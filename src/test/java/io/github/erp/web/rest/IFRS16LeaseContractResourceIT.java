@@ -305,45 +305,45 @@ class DetailedLeaseContractResourceIT {
     @Test
     @Transactional
     void checkLeaseTitleIsRequired() throws Exception {
-        int databaseSizeBeforeTest = iFRS16LeaseContractRepository.findAll().size();
+        int databaseSizeBeforeTest = detailedLeaseContractRepository.findAll().size();
         // set the field null
-        iFRS16LeaseContract.setLeaseTitle(null);
+        detailedLeaseContract.setLeaseTitle(null);
 
-        // Create the IFRS16LeaseContract, which fails.
-        IFRS16LeaseContractDTO iFRS16LeaseContractDTO = iFRS16LeaseContractMapper.toDto(iFRS16LeaseContract);
+        // Create the DetailedLeaseContract, which fails.
+        DetailedLeaseContractDTO detailedLeaseContractDTO = detailedLeaseContractMapper.toDto(detailedLeaseContract);
 
-        restIFRS16LeaseContractMockMvc
+        restDetailedLeaseContractMockMvc
             .perform(
                 post(ENTITY_API_URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(iFRS16LeaseContractDTO))
+                    .content(TestUtil.convertObjectToJsonBytes(detailedLeaseContractDTO))
             )
             .andExpect(status().isBadRequest());
 
-        List<IFRS16LeaseContract> iFRS16LeaseContractList = iFRS16LeaseContractRepository.findAll();
-        assertThat(iFRS16LeaseContractList).hasSize(databaseSizeBeforeTest);
+        List<DetailedLeaseContract> detailedLeaseContractList = detailedLeaseContractRepository.findAll();
+        assertThat(detailedLeaseContractList).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
     @Transactional
     void checkInceptionDateIsRequired() throws Exception {
-        int databaseSizeBeforeTest = iFRS16LeaseContractRepository.findAll().size();
+        int databaseSizeBeforeTest = detailedLeaseContractRepository.findAll().size();
         // set the field null
-        iFRS16LeaseContract.setInceptionDate(null);
+        detailedLeaseContract.setInceptionDate(null);
 
-        // Create the IFRS16LeaseContract, which fails.
-        IFRS16LeaseContractDTO iFRS16LeaseContractDTO = iFRS16LeaseContractMapper.toDto(iFRS16LeaseContract);
+        // Create the DetailedLeaseContract, which fails.
+        DetailedLeaseContractDTO detailedLeaseContractDTO = detailedLeaseContractMapper.toDto(detailedLeaseContract);
 
-        restIFRS16LeaseContractMockMvc
+        restDetailedLeaseContractMockMvc
             .perform(
                 post(ENTITY_API_URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(iFRS16LeaseContractDTO))
+                    .content(TestUtil.convertObjectToJsonBytes(detailedLeaseContractDTO))
             )
             .andExpect(status().isBadRequest());
 
-        List<IFRS16LeaseContract> iFRS16LeaseContractList = iFRS16LeaseContractRepository.findAll();
-        assertThat(iFRS16LeaseContractList).hasSize(databaseSizeBeforeTest);
+        List<DetailedLeaseContract> detailedLeaseContractList = detailedLeaseContractRepository.findAll();
+        assertThat(detailedLeaseContractList).hasSize(databaseSizeBeforeTest);
     }
 
     @Test

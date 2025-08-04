@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20250804185200-1" author="devin">
+        <dropTable tableName="rel_asset_registration__payment_invoices"/>
+        <dropTable tableName="rel_asset_registration__other_related_service_outlets"/>
+        <dropTable tableName="rel_asset_registration__other_related_settlements"/>
+        <dropTable tableName="rel_asset_registration__purchase_order"/>
+        <dropTable tableName="rel_asset_registration__delivery_note"/>
+        <dropTable tableName="rel_asset_registration__job_sheet"/>
+        <dropTable tableName="rel_asset_registration__designated_users"/>
+        <dropTable tableName="rel_asset_registration__business_document"/>
+        <dropTable tableName="rel_asset_registration__asset_warranty"/>
+        <dropTable tableName="rel_asset_registration__universally_unique_mapping"/>
+        <dropTable tableName="rel_asset_registration__asset_accessory"/>
+    </changeSet>
+
+</databaseChangeLog>

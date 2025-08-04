@@ -25,6 +25,7 @@ import scala.concurrent.duration._
 
 /**
  * Performance test for the AssetRegistration entity.
+ * Updated for optimized aggregate boundaries with reduced relationships.
  */
 class AssetRegistrationGatlingTest extends Simulation {
 

@@ -75,13 +75,13 @@ public class DetailedLeaseContractResourceProd {
     }
 
     /**
-     * {@code POST  /ifrs-16-lease-contracts} : Create a new DetailedLeaseContract.
+     * {@code POST  /detailed-lease-contracts} : Create a new DetailedLeaseContract.
      *
      * @param detailedLeaseContractDTO the DetailedLeaseContractDTO to create.
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new DetailedLeaseContractDTO, or with status {@code 400 (Bad Request)} if the DetailedLeaseContract has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/ifrs-16-lease-contracts")
+    @PostMapping("/detailed-lease-contracts")
     public ResponseEntity<DetailedLeaseContractDTO> createDetailedLeaseContract(
         @Valid @RequestBody DetailedLeaseContractDTO detailedLeaseContractDTO
     ) throws URISyntaxException {
@@ -91,13 +91,13 @@ public class DetailedLeaseContractResourceProd {
         }
         DetailedLeaseContractDTO result = detailedLeaseContractService.save(detailedLeaseContractDTO);
         return ResponseEntity
-            .created(new URI("/api/ifrs-16-lease-contracts/" + result.getId()))
+            .created(new URI("/api/detailed-lease-contracts/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /ifrs-16-lease-contracts/:id} : Updates an existing DetailedLeaseContract.
+     * {@code PUT  /detailed-lease-contracts/:id} : Updates an existing DetailedLeaseContract.
      *
      * @param id the id of the DetailedLeaseContractDTO to save.
      * @param detailedLeaseContractDTO the DetailedLeaseContractDTO to update.
@@ -106,7 +106,7 @@ public class DetailedLeaseContractResourceProd {
      * or with status {@code 500 (Internal Server Error)} if the DetailedLeaseContractDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/ifrs-16-lease-contracts/{id}")
+    @PutMapping("/detailed-lease-contracts/{id}")
     public ResponseEntity<DetailedLeaseContractDTO> updateDetailedLeaseContract(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody DetailedLeaseContractDTO detailedLeaseContractDTO

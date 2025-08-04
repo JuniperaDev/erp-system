@@ -85,9 +85,9 @@ class DetailedLeaseContractResourceIT {
     private static final UUID DEFAULT_SERIAL_NUMBER = UUID.randomUUID();
     private static final UUID UPDATED_SERIAL_NUMBER = UUID.randomUUID();
 
-    private static final String ENTITY_API_URL = "/api/leases/ifrs-16-lease-contracts";
+    private static final String ENTITY_API_URL = "/api/leases/detailed-lease-contracts";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
-    private static final String ENTITY_SEARCH_API_URL = "/api/leases/_search/ifrs-16-lease-contracts";
+    private static final String ENTITY_SEARCH_API_URL = "/api/leases/_search/detailed-lease-contracts";
 
     private static Random random = new Random();
     private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
@@ -229,50 +229,50 @@ class DetailedLeaseContractResourceIT {
             .perform(
                 post(ENTITY_API_URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(iFRS16LeaseContractDTO))
+                    .content(TestUtil.convertObjectToJsonBytes(detailedLeaseContractDTO))
             )
             .andExpect(status().isCreated());
 
-        // Validate the IFRS16LeaseContract in the database
-        List<IFRS16LeaseContract> iFRS16LeaseContractList = iFRS16LeaseContractRepository.findAll();
-        assertThat(iFRS16LeaseContractList).hasSize(databaseSizeBeforeCreate + 1);
-        IFRS16LeaseContract testIFRS16LeaseContract = iFRS16LeaseContractList.get(iFRS16LeaseContractList.size() - 1);
-        assertThat(testIFRS16LeaseContract.getBookingId()).isEqualTo(DEFAULT_BOOKING_ID);
-        assertThat(testIFRS16LeaseContract.getLeaseTitle()).isEqualTo(DEFAULT_LEASE_TITLE);
-        assertThat(testIFRS16LeaseContract.getShortTitle()).isEqualTo(DEFAULT_SHORT_TITLE);
-        assertThat(testIFRS16LeaseContract.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
-        assertThat(testIFRS16LeaseContract.getInceptionDate()).isEqualTo(DEFAULT_INCEPTION_DATE);
-        assertThat(testIFRS16LeaseContract.getCommencementDate()).isEqualTo(DEFAULT_COMMENCEMENT_DATE);
-        assertThat(testIFRS16LeaseContract.getSerialNumber()).isEqualTo(DEFAULT_SERIAL_NUMBER);
+        // Validate the DetailedLeaseContract in the database
+        List<DetailedLeaseContract> detailedLeaseContractList = detailedLeaseContractRepository.findAll();
+        assertThat(detailedLeaseContractList).hasSize(databaseSizeBeforeCreate + 1);
+        DetailedLeaseContract testDetailedLeaseContract = detailedLeaseContractList.get(detailedLeaseContractList.size() - 1);
+        assertThat(testDetailedLeaseContract.getBookingId()).isEqualTo(DEFAULT_BOOKING_ID);
+        assertThat(testDetailedLeaseContract.getLeaseTitle()).isEqualTo(DEFAULT_LEASE_TITLE);
+        assertThat(testDetailedLeaseContract.getShortTitle()).isEqualTo(DEFAULT_SHORT_TITLE);
+        assertThat(testDetailedLeaseContract.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
+        assertThat(testDetailedLeaseContract.getInceptionDate()).isEqualTo(DEFAULT_INCEPTION_DATE);
+        assertThat(testDetailedLeaseContract.getCommencementDate()).isEqualTo(DEFAULT_COMMENCEMENT_DATE);
+        assertThat(testDetailedLeaseContract.getSerialNumber()).isEqualTo(DEFAULT_SERIAL_NUMBER);
 
-        // Validate the IFRS16LeaseContract in Elasticsearch
-        verify(mockIFRS16LeaseContractSearchRepository, times(1)).save(testIFRS16LeaseContract);
+        // Validate the DetailedLeaseContract in Elasticsearch
+        verify(mockDetailedLeaseContractSearchRepository, times(1)).save(testDetailedLeaseContract);
     }
 
     @Test
     @Transactional
-    void createIFRS16LeaseContractWithExistingId() throws Exception {
-        // Create the IFRS16LeaseContract with an existing ID
-        iFRS16LeaseContract.setId(1L);
-        IFRS16LeaseContractDTO iFRS16LeaseContractDTO = iFRS16LeaseContractMapper.toDto(iFRS16LeaseContract);
+    void createDetailedLeaseContractWithExistingId() throws Exception {
+        // Create the DetailedLeaseContract with an existing ID
+        detailedLeaseContract.setId(1L);
+        DetailedLeaseContractDTO detailedLeaseContractDTO = detailedLeaseContractMapper.toDto(detailedLeaseContract);
 
-        int databaseSizeBeforeCreate = iFRS16LeaseContractRepository.findAll().size();
+        int databaseSizeBeforeCreate = detailedLeaseContractRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restIFRS16LeaseContractMockMvc
             .perform(
                 post(ENTITY_API_URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(iFRS16LeaseContractDTO))
+                    .content(TestUtil.convertObjectToJsonBytes(detailedLeaseContractDTO))
             )
             .andExpect(status().isBadRequest());
 
-        // Validate the IFRS16LeaseContract in the database
-        List<IFRS16LeaseContract> iFRS16LeaseContractList = iFRS16LeaseContractRepository.findAll();
-        assertThat(iFRS16LeaseContractList).hasSize(databaseSizeBeforeCreate);
+        // Validate the DetailedLeaseContract in the database
+        List<DetailedLeaseContract> detailedLeaseContractList = detailedLeaseContractRepository.findAll();
+        assertThat(detailedLeaseContractList).hasSize(databaseSizeBeforeCreate);
 
-        // Validate the IFRS16LeaseContract in Elasticsearch
-        verify(mockIFRS16LeaseContractSearchRepository, times(0)).save(iFRS16LeaseContract);
+        // Validate the DetailedLeaseContract in Elasticsearch
+        verify(mockDetailedLeaseContractSearchRepository, times(0)).save(detailedLeaseContract);
     }
 
     @Test
@@ -289,7 +289,7 @@ class DetailedLeaseContractResourceIT {
             .perform(
                 post(ENTITY_API_URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(iFRS16LeaseContractDTO))
+                    .content(TestUtil.convertObjectToJsonBytes(detailedLeaseContractDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -311,7 +311,7 @@ class DetailedLeaseContractResourceIT {
             .perform(
                 post(ENTITY_API_URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(iFRS16LeaseContractDTO))
+                    .content(TestUtil.convertObjectToJsonBytes(detailedLeaseContractDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -333,7 +333,7 @@ class DetailedLeaseContractResourceIT {
             .perform(
                 post(ENTITY_API_URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(iFRS16LeaseContractDTO))
+                    .content(TestUtil.convertObjectToJsonBytes(detailedLeaseContractDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -355,7 +355,7 @@ class DetailedLeaseContractResourceIT {
             .perform(
                 post(ENTITY_API_URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(iFRS16LeaseContractDTO))
+                    .content(TestUtil.convertObjectToJsonBytes(detailedLeaseContractDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -1254,7 +1254,7 @@ class DetailedLeaseContractResourceIT {
             .perform(
                 put(ENTITY_API_URL_ID, iFRS16LeaseContractDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(iFRS16LeaseContractDTO))
+                    .content(TestUtil.convertObjectToJsonBytes(detailedLeaseContractDTO))
             )
             .andExpect(status().isOk());
 
@@ -1288,7 +1288,7 @@ class DetailedLeaseContractResourceIT {
             .perform(
                 put(ENTITY_API_URL_ID, iFRS16LeaseContractDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(iFRS16LeaseContractDTO))
+                    .content(TestUtil.convertObjectToJsonBytes(detailedLeaseContractDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -1296,8 +1296,8 @@ class DetailedLeaseContractResourceIT {
         List<IFRS16LeaseContract> iFRS16LeaseContractList = iFRS16LeaseContractRepository.findAll();
         assertThat(iFRS16LeaseContractList).hasSize(databaseSizeBeforeUpdate);
 
-        // Validate the IFRS16LeaseContract in Elasticsearch
-        verify(mockIFRS16LeaseContractSearchRepository, times(0)).save(iFRS16LeaseContract);
+        // Validate the DetailedLeaseContract in Elasticsearch
+        verify(mockDetailedLeaseContractSearchRepository, times(0)).save(detailedLeaseContract);
     }
 
     @Test
@@ -1314,7 +1314,7 @@ class DetailedLeaseContractResourceIT {
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(iFRS16LeaseContractDTO))
+                    .content(TestUtil.convertObjectToJsonBytes(detailedLeaseContractDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -1322,8 +1322,8 @@ class DetailedLeaseContractResourceIT {
         List<IFRS16LeaseContract> iFRS16LeaseContractList = iFRS16LeaseContractRepository.findAll();
         assertThat(iFRS16LeaseContractList).hasSize(databaseSizeBeforeUpdate);
 
-        // Validate the IFRS16LeaseContract in Elasticsearch
-        verify(mockIFRS16LeaseContractSearchRepository, times(0)).save(iFRS16LeaseContract);
+        // Validate the DetailedLeaseContract in Elasticsearch
+        verify(mockDetailedLeaseContractSearchRepository, times(0)).save(detailedLeaseContract);
     }
 
     @Test
@@ -1340,7 +1340,7 @@ class DetailedLeaseContractResourceIT {
             .perform(
                 put(ENTITY_API_URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(iFRS16LeaseContractDTO))
+                    .content(TestUtil.convertObjectToJsonBytes(detailedLeaseContractDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 
@@ -1348,8 +1348,8 @@ class DetailedLeaseContractResourceIT {
         List<IFRS16LeaseContract> iFRS16LeaseContractList = iFRS16LeaseContractRepository.findAll();
         assertThat(iFRS16LeaseContractList).hasSize(databaseSizeBeforeUpdate);
 
-        // Validate the IFRS16LeaseContract in Elasticsearch
-        verify(mockIFRS16LeaseContractSearchRepository, times(0)).save(iFRS16LeaseContract);
+        // Validate the DetailedLeaseContract in Elasticsearch
+        verify(mockDetailedLeaseContractSearchRepository, times(0)).save(detailedLeaseContract);
     }
 
     @Test
@@ -1443,7 +1443,7 @@ class DetailedLeaseContractResourceIT {
             .perform(
                 patch(ENTITY_API_URL_ID, iFRS16LeaseContractDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(iFRS16LeaseContractDTO))
+                    .content(TestUtil.convertObjectToJsonBytes(detailedLeaseContractDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -1451,8 +1451,8 @@ class DetailedLeaseContractResourceIT {
         List<IFRS16LeaseContract> iFRS16LeaseContractList = iFRS16LeaseContractRepository.findAll();
         assertThat(iFRS16LeaseContractList).hasSize(databaseSizeBeforeUpdate);
 
-        // Validate the IFRS16LeaseContract in Elasticsearch
-        verify(mockIFRS16LeaseContractSearchRepository, times(0)).save(iFRS16LeaseContract);
+        // Validate the DetailedLeaseContract in Elasticsearch
+        verify(mockDetailedLeaseContractSearchRepository, times(0)).save(detailedLeaseContract);
     }
 
     @Test
@@ -1469,7 +1469,7 @@ class DetailedLeaseContractResourceIT {
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(iFRS16LeaseContractDTO))
+                    .content(TestUtil.convertObjectToJsonBytes(detailedLeaseContractDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -1477,8 +1477,8 @@ class DetailedLeaseContractResourceIT {
         List<IFRS16LeaseContract> iFRS16LeaseContractList = iFRS16LeaseContractRepository.findAll();
         assertThat(iFRS16LeaseContractList).hasSize(databaseSizeBeforeUpdate);
 
-        // Validate the IFRS16LeaseContract in Elasticsearch
-        verify(mockIFRS16LeaseContractSearchRepository, times(0)).save(iFRS16LeaseContract);
+        // Validate the DetailedLeaseContract in Elasticsearch
+        verify(mockDetailedLeaseContractSearchRepository, times(0)).save(detailedLeaseContract);
     }
 
     @Test
@@ -1495,7 +1495,7 @@ class DetailedLeaseContractResourceIT {
             .perform(
                 patch(ENTITY_API_URL)
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(iFRS16LeaseContractDTO))
+                    .content(TestUtil.convertObjectToJsonBytes(detailedLeaseContractDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 
@@ -1503,8 +1503,8 @@ class DetailedLeaseContractResourceIT {
         List<IFRS16LeaseContract> iFRS16LeaseContractList = iFRS16LeaseContractRepository.findAll();
         assertThat(iFRS16LeaseContractList).hasSize(databaseSizeBeforeUpdate);
 
-        // Validate the IFRS16LeaseContract in Elasticsearch
-        verify(mockIFRS16LeaseContractSearchRepository, times(0)).save(iFRS16LeaseContract);
+        // Validate the DetailedLeaseContract in Elasticsearch
+        verify(mockDetailedLeaseContractSearchRepository, times(0)).save(detailedLeaseContract);
     }
 
     @Test

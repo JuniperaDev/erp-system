@@ -42,6 +42,11 @@ public interface AssetWarrantyMapper extends EntityMapper<AssetWarrantyDTO, Asse
     @Mapping(target = "removeWarrantyAttachment", ignore = true)
     AssetWarranty toEntity(AssetWarrantyDTO assetWarrantyDTO);
 
+    @Named("assetWarrantyId")
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", source = "id")
+    AssetWarranty fromId(Long id);
+
     @Named("descriptionSet")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")

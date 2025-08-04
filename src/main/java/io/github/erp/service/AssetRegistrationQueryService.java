@@ -159,7 +159,8 @@ public class AssetRegistrationQueryService extends QueryService<AssetRegistratio
                     specification.and(
                         buildSpecification(
                             criteria.getPaymentInvoicesId(),
-                            root -> root.join(AssetRegistration_.paymentInvoices, JoinType.LEFT).get(PaymentInvoice_.id)
+                            root -> root.join(AssetRegistration_.assetPaymentInvoiceAssignments, JoinType.LEFT)
+                                       .join(AssetPaymentInvoiceAssignment_.paymentInvoice, JoinType.LEFT).get(PaymentInvoice_.id)
                         )
                     );
             }
@@ -195,7 +196,8 @@ public class AssetRegistrationQueryService extends QueryService<AssetRegistratio
                     specification.and(
                         buildSpecification(
                             criteria.getPurchaseOrderId(),
-                            root -> root.join(AssetRegistration_.purchaseOrders, JoinType.LEFT).get(PurchaseOrder_.id)
+                            root -> root.join(AssetRegistration_.assetPurchaseOrderAssignments, JoinType.LEFT)
+                                       .join(AssetPurchaseOrderAssignment_.purchaseOrder, JoinType.LEFT).get(PurchaseOrder_.id)
                         )
                     );
             }
@@ -213,7 +215,8 @@ public class AssetRegistrationQueryService extends QueryService<AssetRegistratio
                     specification.and(
                         buildSpecification(
                             criteria.getJobSheetId(),
-                            root -> root.join(AssetRegistration_.jobSheets, JoinType.LEFT).get(JobSheet_.id)
+                            root -> root.join(AssetRegistration_.assetJobSheetAssignments, JoinType.LEFT)
+                                       .join(AssetJobSheetAssignment_.jobSheet, JoinType.LEFT).get(JobSheet_.id)
                         )
                     );
             }
@@ -249,7 +252,8 @@ public class AssetRegistrationQueryService extends QueryService<AssetRegistratio
                     specification.and(
                         buildSpecification(
                             criteria.getBusinessDocumentId(),
-                            root -> root.join(AssetRegistration_.businessDocuments, JoinType.LEFT).get(BusinessDocument_.id)
+                            root -> root.join(AssetRegistration_.assetDocumentAssignments, JoinType.LEFT)
+                                       .join(AssetDocumentAssignment_.businessDocument, JoinType.LEFT).get(BusinessDocument_.id)
                         )
                     );
             }
@@ -258,7 +262,8 @@ public class AssetRegistrationQueryService extends QueryService<AssetRegistratio
                     specification.and(
                         buildSpecification(
                             criteria.getAssetWarrantyId(),
-                            root -> root.join(AssetRegistration_.assetWarranties, JoinType.LEFT).get(AssetWarranty_.id)
+                            root -> root.join(AssetRegistration_.assetWarrantyAssignments, JoinType.LEFT)
+                                       .join(AssetWarrantyAssignment_.assetWarranty, JoinType.LEFT).get(AssetWarranty_.id)
                         )
                     );
             }

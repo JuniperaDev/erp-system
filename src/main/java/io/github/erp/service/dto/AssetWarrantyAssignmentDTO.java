@@ -47,7 +47,7 @@ public class AssetWarrantyAssignmentDTO implements Serializable {
 
     private Long assetWarrantyId;
 
-    private String assetWarrantyIdentifier;
+    private String assetWarrantyDescription;
 
     public Long getId() {
         return id;
@@ -121,12 +121,12 @@ public class AssetWarrantyAssignmentDTO implements Serializable {
         this.assetWarrantyId = assetWarrantyId;
     }
 
-    public String getAssetWarrantyIdentifier() {
-        return assetWarrantyIdentifier;
+    public String getAssetWarrantyDescription() {
+        return assetWarrantyDescription;
     }
 
-    public void setAssetWarrantyIdentifier(String assetWarrantyIdentifier) {
-        this.assetWarrantyIdentifier = assetWarrantyIdentifier;
+    public void setAssetWarrantyDescription(String assetWarrantyDescription) {
+        this.assetWarrantyDescription = assetWarrantyDescription;
     }
 
     @Override

@@ -168,7 +168,7 @@ public class AssetWarrantyAssignmentResource {
      */
     @GetMapping("/asset-warranty-assignments")
     public ResponseEntity<List<AssetWarrantyAssignmentDTO>> getAllAssetWarrantyAssignments(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get a page of AssetWarrantyAssignments");
         Page<AssetWarrantyAssignmentDTO> page = assetWarrantyAssignmentService.findAll(pageable);
@@ -216,7 +216,7 @@ public class AssetWarrantyAssignmentResource {
     @GetMapping("/_search/asset-warranty-assignments")
     public ResponseEntity<List<AssetWarrantyAssignmentDTO>> searchAssetWarrantyAssignments(
         @RequestParam String query,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to search for a page of AssetWarrantyAssignments for query {}", query);
         Page<AssetWarrantyAssignmentDTO> page = assetWarrantyAssignmentService.search(query, pageable);

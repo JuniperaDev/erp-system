@@ -64,6 +64,11 @@ public interface PaymentInvoiceMapper extends EntityMapper<PaymentInvoiceDTO, Pa
     @Mapping(target = "invoiceNumber", source = "invoiceNumber")
     Set<PaymentInvoiceDTO> toDtoInvoiceNumberSet(Set<PaymentInvoice> paymentInvoice);
 
+    @Named("paymentInvoiceId")
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", source = "id")
+    PaymentInvoice fromId(Long id);
+
     @Named("invoiceNumber")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")

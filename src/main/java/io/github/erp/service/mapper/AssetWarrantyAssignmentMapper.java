@@ -30,7 +30,7 @@ public interface AssetWarrantyAssignmentMapper extends EntityMapper<AssetWarrant
     @Mapping(target = "assetRegistrationId", source = "assetRegistration.id")
     @Mapping(target = "assetRegistrationAssetNumber", source = "assetRegistration.assetNumber")
     @Mapping(target = "assetWarrantyId", source = "assetWarranty.id")
-    @Mapping(target = "assetWarrantyIdentifier", source = "assetWarranty.identifier")
+    @Mapping(target = "assetWarrantyDescription", source = "assetWarranty.description")
     AssetWarrantyAssignmentDTO toDto(AssetWarrantyAssignment s);
 
     @Mapping(target = "assetRegistration", source = "assetRegistrationId", qualifiedByName = "assetRegistrationId")

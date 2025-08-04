@@ -152,7 +152,7 @@ public class DetailedLeaseContractQueryService extends QueryService<DetailedLeas
                     specification.and(
                         buildSpecification(
                             criteria.getMainDealerId(),
-                            root -> root.join(IFRS16LeaseContract_.mainDealer, JoinType.LEFT).get(Dealer_.id)
+                            root -> root.join(DetailedLeaseContract_.mainDealer, JoinType.LEFT).get(Dealer_.id)
                         )
                     );
             }
@@ -161,7 +161,7 @@ public class DetailedLeaseContractQueryService extends QueryService<DetailedLeas
                     specification.and(
                         buildSpecification(
                             criteria.getFirstReportingPeriodId(),
-                            root -> root.join(IFRS16LeaseContract_.firstReportingPeriod, JoinType.LEFT).get(FiscalMonth_.id)
+                            root -> root.join(DetailedLeaseContract_.firstReportingPeriod, JoinType.LEFT).get(FiscalMonth_.id)
                         )
                     );
             }
@@ -170,7 +170,7 @@ public class DetailedLeaseContractQueryService extends QueryService<DetailedLeas
                     specification.and(
                         buildSpecification(
                             criteria.getLastReportingPeriodId(),
-                            root -> root.join(IFRS16LeaseContract_.lastReportingPeriod, JoinType.LEFT).get(FiscalMonth_.id)
+                            root -> root.join(DetailedLeaseContract_.lastReportingPeriod, JoinType.LEFT).get(FiscalMonth_.id)
                         )
                     );
             }
@@ -179,7 +179,7 @@ public class DetailedLeaseContractQueryService extends QueryService<DetailedLeas
                     specification.and(
                         buildSpecification(
                             criteria.getLeaseContractDocumentId(),
-                            root -> root.join(IFRS16LeaseContract_.leaseContractDocument, JoinType.LEFT).get(BusinessDocument_.id)
+                            root -> root.join(DetailedLeaseContract_.leaseContractDocument, JoinType.LEFT).get(BusinessDocument_.id)
                         )
                     );
             }
@@ -188,7 +188,7 @@ public class DetailedLeaseContractQueryService extends QueryService<DetailedLeas
                     specification.and(
                         buildSpecification(
                             criteria.getLeaseContractCalculationsId(),
-                            root -> root.join(IFRS16LeaseContract_.leaseContractCalculations, JoinType.LEFT).get(BusinessDocument_.id)
+                            root -> root.join(DetailedLeaseContract_.leaseContractCalculations, JoinType.LEFT).get(BusinessDocument_.id)
                         )
                     );
             }
@@ -197,7 +197,7 @@ public class DetailedLeaseContractQueryService extends QueryService<DetailedLeas
                     specification.and(
                         buildSpecification(
                             criteria.getLeasePaymentId(),
-                            root -> root.join(IFRS16LeaseContract_.leasePayments, JoinType.LEFT).get(LeasePayment_.id)
+                            root -> root.join(DetailedLeaseContract_.leasePayments, JoinType.LEFT).get(LeasePayment_.id)
                         )
                     );
             }

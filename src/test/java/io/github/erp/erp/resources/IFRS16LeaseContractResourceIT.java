@@ -216,16 +216,16 @@ class DetailedLeaseContractResourceIT {
 
     @BeforeEach
     public void initTest() {
-        iFRS16LeaseContract = createEntity(em);
+        detailedLeaseContract = createEntity(em);
     }
 
     @Test
     @Transactional
-    void createIFRS16LeaseContract() throws Exception {
-        int databaseSizeBeforeCreate = iFRS16LeaseContractRepository.findAll().size();
-        // Create the IFRS16LeaseContract
-        IFRS16LeaseContractDTO iFRS16LeaseContractDTO = iFRS16LeaseContractMapper.toDto(iFRS16LeaseContract);
-        restIFRS16LeaseContractMockMvc
+    void createDetailedLeaseContract() throws Exception {
+        int databaseSizeBeforeCreate = detailedLeaseContractRepository.findAll().size();
+        // Create the DetailedLeaseContract
+        DetailedLeaseContractDTO detailedLeaseContractDTO = detailedLeaseContractMapper.toDto(detailedLeaseContract);
+        restDetailedLeaseContractMockMvc
             .perform(
                 post(ENTITY_API_URL)
                     .contentType(MediaType.APPLICATION_JSON)

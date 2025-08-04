@@ -230,28 +230,28 @@ class DetailedLeaseContractResourceIT {
         int databaseSizeBeforeCreate = detailedLeaseContractRepository.findAll().size();
         // Create the DetailedLeaseContract
         DetailedLeaseContractDTO detailedLeaseContractDTO = detailedLeaseContractMapper.toDto(detailedLeaseContract);
-        restIFRS16LeaseContractMockMvc
+        restDetailedLeaseContractMockMvc
             .perform(
                 post(ENTITY_API_URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(iFRS16LeaseContractDTO))
+                    .content(TestUtil.convertObjectToJsonBytes(detailedLeaseContractDTO))
             )
-            .andExpect(status().isCreated());
+            .andExpected(status().isCreated());
 
-        // Validate the IFRS16LeaseContract in the database
-        List<IFRS16LeaseContract> iFRS16LeaseContractList = iFRS16LeaseContractRepository.findAll();
-        assertThat(iFRS16LeaseContractList).hasSize(databaseSizeBeforeCreate + 1);
-        IFRS16LeaseContract testIFRS16LeaseContract = iFRS16LeaseContractList.get(iFRS16LeaseContractList.size() - 1);
-        assertThat(testIFRS16LeaseContract.getBookingId()).isEqualTo(DEFAULT_BOOKING_ID);
-        assertThat(testIFRS16LeaseContract.getLeaseTitle()).isEqualTo(DEFAULT_LEASE_TITLE);
-        assertThat(testIFRS16LeaseContract.getShortTitle()).isEqualTo(DEFAULT_SHORT_TITLE);
-        assertThat(testIFRS16LeaseContract.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
-        assertThat(testIFRS16LeaseContract.getInceptionDate()).isEqualTo(DEFAULT_INCEPTION_DATE);
-        assertThat(testIFRS16LeaseContract.getCommencementDate()).isEqualTo(DEFAULT_COMMENCEMENT_DATE);
-        assertThat(testIFRS16LeaseContract.getSerialNumber()).isEqualTo(DEFAULT_SERIAL_NUMBER);
+        // Validate the DetailedLeaseContract in the database
+        List<DetailedLeaseContract> detailedLeaseContractList = detailedLeaseContractRepository.findAll();
+        assertThat(detailedLeaseContractList).hasSize(databaseSizeBeforeCreate + 1);
+        DetailedLeaseContract testDetailedLeaseContract = detailedLeaseContractList.get(detailedLeaseContractList.size() - 1);
+        assertThat(testDetailedLeaseContract.getBookingId()).isEqualTo(DEFAULT_BOOKING_ID);
+        assertThat(testDetailedLeaseContract.getLeaseTitle()).isEqualTo(DEFAULT_LEASE_TITLE);
+        assertThat(testDetailedLeaseContract.getShortTitle()).isEqualTo(DEFAULT_SHORT_TITLE);
+        assertThat(testDetailedLeaseContract.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
+        assertThat(testDetailedLeaseContract.getInceptionDate()).isEqualTo(DEFAULT_INCEPTION_DATE);
+        assertThat(testDetailedLeaseContract.getCommencementDate()).isEqualTo(DEFAULT_COMMENCEMENT_DATE);
+        assertThat(testDetailedLeaseContract.getSerialNumber()).isEqualTo(DEFAULT_SERIAL_NUMBER);
 
-        // Validate the IFRS16LeaseContract in Elasticsearch
-        verify(mockIFRS16LeaseContractSearchRepository, times(1)).save(testIFRS16LeaseContract);
+        // Validate the DetailedLeaseContract in Elasticsearch
+        verify(mockDetailedLeaseContractSearchRepository, times(1)).save(testDetailedLeaseContract);
     }
 
     @Test

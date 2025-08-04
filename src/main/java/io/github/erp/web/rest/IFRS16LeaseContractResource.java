@@ -135,38 +135,38 @@ public class DetailedLeaseContractResource {
     }
 
     /**
-     * {@code PATCH  /ifrs-16-lease-contracts/:id} : Partial updates given fields of an existing iFRS16LeaseContract, field will ignore if it is null
+     * {@code PATCH  /detailed-lease-contracts/:id} : Partial updates given fields of an existing DetailedLeaseContract, field will ignore if it is null
      *
-     * @param id the id of the iFRS16LeaseContractDTO to save.
-     * @param iFRS16LeaseContractDTO the iFRS16LeaseContractDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated iFRS16LeaseContractDTO,
-     * or with status {@code 400 (Bad Request)} if the iFRS16LeaseContractDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the iFRS16LeaseContractDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the iFRS16LeaseContractDTO couldn't be updated.
+     * @param id the id of the DetailedLeaseContractDTO to save.
+     * @param detailedLeaseContractDTO the DetailedLeaseContractDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated DetailedLeaseContractDTO,
+     * or with status {@code 400 (Bad Request)} if the DetailedLeaseContractDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the DetailedLeaseContractDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the DetailedLeaseContractDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/ifrs-16-lease-contracts/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<IFRS16LeaseContractDTO> partialUpdateIFRS16LeaseContract(
+    @PatchMapping(value = "/detailed-lease-contracts/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    public ResponseEntity<DetailedLeaseContractDTO> partialUpdateDetailedLeaseContract(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody IFRS16LeaseContractDTO iFRS16LeaseContractDTO
+        @NotNull @RequestBody DetailedLeaseContractDTO detailedLeaseContractDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update IFRS16LeaseContract partially : {}, {}", id, iFRS16LeaseContractDTO);
-        if (iFRS16LeaseContractDTO.getId() == null) {
+        log.debug("REST request to partial update DetailedLeaseContract partially : {}, {}", id, detailedLeaseContractDTO);
+        if (detailedLeaseContractDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, iFRS16LeaseContractDTO.getId())) {
+        if (!Objects.equals(id, detailedLeaseContractDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
-        if (!iFRS16LeaseContractRepository.existsById(id)) {
+        if (!detailedLeaseContractRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<IFRS16LeaseContractDTO> result = iFRS16LeaseContractService.partialUpdate(iFRS16LeaseContractDTO);
+        Optional<DetailedLeaseContractDTO> result = detailedLeaseContractService.partialUpdate(detailedLeaseContractDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, iFRS16LeaseContractDTO.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, detailedLeaseContractDTO.getId().toString())
         );
     }
 

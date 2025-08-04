@@ -25,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import io.github.erp.IntegrationTest;
 import io.github.erp.domain.Dealer;
+import io.github.erp.domain.DealerGroup;
 import io.github.erp.domain.PaymentLabel;
 import io.github.erp.domain.Placeholder;
 import io.github.erp.repository.DealerRepository;
@@ -1225,13 +1226,13 @@ public class DealerResourceIT {
     void getAllDealersByDealerGroupIsEqualToSomething() throws Exception {
         // Initialize the database
         dealerRepository.saveAndFlush(dealer);
-        Dealer dealerGroup;
-        if (TestUtil.findAll(em, Dealer.class).isEmpty()) {
-            dealerGroup = DealerResourceIT.createEntity(em);
+        DealerGroup dealerGroup;
+        if (TestUtil.findAll(em, DealerGroup.class).isEmpty()) {
+            dealerGroup = DealerGroupResourceIT.createEntity(em);
             em.persist(dealerGroup);
             em.flush();
         } else {
-            dealerGroup = TestUtil.findAll(em, Dealer.class).get(0);
+            dealerGroup = TestUtil.findAll(em, DealerGroup.class).get(0);
         }
         em.persist(dealerGroup);
         em.flush();

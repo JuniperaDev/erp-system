@@ -105,15 +105,15 @@ public class DetailedLeaseContractServiceImpl implements DetailedLeaseContractSe
 
     @Override
     public void delete(Long id) {
-        log.debug("Request to delete IFRS16LeaseContract : {}", id);
-        iFRS16LeaseContractRepository.deleteById(id);
-        iFRS16LeaseContractSearchRepository.deleteById(id);
+        log.debug("Request to delete DetailedLeaseContract : {}", id);
+        detailedLeaseContractRepository.deleteById(id);
+        detailedLeaseContractSearchRepository.deleteById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<IFRS16LeaseContractDTO> search(String query, Pageable pageable) {
-        log.debug("Request to search for a page of IFRS16LeaseContracts for query {}", query);
-        return iFRS16LeaseContractSearchRepository.search(query, pageable).map(iFRS16LeaseContractMapper::toDto);
+    public Page<DetailedLeaseContractDTO> search(String query, Pageable pageable) {
+        log.debug("Request to search for a page of DetailedLeaseContracts for query {}", query);
+        return detailedLeaseContractSearchRepository.search(query, pageable).map(detailedLeaseContractMapper::toDto);
     }
 }

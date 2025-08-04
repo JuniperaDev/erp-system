@@ -102,48 +102,48 @@ public class DetailedLeaseContractQueryService extends QueryService<DetailedLeas
     }
 
     /**
-     * Function to convert {@link IFRS16LeaseContractCriteria} to a {@link Specification}
+     * Function to convert {@link DetailedLeaseContractCriteria} to a {@link Specification}
      * @param criteria The object which holds all the filters, which the entities should match.
      * @return the matching {@link Specification} of the entity.
      */
-    protected Specification<IFRS16LeaseContract> createSpecification(IFRS16LeaseContractCriteria criteria) {
-        Specification<IFRS16LeaseContract> specification = Specification.where(null);
+    protected Specification<DetailedLeaseContract> createSpecification(DetailedLeaseContractCriteria criteria) {
+        Specification<DetailedLeaseContract> specification = Specification.where(null);
         if (criteria != null) {
             // This has to be called first, because the distinct method returns null
             if (criteria.getDistinct() != null) {
                 specification = specification.and(distinct(criteria.getDistinct()));
             }
             if (criteria.getId() != null) {
-                specification = specification.and(buildRangeSpecification(criteria.getId(), IFRS16LeaseContract_.id));
+                specification = specification.and(buildRangeSpecification(criteria.getId(), DetailedLeaseContract_.id));
             }
             if (criteria.getBookingId() != null) {
-                specification = specification.and(buildStringSpecification(criteria.getBookingId(), IFRS16LeaseContract_.bookingId));
+                specification = specification.and(buildStringSpecification(criteria.getBookingId(), DetailedLeaseContract_.bookingId));
             }
             if (criteria.getLeaseTitle() != null) {
-                specification = specification.and(buildStringSpecification(criteria.getLeaseTitle(), IFRS16LeaseContract_.leaseTitle));
+                specification = specification.and(buildStringSpecification(criteria.getLeaseTitle(), DetailedLeaseContract_.leaseTitle));
             }
             if (criteria.getShortTitle() != null) {
-                specification = specification.and(buildStringSpecification(criteria.getShortTitle(), IFRS16LeaseContract_.shortTitle));
+                specification = specification.and(buildStringSpecification(criteria.getShortTitle(), DetailedLeaseContract_.shortTitle));
             }
             if (criteria.getDescription() != null) {
-                specification = specification.and(buildStringSpecification(criteria.getDescription(), IFRS16LeaseContract_.description));
+                specification = specification.and(buildStringSpecification(criteria.getDescription(), DetailedLeaseContract_.description));
             }
             if (criteria.getInceptionDate() != null) {
-                specification = specification.and(buildRangeSpecification(criteria.getInceptionDate(), IFRS16LeaseContract_.inceptionDate));
+                specification = specification.and(buildRangeSpecification(criteria.getInceptionDate(), DetailedLeaseContract_.inceptionDate));
             }
             if (criteria.getCommencementDate() != null) {
                 specification =
-                    specification.and(buildRangeSpecification(criteria.getCommencementDate(), IFRS16LeaseContract_.commencementDate));
+                    specification.and(buildRangeSpecification(criteria.getCommencementDate(), DetailedLeaseContract_.commencementDate));
             }
             if (criteria.getSerialNumber() != null) {
-                specification = specification.and(buildSpecification(criteria.getSerialNumber(), IFRS16LeaseContract_.serialNumber));
+                specification = specification.and(buildSpecification(criteria.getSerialNumber(), DetailedLeaseContract_.serialNumber));
             }
             if (criteria.getSuperintendentServiceOutletId() != null) {
                 specification =
                     specification.and(
                         buildSpecification(
                             criteria.getSuperintendentServiceOutletId(),
-                            root -> root.join(IFRS16LeaseContract_.superintendentServiceOutlet, JoinType.LEFT).get(ServiceOutlet_.id)
+                            root -> root.join(DetailedLeaseContract_.superintendentServiceOutlet, JoinType.LEFT).get(ServiceOutlet_.id)
                         )
                     );
             }

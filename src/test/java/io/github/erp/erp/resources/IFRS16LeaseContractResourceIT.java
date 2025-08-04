@@ -170,8 +170,8 @@ class DetailedLeaseContractResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static IFRS16LeaseContract createUpdatedEntity(EntityManager em) {
-        IFRS16LeaseContract iFRS16LeaseContract = new IFRS16LeaseContract()
+    public static DetailedLeaseContract createUpdatedEntity(EntityManager em) {
+        DetailedLeaseContract detailedLeaseContract = new DetailedLeaseContract()
             .bookingId(UPDATED_BOOKING_ID)
             .leaseTitle(UPDATED_LEASE_TITLE)
             .shortTitle(UPDATED_SHORT_TITLE)
@@ -188,7 +188,7 @@ class DetailedLeaseContractResourceIT {
         } else {
             serviceOutlet = TestUtil.findAll(em, ServiceOutlet.class).get(0);
         }
-        iFRS16LeaseContract.setSuperintendentServiceOutlet(serviceOutlet);
+        detailedLeaseContract.setSuperintendentServiceOutlet(serviceOutlet);
         // Add required entity
         Dealer dealer;
         if (TestUtil.findAll(em, Dealer.class).isEmpty()) {
@@ -198,7 +198,7 @@ class DetailedLeaseContractResourceIT {
         } else {
             dealer = TestUtil.findAll(em, Dealer.class).get(0);
         }
-        iFRS16LeaseContract.setMainDealer(dealer);
+        detailedLeaseContract.setMainDealer(dealer);
         // Add required entity
         FiscalMonth fiscalMonth;
         if (TestUtil.findAll(em, FiscalMonth.class).isEmpty()) {
@@ -208,10 +208,10 @@ class DetailedLeaseContractResourceIT {
         } else {
             fiscalMonth = TestUtil.findAll(em, FiscalMonth.class).get(0);
         }
-        iFRS16LeaseContract.setFirstReportingPeriod(fiscalMonth);
+        detailedLeaseContract.setFirstReportingPeriod(fiscalMonth);
         // Add required entity
-        iFRS16LeaseContract.setLastReportingPeriod(fiscalMonth);
-        return iFRS16LeaseContract;
+        detailedLeaseContract.setLastReportingPeriod(fiscalMonth);
+        return detailedLeaseContract;
     }
 
     @BeforeEach

@@ -374,11 +374,11 @@ public class RouModelMetadata implements Serializable {
     }
 
     public DetailedLeaseContract getDetailedLeaseContract() {
-        return this.ifrs16LeaseContract;
+        return this.detailedLeaseContract;
     }
 
     public void setDetailedLeaseContract(DetailedLeaseContract detailedLeaseContract) {
-        this.ifrs16LeaseContract = detailedLeaseContract;
+        this.detailedLeaseContract = detailedLeaseContract;
     }
 
     public RouModelMetadata detailedLeaseContract(DetailedLeaseContract detailedLeaseContract) {

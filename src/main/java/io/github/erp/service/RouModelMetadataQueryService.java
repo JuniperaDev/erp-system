@@ -179,12 +179,12 @@ public class RouModelMetadataQueryService extends QueryService<RouModelMetadata>
                 specification =
                     specification.and(buildRangeSpecification(criteria.getCompilationTime(), RouModelMetadata_.compilationTime));
             }
-            if (criteria.getIfrs16LeaseContractId() != null) {
+            if (criteria.getDetailedLeaseContractId() != null) {
                 specification =
                     specification.and(
                         buildSpecification(
-                            criteria.getIfrs16LeaseContractId(),
-                            root -> root.join(RouModelMetadata_.ifrs16LeaseContract, JoinType.LEFT).get(DetailedLeaseContract_.id)
+                            criteria.getDetailedLeaseContractId(),
+                            root -> root.join(RouModelMetadata_.detailedLeaseContract, JoinType.LEFT).get(DetailedLeaseContract_.id)
                         )
                     );
             }

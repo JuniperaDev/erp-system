@@ -96,22 +96,22 @@ public class InternalDetailedLeaseContractServiceImpl implements InternalDetaile
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<IFRS16LeaseContractDTO> findOne(Long id) {
-        log.debug("Request to get IFRS16LeaseContract : {}", id);
-        return iFRS16LeaseContractRepository.findById(id).map(iFRS16LeaseContractMapper::toDto);
+    public Optional<DetailedLeaseContractDTO> findOne(Long id) {
+        log.debug("Request to get DetailedLeaseContract : {}", id);
+        return detailedLeaseContractRepository.findById(id).map(detailedLeaseContractMapper::toDto);
     }
 
     @Override
     public void delete(Long id) {
-        log.debug("Request to delete IFRS16LeaseContract : {}", id);
-        iFRS16LeaseContractRepository.deleteById(id);
-        iFRS16LeaseContractSearchRepository.deleteById(id);
+        log.debug("Request to delete DetailedLeaseContract : {}", id);
+        detailedLeaseContractRepository.deleteById(id);
+        detailedLeaseContractSearchRepository.deleteById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<IFRS16LeaseContractDTO> search(String query, Pageable pageable) {
-        log.debug("Request to search for a page of IFRS16LeaseContracts for query {}", query);
-        return iFRS16LeaseContractSearchRepository.search(query, pageable).map(iFRS16LeaseContractMapper::toDto);
+    public Page<DetailedLeaseContractDTO> search(String query, Pageable pageable) {
+        log.debug("Request to search for a page of DetailedLeaseContracts for query {}", query);
+        return detailedLeaseContractSearchRepository.search(query, pageable).map(detailedLeaseContractMapper::toDto);
     }
 }

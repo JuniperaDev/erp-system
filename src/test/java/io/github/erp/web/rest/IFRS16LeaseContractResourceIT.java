@@ -193,7 +193,7 @@ class DetailedLeaseContractResourceIT {
         } else {
             serviceOutlet = TestUtil.findAll(em, ServiceOutlet.class).get(0);
         }
-        iFRS16LeaseContract.setSuperintendentServiceOutlet(serviceOutlet);
+        detailedLeaseContract.setSuperintendentServiceOutlet(serviceOutlet);
         // Add required entity
         Dealer dealer;
         if (TestUtil.findAll(em, Dealer.class).isEmpty()) {
@@ -203,7 +203,7 @@ class DetailedLeaseContractResourceIT {
         } else {
             dealer = TestUtil.findAll(em, Dealer.class).get(0);
         }
-        iFRS16LeaseContract.setMainDealer(dealer);
+        detailedLeaseContract.setMainDealer(dealer);
         // Add required entity
         FiscalMonth fiscalMonth;
         if (TestUtil.findAll(em, FiscalMonth.class).isEmpty()) {
@@ -213,23 +213,23 @@ class DetailedLeaseContractResourceIT {
         } else {
             fiscalMonth = TestUtil.findAll(em, FiscalMonth.class).get(0);
         }
-        iFRS16LeaseContract.setFirstReportingPeriod(fiscalMonth);
+        detailedLeaseContract.setFirstReportingPeriod(fiscalMonth);
         // Add required entity
-        iFRS16LeaseContract.setLastReportingPeriod(fiscalMonth);
-        return iFRS16LeaseContract;
+        detailedLeaseContract.setLastReportingPeriod(fiscalMonth);
+        return detailedLeaseContract;
     }
 
     @BeforeEach
     public void initTest() {
-        iFRS16LeaseContract = createEntity(em);
+        detailedLeaseContract = createEntity(em);
     }
 
     @Test
     @Transactional
-    void createIFRS16LeaseContract() throws Exception {
-        int databaseSizeBeforeCreate = iFRS16LeaseContractRepository.findAll().size();
-        // Create the IFRS16LeaseContract
-        IFRS16LeaseContractDTO iFRS16LeaseContractDTO = iFRS16LeaseContractMapper.toDto(iFRS16LeaseContract);
+    void createDetailedLeaseContract() throws Exception {
+        int databaseSizeBeforeCreate = detailedLeaseContractRepository.findAll().size();
+        // Create the DetailedLeaseContract
+        DetailedLeaseContractDTO detailedLeaseContractDTO = detailedLeaseContractMapper.toDto(detailedLeaseContract);
         restIFRS16LeaseContractMockMvc
             .perform(
                 post(ENTITY_API_URL)

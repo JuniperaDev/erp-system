@@ -101,36 +101,36 @@ public class DetailedLeaseContractResource {
     }
 
     /**
-     * {@code PUT  /ifrs-16-lease-contracts/:id} : Updates an existing iFRS16LeaseContract.
+     * {@code PUT  /detailed-lease-contracts/:id} : Updates an existing DetailedLeaseContract.
      *
-     * @param id the id of the iFRS16LeaseContractDTO to save.
-     * @param iFRS16LeaseContractDTO the iFRS16LeaseContractDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated iFRS16LeaseContractDTO,
-     * or with status {@code 400 (Bad Request)} if the iFRS16LeaseContractDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the iFRS16LeaseContractDTO couldn't be updated.
+     * @param id the id of the DetailedLeaseContractDTO to save.
+     * @param detailedLeaseContractDTO the DetailedLeaseContractDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated DetailedLeaseContractDTO,
+     * or with status {@code 400 (Bad Request)} if the DetailedLeaseContractDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the DetailedLeaseContractDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/ifrs-16-lease-contracts/{id}")
-    public ResponseEntity<IFRS16LeaseContractDTO> updateIFRS16LeaseContract(
+    @PutMapping("/detailed-lease-contracts/{id}")
+    public ResponseEntity<DetailedLeaseContractDTO> updateDetailedLeaseContract(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody IFRS16LeaseContractDTO iFRS16LeaseContractDTO
+        @Valid @RequestBody DetailedLeaseContractDTO detailedLeaseContractDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update IFRS16LeaseContract : {}, {}", id, iFRS16LeaseContractDTO);
-        if (iFRS16LeaseContractDTO.getId() == null) {
+        log.debug("REST request to update DetailedLeaseContract : {}, {}", id, detailedLeaseContractDTO);
+        if (detailedLeaseContractDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, iFRS16LeaseContractDTO.getId())) {
+        if (!Objects.equals(id, detailedLeaseContractDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
-        if (!iFRS16LeaseContractRepository.existsById(id)) {
+        if (!detailedLeaseContractRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        IFRS16LeaseContractDTO result = iFRS16LeaseContractService.save(iFRS16LeaseContractDTO);
+        DetailedLeaseContractDTO result = detailedLeaseContractService.save(detailedLeaseContractDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, iFRS16LeaseContractDTO.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, detailedLeaseContractDTO.getId().toString()))
             .body(result);
     }
 

@@ -46,7 +46,7 @@ public interface InternalLeaseAmortizationScheduleRepository
         value = "" +
             "SELECT lam.id, identifier, lease_liability_id, lease_contract_id " +
             " FROM public.lease_amortization_schedule lam " +
-            " LEFT JOIN ifrs16lease_contract contract on contract.id = lam.lease_contract_id " +
+            " LEFT JOIN detailed_lease_contract contract on contract.id = lam.lease_contract_id " +
             " WHERE contract.booking_id = :bookingId"
     )
     Optional<LeaseAmortizationSchedule> findAdjacentScheduleByBookingId(@Param("bookingId") String bookingId);

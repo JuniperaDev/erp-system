@@ -63,7 +63,7 @@ public interface InternalRouDepreciationEntryReportItemRepository
             "    LEFT JOIN transaction_account dta ON debit_account_id = dta.id  " +
             "    LEFT JOIN transaction_account cta ON credit_account_id = cta.id  " +
             "    LEFT JOIN rou_model_metadata rmm ON rou_metadata_id = rmm.id " +
-            "    LEFT JOIN ifrs16lease_contract ifr ON rmm.ifrs16lease_contract_id = ifr.id " +
+            "    LEFT JOIN detailed_lease_contract ifr ON rmm.detailed_lease_contract_id = ifr.id " +
             " WHERE (is_deleted=false OR is_deleted IS NULL) AND       " +
             "    (activated=true OR activated IS NULL) AND       " +
             "    (invalidated=false OR invalidated IS NULL)",
@@ -89,7 +89,7 @@ public interface InternalRouDepreciationEntryReportItemRepository
             "    LEFT JOIN transaction_account dta ON debit_account_id = dta.id  " +
             "    LEFT JOIN transaction_account cta ON credit_account_id = cta.id  " +
             "    LEFT JOIN rou_model_metadata rmm ON rou_metadata_id = rmm.id " +
-            "    LEFT JOIN ifrs16lease_contract ifr ON rmm.ifrs16lease_contract_id = ifr.id " +
+            "    LEFT JOIN detailed_lease_contract ifr ON rmm.detailed_lease_contract_id = ifr.id " +
             " WHERE (is_deleted=false OR is_deleted IS NULL) AND       " +
             "    (activated=true OR activated IS NULL) AND       " +
             "    (invalidated=false OR invalidated IS NULL)"
@@ -120,7 +120,7 @@ public interface InternalRouDepreciationEntryReportItemRepository
             "    LEFT JOIN transaction_account dta ON debit_account_id = dta.id  " +
             "    LEFT JOIN transaction_account cta ON credit_account_id = cta.id  " +
             "    LEFT JOIN rou_model_metadata rmm ON rou_metadata_id = rmm.id " +
-            "    LEFT JOIN ifrs16lease_contract ifr ON rmm.ifrs16lease_contract_id = ifr.id " +
+            "    LEFT JOIN detailed_lease_contract ifr ON rmm.detailed_lease_contract_id = ifr.id " +
             " WHERE (is_deleted=false OR is_deleted IS NULL) AND       " +
             "    (activated=true OR activated IS NULL) AND       " +
             "    (invalidated=false OR invalidated IS NULL) AND " +
@@ -147,7 +147,7 @@ public interface InternalRouDepreciationEntryReportItemRepository
             "    LEFT JOIN transaction_account dta ON debit_account_id = dta.id  " +
             "    LEFT JOIN transaction_account cta ON credit_account_id = cta.id  " +
             "    LEFT JOIN rou_model_metadata rmm ON rou_metadata_id = rmm.id " +
-            "    LEFT JOIN ifrs16lease_contract ifr ON rmm.ifrs16lease_contract_id = ifr.id " +
+            "    LEFT JOIN detailed_lease_contract ifr ON rmm.detailed_lease_contract_id = ifr.id " +
             " WHERE (is_deleted=false OR is_deleted IS NULL) AND       " +
             "    (activated=true OR activated IS NULL) AND       " +
             "    (invalidated=false OR invalidated IS NULL) AND " +
@@ -179,7 +179,7 @@ public interface InternalRouDepreciationEntryReportItemRepository
             "    LEFT JOIN transaction_account dta ON debit_account_id = dta.id  " +
             "    LEFT JOIN transaction_account cta ON credit_account_id = cta.id  " +
             "    LEFT JOIN rou_model_metadata rmm ON rou_metadata_id = rmm.id " +
-            "    LEFT JOIN ifrs16lease_contract ifr ON rmm.ifrs16lease_contract_id = ifr.id " +
+            "    LEFT JOIN detailed_lease_contract ifr ON rmm.detailed_lease_contract_id = ifr.id " +
             " WHERE (is_deleted=false OR is_deleted IS NULL) AND       " +
             "    (activated=true OR activated IS NULL) AND       " +
             "    (invalidated=false OR invalidated IS NULL) AND  " +
@@ -206,7 +206,7 @@ public interface InternalRouDepreciationEntryReportItemRepository
             "    LEFT JOIN transaction_account dta ON debit_account_id = dta.id  " +
             "    LEFT JOIN transaction_account cta ON credit_account_id = cta.id  " +
             "    LEFT JOIN rou_model_metadata rmm ON rou_metadata_id = rmm.id " +
-            "    LEFT JOIN ifrs16lease_contract ifr ON rmm.ifrs16lease_contract_id = ifr.id " +
+            "    LEFT JOIN detailed_lease_contract ifr ON rmm.detailed_lease_contract_id = ifr.id " +
             " WHERE (is_deleted=false OR is_deleted IS NULL) AND       " +
             "    (activated=true OR activated IS NULL) AND       " +
             "    (invalidated=false OR invalidated IS NULL) AND  " +
@@ -239,7 +239,7 @@ public interface InternalRouDepreciationEntryReportItemRepository
             "    LEFT JOIN transaction_account dta ON debit_account_id = dta.id  " +
             "    LEFT JOIN transaction_account cta ON credit_account_id = cta.id  " +
             "    LEFT JOIN rou_model_metadata rmm ON rou_metadata_id = rmm.id " +
-            "    LEFT JOIN ifrs16lease_contract ifr ON rmm.ifrs16lease_contract_id = ifr.id " +
+            "    LEFT JOIN detailed_lease_contract ifr ON rmm.detailed_lease_contract_id = ifr.id " +
             " WHERE (is_deleted=false OR is_deleted IS NULL) AND       " +
             "    (activated=true OR activated IS NULL) AND       " +
             "    (invalidated=false OR invalidated IS NULL) AND  " +
@@ -272,7 +272,7 @@ public interface InternalRouDepreciationEntryReportItemRepository
             "    LEFT JOIN transaction_account dta ON debit_account_id = dta.id  " +
             "    LEFT JOIN transaction_account cta ON credit_account_id = cta.id  " +
             "    LEFT JOIN rou_model_metadata rmm ON rou_metadata_id = rmm.id " +
-            "    LEFT JOIN ifrs16lease_contract ifr ON rmm.ifrs16lease_contract_id = ifr.id " +
+            "    LEFT JOIN detailed_lease_contract ifr ON rmm.detailed_lease_contract_id = ifr.id " +
             " WHERE (is_deleted=false OR is_deleted IS NULL) AND       " +
             "    (activated=true OR activated IS NULL) AND       " +
             "    (invalidated=false OR invalidated IS NULL) AND " +

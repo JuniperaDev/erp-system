@@ -20,11 +20,11 @@ package io.github.erp.web.rest;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
-import io.github.erp.repository.IFRS16LeaseContractRepository;
-import io.github.erp.service.IFRS16LeaseContractQueryService;
-import io.github.erp.service.IFRS16LeaseContractService;
-import io.github.erp.service.criteria.IFRS16LeaseContractCriteria;
-import io.github.erp.service.dto.IFRS16LeaseContractDTO;
+import io.github.erp.repository.DetailedLeaseContractRepository;
+import io.github.erp.service.DetailedLeaseContractQueryService;
+import io.github.erp.service.DetailedLeaseContractService;
+import io.github.erp.service.criteria.DetailedLeaseContractCriteria;
+import io.github.erp.service.dto.DetailedLeaseContractDTO;
 import io.github.erp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -49,53 +49,53 @@ import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
 /**
- * REST controller for managing {@link io.github.erp.domain.IFRS16LeaseContract}.
+ * REST controller for managing {@link io.github.erp.domain.DetailedLeaseContract}.
  */
 @RestController
 @RequestMapping("/api")
-public class IFRS16LeaseContractResource {
+public class DetailedLeaseContractResource {
 
-    private final Logger log = LoggerFactory.getLogger(IFRS16LeaseContractResource.class);
+    private final Logger log = LoggerFactory.getLogger(DetailedLeaseContractResource.class);
 
-    private static final String ENTITY_NAME = "iFRS16LeaseContract";
+    private static final String ENTITY_NAME = "detailedLeaseContract";
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    private final IFRS16LeaseContractService iFRS16LeaseContractService;
+    private final DetailedLeaseContractService detailedLeaseContractService;
 
-    private final IFRS16LeaseContractRepository iFRS16LeaseContractRepository;
+    private final DetailedLeaseContractRepository detailedLeaseContractRepository;
 
-    private final IFRS16LeaseContractQueryService iFRS16LeaseContractQueryService;
+    private final DetailedLeaseContractQueryService detailedLeaseContractQueryService;
 
-    public IFRS16LeaseContractResource(
-        IFRS16LeaseContractService iFRS16LeaseContractService,
-        IFRS16LeaseContractRepository iFRS16LeaseContractRepository,
-        IFRS16LeaseContractQueryService iFRS16LeaseContractQueryService
+    public DetailedLeaseContractResource(
+        DetailedLeaseContractService detailedLeaseContractService,
+        DetailedLeaseContractRepository detailedLeaseContractRepository,
+        DetailedLeaseContractQueryService detailedLeaseContractQueryService
     ) {
-        this.iFRS16LeaseContractService = iFRS16LeaseContractService;
-        this.iFRS16LeaseContractRepository = iFRS16LeaseContractRepository;
-        this.iFRS16LeaseContractQueryService = iFRS16LeaseContractQueryService;
+        this.detailedLeaseContractService = detailedLeaseContractService;
+        this.detailedLeaseContractRepository = detailedLeaseContractRepository;
+        this.detailedLeaseContractQueryService = detailedLeaseContractQueryService;
     }
 
     /**
-     * {@code POST  /ifrs-16-lease-contracts} : Create a new iFRS16LeaseContract.
+     * {@code POST  /detailed-lease-contracts} : Create a new DetailedLeaseContract.
      *
-     * @param iFRS16LeaseContractDTO the iFRS16LeaseContractDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new iFRS16LeaseContractDTO, or with status {@code 400 (Bad Request)} if the iFRS16LeaseContract has already an ID.
+     * @param detailedLeaseContractDTO the detailedLeaseContractDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new detailedLeaseContractDTO, or with status {@code 400 (Bad Request)} if the DetailedLeaseContract has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/ifrs-16-lease-contracts")
-    public ResponseEntity<IFRS16LeaseContractDTO> createIFRS16LeaseContract(
-        @Valid @RequestBody IFRS16LeaseContractDTO iFRS16LeaseContractDTO
+    @PostMapping("/detailed-lease-contracts")
+    public ResponseEntity<DetailedLeaseContractDTO> createDetailedLeaseContract(
+        @Valid @RequestBody DetailedLeaseContractDTO detailedLeaseContractDTO
     ) throws URISyntaxException {
-        log.debug("REST request to save IFRS16LeaseContract : {}", iFRS16LeaseContractDTO);
-        if (iFRS16LeaseContractDTO.getId() != null) {
-            throw new BadRequestAlertException("A new iFRS16LeaseContract cannot already have an ID", ENTITY_NAME, "idexists");
+        log.debug("REST request to save DetailedLeaseContract : {}", detailedLeaseContractDTO);
+        if (detailedLeaseContractDTO.getId() != null) {
+            throw new BadRequestAlertException("A new DetailedLeaseContract cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        IFRS16LeaseContractDTO result = iFRS16LeaseContractService.save(iFRS16LeaseContractDTO);
+        DetailedLeaseContractDTO result = detailedLeaseContractService.save(detailedLeaseContractDTO);
         return ResponseEntity
-            .created(new URI("/api/ifrs-16-lease-contracts/" + result.getId()))
+            .created(new URI("/api/detailed-lease-contracts/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }

@@ -8,11 +8,11 @@
     -->
     <changeSet id="20240307081647-2" author="jhipster">
 
-        <addForeignKeyConstraint baseColumnNames="ifrs16lease_contract_id"
+        <addForeignKeyConstraint baseColumnNames="detailed_lease_contract_id"
                                  baseTableName="rou_model_metadata"
-                                 constraintName="fk_rou_model_metadata__ifrs16lease_contract_id"
+                                 constraintName="fk_rou_model_metadata__detailed_lease_contract_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="ifrs16lease_contract"/>
+                                 referencedTableName="detailed_lease_contract"/>
 
         <addForeignKeyConstraint baseColumnNames="asset_account_id"
                                  baseTableName="rou_model_metadata"

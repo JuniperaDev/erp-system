@@ -78,7 +78,7 @@ public class ROUDepreciationEntryCompilationServiceImpl implements ROUDepreciati
         entry.setDebitAccount(modelMetadataDTO.getDepreciationAccount());
         entry.setCreditAccount(modelMetadataDTO.getAssetAccount());
         entry.setAssetCategory(modelMetadataDTO.getAssetCategory());
-        entry.setLeaseContract(modelMetadataDTO.getIfrs16LeaseContract());
+        entry.setLeaseContract(modelMetadataDTO.getDetailedLeaseContract());
         entry.setRouMetadata(modelMetadataDTO);
         entry.setBatchJobIdentifier(UUID.fromString(batchJobIdentifier));
         entry.setInvalidated(false);

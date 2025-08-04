@@ -198,7 +198,7 @@ public class LeaseLiabilityScheduleItemQueryService extends QueryService<LeaseLi
                     specification.and(
                         buildSpecification(
                             criteria.getLeaseContractId(),
-                            root -> root.join(LeaseLiabilityScheduleItem_.leaseContract, JoinType.LEFT).get(IFRS16LeaseContract_.id)
+                            root -> root.join(LeaseLiabilityScheduleItem_.leaseContract, JoinType.LEFT).get(DetailedLeaseContract_.id)
                         )
                     );
             }

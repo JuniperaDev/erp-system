@@ -21,7 +21,7 @@ import io.github.erp.domain.LeasePeriod;
 import io.github.erp.internal.repository.InternalLeasePeriodRepository;
 import io.github.erp.repository.search.LeasePeriodSearchRepository;
 import io.github.erp.service.RouModelMetadataService;
-import io.github.erp.service.dto.IFRS16LeaseContractDTO;
+import io.github.erp.service.dto.DetailedLeaseContractDTO;
 import io.github.erp.service.dto.LeaseLiabilityDTO;
 import io.github.erp.service.dto.LeasePeriodDTO;
 import io.github.erp.service.dto.RouModelMetadataDTO;
@@ -164,7 +164,7 @@ public class InternalLeasePeriodServiceImpl implements InternalLeasePeriodServic
      * @return the entity.
      */
     @Override
-    public Optional<List<LeasePeriodDTO>> findLeasePeriods(IFRS16LeaseContractDTO leaseContract) {
+    public Optional<List<LeasePeriodDTO>> findLeasePeriods(DetailedLeaseContractDTO leaseContract) {
 
         var ref = new Object() {
             Optional<List<LeasePeriodDTO>> periodList = Optional.empty();

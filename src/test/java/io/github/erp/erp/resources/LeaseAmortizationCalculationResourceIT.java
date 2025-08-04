@@ -18,7 +18,7 @@ package io.github.erp.erp.resources;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import io.github.erp.IntegrationTest;
-import io.github.erp.domain.IFRS16LeaseContract;
+import io.github.erp.domain.DetailedLeaseContract;
 import io.github.erp.domain.LeaseAmortizationCalculation;
 import io.github.erp.domain.LeaseLiability;
 import io.github.erp.repository.LeaseAmortizationCalculationRepository;
@@ -119,15 +119,15 @@ class LeaseAmortizationCalculationResourceIT {
             .numberOfPeriods(DEFAULT_NUMBER_OF_PERIODS)
             .interestRate(DEFAULT_INTEREST_RATE);
         // Add required entity
-        IFRS16LeaseContract iFRS16LeaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            iFRS16LeaseContract = IFRS16LeaseContractResourceIT.createEntity(em);
-            em.persist(iFRS16LeaseContract);
+        DetailedLeaseContract detailedLeaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            detailedLeaseContract = DetailedLeaseContractResourceIT.createEntity(em);
+            em.persist(detailedLeaseContract);
             em.flush();
         } else {
-            iFRS16LeaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            detailedLeaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
-        leaseAmortizationCalculation.setLeaseContract(iFRS16LeaseContract);
+        leaseAmortizationCalculation.setLeaseContract(detailedLeaseContract);
         return leaseAmortizationCalculation;
     }
 
@@ -144,15 +144,15 @@ class LeaseAmortizationCalculationResourceIT {
             .numberOfPeriods(UPDATED_NUMBER_OF_PERIODS)
             .interestRate(UPDATED_INTEREST_RATE);
         // Add required entity
-        IFRS16LeaseContract iFRS16LeaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            iFRS16LeaseContract = IFRS16LeaseContractResourceIT.createUpdatedEntity(em);
-            em.persist(iFRS16LeaseContract);
+        DetailedLeaseContract detailedLeaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            detailedLeaseContract = DetailedLeaseContractResourceIT.createUpdatedEntity(em);
+            em.persist(detailedLeaseContract);
             em.flush();
         } else {
-            iFRS16LeaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            detailedLeaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
-        leaseAmortizationCalculation.setLeaseContract(iFRS16LeaseContract);
+        leaseAmortizationCalculation.setLeaseContract(detailedLeaseContract);
         return leaseAmortizationCalculation;
     }
 
@@ -721,7 +721,7 @@ class LeaseAmortizationCalculationResourceIT {
     @Transactional
     void getAllLeaseAmortizationCalculationsByLeaseContractIsEqualToSomething() throws Exception {
         // Get already existing entity
-        IFRS16LeaseContract leaseContract = leaseAmortizationCalculation.getLeaseContract();
+        DetailedLeaseContract leaseContract = leaseAmortizationCalculation.getLeaseContract();
         leaseAmortizationCalculationRepository.saveAndFlush(leaseAmortizationCalculation);
         Long leaseContractId = leaseContract.getId();
 

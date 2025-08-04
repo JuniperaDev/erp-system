@@ -30,7 +30,7 @@
                                  baseTableName="rou_depreciation_entry"
                                  constraintName="fk_rou_depreciation_entry__lease_contract_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="ifrs16lease_contract"/>
+                                 referencedTableName="detailed_lease_contract"/>
 
         <addForeignKeyConstraint baseColumnNames="rou_metadata_id"
                                  baseTableName="rou_depreciation_entry"

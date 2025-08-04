@@ -20,12 +20,12 @@ package io.github.erp.service.impl;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
-import io.github.erp.domain.IFRS16LeaseContract;
-import io.github.erp.repository.IFRS16LeaseContractRepository;
-import io.github.erp.repository.search.IFRS16LeaseContractSearchRepository;
-import io.github.erp.service.IFRS16LeaseContractService;
-import io.github.erp.service.dto.IFRS16LeaseContractDTO;
-import io.github.erp.service.mapper.IFRS16LeaseContractMapper;
+import io.github.erp.domain.DetailedLeaseContract;
+import io.github.erp.repository.DetailedLeaseContractRepository;
+import io.github.erp.repository.search.DetailedLeaseContractSearchRepository;
+import io.github.erp.service.DetailedLeaseContractService;
+import io.github.erp.service.dto.DetailedLeaseContractDTO;
+import io.github.erp.service.mapper.DetailedLeaseContractMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,72 +35,72 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service Implementation for managing {@link IFRS16LeaseContract}.
+ * Service Implementation for managing {@link DetailedLeaseContract}.
  */
 @Service
 @Transactional
-public class IFRS16LeaseContractServiceImpl implements IFRS16LeaseContractService {
+public class DetailedLeaseContractServiceImpl implements DetailedLeaseContractService {
 
-    private final Logger log = LoggerFactory.getLogger(IFRS16LeaseContractServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(DetailedLeaseContractServiceImpl.class);
 
-    private final IFRS16LeaseContractRepository iFRS16LeaseContractRepository;
+    private final DetailedLeaseContractRepository detailedLeaseContractRepository;
 
-    private final IFRS16LeaseContractMapper iFRS16LeaseContractMapper;
+    private final DetailedLeaseContractMapper detailedLeaseContractMapper;
 
-    private final IFRS16LeaseContractSearchRepository iFRS16LeaseContractSearchRepository;
+    private final DetailedLeaseContractSearchRepository detailedLeaseContractSearchRepository;
 
-    public IFRS16LeaseContractServiceImpl(
-        IFRS16LeaseContractRepository iFRS16LeaseContractRepository,
-        IFRS16LeaseContractMapper iFRS16LeaseContractMapper,
-        IFRS16LeaseContractSearchRepository iFRS16LeaseContractSearchRepository
+    public DetailedLeaseContractServiceImpl(
+        DetailedLeaseContractRepository detailedLeaseContractRepository,
+        DetailedLeaseContractMapper detailedLeaseContractMapper,
+        DetailedLeaseContractSearchRepository detailedLeaseContractSearchRepository
     ) {
-        this.iFRS16LeaseContractRepository = iFRS16LeaseContractRepository;
-        this.iFRS16LeaseContractMapper = iFRS16LeaseContractMapper;
-        this.iFRS16LeaseContractSearchRepository = iFRS16LeaseContractSearchRepository;
+        this.detailedLeaseContractRepository = detailedLeaseContractRepository;
+        this.detailedLeaseContractMapper = detailedLeaseContractMapper;
+        this.detailedLeaseContractSearchRepository = detailedLeaseContractSearchRepository;
     }
 
     @Override
-    public IFRS16LeaseContractDTO save(IFRS16LeaseContractDTO iFRS16LeaseContractDTO) {
-        log.debug("Request to save IFRS16LeaseContract : {}", iFRS16LeaseContractDTO);
-        IFRS16LeaseContract iFRS16LeaseContract = iFRS16LeaseContractMapper.toEntity(iFRS16LeaseContractDTO);
-        iFRS16LeaseContract = iFRS16LeaseContractRepository.save(iFRS16LeaseContract);
-        IFRS16LeaseContractDTO result = iFRS16LeaseContractMapper.toDto(iFRS16LeaseContract);
-        iFRS16LeaseContractSearchRepository.save(iFRS16LeaseContract);
+    public DetailedLeaseContractDTO save(DetailedLeaseContractDTO detailedLeaseContractDTO) {
+        log.debug("Request to save DetailedLeaseContract : {}", detailedLeaseContractDTO);
+        DetailedLeaseContract detailedLeaseContract = detailedLeaseContractMapper.toEntity(detailedLeaseContractDTO);
+        detailedLeaseContract = detailedLeaseContractRepository.save(detailedLeaseContract);
+        DetailedLeaseContractDTO result = detailedLeaseContractMapper.toDto(detailedLeaseContract);
+        detailedLeaseContractSearchRepository.save(detailedLeaseContract);
         return result;
     }
 
     @Override
-    public Optional<IFRS16LeaseContractDTO> partialUpdate(IFRS16LeaseContractDTO iFRS16LeaseContractDTO) {
-        log.debug("Request to partially update IFRS16LeaseContract : {}", iFRS16LeaseContractDTO);
+    public Optional<DetailedLeaseContractDTO> partialUpdate(DetailedLeaseContractDTO detailedLeaseContractDTO) {
+        log.debug("Request to partially update DetailedLeaseContract : {}", detailedLeaseContractDTO);
 
-        return iFRS16LeaseContractRepository
-            .findById(iFRS16LeaseContractDTO.getId())
-            .map(existingIFRS16LeaseContract -> {
-                iFRS16LeaseContractMapper.partialUpdate(existingIFRS16LeaseContract, iFRS16LeaseContractDTO);
+        return detailedLeaseContractRepository
+            .findById(detailedLeaseContractDTO.getId())
+            .map(existingDetailedLeaseContract -> {
+                detailedLeaseContractMapper.partialUpdate(existingDetailedLeaseContract, detailedLeaseContractDTO);
 
-                return existingIFRS16LeaseContract;
+                return existingDetailedLeaseContract;
             })
-            .map(iFRS16LeaseContractRepository::save)
-            .map(savedIFRS16LeaseContract -> {
-                iFRS16LeaseContractSearchRepository.save(savedIFRS16LeaseContract);
+            .map(detailedLeaseContractRepository::save)
+            .map(savedDetailedLeaseContract -> {
+                detailedLeaseContractSearchRepository.save(savedDetailedLeaseContract);
 
-                return savedIFRS16LeaseContract;
+                return savedDetailedLeaseContract;
             })
-            .map(iFRS16LeaseContractMapper::toDto);
+            .map(detailedLeaseContractMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<IFRS16LeaseContractDTO> findAll(Pageable pageable) {
-        log.debug("Request to get all IFRS16LeaseContracts");
-        return iFRS16LeaseContractRepository.findAll(pageable).map(iFRS16LeaseContractMapper::toDto);
+    public Page<DetailedLeaseContractDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all DetailedLeaseContracts");
+        return detailedLeaseContractRepository.findAll(pageable).map(detailedLeaseContractMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<IFRS16LeaseContractDTO> findOne(Long id) {
-        log.debug("Request to get IFRS16LeaseContract : {}", id);
-        return iFRS16LeaseContractRepository.findById(id).map(iFRS16LeaseContractMapper::toDto);
+    public Optional<DetailedLeaseContractDTO> findOne(Long id) {
+        log.debug("Request to get DetailedLeaseContract : {}", id);
+        return detailedLeaseContractRepository.findById(id).map(detailedLeaseContractMapper::toDto);
     }
 
     @Override

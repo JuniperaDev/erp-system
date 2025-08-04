@@ -93,9 +93,9 @@ public interface InternalLeaseAmortizationCalculationService {
 
     /**
      * Finds the lease-amortization-calculation which has a relations with the instance
-     * of IFRS16LeaseContract whose id is equivalent to the id value provided
+     * of DetailedLeaseContract whose id is equivalent to the id value provided
      *
-     * @param leaseContractId id of the IFRS16LeaseContract instance
+     * @param leaseContractId id of the DetailedLeaseContract instance
      * @return LeaseAmortizationCalculation
      */
     Optional<LeaseAmortizationCalculationDTO> findByLeaseContractId(Long leaseContractId);

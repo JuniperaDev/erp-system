@@ -18,14 +18,14 @@ package io.github.erp.repository;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import io.github.erp.domain.IFRS16LeaseContract;
+import io.github.erp.domain.DetailedLeaseContract;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
 /**
- * Spring Data SQL repository for the IFRS16LeaseContract entity.
+ * Spring Data SQL repository for the DetailedLeaseContract entity.
  */
 @SuppressWarnings("unused")
 @Repository
-public interface IFRS16LeaseContractRepository
-    extends JpaRepository<IFRS16LeaseContract, Long>, JpaSpecificationExecutor<IFRS16LeaseContract> {}
+public interface DetailedLeaseContractRepository
+    extends JpaRepository<DetailedLeaseContract, Long>, JpaSpecificationExecutor<DetailedLeaseContract> {}

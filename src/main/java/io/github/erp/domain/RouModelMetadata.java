@@ -112,7 +112,7 @@ public class RouModelMetadata implements Serializable {
         },
         allowSetters = true
     )
-    private IFRS16LeaseContract ifrs16LeaseContract;
+    private DetailedLeaseContract detailedLeaseContract;
 
     @ManyToOne(optional = false)
     @NotNull
@@ -373,16 +373,16 @@ public class RouModelMetadata implements Serializable {
         this.compilationTime = compilationTime;
     }
 
-    public IFRS16LeaseContract getIfrs16LeaseContract() {
+    public DetailedLeaseContract getDetailedLeaseContract() {
         return this.ifrs16LeaseContract;
     }
 
-    public void setIfrs16LeaseContract(IFRS16LeaseContract iFRS16LeaseContract) {
-        this.ifrs16LeaseContract = iFRS16LeaseContract;
+    public void setDetailedLeaseContract(DetailedLeaseContract detailedLeaseContract) {
+        this.ifrs16LeaseContract = detailedLeaseContract;
     }
 
-    public RouModelMetadata ifrs16LeaseContract(IFRS16LeaseContract iFRS16LeaseContract) {
-        this.setIfrs16LeaseContract(iFRS16LeaseContract);
+    public RouModelMetadata detailedLeaseContract(DetailedLeaseContract detailedLeaseContract) {
+        this.setDetailedLeaseContract(detailedLeaseContract);
         return this;
     }
 

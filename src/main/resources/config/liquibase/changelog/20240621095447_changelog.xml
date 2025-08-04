@@ -32,6 +32,6 @@
         <addUniqueConstraint columnNames="lease_contract_id" constraintName="UK_6xw26bvsan0j5btcfkij1ilel" tableName="lease_liability"/>
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1718963808668-18">
-        <addForeignKeyConstraint baseColumnNames="lease_contract_id" baseTableName="lease_liability" constraintName="FKg918ftb6dkicciipbtl2mople" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="ifrs16lease_contract" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="lease_contract_id" baseTableName="lease_liability" constraintName="FKg918ftb6dkicciipbtl2mople" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="detailed_lease_contract" validate="true"/>
     </changeSet>
 </databaseChangeLog>

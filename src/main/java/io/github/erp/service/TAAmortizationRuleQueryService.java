@@ -127,7 +127,7 @@ public class TAAmortizationRuleQueryService extends QueryService<TAAmortizationR
                     specification.and(
                         buildSpecification(
                             criteria.getLeaseContractId(),
-                            root -> root.join(TAAmortizationRule_.leaseContract, JoinType.LEFT).get(IFRS16LeaseContract_.id)
+                            root -> root.join(TAAmortizationRule_.leaseContract, JoinType.LEFT).get(DetailedLeaseContract_.id)
                         )
                     );
             }

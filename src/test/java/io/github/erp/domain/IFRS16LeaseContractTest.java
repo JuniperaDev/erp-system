@@ -23,19 +23,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.erp.web.rest.TestUtil;
 import org.junit.jupiter.api.Test;
 
-class IFRS16LeaseContractTest {
+class DetailedLeaseContractTest {
 
     @Test
     void equalsVerifier() throws Exception {
-        TestUtil.equalsVerifier(IFRS16LeaseContract.class);
-        IFRS16LeaseContract iFRS16LeaseContract1 = new IFRS16LeaseContract();
-        iFRS16LeaseContract1.setId(1L);
-        IFRS16LeaseContract iFRS16LeaseContract2 = new IFRS16LeaseContract();
-        iFRS16LeaseContract2.setId(iFRS16LeaseContract1.getId());
-        assertThat(iFRS16LeaseContract1).isEqualTo(iFRS16LeaseContract2);
-        iFRS16LeaseContract2.setId(2L);
-        assertThat(iFRS16LeaseContract1).isNotEqualTo(iFRS16LeaseContract2);
-        iFRS16LeaseContract1.setId(null);
-        assertThat(iFRS16LeaseContract1).isNotEqualTo(iFRS16LeaseContract2);
+        TestUtil.equalsVerifier(DetailedLeaseContract.class);
+        DetailedLeaseContract detailedLeaseContract1 = new DetailedLeaseContract();
+        detailedLeaseContract1.setId(1L);
+        DetailedLeaseContract detailedLeaseContract2 = new DetailedLeaseContract();
+        detailedLeaseContract2.setId(detailedLeaseContract1.getId());
+        assertThat(detailedLeaseContract1).isEqualTo(detailedLeaseContract2);
+        detailedLeaseContract2.setId(2L);
+        assertThat(detailedLeaseContract1).isNotEqualTo(detailedLeaseContract2);
+        detailedLeaseContract1.setId(null);
+        assertThat(detailedLeaseContract1).isNotEqualTo(detailedLeaseContract2);
     }
 }

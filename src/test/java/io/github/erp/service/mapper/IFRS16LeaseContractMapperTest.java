@@ -23,12 +23,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class IFRS16LeaseContractMapperTest {
+class DetailedLeaseContractMapperTest {
 
-    private IFRS16LeaseContractMapper iFRS16LeaseContractMapper;
+    private DetailedLeaseContractMapper detailedLeaseContractMapper;
 
     @BeforeEach
     public void setUp() {
-        iFRS16LeaseContractMapper = new IFRS16LeaseContractMapperImpl();
+        detailedLeaseContractMapper = new DetailedLeaseContractMapperImpl();
     }
 }

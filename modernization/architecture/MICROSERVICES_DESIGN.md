@@ -171,7 +171,7 @@ erDiagram
 - Amortization schedule generation
 
 #### Core Entities:
-- `IFRS16LeaseContract` (Aggregate Root)
+- `DetailedLeaseContract` (Aggregate Root)
 - `LeaseLiability`
 - `LeasePayment`
 - `LeaseAmortizationSchedule`
@@ -189,8 +189,8 @@ GET    /api/amortization-schedules   # Get schedules
 #### Database Schema:
 ```mermaid
 erDiagram
-    IFRS16LeaseContract ||--|| LeaseLiability : "creates"
-    IFRS16LeaseContract ||--o{ LeasePayment : "generates"
+    DetailedLeaseContract ||--|| LeaseLiability : "creates"
+    DetailedLeaseContract ||--o{ LeasePayment : "generates"
     LeaseLiability ||--o{ LeaseAmortizationSchedule : "amortized via"
     LeaseAmortizationSchedule ||--o{ LeaseLiabilityScheduleItem : "contains"
 ```

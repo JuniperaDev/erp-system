@@ -25,7 +25,7 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity {@link TAAmortizationRule} and its DTO {@link TAAmortizationRuleDTO}.
  */
-@Mapper(componentModel = "spring", uses = { IFRS16LeaseContractMapper.class, TransactionAccountMapper.class, PlaceholderMapper.class })
+@Mapper(componentModel = "spring", uses = { DetailedLeaseContractMapper.class, TransactionAccountMapper.class, PlaceholderMapper.class })
 public interface TAAmortizationRuleMapper extends EntityMapper<TAAmortizationRuleDTO, TAAmortizationRule> {
     @Mapping(target = "leaseContract", source = "leaseContract", qualifiedByName = "shortTitle")
     @Mapping(target = "debit", source = "debit", qualifiedByName = "accountName")

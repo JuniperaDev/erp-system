@@ -216,7 +216,7 @@ public class LeaseAmortizationCalculationResourceProd {
     }
 
     /**
-     * {@code GET  /lease-amortization-calculations/by-lease-contract-id/:leaseContractId} : get the "id" of IFRS16LeaseContract instance
+     * {@code GET  /lease-amortization-calculations/by-lease-contract-id/:leaseContractId} : get the "id" of DetailedLeaseContract instance
      *
      * @param leaseContractId the id of the leaseAmortizationCalculationDTO to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the leaseAmortizationCalculationDTO, or with status {@code 404 (Not Found)}.

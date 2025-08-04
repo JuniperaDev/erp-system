@@ -25,7 +25,7 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity {@link LeaseLiability} and its DTO {@link LeaseLiabilityDTO}.
  */
-@Mapper(componentModel = "spring", uses = { LeaseAmortizationCalculationMapper.class, IFRS16LeaseContractMapper.class })
+@Mapper(componentModel = "spring", uses = { LeaseAmortizationCalculationMapper.class, DetailedLeaseContractMapper.class })
 public interface LeaseLiabilityMapper extends EntityMapper<LeaseLiabilityDTO, LeaseLiability> {
     @Mapping(target = "leaseAmortizationCalculation", source = "leaseAmortizationCalculation", qualifiedByName = "id")
     @Mapping(target = "leaseContract", source = "leaseContract", qualifiedByName = "bookingId")

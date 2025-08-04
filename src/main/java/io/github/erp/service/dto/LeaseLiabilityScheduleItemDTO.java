@@ -56,7 +56,7 @@ public class LeaseLiabilityScheduleItemDTO implements Serializable {
 
     private LeaseAmortizationScheduleDTO leaseAmortizationSchedule;
 
-    private IFRS16LeaseContractDTO leaseContract;
+    private DetailedLeaseContractDTO leaseContract;
 
     private LeaseLiabilityDTO leaseLiability;
 
@@ -166,11 +166,11 @@ public class LeaseLiabilityScheduleItemDTO implements Serializable {
         this.leaseAmortizationSchedule = leaseAmortizationSchedule;
     }
 
-    public IFRS16LeaseContractDTO getLeaseContract() {
+    public DetailedLeaseContractDTO getLeaseContract() {
         return leaseContract;
     }
 
-    public void setLeaseContract(IFRS16LeaseContractDTO leaseContract) {
+    public void setLeaseContract(DetailedLeaseContractDTO leaseContract) {
         this.leaseContract = leaseContract;
     }
 

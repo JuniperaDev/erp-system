@@ -21,9 +21,9 @@ import com.google.common.collect.ImmutableList;
 import io.github.erp.erp.startUp.index.engine_v1.AbstractStartupRegisteredIndexService;
 import io.github.erp.erp.startUp.index.engine_v1.IndexingServiceChainSingleton;
 import io.github.erp.internal.IndexProperties;
-import io.github.erp.repository.search.IFRS16LeaseContractSearchRepository;
-import io.github.erp.service.IFRS16LeaseContractService;
-import io.github.erp.service.mapper.IFRS16LeaseContractMapper;
+import io.github.erp.repository.search.DetailedLeaseContractSearchRepository;
+import io.github.erp.service.DetailedLeaseContractService;
+import io.github.erp.service.mapper.DetailedLeaseContractMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -36,16 +36,16 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @Transactional
-public class IFRS16LeaseContractIndexingService extends AbstractStartupRegisteredIndexService {
+public class DetailedLeaseContractIndexingService extends AbstractStartupRegisteredIndexService {
 
-    private static final String TAG = "IFRS16LeaseContractIndex";
-    private static final Logger log = LoggerFactory.getLogger(IFRS16LeaseContractIndexingService.class);
+    private static final String TAG = "DetailedLeaseContractIndex";
+    private static final Logger log = LoggerFactory.getLogger(DetailedLeaseContractIndexingService.class);
 
-    private final IFRS16LeaseContractService service;
-    private final IFRS16LeaseContractMapper mapper;
-    private final IFRS16LeaseContractSearchRepository searchRepository;
+    private final DetailedLeaseContractService service;
+    private final DetailedLeaseContractMapper mapper;
+    private final DetailedLeaseContractSearchRepository searchRepository;
 
-    public IFRS16LeaseContractIndexingService (IndexProperties indexProperties, IFRS16LeaseContractService service, IFRS16LeaseContractMapper mapper, IFRS16LeaseContractSearchRepository searchRepository) {
+    public DetailedLeaseContractIndexingService (IndexProperties indexProperties, DetailedLeaseContractService service, DetailedLeaseContractMapper mapper, DetailedLeaseContractSearchRepository searchRepository) {
         super(indexProperties, indexProperties.getRebuild());
         this.service = service;
         this.mapper = mapper;

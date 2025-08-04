@@ -21,12 +21,12 @@
         </addColumn>
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1710337846228-22">
-        <addColumn tableName="ifrs16lease_contract">
+        <addColumn tableName="detailed_lease_contract">
             <column name="lease_contract_calculations_id" type="int8"/>
         </addColumn>
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1710337846228-23">
-        <addColumn tableName="ifrs16lease_contract">
+        <addColumn tableName="detailed_lease_contract">
             <column name="lease_contract_document_id" type="int8"/>
         </addColumn>
     </changeSet>

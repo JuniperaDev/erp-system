@@ -18,35 +18,35 @@ package io.github.erp.service.mapper;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import io.github.erp.domain.IFRS16LeaseContract;
-import io.github.erp.service.dto.IFRS16LeaseContractDTO;
+import io.github.erp.domain.DetailedLeaseContract;
+import io.github.erp.service.dto.DetailedLeaseContractDTO;
 import org.mapstruct.*;
 
 /**
- * Mapper for the entity {@link IFRS16LeaseContract} and its DTO {@link IFRS16LeaseContractDTO}.
+ * Mapper for the entity {@link DetailedLeaseContract} and its DTO {@link DetailedLeaseContractDTO}.
  */
 @Mapper(
     componentModel = "spring",
     uses = { ServiceOutletMapper.class, DealerMapper.class, FiscalMonthMapper.class, BusinessDocumentMapper.class }
 )
-public interface IFRS16LeaseContractMapper extends EntityMapper<IFRS16LeaseContractDTO, IFRS16LeaseContract> {
+public interface DetailedLeaseContractMapper extends EntityMapper<DetailedLeaseContractDTO, DetailedLeaseContract> {
     @Mapping(target = "superintendentServiceOutlet", source = "superintendentServiceOutlet", qualifiedByName = "outletCode")
     @Mapping(target = "mainDealer", source = "mainDealer", qualifiedByName = "dealerName")
     @Mapping(target = "firstReportingPeriod", source = "firstReportingPeriod", qualifiedByName = "fiscalMonthCode")
     @Mapping(target = "lastReportingPeriod", source = "lastReportingPeriod", qualifiedByName = "fiscalMonthCode")
     @Mapping(target = "leaseContractDocument", source = "leaseContractDocument", qualifiedByName = "documentTitle")
     @Mapping(target = "leaseContractCalculations", source = "leaseContractCalculations", qualifiedByName = "documentTitle")
-    IFRS16LeaseContractDTO toDto(IFRS16LeaseContract s);
+    DetailedLeaseContractDTO toDto(DetailedLeaseContract s);
 
     @Named("bookingId")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
     @Mapping(target = "bookingId", source = "bookingId")
-    IFRS16LeaseContractDTO toDtoBookingId(IFRS16LeaseContract iFRS16LeaseContract);
+    DetailedLeaseContractDTO toDtoBookingId(DetailedLeaseContract detailedLeaseContract);
 
     @Named("shortTitle")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
     @Mapping(target = "shortTitle", source = "shortTitle")
-    IFRS16LeaseContractDTO toDtoShortTitle(IFRS16LeaseContract iFRS16LeaseContract);
+    DetailedLeaseContractDTO toDtoShortTitle(DetailedLeaseContract detailedLeaseContract);
 }

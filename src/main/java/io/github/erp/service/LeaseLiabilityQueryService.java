@@ -146,7 +146,7 @@ public class LeaseLiabilityQueryService extends QueryService<LeaseLiability> {
                     specification.and(
                         buildSpecification(
                             criteria.getLeaseContractId(),
-                            root -> root.join(LeaseLiability_.leaseContract, JoinType.LEFT).get(IFRS16LeaseContract_.id)
+                            root -> root.join(LeaseLiability_.leaseContract, JoinType.LEFT).get(DetailedLeaseContract_.id)
                         )
                     );
             }

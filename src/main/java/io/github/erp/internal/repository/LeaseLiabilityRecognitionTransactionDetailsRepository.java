@@ -52,7 +52,7 @@ public interface LeaseLiabilityRecognitionTransactionDetailsRepository
             "FROM  " +
             "    lease_liability ll   " +
             "LEFT JOIN  " +
-            "    ifrs16lease_contract lc ON ll.lease_contract_id = lc.id  " +
+            "    detailed_lease_contract lc ON ll.lease_contract_id = lc.id  " +
             "LEFT JOIN  " +
             "    talease_recognition_rule lrr ON ll.lease_contract_id = lrr.lease_contract_id"
     )

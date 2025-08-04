@@ -127,7 +127,7 @@ public class TALeaseRepaymentRuleQueryService extends QueryService<TALeaseRepaym
                     specification.and(
                         buildSpecification(
                             criteria.getLeaseContractId(),
-                            root -> root.join(TALeaseRepaymentRule_.leaseContract, JoinType.LEFT).get(IFRS16LeaseContract_.id)
+                            root -> root.join(TALeaseRepaymentRule_.leaseContract, JoinType.LEFT).get(DetailedLeaseContract_.id)
                         )
                     );
             }

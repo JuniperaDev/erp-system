@@ -127,7 +127,7 @@ public class TALeaseInterestAccrualRuleQueryService extends QueryService<TALease
                     specification.and(
                         buildSpecification(
                             criteria.getLeaseContractId(),
-                            root -> root.join(TALeaseInterestAccrualRule_.leaseContract, JoinType.LEFT).get(IFRS16LeaseContract_.id)
+                            root -> root.join(TALeaseInterestAccrualRule_.leaseContract, JoinType.LEFT).get(DetailedLeaseContract_.id)
                         )
                     );
             }

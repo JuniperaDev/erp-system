@@ -257,7 +257,7 @@
       "NbvReportItem",
       "NbvReport",
       "MonthlyPrepaymentOutstandingReportItem",
-      "IFRS16LeaseContract",
+      "DetailedLeaseContract",
       "RouModelMetadata",
       "RouDepreciationEntry",
       "RouDepreciationRequest",

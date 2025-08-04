@@ -19,12 +19,12 @@ package io.github.erp.service;
  */
 
 import io.github.erp.domain.*; // for static metamodels
-import io.github.erp.domain.IFRS16LeaseContract;
-import io.github.erp.repository.IFRS16LeaseContractRepository;
-import io.github.erp.repository.search.IFRS16LeaseContractSearchRepository;
-import io.github.erp.service.criteria.IFRS16LeaseContractCriteria;
-import io.github.erp.service.dto.IFRS16LeaseContractDTO;
-import io.github.erp.service.mapper.IFRS16LeaseContractMapper;
+import io.github.erp.domain.DetailedLeaseContract;
+import io.github.erp.repository.DetailedLeaseContractRepository;
+import io.github.erp.repository.search.DetailedLeaseContractSearchRepository;
+import io.github.erp.service.criteria.DetailedLeaseContractCriteria;
+import io.github.erp.service.dto.DetailedLeaseContractDTO;
+import io.github.erp.service.mapper.DetailedLeaseContractMapper;
 import java.util.List;
 import javax.persistence.criteria.JoinType;
 import org.slf4j.Logger;
@@ -37,56 +37,56 @@ import org.springframework.transaction.annotation.Transactional;
 import tech.jhipster.service.QueryService;
 
 /**
- * Service for executing complex queries for {@link IFRS16LeaseContract} entities in the database.
- * The main input is a {@link IFRS16LeaseContractCriteria} which gets converted to {@link Specification},
+ * Service for executing complex queries for {@link DetailedLeaseContract} entities in the database.
+ * The main input is a {@link DetailedLeaseContractCriteria} which gets converted to {@link Specification},
  * in a way that all the filters must apply.
- * It returns a {@link List} of {@link IFRS16LeaseContractDTO} or a {@link Page} of {@link IFRS16LeaseContractDTO} which fulfills the criteria.
+ * It returns a {@link List} of {@link DetailedLeaseContractDTO} or a {@link Page} of {@link DetailedLeaseContractDTO} which fulfills the criteria.
  */
 @Service
 @Transactional(readOnly = true)
-public class IFRS16LeaseContractQueryService extends QueryService<IFRS16LeaseContract> {
+public class DetailedLeaseContractQueryService extends QueryService<DetailedLeaseContract> {
 
-    private final Logger log = LoggerFactory.getLogger(IFRS16LeaseContractQueryService.class);
+    private final Logger log = LoggerFactory.getLogger(DetailedLeaseContractQueryService.class);
 
-    private final IFRS16LeaseContractRepository iFRS16LeaseContractRepository;
+    private final DetailedLeaseContractRepository detailedLeaseContractRepository;
 
-    private final IFRS16LeaseContractMapper iFRS16LeaseContractMapper;
+    private final DetailedLeaseContractMapper detailedLeaseContractMapper;
 
-    private final IFRS16LeaseContractSearchRepository iFRS16LeaseContractSearchRepository;
+    private final DetailedLeaseContractSearchRepository detailedLeaseContractSearchRepository;
 
-    public IFRS16LeaseContractQueryService(
-        IFRS16LeaseContractRepository iFRS16LeaseContractRepository,
-        IFRS16LeaseContractMapper iFRS16LeaseContractMapper,
-        IFRS16LeaseContractSearchRepository iFRS16LeaseContractSearchRepository
+    public DetailedLeaseContractQueryService(
+        DetailedLeaseContractRepository detailedLeaseContractRepository,
+        DetailedLeaseContractMapper detailedLeaseContractMapper,
+        DetailedLeaseContractSearchRepository detailedLeaseContractSearchRepository
     ) {
-        this.iFRS16LeaseContractRepository = iFRS16LeaseContractRepository;
-        this.iFRS16LeaseContractMapper = iFRS16LeaseContractMapper;
-        this.iFRS16LeaseContractSearchRepository = iFRS16LeaseContractSearchRepository;
+        this.detailedLeaseContractRepository = detailedLeaseContractRepository;
+        this.detailedLeaseContractMapper = detailedLeaseContractMapper;
+        this.detailedLeaseContractSearchRepository = detailedLeaseContractSearchRepository;
     }
 
     /**
-     * Return a {@link List} of {@link IFRS16LeaseContractDTO} which matches the criteria from the database.
+     * Return a {@link List} of {@link DetailedLeaseContractDTO} which matches the criteria from the database.
      * @param criteria The object which holds all the filters, which the entities should match.
      * @return the matching entities.
      */
     @Transactional(readOnly = true)
-    public List<IFRS16LeaseContractDTO> findByCriteria(IFRS16LeaseContractCriteria criteria) {
+    public List<DetailedLeaseContractDTO> findByCriteria(DetailedLeaseContractCriteria criteria) {
         log.debug("find by criteria : {}", criteria);
-        final Specification<IFRS16LeaseContract> specification = createSpecification(criteria);
-        return iFRS16LeaseContractMapper.toDto(iFRS16LeaseContractRepository.findAll(specification));
+        final Specification<DetailedLeaseContract> specification = createSpecification(criteria);
+        return detailedLeaseContractMapper.toDto(detailedLeaseContractRepository.findAll(specification));
     }
 
     /**
-     * Return a {@link Page} of {@link IFRS16LeaseContractDTO} which matches the criteria from the database.
+     * Return a {@link Page} of {@link DetailedLeaseContractDTO} which matches the criteria from the database.
      * @param criteria The object which holds all the filters, which the entities should match.
      * @param page The page, which should be returned.
      * @return the matching entities.
      */
     @Transactional(readOnly = true)
-    public Page<IFRS16LeaseContractDTO> findByCriteria(IFRS16LeaseContractCriteria criteria, Pageable page) {
+    public Page<DetailedLeaseContractDTO> findByCriteria(DetailedLeaseContractCriteria criteria, Pageable page) {
         log.debug("find by criteria : {}, page: {}", criteria, page);
-        final Specification<IFRS16LeaseContract> specification = createSpecification(criteria);
-        return iFRS16LeaseContractRepository.findAll(specification, page).map(iFRS16LeaseContractMapper::toDto);
+        final Specification<DetailedLeaseContract> specification = createSpecification(criteria);
+        return detailedLeaseContractRepository.findAll(specification, page).map(detailedLeaseContractMapper::toDto);
     }
 
     /**
@@ -95,10 +95,10 @@ public class IFRS16LeaseContractQueryService extends QueryService<IFRS16LeaseCon
      * @return the number of matching entities.
      */
     @Transactional(readOnly = true)
-    public long countByCriteria(IFRS16LeaseContractCriteria criteria) {
+    public long countByCriteria(DetailedLeaseContractCriteria criteria) {
         log.debug("count by criteria : {}", criteria);
-        final Specification<IFRS16LeaseContract> specification = createSpecification(criteria);
-        return iFRS16LeaseContractRepository.count(specification);
+        final Specification<DetailedLeaseContract> specification = createSpecification(criteria);
+        return detailedLeaseContractRepository.count(specification);
     }
 
     /**

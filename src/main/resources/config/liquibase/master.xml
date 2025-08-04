@@ -252,6 +252,7 @@
     <include file="config/liquibase/changelog/20240219151405_added_entity_NbvReport.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240304133311_added_entity_MonthlyPrepaymentOutstandingReportItem.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240307045420_added_entity_IFRS16LeaseContract.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250804193122_rename_ifrs16_lease_contract_to_detailed_lease_contract.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240307081647_added_entity_RouModelMetadata.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240307105511_added_entity_RouDepreciationEntry.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240313073952_added_entity_RouDepreciationEntryReportItem.xml" relativeToChangelogFile="false"/>

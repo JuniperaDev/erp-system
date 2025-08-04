@@ -28,14 +28,14 @@ import io.github.erp.IntegrationTest;
 import io.github.erp.domain.BusinessDocument;
 import io.github.erp.domain.Dealer;
 import io.github.erp.domain.FiscalMonth;
-import io.github.erp.domain.IFRS16LeaseContract;
+import io.github.erp.domain.DetailedLeaseContract;
 import io.github.erp.domain.LeasePayment;
 import io.github.erp.domain.ServiceOutlet;
-import io.github.erp.repository.IFRS16LeaseContractRepository;
-import io.github.erp.repository.search.IFRS16LeaseContractSearchRepository;
-import io.github.erp.service.criteria.IFRS16LeaseContractCriteria;
-import io.github.erp.service.dto.IFRS16LeaseContractDTO;
-import io.github.erp.service.mapper.IFRS16LeaseContractMapper;
+import io.github.erp.repository.DetailedLeaseContractRepository;
+import io.github.erp.repository.search.DetailedLeaseContractSearchRepository;
+import io.github.erp.service.criteria.DetailedLeaseContractCriteria;
+import io.github.erp.service.dto.DetailedLeaseContractDTO;
+import io.github.erp.service.mapper.DetailedLeaseContractMapper;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collections;
@@ -59,13 +59,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Integration tests for the {@link IFRS16LeaseContractResource} REST controller.
+ * Integration tests for the {@link DetailedLeaseContractResource} REST controller.
  */
 @IntegrationTest
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
-class IFRS16LeaseContractResourceIT {
+class DetailedLeaseContractResourceIT {
 
     private static final String DEFAULT_BOOKING_ID = "AAAAAAAAAA";
     private static final String UPDATED_BOOKING_ID = "BBBBBBBBBB";
@@ -90,34 +90,34 @@ class IFRS16LeaseContractResourceIT {
     private static final UUID DEFAULT_SERIAL_NUMBER = UUID.randomUUID();
     private static final UUID UPDATED_SERIAL_NUMBER = UUID.randomUUID();
 
-    private static final String ENTITY_API_URL = "/api/ifrs-16-lease-contracts";
+    private static final String ENTITY_API_URL = "/api/detailed-lease-contracts";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
-    private static final String ENTITY_SEARCH_API_URL = "/api/_search/ifrs-16-lease-contracts";
+    private static final String ENTITY_SEARCH_API_URL = "/api/_search/detailed-lease-contracts";
 
     private static Random random = new Random();
     private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
-    private IFRS16LeaseContractRepository iFRS16LeaseContractRepository;
+    private DetailedLeaseContractRepository detailedLeaseContractRepository;
 
     @Autowired
-    private IFRS16LeaseContractMapper iFRS16LeaseContractMapper;
+    private DetailedLeaseContractMapper detailedLeaseContractMapper;
 
     /**
      * This repository is mocked in the io.github.erp.repository.search test package.
      *
-     * @see io.github.erp.repository.search.IFRS16LeaseContractSearchRepositoryMockConfiguration
+     * @see io.github.erp.repository.search.DetailedLeaseContractSearchRepositoryMockConfiguration
      */
     @Autowired
-    private IFRS16LeaseContractSearchRepository mockIFRS16LeaseContractSearchRepository;
+    private DetailedLeaseContractSearchRepository mockDetailedLeaseContractSearchRepository;
 
     @Autowired
     private EntityManager em;
 
     @Autowired
-    private MockMvc restIFRS16LeaseContractMockMvc;
+    private MockMvc restDetailedLeaseContractMockMvc;
 
-    private IFRS16LeaseContract iFRS16LeaseContract;
+    private DetailedLeaseContract detailedLeaseContract;
 
     /**
      * Create an entity for this test.
@@ -125,8 +125,8 @@ class IFRS16LeaseContractResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static IFRS16LeaseContract createEntity(EntityManager em) {
-        IFRS16LeaseContract iFRS16LeaseContract = new IFRS16LeaseContract()
+    public static DetailedLeaseContract createEntity(EntityManager em) {
+        DetailedLeaseContract detailedLeaseContract = new DetailedLeaseContract()
             .bookingId(DEFAULT_BOOKING_ID)
             .leaseTitle(DEFAULT_LEASE_TITLE)
             .shortTitle(DEFAULT_SHORT_TITLE)
@@ -143,7 +143,7 @@ class IFRS16LeaseContractResourceIT {
         } else {
             serviceOutlet = TestUtil.findAll(em, ServiceOutlet.class).get(0);
         }
-        iFRS16LeaseContract.setSuperintendentServiceOutlet(serviceOutlet);
+        detailedLeaseContract.setSuperintendentServiceOutlet(serviceOutlet);
         // Add required entity
         Dealer dealer;
         if (TestUtil.findAll(em, Dealer.class).isEmpty()) {
@@ -153,7 +153,7 @@ class IFRS16LeaseContractResourceIT {
         } else {
             dealer = TestUtil.findAll(em, Dealer.class).get(0);
         }
-        iFRS16LeaseContract.setMainDealer(dealer);
+        detailedLeaseContract.setMainDealer(dealer);
         // Add required entity
         FiscalMonth fiscalMonth;
         if (TestUtil.findAll(em, FiscalMonth.class).isEmpty()) {
@@ -163,10 +163,10 @@ class IFRS16LeaseContractResourceIT {
         } else {
             fiscalMonth = TestUtil.findAll(em, FiscalMonth.class).get(0);
         }
-        iFRS16LeaseContract.setFirstReportingPeriod(fiscalMonth);
+        detailedLeaseContract.setFirstReportingPeriod(fiscalMonth);
         // Add required entity
-        iFRS16LeaseContract.setLastReportingPeriod(fiscalMonth);
-        return iFRS16LeaseContract;
+        detailedLeaseContract.setLastReportingPeriod(fiscalMonth);
+        return detailedLeaseContract;
     }
 
     /**
@@ -175,8 +175,8 @@ class IFRS16LeaseContractResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static IFRS16LeaseContract createUpdatedEntity(EntityManager em) {
-        IFRS16LeaseContract iFRS16LeaseContract = new IFRS16LeaseContract()
+    public static DetailedLeaseContract createUpdatedEntity(EntityManager em) {
+        DetailedLeaseContract detailedLeaseContract = new DetailedLeaseContract()
             .bookingId(UPDATED_BOOKING_ID)
             .leaseTitle(UPDATED_LEASE_TITLE)
             .shortTitle(UPDATED_SHORT_TITLE)

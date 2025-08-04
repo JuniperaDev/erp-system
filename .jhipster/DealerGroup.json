@@ -1,0 +1,47 @@
+{
+  "changelogDate": "20250804184800",
+  "clientRootFolder": "dealers",
+  "databaseType": "sql",
+  "dto": "mapstruct",
+  "entityTableName": "dealer_group",
+  "fields": [
+    {
+      "fieldName": "groupName",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "notes",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text"
+    }
+  ],
+  "fluentMethods": true,
+  "incrementalChangelog": false,
+  "jpaMetamodelFiltering": true,
+  "microserviceName": "erpService",
+  "name": "DealerGroup",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityField": "groupName",
+      "otherEntityName": "dealerGroup",
+      "relationshipName": "parentGroup",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "id",
+      "otherEntityName": "placeholder",
+      "ownerSide": true,
+      "relationshipName": "placeholder",
+      "relationshipType": "many-to-many"
+    }
+  ],
+  "searchEngine": "elasticsearch",
+  "service": "serviceImpl"
+}

@@ -93,8 +93,8 @@
       "relationshipType": "many-to-many"
     },
     {
-      "otherEntityField": "dealerName",
-      "otherEntityName": "dealer",
+      "otherEntityField": "groupName",
+      "otherEntityName": "dealerGroup",
       "relationshipName": "dealerGroup",
       "relationshipType": "many-to-one"
     },

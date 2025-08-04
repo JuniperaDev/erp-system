@@ -171,58 +171,58 @@ public class DetailedLeaseContractResource {
     }
 
     /**
-     * {@code GET  /ifrs-16-lease-contracts} : get all the iFRS16LeaseContracts.
+     * {@code GET  /detailed-lease-contracts} : get all the DetailedLeaseContracts.
      *
      * @param pageable the pagination information.
      * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of iFRS16LeaseContracts in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of DetailedLeaseContracts in body.
      */
-    @GetMapping("/ifrs-16-lease-contracts")
-    public ResponseEntity<List<IFRS16LeaseContractDTO>> getAllIFRS16LeaseContracts(
-        IFRS16LeaseContractCriteria criteria,
+    @GetMapping("/detailed-lease-contracts")
+    public ResponseEntity<List<DetailedLeaseContractDTO>> getAllDetailedLeaseContracts(
+        DetailedLeaseContractCriteria criteria,
         Pageable pageable
     ) {
-        log.debug("REST request to get IFRS16LeaseContracts by criteria: {}", criteria);
-        Page<IFRS16LeaseContractDTO> page = iFRS16LeaseContractQueryService.findByCriteria(criteria, pageable);
+        log.debug("REST request to get DetailedLeaseContracts by criteria: {}", criteria);
+        Page<DetailedLeaseContractDTO> page = detailedLeaseContractQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
-     * {@code GET  /ifrs-16-lease-contracts/count} : count all the iFRS16LeaseContracts.
+     * {@code GET  /detailed-lease-contracts/count} : count all the DetailedLeaseContracts.
      *
      * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
      */
-    @GetMapping("/ifrs-16-lease-contracts/count")
-    public ResponseEntity<Long> countIFRS16LeaseContracts(IFRS16LeaseContractCriteria criteria) {
-        log.debug("REST request to count IFRS16LeaseContracts by criteria: {}", criteria);
-        return ResponseEntity.ok().body(iFRS16LeaseContractQueryService.countByCriteria(criteria));
+    @GetMapping("/detailed-lease-contracts/count")
+    public ResponseEntity<Long> countDetailedLeaseContracts(DetailedLeaseContractCriteria criteria) {
+        log.debug("REST request to count DetailedLeaseContracts by criteria: {}", criteria);
+        return ResponseEntity.ok().body(detailedLeaseContractQueryService.countByCriteria(criteria));
     }
 
     /**
-     * {@code GET  /ifrs-16-lease-contracts/:id} : get the "id" iFRS16LeaseContract.
+     * {@code GET  /detailed-lease-contracts/:id} : get the "id" DetailedLeaseContract.
      *
-     * @param id the id of the iFRS16LeaseContractDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the iFRS16LeaseContractDTO, or with status {@code 404 (Not Found)}.
+     * @param id the id of the DetailedLeaseContractDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the DetailedLeaseContractDTO, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/ifrs-16-lease-contracts/{id}")
-    public ResponseEntity<IFRS16LeaseContractDTO> getIFRS16LeaseContract(@PathVariable Long id) {
-        log.debug("REST request to get IFRS16LeaseContract : {}", id);
-        Optional<IFRS16LeaseContractDTO> iFRS16LeaseContractDTO = iFRS16LeaseContractService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(iFRS16LeaseContractDTO);
+    @GetMapping("/detailed-lease-contracts/{id}")
+    public ResponseEntity<DetailedLeaseContractDTO> getDetailedLeaseContract(@PathVariable Long id) {
+        log.debug("REST request to get DetailedLeaseContract : {}", id);
+        Optional<DetailedLeaseContractDTO> detailedLeaseContractDTO = detailedLeaseContractService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(detailedLeaseContractDTO);
     }
 
     /**
-     * {@code DELETE  /ifrs-16-lease-contracts/:id} : delete the "id" iFRS16LeaseContract.
+     * {@code DELETE  /detailed-lease-contracts/:id} : delete the "id" DetailedLeaseContract.
      *
-     * @param id the id of the iFRS16LeaseContractDTO to delete.
+     * @param id the id of the DetailedLeaseContractDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/ifrs-16-lease-contracts/{id}")
-    public ResponseEntity<Void> deleteIFRS16LeaseContract(@PathVariable Long id) {
-        log.debug("REST request to delete IFRS16LeaseContract : {}", id);
-        iFRS16LeaseContractService.delete(id);
+    @DeleteMapping("/detailed-lease-contracts/{id}")
+    public ResponseEntity<Void> deleteDetailedLeaseContract(@PathVariable Long id) {
+        log.debug("REST request to delete DetailedLeaseContract : {}", id);
+        detailedLeaseContractService.delete(id);
         return ResponseEntity
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
@@ -230,17 +230,17 @@ public class DetailedLeaseContractResource {
     }
 
     /**
-     * {@code SEARCH  /_search/ifrs-16-lease-contracts?query=:query} : search for the iFRS16LeaseContract corresponding
+     * {@code SEARCH  /_search/detailed-lease-contracts?query=:query} : search for the DetailedLeaseContract corresponding
      * to the query.
      *
-     * @param query the query of the iFRS16LeaseContract search.
+     * @param query the query of the DetailedLeaseContract search.
      * @param pageable the pagination information.
      * @return the result of the search.
      */
-    @GetMapping("/_search/ifrs-16-lease-contracts")
-    public ResponseEntity<List<IFRS16LeaseContractDTO>> searchIFRS16LeaseContracts(@RequestParam String query, Pageable pageable) {
-        log.debug("REST request to search for a page of IFRS16LeaseContracts for query {}", query);
-        Page<IFRS16LeaseContractDTO> page = iFRS16LeaseContractService.search(query, pageable);
+    @GetMapping("/_search/detailed-lease-contracts")
+    public ResponseEntity<List<DetailedLeaseContractDTO>> searchDetailedLeaseContracts(@RequestParam String query, Pageable pageable) {
+        log.debug("REST request to search for a page of DetailedLeaseContracts for query {}", query);
+        Page<DetailedLeaseContractDTO> page = detailedLeaseContractService.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

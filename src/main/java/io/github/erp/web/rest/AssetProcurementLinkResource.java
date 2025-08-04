@@ -87,7 +87,7 @@ public class AssetProcurementLinkResource {
 
     @GetMapping("/asset-procurement-links")
     public ResponseEntity<List<AssetProcurementLinkDTO>> getAllAssetProcurementLinks(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get a page of AssetProcurementLinks");
         Page<AssetProcurementLinkDTO> page = assetProcurementLinkService.findAll(pageable);

@@ -18,7 +18,7 @@ package io.github.erp.service;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import io.github.erp.domain.*; // for static metamodels
+import io.github.erp.domain.*;
 import io.github.erp.domain.Dealer;
 import io.github.erp.repository.DealerRepository;
 import io.github.erp.repository.search.DealerSearchRepository;
@@ -177,7 +177,7 @@ public class DealerQueryService extends QueryService<Dealer> {
                     specification.and(
                         buildSpecification(
                             criteria.getDealerGroupId(),
-                            root -> root.join(Dealer_.dealerGroup, JoinType.LEFT).get(Dealer_.id)
+                            root -> root.join(Dealer_.dealerGroup, JoinType.LEFT).get(DealerGroup_.id)
                         )
                     );
             }

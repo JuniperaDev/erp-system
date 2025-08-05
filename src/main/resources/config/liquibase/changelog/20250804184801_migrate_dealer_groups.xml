@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd">
+    <!--
+        Migrate existing dealer group relationships to new DealerGroup entity.
+    -->
+    <changeSet id="20250804184801-0" author="devin">
+        <comment>Validate dealer group references before migration</comment>
+        <sql>
+            -- Check for invalid dealer_group_id references
+            DO $$
+            DECLARE
+                invalid_count INTEGER;
+            BEGIN
+                SELECT COUNT(*) INTO invalid_count
+                FROM dealer d1 
+                WHERE d1.dealer_group_id IS NOT NULL 
+                AND d1.dealer_group_id NOT IN (SELECT id FROM dealer);
+                
+                IF invalid_count > 0 THEN
+                    RAISE EXCEPTION 'Found % invalid dealer_group_id references', invalid_count;
+                END IF;
+            END $$;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20250804184801-1" author="devin">
+        <comment>Create DealerGroup records for existing dealer groups</comment>
+        <sql>
+            INSERT INTO dealer_group (id, group_name, description)
+            SELECT DISTINCT d.id, d.dealer_name, CONCAT('Migrated dealer group: ', d.dealer_name)
+            FROM dealer d
+            WHERE d.id IN (
+                SELECT DISTINCT dealer_group_id 
+                FROM dealer 
+                WHERE dealer_group_id IS NOT NULL
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="20250804184801-2" author="devin">
+        <comment>Drop old dealer self-reference constraint</comment>
+        <dropForeignKeyConstraint baseTableName="dealer" constraintName="fk_dealer__dealer_group_id"/>
+    </changeSet>
+
+    <changeSet id="20250804184801-3" author="devin">
+        <comment>Add new foreign key constraint to dealer_group table</comment>
+        <addForeignKeyConstraint baseColumnNames="dealer_group_id"
+                                 baseTableName="dealer"
+                                 constraintName="fk_dealer__dealer_group_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="dealer_group"/>
+    </changeSet>
+</databaseChangeLog>

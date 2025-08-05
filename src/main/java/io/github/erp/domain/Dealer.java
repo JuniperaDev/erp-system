@@ -129,8 +129,8 @@ public class Dealer implements Serializable {
     private Set<PaymentLabel> paymentLabels = new HashSet<>();
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "paymentLabels", "dealerGroup", "placeholders" }, allowSetters = true)
-    private Dealer dealerGroup;
+    @JsonIgnoreProperties(value = { "parentGroup", "placeholders" }, allowSetters = true)
+    private DealerGroup dealerGroup;
 
     @ManyToMany
     @JoinTable(
@@ -401,16 +401,16 @@ public class Dealer implements Serializable {
         return this;
     }
 
-    public Dealer getDealerGroup() {
+    public DealerGroup getDealerGroup() {
         return this.dealerGroup;
     }
 
-    public void setDealerGroup(Dealer dealer) {
-        this.dealerGroup = dealer;
+    public void setDealerGroup(DealerGroup dealerGroup) {
+        this.dealerGroup = dealerGroup;
     }
 
-    public Dealer dealerGroup(Dealer dealer) {
-        this.setDealerGroup(dealer);
+    public Dealer dealerGroup(DealerGroup dealerGroup) {
+        this.setDealerGroup(dealerGroup);
         return this;
     }
 

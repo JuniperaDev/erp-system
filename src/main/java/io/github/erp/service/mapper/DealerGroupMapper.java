@@ -18,34 +18,32 @@ package io.github.erp.service.mapper;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import io.github.erp.domain.Dealer;
-import io.github.erp.service.dto.DealerDTO;
+import io.github.erp.domain.DealerGroup;
+import io.github.erp.service.dto.DealerGroupDTO;
 import java.util.Set;
 import org.mapstruct.*;
 
 /**
- * Mapper for the entity {@link Dealer} and its DTO {@link DealerDTO}.
+ * Mapper for the entity {@link DealerGroup} and its DTO {@link DealerGroupDTO}.
  */
-@Mapper(componentModel = "spring", uses = { PaymentLabelMapper.class, DealerGroupMapper.class, PlaceholderMapper.class })
-public interface DealerMapper extends EntityMapper<DealerDTO, Dealer> {
-    @Mapping(target = "paymentLabels", source = "paymentLabels", qualifiedByName = "descriptionSet")
-    @Mapping(target = "dealerGroup", source = "dealerGroup", qualifiedByName = "groupName")
+@Mapper(componentModel = "spring", uses = { PlaceholderMapper.class })
+public interface DealerGroupMapper extends EntityMapper<DealerGroupDTO, DealerGroup> {
+    @Mapping(target = "parentGroup", source = "parentGroup", qualifiedByName = "groupName")
     @Mapping(target = "placeholders", source = "placeholders", qualifiedByName = "idSet")
-    DealerDTO toDto(Dealer s);
+    DealerGroupDTO toDto(DealerGroup s);
 
-    @Mapping(target = "removePaymentLabel", ignore = true)
     @Mapping(target = "removePlaceholder", ignore = true)
-    Dealer toEntity(DealerDTO dealerDTO);
+    DealerGroup toEntity(DealerGroupDTO dealerGroupDTO);
 
-    @Named("dealerName")
+    @Named("groupName")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
-    @Mapping(target = "dealerName", source = "dealerName")
-    DealerDTO toDtoDealerName(Dealer dealer);
+    @Mapping(target = "groupName", source = "groupName")
+    DealerGroupDTO toDtoGroupName(DealerGroup dealerGroup);
 
-    @Named("dealerNameSet")
+    @Named("groupNameSet")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
-    @Mapping(target = "dealerName", source = "dealerName")
-    Set<DealerDTO> toDtoDealerNameSet(Set<Dealer> dealer);
+    @Mapping(target = "groupName", source = "groupName")
+    Set<DealerGroupDTO> toDtoGroupNameSet(Set<DealerGroup> dealerGroup);
 }

@@ -1,0 +1,124 @@
+package io.github.erp.domain.events;
+
+/*-
+ * Erp System - Mark X No 10 (Jehoiada Series) Server ver 1.8.2
+ * Copyright © 2021 - 2024 Edwin Njeru and the ERP System Contributors (mailnjeru@gmail.com)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@Service
+@Transactional
+public class DomainEventStoreImpl implements DomainEventStore {
+
+    @PersistenceContext
+    EntityManager entityManager;
+
+    @Override
+    public DomainEvent store(DomainEvent event) {
+        if (event instanceof AbstractDomainEvent) {
+            entityManager.persist(event);
+            return event;
+        }
+        throw new IllegalArgumentException("Event must extend AbstractDomainEvent for persistence");
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<DomainEvent> findByEventId(UUID eventId) {
+        TypedQuery<AbstractDomainEvent> query = entityManager.createQuery(
+            "SELECT e FROM AbstractDomainEvent e WHERE e.eventId = :eventId", AbstractDomainEvent.class);
+        query.setParameter("eventId", eventId);
+        
+        List<AbstractDomainEvent> results = query.getResultList();
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DomainEvent> findByAggregateId(String aggregateId) {
+        TypedQuery<AbstractDomainEvent> query = entityManager.createQuery(
+            "SELECT e FROM AbstractDomainEvent e WHERE e.aggregateId = :aggregateId ORDER BY e.occurredOn", 
+            AbstractDomainEvent.class);
+        query.setParameter("aggregateId", aggregateId);
+        return (List<DomainEvent>) (List<?>) query.getResultList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DomainEvent> findByEventType(String eventType) {
+        TypedQuery<AbstractDomainEvent> query = entityManager.createQuery(
+            "SELECT e FROM AbstractDomainEvent e WHERE e.eventType = :eventType ORDER BY e.occurredOn", 
+            AbstractDomainEvent.class);
+        query.setParameter("eventType", eventType);
+        return (List<DomainEvent>) (List<?>) query.getResultList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DomainEvent> findUnprocessedEvents() {
+        TypedQuery<AbstractDomainEvent> query = entityManager.createQuery(
+            "SELECT e FROM AbstractDomainEvent e WHERE e.processed = false ORDER BY e.occurredOn", 
+            AbstractDomainEvent.class);
+        return (List<DomainEvent>) (List<?>) query.getResultList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DomainEvent> findEventsSince(Instant since) {
+        TypedQuery<AbstractDomainEvent> query = entityManager.createQuery(
+            "SELECT e FROM AbstractDomainEvent e WHERE e.occurredOn >= :since ORDER BY e.occurredOn", 
+            AbstractDomainEvent.class);
+        query.setParameter("since", since);
+        return (List<DomainEvent>) (List<?>) query.getResultList();
+    }
+
+    @Override
+    public void markAsProcessed(UUID eventId) {
+        entityManager.createQuery(
+            "UPDATE AbstractDomainEvent e SET e.processed = true WHERE e.eventId = :eventId")
+            .setParameter("eventId", eventId)
+            .executeUpdate();
+    }
+
+    @Override
+    public void incrementRetryCount(UUID eventId) {
+        entityManager.createQuery(
+            "UPDATE AbstractDomainEvent e SET e.retryCount = e.retryCount + 1 WHERE e.eventId = :eventId")
+            .setParameter("eventId", eventId)
+            .executeUpdate();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DomainEvent> findEventsForReplay(String aggregateId, Instant fromTime) {
+        TypedQuery<AbstractDomainEvent> query = entityManager.createQuery(
+            "SELECT e FROM AbstractDomainEvent e WHERE e.aggregateId = :aggregateId AND e.occurredOn >= :fromTime ORDER BY e.occurredOn", 
+            AbstractDomainEvent.class);
+        query.setParameter("aggregateId", aggregateId);
+        query.setParameter("fromTime", fromTime);
+        return (List<DomainEvent>) (List<?>) query.getResultList();
+    }
+}

@@ -65,33 +65,11 @@ public class AssetRegistrationDTO implements Serializable {
 
     private Set<PlaceholderDTO> placeholders = new HashSet<>();
 
-    private Set<PaymentInvoiceDTO> paymentInvoices = new HashSet<>();
-
-    private Set<ServiceOutletDTO> otherRelatedServiceOutlets = new HashSet<>();
-
-    private Set<SettlementDTO> otherRelatedSettlements = new HashSet<>();
-
     private AssetCategoryDTO assetCategory;
-
-    private Set<PurchaseOrderDTO> purchaseOrders = new HashSet<>();
-
-    private Set<DeliveryNoteDTO> deliveryNotes = new HashSet<>();
-
-    private Set<JobSheetDTO> jobSheets = new HashSet<>();
 
     private DealerDTO dealer;
 
-    private Set<DealerDTO> designatedUsers = new HashSet<>();
-
     private SettlementCurrencyDTO settlementCurrency;
-
-    private Set<BusinessDocumentDTO> businessDocuments = new HashSet<>();
-
-    private Set<AssetWarrantyDTO> assetWarranties = new HashSet<>();
-
-    private Set<UniversallyUniqueMappingDTO> universallyUniqueMappings = new HashSet<>();
-
-    private Set<AssetAccessoryDTO> assetAccessories = new HashSet<>();
 
     private ServiceOutletDTO mainServiceOutlet;
 
@@ -209,60 +187,12 @@ public class AssetRegistrationDTO implements Serializable {
         this.placeholders = placeholders;
     }
 
-    public Set<PaymentInvoiceDTO> getPaymentInvoices() {
-        return paymentInvoices;
-    }
-
-    public void setPaymentInvoices(Set<PaymentInvoiceDTO> paymentInvoices) {
-        this.paymentInvoices = paymentInvoices;
-    }
-
-    public Set<ServiceOutletDTO> getOtherRelatedServiceOutlets() {
-        return otherRelatedServiceOutlets;
-    }
-
-    public void setOtherRelatedServiceOutlets(Set<ServiceOutletDTO> otherRelatedServiceOutlets) {
-        this.otherRelatedServiceOutlets = otherRelatedServiceOutlets;
-    }
-
-    public Set<SettlementDTO> getOtherRelatedSettlements() {
-        return otherRelatedSettlements;
-    }
-
-    public void setOtherRelatedSettlements(Set<SettlementDTO> otherRelatedSettlements) {
-        this.otherRelatedSettlements = otherRelatedSettlements;
-    }
-
     public AssetCategoryDTO getAssetCategory() {
         return assetCategory;
     }
 
     public void setAssetCategory(AssetCategoryDTO assetCategory) {
         this.assetCategory = assetCategory;
-    }
-
-    public Set<PurchaseOrderDTO> getPurchaseOrders() {
-        return purchaseOrders;
-    }
-
-    public void setPurchaseOrders(Set<PurchaseOrderDTO> purchaseOrders) {
-        this.purchaseOrders = purchaseOrders;
-    }
-
-    public Set<DeliveryNoteDTO> getDeliveryNotes() {
-        return deliveryNotes;
-    }
-
-    public void setDeliveryNotes(Set<DeliveryNoteDTO> deliveryNotes) {
-        this.deliveryNotes = deliveryNotes;
-    }
-
-    public Set<JobSheetDTO> getJobSheets() {
-        return jobSheets;
-    }
-
-    public void setJobSheets(Set<JobSheetDTO> jobSheets) {
-        this.jobSheets = jobSheets;
     }
 
     public DealerDTO getDealer() {
@@ -273,52 +203,12 @@ public class AssetRegistrationDTO implements Serializable {
         this.dealer = dealer;
     }
 
-    public Set<DealerDTO> getDesignatedUsers() {
-        return designatedUsers;
-    }
-
-    public void setDesignatedUsers(Set<DealerDTO> designatedUsers) {
-        this.designatedUsers = designatedUsers;
-    }
-
     public SettlementCurrencyDTO getSettlementCurrency() {
         return settlementCurrency;
     }
 
     public void setSettlementCurrency(SettlementCurrencyDTO settlementCurrency) {
         this.settlementCurrency = settlementCurrency;
-    }
-
-    public Set<BusinessDocumentDTO> getBusinessDocuments() {
-        return businessDocuments;
-    }
-
-    public void setBusinessDocuments(Set<BusinessDocumentDTO> businessDocuments) {
-        this.businessDocuments = businessDocuments;
-    }
-
-    public Set<AssetWarrantyDTO> getAssetWarranties() {
-        return assetWarranties;
-    }
-
-    public void setAssetWarranties(Set<AssetWarrantyDTO> assetWarranties) {
-        this.assetWarranties = assetWarranties;
-    }
-
-    public Set<UniversallyUniqueMappingDTO> getUniversallyUniqueMappings() {
-        return universallyUniqueMappings;
-    }
-
-    public void setUniversallyUniqueMappings(Set<UniversallyUniqueMappingDTO> universallyUniqueMappings) {
-        this.universallyUniqueMappings = universallyUniqueMappings;
-    }
-
-    public Set<AssetAccessoryDTO> getAssetAccessories() {
-        return assetAccessories;
-    }
-
-    public void setAssetAccessories(Set<AssetAccessoryDTO> assetAccessories) {
-        this.assetAccessories = assetAccessories;
     }
 
     public ServiceOutletDTO getMainServiceOutlet() {
@@ -375,20 +265,9 @@ public class AssetRegistrationDTO implements Serializable {
             ", historicalCost=" + getHistoricalCost() +
             ", registrationDate='" + getRegistrationDate() + "'" +
             ", placeholders=" + getPlaceholders() +
-            ", paymentInvoices=" + getPaymentInvoices() +
-            ", otherRelatedServiceOutlets=" + getOtherRelatedServiceOutlets() +
-            ", otherRelatedSettlements=" + getOtherRelatedSettlements() +
             ", assetCategory=" + getAssetCategory() +
-            ", purchaseOrders=" + getPurchaseOrders() +
-            ", deliveryNotes=" + getDeliveryNotes() +
-            ", jobSheets=" + getJobSheets() +
             ", dealer=" + getDealer() +
-            ", designatedUsers=" + getDesignatedUsers() +
             ", settlementCurrency=" + getSettlementCurrency() +
-            ", businessDocuments=" + getBusinessDocuments() +
-            ", assetWarranties=" + getAssetWarranties() +
-            ", universallyUniqueMappings=" + getUniversallyUniqueMappings() +
-            ", assetAccessories=" + getAssetAccessories() +
             ", mainServiceOutlet=" + getMainServiceOutlet() +
             ", acquiringTransaction=" + getAcquiringTransaction() +
             "}";

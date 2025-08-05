@@ -154,66 +154,12 @@ public class AssetRegistrationQueryService extends QueryService<AssetRegistratio
                         )
                     );
             }
-            if (criteria.getPaymentInvoicesId() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getPaymentInvoicesId(),
-                            root -> root.join(AssetRegistration_.paymentInvoices, JoinType.LEFT).get(PaymentInvoice_.id)
-                        )
-                    );
-            }
-            if (criteria.getOtherRelatedServiceOutletsId() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getOtherRelatedServiceOutletsId(),
-                            root -> root.join(AssetRegistration_.otherRelatedServiceOutlets, JoinType.LEFT).get(ServiceOutlet_.id)
-                        )
-                    );
-            }
-            if (criteria.getOtherRelatedSettlementsId() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getOtherRelatedSettlementsId(),
-                            root -> root.join(AssetRegistration_.otherRelatedSettlements, JoinType.LEFT).get(Settlement_.id)
-                        )
-                    );
-            }
             if (criteria.getAssetCategoryId() != null) {
                 specification =
                     specification.and(
                         buildSpecification(
                             criteria.getAssetCategoryId(),
                             root -> root.join(AssetRegistration_.assetCategory, JoinType.LEFT).get(AssetCategory_.id)
-                        )
-                    );
-            }
-            if (criteria.getPurchaseOrderId() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getPurchaseOrderId(),
-                            root -> root.join(AssetRegistration_.purchaseOrders, JoinType.LEFT).get(PurchaseOrder_.id)
-                        )
-                    );
-            }
-            if (criteria.getDeliveryNoteId() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getDeliveryNoteId(),
-                            root -> root.join(AssetRegistration_.deliveryNotes, JoinType.LEFT).get(DeliveryNote_.id)
-                        )
-                    );
-            }
-            if (criteria.getJobSheetId() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getJobSheetId(),
-                            root -> root.join(AssetRegistration_.jobSheets, JoinType.LEFT).get(JobSheet_.id)
                         )
                     );
             }
@@ -226,57 +172,12 @@ public class AssetRegistrationQueryService extends QueryService<AssetRegistratio
                         )
                     );
             }
-            if (criteria.getDesignatedUsersId() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getDesignatedUsersId(),
-                            root -> root.join(AssetRegistration_.designatedUsers, JoinType.LEFT).get(Dealer_.id)
-                        )
-                    );
-            }
             if (criteria.getSettlementCurrencyId() != null) {
                 specification =
                     specification.and(
                         buildSpecification(
                             criteria.getSettlementCurrencyId(),
                             root -> root.join(AssetRegistration_.settlementCurrency, JoinType.LEFT).get(SettlementCurrency_.id)
-                        )
-                    );
-            }
-            if (criteria.getBusinessDocumentId() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getBusinessDocumentId(),
-                            root -> root.join(AssetRegistration_.businessDocuments, JoinType.LEFT).get(BusinessDocument_.id)
-                        )
-                    );
-            }
-            if (criteria.getAssetWarrantyId() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getAssetWarrantyId(),
-                            root -> root.join(AssetRegistration_.assetWarranties, JoinType.LEFT).get(AssetWarranty_.id)
-                        )
-                    );
-            }
-            if (criteria.getUniversallyUniqueMappingId() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getUniversallyUniqueMappingId(),
-                            root -> root.join(AssetRegistration_.universallyUniqueMappings, JoinType.LEFT).get(UniversallyUniqueMapping_.id)
-                        )
-                    );
-            }
-            if (criteria.getAssetAccessoryId() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getAssetAccessoryId(),
-                            root -> root.join(AssetRegistration_.assetAccessories, JoinType.LEFT).get(AssetAccessory_.id)
                         )
                     );
             }

@@ -66,33 +66,11 @@ public class AssetRegistrationCriteria implements Serializable, Criteria {
 
     private LongFilter placeholderId;
 
-    private LongFilter paymentInvoicesId;
-
-    private LongFilter otherRelatedServiceOutletsId;
-
-    private LongFilter otherRelatedSettlementsId;
-
     private LongFilter assetCategoryId;
-
-    private LongFilter purchaseOrderId;
-
-    private LongFilter deliveryNoteId;
-
-    private LongFilter jobSheetId;
 
     private LongFilter dealerId;
 
-    private LongFilter designatedUsersId;
-
     private LongFilter settlementCurrencyId;
-
-    private LongFilter businessDocumentId;
-
-    private LongFilter assetWarrantyId;
-
-    private LongFilter universallyUniqueMappingId;
-
-    private LongFilter assetAccessoryId;
 
     private LongFilter mainServiceOutletId;
 
@@ -114,20 +92,9 @@ public class AssetRegistrationCriteria implements Serializable, Criteria {
         this.historicalCost = other.historicalCost == null ? null : other.historicalCost.copy();
         this.registrationDate = other.registrationDate == null ? null : other.registrationDate.copy();
         this.placeholderId = other.placeholderId == null ? null : other.placeholderId.copy();
-        this.paymentInvoicesId = other.paymentInvoicesId == null ? null : other.paymentInvoicesId.copy();
-        this.otherRelatedServiceOutletsId = other.otherRelatedServiceOutletsId == null ? null : other.otherRelatedServiceOutletsId.copy();
-        this.otherRelatedSettlementsId = other.otherRelatedSettlementsId == null ? null : other.otherRelatedSettlementsId.copy();
         this.assetCategoryId = other.assetCategoryId == null ? null : other.assetCategoryId.copy();
-        this.purchaseOrderId = other.purchaseOrderId == null ? null : other.purchaseOrderId.copy();
-        this.deliveryNoteId = other.deliveryNoteId == null ? null : other.deliveryNoteId.copy();
-        this.jobSheetId = other.jobSheetId == null ? null : other.jobSheetId.copy();
         this.dealerId = other.dealerId == null ? null : other.dealerId.copy();
-        this.designatedUsersId = other.designatedUsersId == null ? null : other.designatedUsersId.copy();
         this.settlementCurrencyId = other.settlementCurrencyId == null ? null : other.settlementCurrencyId.copy();
-        this.businessDocumentId = other.businessDocumentId == null ? null : other.businessDocumentId.copy();
-        this.assetWarrantyId = other.assetWarrantyId == null ? null : other.assetWarrantyId.copy();
-        this.universallyUniqueMappingId = other.universallyUniqueMappingId == null ? null : other.universallyUniqueMappingId.copy();
-        this.assetAccessoryId = other.assetAccessoryId == null ? null : other.assetAccessoryId.copy();
         this.mainServiceOutletId = other.mainServiceOutletId == null ? null : other.mainServiceOutletId.copy();
         this.acquiringTransactionId = other.acquiringTransactionId == null ? null : other.acquiringTransactionId.copy();
         this.distinct = other.distinct;
@@ -303,50 +270,8 @@ public class AssetRegistrationCriteria implements Serializable, Criteria {
         this.placeholderId = placeholderId;
     }
 
-    public LongFilter getPaymentInvoicesId() {
-        return paymentInvoicesId;
-    }
 
-    public LongFilter paymentInvoicesId() {
-        if (paymentInvoicesId == null) {
-            paymentInvoicesId = new LongFilter();
-        }
-        return paymentInvoicesId;
-    }
 
-    public void setPaymentInvoicesId(LongFilter paymentInvoicesId) {
-        this.paymentInvoicesId = paymentInvoicesId;
-    }
-
-    public LongFilter getOtherRelatedServiceOutletsId() {
-        return otherRelatedServiceOutletsId;
-    }
-
-    public LongFilter otherRelatedServiceOutletsId() {
-        if (otherRelatedServiceOutletsId == null) {
-            otherRelatedServiceOutletsId = new LongFilter();
-        }
-        return otherRelatedServiceOutletsId;
-    }
-
-    public void setOtherRelatedServiceOutletsId(LongFilter otherRelatedServiceOutletsId) {
-        this.otherRelatedServiceOutletsId = otherRelatedServiceOutletsId;
-    }
-
-    public LongFilter getOtherRelatedSettlementsId() {
-        return otherRelatedSettlementsId;
-    }
-
-    public LongFilter otherRelatedSettlementsId() {
-        if (otherRelatedSettlementsId == null) {
-            otherRelatedSettlementsId = new LongFilter();
-        }
-        return otherRelatedSettlementsId;
-    }
-
-    public void setOtherRelatedSettlementsId(LongFilter otherRelatedSettlementsId) {
-        this.otherRelatedSettlementsId = otherRelatedSettlementsId;
-    }
 
     public LongFilter getAssetCategoryId() {
         return assetCategoryId;
@@ -363,50 +288,8 @@ public class AssetRegistrationCriteria implements Serializable, Criteria {
         this.assetCategoryId = assetCategoryId;
     }
 
-    public LongFilter getPurchaseOrderId() {
-        return purchaseOrderId;
-    }
 
-    public LongFilter purchaseOrderId() {
-        if (purchaseOrderId == null) {
-            purchaseOrderId = new LongFilter();
-        }
-        return purchaseOrderId;
-    }
 
-    public void setPurchaseOrderId(LongFilter purchaseOrderId) {
-        this.purchaseOrderId = purchaseOrderId;
-    }
-
-    public LongFilter getDeliveryNoteId() {
-        return deliveryNoteId;
-    }
-
-    public LongFilter deliveryNoteId() {
-        if (deliveryNoteId == null) {
-            deliveryNoteId = new LongFilter();
-        }
-        return deliveryNoteId;
-    }
-
-    public void setDeliveryNoteId(LongFilter deliveryNoteId) {
-        this.deliveryNoteId = deliveryNoteId;
-    }
-
-    public LongFilter getJobSheetId() {
-        return jobSheetId;
-    }
-
-    public LongFilter jobSheetId() {
-        if (jobSheetId == null) {
-            jobSheetId = new LongFilter();
-        }
-        return jobSheetId;
-    }
-
-    public void setJobSheetId(LongFilter jobSheetId) {
-        this.jobSheetId = jobSheetId;
-    }
 
     public LongFilter getDealerId() {
         return dealerId;
@@ -423,20 +306,6 @@ public class AssetRegistrationCriteria implements Serializable, Criteria {
         this.dealerId = dealerId;
     }
 
-    public LongFilter getDesignatedUsersId() {
-        return designatedUsersId;
-    }
-
-    public LongFilter designatedUsersId() {
-        if (designatedUsersId == null) {
-            designatedUsersId = new LongFilter();
-        }
-        return designatedUsersId;
-    }
-
-    public void setDesignatedUsersId(LongFilter designatedUsersId) {
-        this.designatedUsersId = designatedUsersId;
-    }
 
     public LongFilter getSettlementCurrencyId() {
         return settlementCurrencyId;
@@ -453,65 +322,6 @@ public class AssetRegistrationCriteria implements Serializable, Criteria {
         this.settlementCurrencyId = settlementCurrencyId;
     }
 
-    public LongFilter getBusinessDocumentId() {
-        return businessDocumentId;
-    }
-
-    public LongFilter businessDocumentId() {
-        if (businessDocumentId == null) {
-            businessDocumentId = new LongFilter();
-        }
-        return businessDocumentId;
-    }
-
-    public void setBusinessDocumentId(LongFilter businessDocumentId) {
-        this.businessDocumentId = businessDocumentId;
-    }
-
-    public LongFilter getAssetWarrantyId() {
-        return assetWarrantyId;
-    }
-
-    public LongFilter assetWarrantyId() {
-        if (assetWarrantyId == null) {
-            assetWarrantyId = new LongFilter();
-        }
-        return assetWarrantyId;
-    }
-
-    public void setAssetWarrantyId(LongFilter assetWarrantyId) {
-        this.assetWarrantyId = assetWarrantyId;
-    }
-
-    public LongFilter getUniversallyUniqueMappingId() {
-        return universallyUniqueMappingId;
-    }
-
-    public LongFilter universallyUniqueMappingId() {
-        if (universallyUniqueMappingId == null) {
-            universallyUniqueMappingId = new LongFilter();
-        }
-        return universallyUniqueMappingId;
-    }
-
-    public void setUniversallyUniqueMappingId(LongFilter universallyUniqueMappingId) {
-        this.universallyUniqueMappingId = universallyUniqueMappingId;
-    }
-
-    public LongFilter getAssetAccessoryId() {
-        return assetAccessoryId;
-    }
-
-    public LongFilter assetAccessoryId() {
-        if (assetAccessoryId == null) {
-            assetAccessoryId = new LongFilter();
-        }
-        return assetAccessoryId;
-    }
-
-    public void setAssetAccessoryId(LongFilter assetAccessoryId) {
-        this.assetAccessoryId = assetAccessoryId;
-    }
 
     public LongFilter getMainServiceOutletId() {
         return mainServiceOutletId;
@@ -572,20 +382,9 @@ public class AssetRegistrationCriteria implements Serializable, Criteria {
             Objects.equals(historicalCost, that.historicalCost) &&
             Objects.equals(registrationDate, that.registrationDate) &&
             Objects.equals(placeholderId, that.placeholderId) &&
-            Objects.equals(paymentInvoicesId, that.paymentInvoicesId) &&
-            Objects.equals(otherRelatedServiceOutletsId, that.otherRelatedServiceOutletsId) &&
-            Objects.equals(otherRelatedSettlementsId, that.otherRelatedSettlementsId) &&
             Objects.equals(assetCategoryId, that.assetCategoryId) &&
-            Objects.equals(purchaseOrderId, that.purchaseOrderId) &&
-            Objects.equals(deliveryNoteId, that.deliveryNoteId) &&
-            Objects.equals(jobSheetId, that.jobSheetId) &&
             Objects.equals(dealerId, that.dealerId) &&
-            Objects.equals(designatedUsersId, that.designatedUsersId) &&
             Objects.equals(settlementCurrencyId, that.settlementCurrencyId) &&
-            Objects.equals(businessDocumentId, that.businessDocumentId) &&
-            Objects.equals(assetWarrantyId, that.assetWarrantyId) &&
-            Objects.equals(universallyUniqueMappingId, that.universallyUniqueMappingId) &&
-            Objects.equals(assetAccessoryId, that.assetAccessoryId) &&
             Objects.equals(mainServiceOutletId, that.mainServiceOutletId) &&
             Objects.equals(acquiringTransactionId, that.acquiringTransactionId) &&
             Objects.equals(distinct, that.distinct)
@@ -606,20 +405,9 @@ public class AssetRegistrationCriteria implements Serializable, Criteria {
             historicalCost,
             registrationDate,
             placeholderId,
-            paymentInvoicesId,
-            otherRelatedServiceOutletsId,
-            otherRelatedSettlementsId,
             assetCategoryId,
-            purchaseOrderId,
-            deliveryNoteId,
-            jobSheetId,
             dealerId,
-            designatedUsersId,
             settlementCurrencyId,
-            businessDocumentId,
-            assetWarrantyId,
-            universallyUniqueMappingId,
-            assetAccessoryId,
             mainServiceOutletId,
             acquiringTransactionId,
             distinct
@@ -641,20 +429,9 @@ public class AssetRegistrationCriteria implements Serializable, Criteria {
             (historicalCost != null ? "historicalCost=" + historicalCost + ", " : "") +
             (registrationDate != null ? "registrationDate=" + registrationDate + ", " : "") +
             (placeholderId != null ? "placeholderId=" + placeholderId + ", " : "") +
-            (paymentInvoicesId != null ? "paymentInvoicesId=" + paymentInvoicesId + ", " : "") +
-            (otherRelatedServiceOutletsId != null ? "otherRelatedServiceOutletsId=" + otherRelatedServiceOutletsId + ", " : "") +
-            (otherRelatedSettlementsId != null ? "otherRelatedSettlementsId=" + otherRelatedSettlementsId + ", " : "") +
             (assetCategoryId != null ? "assetCategoryId=" + assetCategoryId + ", " : "") +
-            (purchaseOrderId != null ? "purchaseOrderId=" + purchaseOrderId + ", " : "") +
-            (deliveryNoteId != null ? "deliveryNoteId=" + deliveryNoteId + ", " : "") +
-            (jobSheetId != null ? "jobSheetId=" + jobSheetId + ", " : "") +
             (dealerId != null ? "dealerId=" + dealerId + ", " : "") +
-            (designatedUsersId != null ? "designatedUsersId=" + designatedUsersId + ", " : "") +
             (settlementCurrencyId != null ? "settlementCurrencyId=" + settlementCurrencyId + ", " : "") +
-            (businessDocumentId != null ? "businessDocumentId=" + businessDocumentId + ", " : "") +
-            (assetWarrantyId != null ? "assetWarrantyId=" + assetWarrantyId + ", " : "") +
-            (universallyUniqueMappingId != null ? "universallyUniqueMappingId=" + universallyUniqueMappingId + ", " : "") +
-            (assetAccessoryId != null ? "assetAccessoryId=" + assetAccessoryId + ", " : "") +
             (mainServiceOutletId != null ? "mainServiceOutletId=" + mainServiceOutletId + ", " : "") +
             (acquiringTransactionId != null ? "acquiringTransactionId=" + acquiringTransactionId + ", " : "") +
             (distinct != null ? "distinct=" + distinct + ", " : "") +

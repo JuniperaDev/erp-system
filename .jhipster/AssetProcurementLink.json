@@ -1,0 +1,36 @@
+{
+  "applications": "*",
+  "changelogDate": "20250804185100",
+  "dto": true,
+  "embedded": false,
+  "entityTableName": "asset_procurement_link",
+  "fields": [
+    {
+      "fieldName": "assetId",
+      "fieldType": "Long",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "procurementEntityId",
+      "fieldType": "Long",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "procurementEntityType",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "linkDate",
+      "fieldType": "LocalDate"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "AssetProcurementLink",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [],
+  "service": "serviceImpl",
+  "searchEngine": "elasticsearch"
+}

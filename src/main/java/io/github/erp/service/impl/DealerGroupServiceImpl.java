@@ -50,14 +50,18 @@ public class DealerGroupServiceImpl implements DealerGroupService {
 
     private final DealerGroupSearchRepository dealerGroupSearchRepository;
 
+    private final DealerGroupValidationService validationService;
+
     public DealerGroupServiceImpl(
         DealerGroupRepository dealerGroupRepository,
         DealerGroupMapper dealerGroupMapper,
-        DealerGroupSearchRepository dealerGroupSearchRepository
+        DealerGroupSearchRepository dealerGroupSearchRepository,
+        DealerGroupValidationService validationService
     ) {
         this.dealerGroupRepository = dealerGroupRepository;
         this.dealerGroupMapper = dealerGroupMapper;
         this.dealerGroupSearchRepository = dealerGroupSearchRepository;
+        this.validationService = validationService;
     }
 
     @Override
@@ -65,8 +69,6 @@ public class DealerGroupServiceImpl implements DealerGroupService {
         log.debug("Request to save DealerGroup : {}", dealerGroupDTO);
         
         if (dealerGroupDTO.getParentGroup() != null) {
-            DealerGroupValidationService validationService = new DealerGroupValidationService(dealerGroupRepository);
-            
             if (!validationService.isValidParentRelationship(dealerGroupDTO.getId(), dealerGroupDTO.getParentGroup().getId())) {
                 throw new IllegalArgumentException("Setting this parent group would create a circular dependency");
             }
@@ -86,6 +88,16 @@ public class DealerGroupServiceImpl implements DealerGroupService {
     @Override
     public Optional<DealerGroupDTO> partialUpdate(DealerGroupDTO dealerGroupDTO) {
         log.debug("Request to partially update DealerGroup : {}", dealerGroupDTO);
+
+        if (dealerGroupDTO.getParentGroup() != null) {
+            if (!validationService.isValidParentRelationship(dealerGroupDTO.getId(), dealerGroupDTO.getParentGroup().getId())) {
+                throw new IllegalArgumentException("Setting this parent group would create a circular dependency");
+            }
+            
+            if (!validationService.isValidHierarchyDepth(dealerGroupDTO.getId(), dealerGroupDTO.getParentGroup().getId())) {
+                throw new IllegalArgumentException("Hierarchy depth would exceed maximum allowed depth of 5 levels");
+            }
+        }
 
         return dealerGroupRepository
             .findById(dealerGroupDTO.getId())

@@ -21,9 +21,15 @@
         <addForeignKeyConstraint baseColumnNames="lease_period_id" baseTableName="rou_account_balance_report" constraintName="FKiyqkv8nwc1pi5jqw44tou8x5l" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="lease_period" validate="true"/>
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1716877433976-20">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyTableName="rou_account_balance_report" foreignKeyName="fk_rou_account_balance_report__reporting_month_id"/>
+        </preConditions>
         <dropForeignKeyConstraint baseTableName="rou_account_balance_report" constraintName="fk_rou_account_balance_report__reporting_month_id"/>
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1716877433976-21">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyTableName="rou_assetnbvreport" foreignKeyName="fk_rou_assetnbvreport__fiscal_reporting_month_id"/>
+        </preConditions>
         <dropForeignKeyConstraint baseTableName="rou_assetnbvreport" constraintName="fk_rou_assetnbvreport__fiscal_reporting_month_id"/>
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1716877433976-33">
@@ -33,6 +39,9 @@
         <dropColumn columnName="reporting_month_id" tableName="rou_account_balance_report"/>
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1716877433976-1">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyTableName="rou_deprec_pst_rpt" foreignKeyName="FKe95ki925qpy6tdc3bg5xvk5gh"/>
+        </preConditions>
         <dropForeignKeyConstraint baseTableName="rou_deprec_pst_rpt" constraintName="FKe95ki925qpy6tdc3bg5xvk5gh"/>
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1716877433976-2">

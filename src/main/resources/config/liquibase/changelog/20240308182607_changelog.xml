@@ -4,6 +4,9 @@
         <addUniqueConstraint columnNames="short_title" constraintName="UC_DETAILED_LEASE_CONTRACTSHORT_TITLE_COL" tableName="detailed_lease_contract"/>
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1709922467221-13">
+        <preConditions onFail="MARK_RAN">
+            <uniqueConstraintExists tableName="detailed_lease_contract" constraintName="ux_detailed_lease_contract__lease_title"/>
+        </preConditions>
         <dropUniqueConstraint constraintName="ux_detailed_lease_contract__lease_title" tableName="detailed_lease_contract"/>
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1709922467221-4">

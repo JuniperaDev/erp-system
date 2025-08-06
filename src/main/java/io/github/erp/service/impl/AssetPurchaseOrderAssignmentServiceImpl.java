@@ -18,8 +18,11 @@ package io.github.erp.service.impl;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import static org.elasticsearch.index.query.QueryBuilders.*;
+
 import io.github.erp.domain.AssetPurchaseOrderAssignment;
 import io.github.erp.repository.AssetPurchaseOrderAssignmentRepository;
+import io.github.erp.repository.search.AssetPurchaseOrderAssignmentSearchRepository;
 import io.github.erp.service.AssetPurchaseOrderAssignmentService;
 import io.github.erp.service.dto.AssetPurchaseOrderAssignmentDTO;
 import io.github.erp.service.mapper.AssetPurchaseOrderAssignmentMapper;
@@ -44,12 +47,16 @@ public class AssetPurchaseOrderAssignmentServiceImpl implements AssetPurchaseOrd
 
     private final AssetPurchaseOrderAssignmentMapper assetPurchaseOrderAssignmentMapper;
 
+    private final AssetPurchaseOrderAssignmentSearchRepository assetPurchaseOrderAssignmentSearchRepository;
+
     public AssetPurchaseOrderAssignmentServiceImpl(
         AssetPurchaseOrderAssignmentRepository assetPurchaseOrderAssignmentRepository,
-        AssetPurchaseOrderAssignmentMapper assetPurchaseOrderAssignmentMapper
+        AssetPurchaseOrderAssignmentMapper assetPurchaseOrderAssignmentMapper,
+        AssetPurchaseOrderAssignmentSearchRepository assetPurchaseOrderAssignmentSearchRepository
     ) {
         this.assetPurchaseOrderAssignmentRepository = assetPurchaseOrderAssignmentRepository;
         this.assetPurchaseOrderAssignmentMapper = assetPurchaseOrderAssignmentMapper;
+        this.assetPurchaseOrderAssignmentSearchRepository = assetPurchaseOrderAssignmentSearchRepository;
     }
 
     @Override
@@ -58,6 +65,7 @@ public class AssetPurchaseOrderAssignmentServiceImpl implements AssetPurchaseOrd
         AssetPurchaseOrderAssignment assetPurchaseOrderAssignment = assetPurchaseOrderAssignmentMapper.toEntity(assetPurchaseOrderAssignmentDTO);
         assetPurchaseOrderAssignment = assetPurchaseOrderAssignmentRepository.save(assetPurchaseOrderAssignment);
         AssetPurchaseOrderAssignmentDTO result = assetPurchaseOrderAssignmentMapper.toDto(assetPurchaseOrderAssignment);
+        assetPurchaseOrderAssignmentSearchRepository.save(assetPurchaseOrderAssignment);
         return result;
     }
 
@@ -67,6 +75,7 @@ public class AssetPurchaseOrderAssignmentServiceImpl implements AssetPurchaseOrd
         AssetPurchaseOrderAssignment assetPurchaseOrderAssignment = assetPurchaseOrderAssignmentMapper.toEntity(assetPurchaseOrderAssignmentDTO);
         assetPurchaseOrderAssignment = assetPurchaseOrderAssignmentRepository.save(assetPurchaseOrderAssignment);
         AssetPurchaseOrderAssignmentDTO result = assetPurchaseOrderAssignmentMapper.toDto(assetPurchaseOrderAssignment);
+        assetPurchaseOrderAssignmentSearchRepository.save(assetPurchaseOrderAssignment);
         return result;
     }
 
@@ -82,6 +91,11 @@ public class AssetPurchaseOrderAssignmentServiceImpl implements AssetPurchaseOrd
                 return existingAssetPurchaseOrderAssignment;
             })
             .map(assetPurchaseOrderAssignmentRepository::save)
+            .map(savedAssetPurchaseOrderAssignment -> {
+                assetPurchaseOrderAssignmentSearchRepository.save(savedAssetPurchaseOrderAssignment);
+
+                return savedAssetPurchaseOrderAssignment;
+            })
             .map(assetPurchaseOrderAssignmentMapper::toDto);
     }
 
@@ -103,12 +117,13 @@ public class AssetPurchaseOrderAssignmentServiceImpl implements AssetPurchaseOrd
     public void delete(Long id) {
         log.debug("Request to delete AssetPurchaseOrderAssignment : {}", id);
         assetPurchaseOrderAssignmentRepository.deleteById(id);
+        assetPurchaseOrderAssignmentSearchRepository.deleteById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AssetPurchaseOrderAssignmentDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AssetPurchaseOrderAssignments for query {}", query);
-        return assetPurchaseOrderAssignmentRepository.findAll(pageable).map(assetPurchaseOrderAssignmentMapper::toDto);
+        return assetPurchaseOrderAssignmentSearchRepository.search(query, pageable).map(assetPurchaseOrderAssignmentMapper::toDto);
     }
 }

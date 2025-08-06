@@ -593,7 +593,18 @@
     <include file="config/liquibase/changelog/20241115103432_added_entity_constraints_ReportingEntity.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250203103056_added_entity_constraints_WIPListReport.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250203110822_added_entity_constraints_WIPTransferListReport.xml" relativeToChangelogFile="false"/>
+    <!-- Intermediate entity migrations for AssetRegistration relationships -->
+    <include file="config/liquibase/changelog/20240804191500_added_entity_AssetWarrantyAssignment.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240804191501_added_entity_AssetPurchaseOrderAssignment.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240804191502_added_entity_AssetDocumentAssignment.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240804191503_added_entity_AssetPaymentInvoiceAssignment.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240804191504_added_entity_AssetJobSheetAssignment.xml" relativeToChangelogFile="false"/>
+    <!-- Data migration from old join tables to intermediate entities -->
+    <include file="config/liquibase/changelog/20240804191505_migrate_asset_warranty_data.xml" relativeToChangelogFile="false"/>
+    <!-- Validation that all data was migrated successfully -->
     <include file="config/liquibase/changelog/20240804191505_validate_migration_data.xml" relativeToChangelogFile="false"/>
+    <!-- Drop old join tables after validation passes -->
+    <include file="config/liquibase/changelog/20240804191506_drop_old_join_tables.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

@@ -76,7 +76,7 @@
                 CURRENT_DATE,
                 'ACTIVE',
                 asset_registration_id,
-                payment_invoice_id
+                payment_invoices_id
             FROM rel_asset_registration__payment_invoices
             WHERE EXISTS (SELECT 1 FROM asset_registration WHERE id = asset_registration_id)
             AND EXISTS (SELECT 1 FROM payment_invoice WHERE id = payment_invoices_id);

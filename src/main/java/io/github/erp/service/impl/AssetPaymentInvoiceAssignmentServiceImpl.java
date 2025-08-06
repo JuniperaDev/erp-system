@@ -18,8 +18,11 @@ package io.github.erp.service.impl;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import static org.elasticsearch.index.query.QueryBuilders.*;
+
 import io.github.erp.domain.AssetPaymentInvoiceAssignment;
 import io.github.erp.repository.AssetPaymentInvoiceAssignmentRepository;
+import io.github.erp.repository.search.AssetPaymentInvoiceAssignmentSearchRepository;
 import io.github.erp.service.AssetPaymentInvoiceAssignmentService;
 import io.github.erp.service.dto.AssetPaymentInvoiceAssignmentDTO;
 import io.github.erp.service.mapper.AssetPaymentInvoiceAssignmentMapper;
@@ -44,12 +47,16 @@ public class AssetPaymentInvoiceAssignmentServiceImpl implements AssetPaymentInv
 
     private final AssetPaymentInvoiceAssignmentMapper assetPaymentInvoiceAssignmentMapper;
 
+    private final AssetPaymentInvoiceAssignmentSearchRepository assetPaymentInvoiceAssignmentSearchRepository;
+
     public AssetPaymentInvoiceAssignmentServiceImpl(
         AssetPaymentInvoiceAssignmentRepository assetPaymentInvoiceAssignmentRepository,
-        AssetPaymentInvoiceAssignmentMapper assetPaymentInvoiceAssignmentMapper
+        AssetPaymentInvoiceAssignmentMapper assetPaymentInvoiceAssignmentMapper,
+        AssetPaymentInvoiceAssignmentSearchRepository assetPaymentInvoiceAssignmentSearchRepository
     ) {
         this.assetPaymentInvoiceAssignmentRepository = assetPaymentInvoiceAssignmentRepository;
         this.assetPaymentInvoiceAssignmentMapper = assetPaymentInvoiceAssignmentMapper;
+        this.assetPaymentInvoiceAssignmentSearchRepository = assetPaymentInvoiceAssignmentSearchRepository;
     }
 
     @Override
@@ -58,6 +65,7 @@ public class AssetPaymentInvoiceAssignmentServiceImpl implements AssetPaymentInv
         AssetPaymentInvoiceAssignment assetPaymentInvoiceAssignment = assetPaymentInvoiceAssignmentMapper.toEntity(assetPaymentInvoiceAssignmentDTO);
         assetPaymentInvoiceAssignment = assetPaymentInvoiceAssignmentRepository.save(assetPaymentInvoiceAssignment);
         AssetPaymentInvoiceAssignmentDTO result = assetPaymentInvoiceAssignmentMapper.toDto(assetPaymentInvoiceAssignment);
+        assetPaymentInvoiceAssignmentSearchRepository.save(assetPaymentInvoiceAssignment);
         return result;
     }
 
@@ -67,6 +75,7 @@ public class AssetPaymentInvoiceAssignmentServiceImpl implements AssetPaymentInv
         AssetPaymentInvoiceAssignment assetPaymentInvoiceAssignment = assetPaymentInvoiceAssignmentMapper.toEntity(assetPaymentInvoiceAssignmentDTO);
         assetPaymentInvoiceAssignment = assetPaymentInvoiceAssignmentRepository.save(assetPaymentInvoiceAssignment);
         AssetPaymentInvoiceAssignmentDTO result = assetPaymentInvoiceAssignmentMapper.toDto(assetPaymentInvoiceAssignment);
+        assetPaymentInvoiceAssignmentSearchRepository.save(assetPaymentInvoiceAssignment);
         return result;
     }
 
@@ -82,6 +91,11 @@ public class AssetPaymentInvoiceAssignmentServiceImpl implements AssetPaymentInv
                 return existingAssetPaymentInvoiceAssignment;
             })
             .map(assetPaymentInvoiceAssignmentRepository::save)
+            .map(savedAssetPaymentInvoiceAssignment -> {
+                assetPaymentInvoiceAssignmentSearchRepository.save(savedAssetPaymentInvoiceAssignment);
+
+                return savedAssetPaymentInvoiceAssignment;
+            })
             .map(assetPaymentInvoiceAssignmentMapper::toDto);
     }
 
@@ -103,12 +117,13 @@ public class AssetPaymentInvoiceAssignmentServiceImpl implements AssetPaymentInv
     public void delete(Long id) {
         log.debug("Request to delete AssetPaymentInvoiceAssignment : {}", id);
         assetPaymentInvoiceAssignmentRepository.deleteById(id);
+        assetPaymentInvoiceAssignmentSearchRepository.deleteById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AssetPaymentInvoiceAssignmentDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AssetPaymentInvoiceAssignments for query {}", query);
-        return assetPaymentInvoiceAssignmentRepository.findAll(pageable).map(assetPaymentInvoiceAssignmentMapper::toDto);
+        return assetPaymentInvoiceAssignmentSearchRepository.search(query, pageable).map(assetPaymentInvoiceAssignmentMapper::toDto);
     }
 }

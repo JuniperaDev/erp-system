@@ -18,8 +18,11 @@ package io.github.erp.service.impl;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import static org.elasticsearch.index.query.QueryBuilders.*;
+
 import io.github.erp.domain.AssetDocumentAssignment;
 import io.github.erp.repository.AssetDocumentAssignmentRepository;
+import io.github.erp.repository.search.AssetDocumentAssignmentSearchRepository;
 import io.github.erp.service.AssetDocumentAssignmentService;
 import io.github.erp.service.dto.AssetDocumentAssignmentDTO;
 import io.github.erp.service.mapper.AssetDocumentAssignmentMapper;
@@ -44,12 +47,16 @@ public class AssetDocumentAssignmentServiceImpl implements AssetDocumentAssignme
 
     private final AssetDocumentAssignmentMapper assetDocumentAssignmentMapper;
 
+    private final AssetDocumentAssignmentSearchRepository assetDocumentAssignmentSearchRepository;
+
     public AssetDocumentAssignmentServiceImpl(
         AssetDocumentAssignmentRepository assetDocumentAssignmentRepository,
-        AssetDocumentAssignmentMapper assetDocumentAssignmentMapper
+        AssetDocumentAssignmentMapper assetDocumentAssignmentMapper,
+        AssetDocumentAssignmentSearchRepository assetDocumentAssignmentSearchRepository
     ) {
         this.assetDocumentAssignmentRepository = assetDocumentAssignmentRepository;
         this.assetDocumentAssignmentMapper = assetDocumentAssignmentMapper;
+        this.assetDocumentAssignmentSearchRepository = assetDocumentAssignmentSearchRepository;
     }
 
     @Override
@@ -58,6 +65,7 @@ public class AssetDocumentAssignmentServiceImpl implements AssetDocumentAssignme
         AssetDocumentAssignment assetDocumentAssignment = assetDocumentAssignmentMapper.toEntity(assetDocumentAssignmentDTO);
         assetDocumentAssignment = assetDocumentAssignmentRepository.save(assetDocumentAssignment);
         AssetDocumentAssignmentDTO result = assetDocumentAssignmentMapper.toDto(assetDocumentAssignment);
+        assetDocumentAssignmentSearchRepository.save(assetDocumentAssignment);
         return result;
     }
 
@@ -67,6 +75,7 @@ public class AssetDocumentAssignmentServiceImpl implements AssetDocumentAssignme
         AssetDocumentAssignment assetDocumentAssignment = assetDocumentAssignmentMapper.toEntity(assetDocumentAssignmentDTO);
         assetDocumentAssignment = assetDocumentAssignmentRepository.save(assetDocumentAssignment);
         AssetDocumentAssignmentDTO result = assetDocumentAssignmentMapper.toDto(assetDocumentAssignment);
+        assetDocumentAssignmentSearchRepository.save(assetDocumentAssignment);
         return result;
     }
 
@@ -82,6 +91,11 @@ public class AssetDocumentAssignmentServiceImpl implements AssetDocumentAssignme
                 return existingAssetDocumentAssignment;
             })
             .map(assetDocumentAssignmentRepository::save)
+            .map(savedAssetDocumentAssignment -> {
+                assetDocumentAssignmentSearchRepository.save(savedAssetDocumentAssignment);
+
+                return savedAssetDocumentAssignment;
+            })
             .map(assetDocumentAssignmentMapper::toDto);
     }
 
@@ -103,12 +117,13 @@ public class AssetDocumentAssignmentServiceImpl implements AssetDocumentAssignme
     public void delete(Long id) {
         log.debug("Request to delete AssetDocumentAssignment : {}", id);
         assetDocumentAssignmentRepository.deleteById(id);
+        assetDocumentAssignmentSearchRepository.deleteById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AssetDocumentAssignmentDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AssetDocumentAssignments for query {}", query);
-        return assetDocumentAssignmentRepository.findAll(pageable).map(assetDocumentAssignmentMapper::toDto);
+        return assetDocumentAssignmentSearchRepository.search(query, pageable).map(assetDocumentAssignmentMapper::toDto);
     }
 }

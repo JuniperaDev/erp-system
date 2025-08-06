@@ -20,18 +20,34 @@ package io.github.erp.domain.events;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class DomainEventErrorHandler {
 
     private static final Logger log = LoggerFactory.getLogger(DomainEventErrorHandler.class);
     private static final int MAX_RETRY_COUNT = 3;
+    private static final long BASE_RETRY_DELAY_SECONDS = 2;
+
+    @Value("${spring.kafka.topics.domain-events-dlq.topic.name:domain_events_dlq}")
+    private String deadLetterTopicName;
 
     private final DomainEventStore eventStore;
+    private final KafkaTemplate<String, DomainEvent> kafkaTemplate;
+    private final DomainEventProcessor domainEventProcessor;
 
-    public DomainEventErrorHandler(DomainEventStore eventStore) {
+    public DomainEventErrorHandler(DomainEventStore eventStore, 
+                                 KafkaTemplate<String, DomainEvent> kafkaTemplate,
+                                 DomainEventProcessor domainEventProcessor) {
         this.eventStore = eventStore;
+        this.kafkaTemplate = kafkaTemplate;
+        this.domainEventProcessor = domainEventProcessor;
     }
 
     public void handleError(DomainEvent event, Exception error) {
@@ -59,10 +75,44 @@ public class DomainEventErrorHandler {
     }
 
     private void handleDeadLetter(DomainEvent event, Exception error) {
-        log.error("Domain event {} moved to dead letter queue due to: {}", event.getEventId(), error.getMessage());
+        try {
+            String partitionKey = event.getAggregateType() + ":" + event.getAggregateId();
+            kafkaTemplate.send(deadLetterTopicName, partitionKey, event);
+            
+            log.error("Domain event {} moved to dead letter queue due to: {}", 
+                     event.getEventId(), error.getMessage());
+            
+            sendAlert("Domain Event DLQ", event, error);
+            
+        } catch (Exception e) {
+            log.error("Failed to send event {} to dead letter queue", event.getEventId(), e);
+        }
     }
 
-    private void scheduleRetry(DomainEvent event) {
-        log.info("Retry scheduled for domain event: {}", event.getEventId());
+    @Async
+    public void scheduleRetry(DomainEvent event) {
+        long delaySeconds = calculateBackoffDelay(event instanceof AbstractDomainEvent ? 
+            ((AbstractDomainEvent) event).getRetryCount() : 0);
+        
+        log.info("Scheduling retry for domain event: {} with delay: {}s", 
+                event.getEventId(), delaySeconds);
+        
+        CompletableFuture.delayedExecutor(delaySeconds, TimeUnit.SECONDS)
+            .execute(() -> {
+                try {
+                    domainEventProcessor.processEvent(event);
+                } catch (Exception e) {
+                    log.error("Retry failed for domain event: {}", event.getEventId(), e);
+                }
+            });
+    }
+
+    private long calculateBackoffDelay(int retryCount) {
+        return BASE_RETRY_DELAY_SECONDS * (long) Math.pow(2, retryCount);
+    }
+
+    private void sendAlert(String alertType, DomainEvent event, Exception error) {
+        log.warn("ALERT: {} - Event: {}, Aggregate: {}, Error: {}", 
+                alertType, event.getEventId(), event.getAggregateId(), error.getMessage());
     }
 }

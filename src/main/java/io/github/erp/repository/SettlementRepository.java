@@ -33,18 +33,18 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SettlementRepository extends JpaRepository<Settlement, Long>, JpaSpecificationExecutor<Settlement> {
     @Query(
-        value = "select distinct settlement from Settlement settlement left join fetch settlement.placeholders left join fetch settlement.paymentLabels left join fetch settlement.paymentInvoices left join fetch settlement.signatories left join fetch settlement.businessDocuments",
+        value = "select distinct settlement from Settlement settlement left join fetch settlement.placeholders left join fetch settlement.paymentLabels left join fetch settlement.signatories",
         countQuery = "select count(distinct settlement) from Settlement settlement"
     )
     Page<Settlement> findAllWithEagerRelationships(Pageable pageable);
 
     @Query(
-        "select distinct settlement from Settlement settlement left join fetch settlement.placeholders left join fetch settlement.paymentLabels left join fetch settlement.paymentInvoices left join fetch settlement.signatories left join fetch settlement.businessDocuments"
+        "select distinct settlement from Settlement settlement left join fetch settlement.placeholders left join fetch settlement.paymentLabels left join fetch settlement.signatories"
     )
     List<Settlement> findAllWithEagerRelationships();
 
     @Query(
-        "select settlement from Settlement settlement left join fetch settlement.placeholders left join fetch settlement.paymentLabels left join fetch settlement.paymentInvoices left join fetch settlement.signatories left join fetch settlement.businessDocuments where settlement.id =:id"
+        "select settlement from Settlement settlement left join fetch settlement.placeholders left join fetch settlement.paymentLabels left join fetch settlement.signatories where settlement.id =:id"
     )
     Optional<Settlement> findOneWithEagerRelationships(@Param("id") Long id);
 }

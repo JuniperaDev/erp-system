@@ -33,18 +33,18 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PaymentInvoiceRepository extends JpaRepository<PaymentInvoice, Long>, JpaSpecificationExecutor<PaymentInvoice> {
     @Query(
-        value = "select distinct paymentInvoice from PaymentInvoice paymentInvoice left join fetch paymentInvoice.purchaseOrders left join fetch paymentInvoice.placeholders left join fetch paymentInvoice.paymentLabels left join fetch paymentInvoice.deliveryNotes left join fetch paymentInvoice.jobSheets left join fetch paymentInvoice.businessDocuments",
+        value = "select distinct paymentInvoice from PaymentInvoice paymentInvoice left join fetch paymentInvoice.placeholders left join fetch paymentInvoice.paymentLabels left join fetch paymentInvoice.deliveryNotes",
         countQuery = "select count(distinct paymentInvoice) from PaymentInvoice paymentInvoice"
     )
     Page<PaymentInvoice> findAllWithEagerRelationships(Pageable pageable);
 
     @Query(
-        "select distinct paymentInvoice from PaymentInvoice paymentInvoice left join fetch paymentInvoice.purchaseOrders left join fetch paymentInvoice.placeholders left join fetch paymentInvoice.paymentLabels left join fetch paymentInvoice.deliveryNotes left join fetch paymentInvoice.jobSheets left join fetch paymentInvoice.businessDocuments"
+        "select distinct paymentInvoice from PaymentInvoice paymentInvoice left join fetch paymentInvoice.placeholders left join fetch paymentInvoice.paymentLabels left join fetch paymentInvoice.deliveryNotes"
     )
     List<PaymentInvoice> findAllWithEagerRelationships();
 
     @Query(
-        "select paymentInvoice from PaymentInvoice paymentInvoice left join fetch paymentInvoice.purchaseOrders left join fetch paymentInvoice.placeholders left join fetch paymentInvoice.paymentLabels left join fetch paymentInvoice.deliveryNotes left join fetch paymentInvoice.jobSheets left join fetch paymentInvoice.businessDocuments where paymentInvoice.id =:id"
+        "select paymentInvoice from PaymentInvoice paymentInvoice left join fetch paymentInvoice.placeholders left join fetch paymentInvoice.paymentLabels left join fetch paymentInvoice.deliveryNotes where paymentInvoice.id =:id"
     )
     Optional<PaymentInvoice> findOneWithEagerRelationships(@Param("id") Long id);
 }

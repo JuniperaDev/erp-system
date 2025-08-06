@@ -33,18 +33,18 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JobSheetRepository extends JpaRepository<JobSheet, Long>, JpaSpecificationExecutor<JobSheet> {
     @Query(
-        value = "select distinct jobSheet from JobSheet jobSheet left join fetch jobSheet.signatories left join fetch jobSheet.businessStamps left join fetch jobSheet.placeholders left join fetch jobSheet.paymentLabels left join fetch jobSheet.businessDocuments",
+        value = "select distinct jobSheet from JobSheet jobSheet left join fetch jobSheet.signatories left join fetch jobSheet.businessStamps left join fetch jobSheet.placeholders left join fetch jobSheet.paymentLabels",
         countQuery = "select count(distinct jobSheet) from JobSheet jobSheet"
     )
     Page<JobSheet> findAllWithEagerRelationships(Pageable pageable);
 
     @Query(
-        "select distinct jobSheet from JobSheet jobSheet left join fetch jobSheet.signatories left join fetch jobSheet.businessStamps left join fetch jobSheet.placeholders left join fetch jobSheet.paymentLabels left join fetch jobSheet.businessDocuments"
+        "select distinct jobSheet from JobSheet jobSheet left join fetch jobSheet.signatories left join fetch jobSheet.businessStamps left join fetch jobSheet.placeholders left join fetch jobSheet.paymentLabels"
     )
     List<JobSheet> findAllWithEagerRelationships();
 
     @Query(
-        "select jobSheet from JobSheet jobSheet left join fetch jobSheet.signatories left join fetch jobSheet.businessStamps left join fetch jobSheet.placeholders left join fetch jobSheet.paymentLabels left join fetch jobSheet.businessDocuments where jobSheet.id =:id"
+        "select jobSheet from JobSheet jobSheet left join fetch jobSheet.signatories left join fetch jobSheet.businessStamps left join fetch jobSheet.placeholders left join fetch jobSheet.paymentLabels where jobSheet.id =:id"
     )
     Optional<JobSheet> findOneWithEagerRelationships(@Param("id") Long id);
 }

@@ -33,18 +33,18 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PrepaymentAccountRepository extends JpaRepository<PrepaymentAccount, Long>, JpaSpecificationExecutor<PrepaymentAccount> {
     @Query(
-        value = "select distinct prepaymentAccount from PrepaymentAccount prepaymentAccount left join fetch prepaymentAccount.placeholders left join fetch prepaymentAccount.generalParameters left join fetch prepaymentAccount.prepaymentParameters left join fetch prepaymentAccount.businessDocuments",
+        value = "select distinct prepaymentAccount from PrepaymentAccount prepaymentAccount left join fetch prepaymentAccount.placeholders left join fetch prepaymentAccount.generalParameters left join fetch prepaymentAccount.prepaymentParameters",
         countQuery = "select count(distinct prepaymentAccount) from PrepaymentAccount prepaymentAccount"
     )
     Page<PrepaymentAccount> findAllWithEagerRelationships(Pageable pageable);
 
     @Query(
-        "select distinct prepaymentAccount from PrepaymentAccount prepaymentAccount left join fetch prepaymentAccount.placeholders left join fetch prepaymentAccount.generalParameters left join fetch prepaymentAccount.prepaymentParameters left join fetch prepaymentAccount.businessDocuments"
+        "select distinct prepaymentAccount from PrepaymentAccount prepaymentAccount left join fetch prepaymentAccount.placeholders left join fetch prepaymentAccount.generalParameters left join fetch prepaymentAccount.prepaymentParameters"
     )
     List<PrepaymentAccount> findAllWithEagerRelationships();
 
     @Query(
-        "select prepaymentAccount from PrepaymentAccount prepaymentAccount left join fetch prepaymentAccount.placeholders left join fetch prepaymentAccount.generalParameters left join fetch prepaymentAccount.prepaymentParameters left join fetch prepaymentAccount.businessDocuments where prepaymentAccount.id =:id"
+        "select prepaymentAccount from PrepaymentAccount prepaymentAccount left join fetch prepaymentAccount.placeholders left join fetch prepaymentAccount.generalParameters left join fetch prepaymentAccount.prepaymentParameters where prepaymentAccount.id =:id"
     )
     Optional<PrepaymentAccount> findOneWithEagerRelationships(@Param("id") Long id);
 }

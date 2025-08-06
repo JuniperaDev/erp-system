@@ -1336,8 +1336,14 @@ public class AssetRegistrationResourceIT {
         }
         em.persist(paymentInvoices);
         em.flush();
-        assetRegistration.addPaymentInvoices(paymentInvoices);
-        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        // Create intermediate entity assignment instead of direct relationship
+        AssetPaymentInvoiceAssignment assignment = new AssetPaymentInvoiceAssignment();
+        assignment.setAssetRegistration(assetRegistration);
+        assignment.setPaymentInvoice(paymentInvoices);
+        assignment.setAssignmentDate(LocalDate.now());
+        assignment.setAssignmentStatus("ACTIVE");
+        em.persist(assignment);
+        em.flush();
         Long paymentInvoicesId = paymentInvoices.getId();
 
         // Get all the assetRegistrationList where paymentInvoices equals to paymentInvoicesId
@@ -1440,8 +1446,14 @@ public class AssetRegistrationResourceIT {
         }
         em.persist(purchaseOrder);
         em.flush();
-        assetRegistration.addPurchaseOrder(purchaseOrder);
-        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        // Create intermediate entity assignment instead of direct relationship
+        AssetPurchaseOrderAssignment assignment = new AssetPurchaseOrderAssignment();
+        assignment.setAssetRegistration(assetRegistration);
+        assignment.setPurchaseOrder(purchaseOrder);
+        assignment.setAssignmentDate(LocalDate.now());
+        assignment.setAssignmentStatus("ACTIVE");
+        em.persist(assignment);
+        em.flush();
         Long purchaseOrderId = purchaseOrder.getId();
 
         // Get all the assetRegistrationList where purchaseOrder equals to purchaseOrderId
@@ -1492,8 +1504,14 @@ public class AssetRegistrationResourceIT {
         }
         em.persist(jobSheet);
         em.flush();
-        assetRegistration.addJobSheet(jobSheet);
-        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        // Create intermediate entity assignment instead of direct relationship
+        AssetJobSheetAssignment assignment = new AssetJobSheetAssignment();
+        assignment.setAssetRegistration(assetRegistration);
+        assignment.setJobSheet(jobSheet);
+        assignment.setAssignmentDate(LocalDate.now());
+        assignment.setAssignmentStatus("ACTIVE");
+        em.persist(assignment);
+        em.flush();
         Long jobSheetId = jobSheet.getId();
 
         // Get all the assetRegistrationList where jobSheet equals to jobSheetId
@@ -1596,8 +1614,14 @@ public class AssetRegistrationResourceIT {
         }
         em.persist(businessDocument);
         em.flush();
-        assetRegistration.addBusinessDocument(businessDocument);
-        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        // Create intermediate entity assignment instead of direct relationship
+        AssetDocumentAssignment assignment = new AssetDocumentAssignment();
+        assignment.setAssetRegistration(assetRegistration);
+        assignment.setBusinessDocument(businessDocument);
+        assignment.setAssignmentDate(LocalDate.now());
+        assignment.setAssignmentStatus("ACTIVE");
+        em.persist(assignment);
+        em.flush();
         Long businessDocumentId = businessDocument.getId();
 
         // Get all the assetRegistrationList where businessDocument equals to businessDocumentId
@@ -1622,8 +1646,14 @@ public class AssetRegistrationResourceIT {
         }
         em.persist(assetWarranty);
         em.flush();
-        assetRegistration.addAssetWarranty(assetWarranty);
-        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        // Create intermediate entity assignment instead of direct relationship
+        AssetWarrantyAssignment assignment = new AssetWarrantyAssignment();
+        assignment.setAssetRegistration(assetRegistration);
+        assignment.setAssetWarranty(assetWarranty);
+        assignment.setAssignmentDate(LocalDate.now());
+        assignment.setAssignmentStatus("ACTIVE");
+        em.persist(assignment);
+        em.flush();
         Long assetWarrantyId = assetWarranty.getId();
 
         // Get all the assetRegistrationList where assetWarranty equals to assetWarrantyId

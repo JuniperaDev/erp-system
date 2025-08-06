@@ -57,6 +57,11 @@ public interface BusinessDocumentMapper extends EntityMapper<BusinessDocumentDTO
     @Mapping(target = "documentTitle", source = "documentTitle")
     Set<BusinessDocumentDTO> toDtoDocumentTitleSet(Set<BusinessDocument> businessDocument);
 
+    @Named("businessDocumentId")
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", source = "id")
+    BusinessDocument fromId(Long id);
+
     @Named("documentTitle")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")

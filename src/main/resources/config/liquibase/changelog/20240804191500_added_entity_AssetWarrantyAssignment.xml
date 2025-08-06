@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20240804191500-1" author="devin">
+        <createTable tableName="asset_warranty_assignment">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="assignment_date" type="date">
+                <constraints nullable="false" />
+            </column>
+            <column name="warranty_start_date" type="date">
+                <constraints nullable="true" />
+            </column>
+            <column name="warranty_end_date" type="date">
+                <constraints nullable="true" />
+            </column>
+            <column name="assignment_status" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="notes" type="varchar(1000)">
+                <constraints nullable="true" />
+            </column>
+            <column name="asset_registration_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="asset_warranty_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20240804191500-2" author="devin">
+        <addForeignKeyConstraint baseColumnNames="asset_registration_id"
+                                 baseTableName="asset_warranty_assignment"
+                                 constraintName="fk_asset_warranty_assignment__asset_registration_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="asset_registration"/>
+    </changeSet>
+
+    <changeSet id="20240804191500-3" author="devin">
+        <addForeignKeyConstraint baseColumnNames="asset_warranty_id"
+                                 baseTableName="asset_warranty_assignment"
+                                 constraintName="fk_asset_warranty_assignment__asset_warranty_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="asset_warranty"/>
+    </changeSet>
+
+    <changeSet id="20240804191500-4" author="devin">
+        <createIndex indexName="idx_asset_warranty_assignment_asset_registration"
+                     tableName="asset_warranty_assignment">
+            <column name="asset_registration_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="20240804191500-5" author="devin">
+        <createIndex indexName="idx_asset_warranty_assignment_asset_warranty"
+                     tableName="asset_warranty_assignment">
+            <column name="asset_warranty_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

@@ -41,15 +41,10 @@ public interface InternalAssetRegistrationRepository
         value = "select distinct assetRegistration " +
             "from AssetRegistration assetRegistration " +
             "left join fetch assetRegistration.placeholders " +
-            "left join fetch assetRegistration.paymentInvoices " +
             "left join fetch assetRegistration.otherRelatedServiceOutlets " +
             "left join fetch assetRegistration.otherRelatedSettlements " +
-            "left join fetch assetRegistration.purchaseOrders " +
             "left join fetch assetRegistration.deliveryNotes " +
-            "left join fetch assetRegistration.jobSheets " +
             "left join fetch assetRegistration.designatedUsers " +
-            "left join fetch assetRegistration.businessDocuments " +
-            "left join fetch assetRegistration.assetWarranties " +
             "left join fetch assetRegistration.universallyUniqueMappings " +
             "left join fetch assetRegistration.assetAccessories",
         countQuery = "select count(distinct assetRegistration) from AssetRegistration assetRegistration"
@@ -60,15 +55,10 @@ public interface InternalAssetRegistrationRepository
         "select distinct assetRegistration " +
             "from AssetRegistration assetRegistration " +
             "left join fetch assetRegistration.placeholders " +
-            "left join fetch assetRegistration.paymentInvoices " +
             "left join fetch assetRegistration.otherRelatedServiceOutlets " +
             "left join fetch assetRegistration.otherRelatedSettlements " +
-            "left join fetch assetRegistration.purchaseOrders " +
             "left join fetch assetRegistration.deliveryNotes " +
-            "left join fetch assetRegistration.jobSheets " +
             "left join fetch assetRegistration.designatedUsers " +
-            "left join fetch assetRegistration.businessDocuments " +
-            "left join fetch assetRegistration.assetWarranties " +
             "left join fetch assetRegistration.universallyUniqueMappings " +
             "left join fetch assetRegistration.assetAccessories"
     )
@@ -79,15 +69,10 @@ public interface InternalAssetRegistrationRepository
             "from AssetRegistration assetRegistration " +
             "left join fetch assetRegistration.acquiringTransaction " +
             "left join fetch assetRegistration.placeholders " +
-            "left join fetch assetRegistration.paymentInvoices " +
             "left join fetch assetRegistration.otherRelatedServiceOutlets " +
             "left join fetch assetRegistration.otherRelatedSettlements " +
-            "left join fetch assetRegistration.purchaseOrders " +
             "left join fetch assetRegistration.deliveryNotes " +
-            "left join fetch assetRegistration.jobSheets " +
             "left join fetch assetRegistration.designatedUsers " +
-            "left join fetch assetRegistration.businessDocuments " +
-            "left join fetch assetRegistration.assetWarranties " +
             "left join fetch assetRegistration.universallyUniqueMappings " +
             "left join fetch assetRegistration.assetAccessories " +
             "where assetRegistration.id =:id"

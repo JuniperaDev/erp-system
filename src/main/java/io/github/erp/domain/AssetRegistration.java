@@ -114,27 +114,10 @@ public class AssetRegistration implements Serializable {
     @JsonIgnoreProperties(value = { "containingPlaceholder" }, allowSetters = true)
     private Set<Placeholder> placeholders = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(
-        name = "rel_asset_registration__payment_invoices",
-        joinColumns = @JoinColumn(name = "asset_registration_id"),
-        inverseJoinColumns = @JoinColumn(name = "payment_invoices_id")
-    )
+    @OneToMany(mappedBy = "assetRegistration", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(
-        value = {
-            "purchaseOrders",
-            "placeholders",
-            "paymentLabels",
-            "settlementCurrency",
-            "biller",
-            "deliveryNotes",
-            "jobSheets",
-            "businessDocuments",
-        },
-        allowSetters = true
-    )
-    private Set<PaymentInvoice> paymentInvoices = new HashSet<>();
+    @JsonIgnoreProperties(value = { "assetRegistration", "paymentInvoice" }, allowSetters = true)
+    private Set<AssetPaymentInvoiceAssignment> assetPaymentInvoiceAssignments = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -177,18 +160,10 @@ public class AssetRegistration implements Serializable {
     @JsonIgnoreProperties(value = { "depreciationMethod", "placeholders" }, allowSetters = true)
     private AssetCategory assetCategory;
 
-    @ManyToMany
-    @JoinTable(
-        name = "rel_asset_registration__purchase_order",
-        joinColumns = @JoinColumn(name = "asset_registration_id"),
-        inverseJoinColumns = @JoinColumn(name = "purchase_order_id")
-    )
+    @OneToMany(mappedBy = "assetRegistration", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(
-        value = { "settlementCurrency", "placeholders", "signatories", "vendor", "businessDocuments" },
-        allowSetters = true
-    )
-    private Set<PurchaseOrder> purchaseOrders = new HashSet<>();
+    @JsonIgnoreProperties(value = { "assetRegistration", "purchaseOrder" }, allowSetters = true)
+    private Set<AssetPurchaseOrderAssignment> assetPurchaseOrderAssignments = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -212,18 +187,10 @@ public class AssetRegistration implements Serializable {
     )
     private Set<DeliveryNote> deliveryNotes = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(
-        name = "rel_asset_registration__job_sheet",
-        joinColumns = @JoinColumn(name = "asset_registration_id"),
-        inverseJoinColumns = @JoinColumn(name = "job_sheet_id")
-    )
+    @OneToMany(mappedBy = "assetRegistration", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(
-        value = { "biller", "signatories", "contactPerson", "businessStamps", "placeholders", "paymentLabels", "businessDocuments" },
-        allowSetters = true
-    )
-    private Set<JobSheet> jobSheets = new HashSet<>();
+    @JsonIgnoreProperties(value = { "assetRegistration", "jobSheet" }, allowSetters = true)
+    private Set<AssetJobSheetAssignment> assetJobSheetAssignments = new HashSet<>();
 
     @ManyToOne(optional = false)
     @NotNull
@@ -244,36 +211,15 @@ public class AssetRegistration implements Serializable {
     @JsonIgnoreProperties(value = { "placeholders" }, allowSetters = true)
     private SettlementCurrency settlementCurrency;
 
-    @ManyToMany
-    @JoinTable(
-        name = "rel_asset_registration__business_document",
-        joinColumns = @JoinColumn(name = "asset_registration_id"),
-        inverseJoinColumns = @JoinColumn(name = "business_document_id")
-    )
+    @OneToMany(mappedBy = "assetRegistration", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(
-        value = {
-            "createdBy",
-            "lastModifiedBy",
-            "originatingDepartment",
-            "applicationMappings",
-            "placeholders",
-            "fileChecksumAlgorithm",
-            "securityClearance",
-        },
-        allowSetters = true
-    )
-    private Set<BusinessDocument> businessDocuments = new HashSet<>();
+    @JsonIgnoreProperties(value = { "assetRegistration", "businessDocument" }, allowSetters = true)
+    private Set<AssetDocumentAssignment> assetDocumentAssignments = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(
-        name = "rel_asset_registration__asset_warranty",
-        joinColumns = @JoinColumn(name = "asset_registration_id"),
-        inverseJoinColumns = @JoinColumn(name = "asset_warranty_id")
-    )
+    @OneToMany(mappedBy = "assetRegistration", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "placeholders", "universallyUniqueMappings", "dealer", "warrantyAttachments" }, allowSetters = true)
-    private Set<AssetWarranty> assetWarranties = new HashSet<>();
+    @JsonIgnoreProperties(value = { "assetRegistration", "assetWarranty" }, allowSetters = true)
+    private Set<AssetWarrantyAssignment> assetWarrantyAssignments = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -532,26 +478,28 @@ public class AssetRegistration implements Serializable {
         return this;
     }
 
-    public Set<PaymentInvoice> getPaymentInvoices() {
-        return this.paymentInvoices;
+    public Set<AssetPaymentInvoiceAssignment> getAssetPaymentInvoiceAssignments() {
+        return this.assetPaymentInvoiceAssignments;
     }
 
-    public void setPaymentInvoices(Set<PaymentInvoice> paymentInvoices) {
-        this.paymentInvoices = paymentInvoices;
+    public void setAssetPaymentInvoiceAssignments(Set<AssetPaymentInvoiceAssignment> assetPaymentInvoiceAssignments) {
+        this.assetPaymentInvoiceAssignments = assetPaymentInvoiceAssignments;
     }
 
-    public AssetRegistration paymentInvoices(Set<PaymentInvoice> paymentInvoices) {
-        this.setPaymentInvoices(paymentInvoices);
+    public AssetRegistration assetPaymentInvoiceAssignments(Set<AssetPaymentInvoiceAssignment> assetPaymentInvoiceAssignments) {
+        this.setAssetPaymentInvoiceAssignments(assetPaymentInvoiceAssignments);
         return this;
     }
 
-    public AssetRegistration addPaymentInvoices(PaymentInvoice paymentInvoice) {
-        this.paymentInvoices.add(paymentInvoice);
+    public AssetRegistration addAssetPaymentInvoiceAssignment(AssetPaymentInvoiceAssignment assetPaymentInvoiceAssignment) {
+        this.assetPaymentInvoiceAssignments.add(assetPaymentInvoiceAssignment);
+        assetPaymentInvoiceAssignment.setAssetRegistration(this);
         return this;
     }
 
-    public AssetRegistration removePaymentInvoices(PaymentInvoice paymentInvoice) {
-        this.paymentInvoices.remove(paymentInvoice);
+    public AssetRegistration removeAssetPaymentInvoiceAssignment(AssetPaymentInvoiceAssignment assetPaymentInvoiceAssignment) {
+        this.assetPaymentInvoiceAssignments.remove(assetPaymentInvoiceAssignment);
+        assetPaymentInvoiceAssignment.setAssetRegistration(null);
         return this;
     }
 
@@ -614,26 +562,28 @@ public class AssetRegistration implements Serializable {
         return this;
     }
 
-    public Set<PurchaseOrder> getPurchaseOrders() {
-        return this.purchaseOrders;
+    public Set<AssetPurchaseOrderAssignment> getAssetPurchaseOrderAssignments() {
+        return this.assetPurchaseOrderAssignments;
     }
 
-    public void setPurchaseOrders(Set<PurchaseOrder> purchaseOrders) {
-        this.purchaseOrders = purchaseOrders;
+    public void setAssetPurchaseOrderAssignments(Set<AssetPurchaseOrderAssignment> assetPurchaseOrderAssignments) {
+        this.assetPurchaseOrderAssignments = assetPurchaseOrderAssignments;
     }
 
-    public AssetRegistration purchaseOrders(Set<PurchaseOrder> purchaseOrders) {
-        this.setPurchaseOrders(purchaseOrders);
+    public AssetRegistration assetPurchaseOrderAssignments(Set<AssetPurchaseOrderAssignment> assetPurchaseOrderAssignments) {
+        this.setAssetPurchaseOrderAssignments(assetPurchaseOrderAssignments);
         return this;
     }
 
-    public AssetRegistration addPurchaseOrder(PurchaseOrder purchaseOrder) {
-        this.purchaseOrders.add(purchaseOrder);
+    public AssetRegistration addAssetPurchaseOrderAssignment(AssetPurchaseOrderAssignment assetPurchaseOrderAssignment) {
+        this.assetPurchaseOrderAssignments.add(assetPurchaseOrderAssignment);
+        assetPurchaseOrderAssignment.setAssetRegistration(this);
         return this;
     }
 
-    public AssetRegistration removePurchaseOrder(PurchaseOrder purchaseOrder) {
-        this.purchaseOrders.remove(purchaseOrder);
+    public AssetRegistration removeAssetPurchaseOrderAssignment(AssetPurchaseOrderAssignment assetPurchaseOrderAssignment) {
+        this.assetPurchaseOrderAssignments.remove(assetPurchaseOrderAssignment);
+        assetPurchaseOrderAssignment.setAssetRegistration(null);
         return this;
     }
 
@@ -660,26 +610,28 @@ public class AssetRegistration implements Serializable {
         return this;
     }
 
-    public Set<JobSheet> getJobSheets() {
-        return this.jobSheets;
+    public Set<AssetJobSheetAssignment> getAssetJobSheetAssignments() {
+        return this.assetJobSheetAssignments;
     }
 
-    public void setJobSheets(Set<JobSheet> jobSheets) {
-        this.jobSheets = jobSheets;
+    public void setAssetJobSheetAssignments(Set<AssetJobSheetAssignment> assetJobSheetAssignments) {
+        this.assetJobSheetAssignments = assetJobSheetAssignments;
     }
 
-    public AssetRegistration jobSheets(Set<JobSheet> jobSheets) {
-        this.setJobSheets(jobSheets);
+    public AssetRegistration assetJobSheetAssignments(Set<AssetJobSheetAssignment> assetJobSheetAssignments) {
+        this.setAssetJobSheetAssignments(assetJobSheetAssignments);
         return this;
     }
 
-    public AssetRegistration addJobSheet(JobSheet jobSheet) {
-        this.jobSheets.add(jobSheet);
+    public AssetRegistration addAssetJobSheetAssignment(AssetJobSheetAssignment assetJobSheetAssignment) {
+        this.assetJobSheetAssignments.add(assetJobSheetAssignment);
+        assetJobSheetAssignment.setAssetRegistration(this);
         return this;
     }
 
-    public AssetRegistration removeJobSheet(JobSheet jobSheet) {
-        this.jobSheets.remove(jobSheet);
+    public AssetRegistration removeAssetJobSheetAssignment(AssetJobSheetAssignment assetJobSheetAssignment) {
+        this.assetJobSheetAssignments.remove(assetJobSheetAssignment);
+        assetJobSheetAssignment.setAssetRegistration(null);
         return this;
     }
 
@@ -732,49 +684,53 @@ public class AssetRegistration implements Serializable {
         return this;
     }
 
-    public Set<BusinessDocument> getBusinessDocuments() {
-        return this.businessDocuments;
+    public Set<AssetDocumentAssignment> getAssetDocumentAssignments() {
+        return this.assetDocumentAssignments;
     }
 
-    public void setBusinessDocuments(Set<BusinessDocument> businessDocuments) {
-        this.businessDocuments = businessDocuments;
+    public void setAssetDocumentAssignments(Set<AssetDocumentAssignment> assetDocumentAssignments) {
+        this.assetDocumentAssignments = assetDocumentAssignments;
     }
 
-    public AssetRegistration businessDocuments(Set<BusinessDocument> businessDocuments) {
-        this.setBusinessDocuments(businessDocuments);
+    public AssetRegistration assetDocumentAssignments(Set<AssetDocumentAssignment> assetDocumentAssignments) {
+        this.setAssetDocumentAssignments(assetDocumentAssignments);
         return this;
     }
 
-    public AssetRegistration addBusinessDocument(BusinessDocument businessDocument) {
-        this.businessDocuments.add(businessDocument);
+    public AssetRegistration addAssetDocumentAssignment(AssetDocumentAssignment assetDocumentAssignment) {
+        this.assetDocumentAssignments.add(assetDocumentAssignment);
+        assetDocumentAssignment.setAssetRegistration(this);
         return this;
     }
 
-    public AssetRegistration removeBusinessDocument(BusinessDocument businessDocument) {
-        this.businessDocuments.remove(businessDocument);
+    public AssetRegistration removeAssetDocumentAssignment(AssetDocumentAssignment assetDocumentAssignment) {
+        this.assetDocumentAssignments.remove(assetDocumentAssignment);
+        assetDocumentAssignment.setAssetRegistration(null);
         return this;
     }
 
-    public Set<AssetWarranty> getAssetWarranties() {
-        return this.assetWarranties;
+    public Set<AssetWarrantyAssignment> getAssetWarrantyAssignments() {
+        return this.assetWarrantyAssignments;
     }
 
-    public void setAssetWarranties(Set<AssetWarranty> assetWarranties) {
-        this.assetWarranties = assetWarranties;
+    public void setAssetWarrantyAssignments(Set<AssetWarrantyAssignment> assetWarrantyAssignments) {
+        this.assetWarrantyAssignments = assetWarrantyAssignments;
     }
 
-    public AssetRegistration assetWarranties(Set<AssetWarranty> assetWarranties) {
-        this.setAssetWarranties(assetWarranties);
+    public AssetRegistration assetWarrantyAssignments(Set<AssetWarrantyAssignment> assetWarrantyAssignments) {
+        this.setAssetWarrantyAssignments(assetWarrantyAssignments);
         return this;
     }
 
-    public AssetRegistration addAssetWarranty(AssetWarranty assetWarranty) {
-        this.assetWarranties.add(assetWarranty);
+    public AssetRegistration addAssetWarrantyAssignment(AssetWarrantyAssignment assetWarrantyAssignment) {
+        this.assetWarrantyAssignments.add(assetWarrantyAssignment);
+        assetWarrantyAssignment.setAssetRegistration(this);
         return this;
     }
 
-    public AssetRegistration removeAssetWarranty(AssetWarranty assetWarranty) {
-        this.assetWarranties.remove(assetWarranty);
+    public AssetRegistration removeAssetWarrantyAssignment(AssetWarrantyAssignment assetWarrantyAssignment) {
+        this.assetWarrantyAssignments.remove(assetWarrantyAssignment);
+        assetWarrantyAssignment.setAssetRegistration(null);
         return this;
     }
 

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Production-safe data validation for AssetRegistration many-to-many relationship migration.
+    This migration validates that all data was successfully migrated from old join tables
+    to new intermediate entities before allowing the old tables to be dropped.
+    Each changeset includes preconditions that halt the migration if any data is missing,
+    ensuring zero data loss during the migration process.
+    This follows the incremental migration approach specified in MIGRATION_STRATEGY_BACKLOG.md.
+-->
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20240804191505-validate-1" author="devin">
+        <preConditions onFail="HALT">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM rel_asset_registration__asset_warranty old_rel
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM asset_warranty_assignment new_rel 
+                    WHERE new_rel.asset_registration_id = old_rel.asset_registration_id 
+                    AND new_rel.asset_warranty_id = old_rel.asset_warranty_id
+                )
+            </sqlCheck>
+        </preConditions>
+        <sql>SELECT 'Asset warranty relationships validated successfully';</sql>
+    </changeSet>
+
+    <changeSet id="20240804191505-validate-2" author="devin">
+        <preConditions onFail="HALT">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM rel_asset_registration__purchase_order old_rel
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM asset_purchase_order_assignment new_rel 
+                    WHERE new_rel.asset_registration_id = old_rel.asset_registration_id 
+                    AND new_rel.purchase_order_id = old_rel.purchase_order_id
+                )
+            </sqlCheck>
+        </preConditions>
+        <sql>SELECT 'Purchase order relationships validated successfully';</sql>
+    </changeSet>
+
+    <changeSet id="20240804191505-validate-3" author="devin">
+        <preConditions onFail="HALT">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM rel_asset_registration__business_document old_rel
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM asset_document_assignment new_rel 
+                    WHERE new_rel.asset_registration_id = old_rel.asset_registration_id 
+                    AND new_rel.business_document_id = old_rel.business_document_id
+                )
+            </sqlCheck>
+        </preConditions>
+        <sql>SELECT 'Business document relationships validated successfully';</sql>
+    </changeSet>
+
+    <changeSet id="20240804191505-validate-4" author="devin">
+        <preConditions onFail="HALT">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM rel_asset_registration__payment_invoices old_rel
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM asset_payment_invoice_assignment new_rel 
+                    WHERE new_rel.asset_registration_id = old_rel.asset_registration_id 
+                    AND new_rel.payment_invoice_id = old_rel.payment_invoices_id
+                )
+            </sqlCheck>
+        </preConditions>
+        <sql>SELECT 'Payment invoice relationships validated successfully';</sql>
+    </changeSet>
+
+    <changeSet id="20240804191505-validate-5" author="devin">
+        <preConditions onFail="HALT">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM rel_asset_registration__job_sheet old_rel
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM asset_job_sheet_assignment new_rel 
+                    WHERE new_rel.asset_registration_id = old_rel.asset_registration_id 
+                    AND new_rel.job_sheet_id = old_rel.job_sheet_id
+                )
+            </sqlCheck>
+        </preConditions>
+        <sql>SELECT 'Job sheet relationships validated successfully';</sql>
+    </changeSet>
+
+</databaseChangeLog>

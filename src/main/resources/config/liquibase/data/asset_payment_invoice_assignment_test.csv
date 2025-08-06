@@ -1,0 +1,4 @@
+id;assignment_date;assignment_details;asset_registration_id;payment_invoice_id
+1;2024-01-01;Test payment invoice assignment for Asset 1;1;1
+2;2024-01-02;Test payment invoice assignment for Asset 2;2;2
+3;2024-01-03;Additional payment invoice assignment;1;2

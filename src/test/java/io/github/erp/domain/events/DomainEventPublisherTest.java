@@ -69,7 +69,7 @@ class DomainEventPublisherTest {
 
         verify(eventStore).store(event);
         verify(applicationEventPublisher).publishEvent(event);
-        verify(kafkaTemplate).send(eq("domain_events_topic"), eq("AST-001"), eq(event));
+        verify(kafkaTemplate).send(eq("domain_events_topic"), eq("Asset:AST-001"), eq(event));
     }
 
     @Test

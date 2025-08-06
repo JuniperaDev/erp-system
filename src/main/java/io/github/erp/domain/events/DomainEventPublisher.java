@@ -56,7 +56,8 @@ public class DomainEventPublisher {
 
             applicationEventPublisher.publishEvent(event);
 
-            kafkaTemplate.send(domainEventsTopicName, event.getAggregateId(), event);
+            String partitionKey = event.getAggregateType() + ":" + event.getAggregateId();
+            kafkaTemplate.send(domainEventsTopicName, partitionKey, event);
 
             log.debug("Successfully published domain event: {}", event.getEventId());
 

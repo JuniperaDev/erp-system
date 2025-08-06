@@ -37,7 +37,7 @@ public class DomainEventProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(DomainEventProcessor.class);
 
-    private final Map<String, List<DomainEventHandlerMethod>> handlerRegistry = new ConcurrentHashMap<>();
+    private final Map<String, List<DomainEventHandlerMethodWrapper>> handlerRegistry = new ConcurrentHashMap<>();
     private final DomainEventStore eventStore;
     private final DomainEventErrorHandler errorHandler;
 
@@ -63,18 +63,18 @@ public class DomainEventProcessor {
         }
     }
 
-    private void processEvent(DomainEvent event) {
+    public void processEvent(DomainEvent event) {
         try {
             log.info("Processing domain event: {} for aggregate: {}", 
                     event.getEventType(), event.getAggregateId());
 
-            List<DomainEventHandlerMethod> handlers = handlerRegistry.get(event.getEventType());
+            List<DomainEventHandlerMethodWrapper> handlers = handlerRegistry.get(event.getEventType());
             if (handlers != null && !handlers.isEmpty()) {
-                for (DomainEventHandlerMethod handler : handlers) {
+                for (DomainEventHandlerMethodWrapper handler : handlers) {
                     try {
                         handler.handle(event);
                     } catch (Exception e) {
-                        log.error("Handler {} failed for event {}", handler.getClass().getSimpleName(), event.getEventId(), e);
+                        log.error("Handler {} failed for event {}", handler.getMethodName(), event.getEventId(), e);
                         errorHandler.handleError(event, e);
                     }
                 }
@@ -90,7 +90,7 @@ public class DomainEventProcessor {
         }
     }
 
-    public void registerHandler(String eventType, DomainEventHandlerMethod handler) {
+    public void registerHandler(String eventType, DomainEventHandlerMethodWrapper handler) {
         handlerRegistry.computeIfAbsent(eventType, k -> new ArrayList<>()).add(handler);
     }
 }

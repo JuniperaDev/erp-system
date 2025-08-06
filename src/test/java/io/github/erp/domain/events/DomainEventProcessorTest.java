@@ -93,8 +93,8 @@ class DomainEventProcessorTest {
     @DisplayName("Should register event handler")
     void shouldRegisterEventHandler() throws Exception {
         Object handler = new Object();
-        DomainEventHandlerMethod handlerMethod = new DomainEventHandlerMethod(
-            handler, handler.getClass().getMethod("toString"), "AssetCreatedEvent");
+        DomainEventHandlerMethodWrapper handlerMethod = new DomainEventHandlerMethodWrapper(
+            handler, handler.getClass().getMethod("toString"), "AssetCreatedEvent", 1);
 
         processor.registerHandler("AssetCreatedEvent", handlerMethod);
 
@@ -102,6 +102,17 @@ class DomainEventProcessorTest {
             "AST-001", "AST-001", "Test Asset", BigDecimal.valueOf(10000), 1L, UUID.randomUUID());
 
         processor.handleLocalEvent(event);
+
+        verify(eventStore).markAsProcessed(event.getEventId());
+    }
+
+    @Test
+    @DisplayName("Should make processEvent method public for retry mechanism")
+    void shouldMakeProcessEventPublicForRetryMechanism() {
+        AssetCreatedEvent event = new AssetCreatedEvent(
+            "AST-001", "AST-001", "Test Asset", BigDecimal.valueOf(10000), 1L, UUID.randomUUID());
+
+        processor.processEvent(event);
 
         verify(eventStore).markAsProcessed(event.getEventId());
     }

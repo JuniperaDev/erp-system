@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Production-safe table cleanup for AssetRegistration many-to-many relationships.
-    This migration drops old join tables only after data validation passes.
-    Each changeset includes preconditions to ensure all data was successfully migrated
-    to the new intermediate entities before dropping the old tables.
+    Production-safe data validation for AssetRegistration many-to-many relationship migration.
+    This migration validates that all data was successfully migrated from old join tables
+    to new intermediate entities before allowing the old tables to be dropped.
+    Each changeset includes preconditions that halt the migration if any data is missing,
+    ensuring zero data loss during the migration process.
     This follows the incremental migration approach specified in MIGRATION_STRATEGY_BACKLOG.md.
 -->
 <databaseChangeLog
@@ -13,7 +14,7 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <changeSet id="20240804191506-1" author="devin">
+    <changeSet id="20240804191505-validate-1" author="devin">
         <preConditions onFail="HALT">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM rel_asset_registration__asset_warranty old_rel
@@ -24,10 +25,10 @@
                 )
             </sqlCheck>
         </preConditions>
-        <dropTable tableName="rel_asset_registration__asset_warranty"/>
+        <sql>SELECT 'Asset warranty relationships validated successfully';</sql>
     </changeSet>
 
-    <changeSet id="20240804191506-2" author="devin">
+    <changeSet id="20240804191505-validate-2" author="devin">
         <preConditions onFail="HALT">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM rel_asset_registration__purchase_order old_rel
@@ -38,10 +39,10 @@
                 )
             </sqlCheck>
         </preConditions>
-        <dropTable tableName="rel_asset_registration__purchase_order"/>
+        <sql>SELECT 'Purchase order relationships validated successfully';</sql>
     </changeSet>
 
-    <changeSet id="20240804191506-3" author="devin">
+    <changeSet id="20240804191505-validate-3" author="devin">
         <preConditions onFail="HALT">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM rel_asset_registration__business_document old_rel
@@ -52,10 +53,10 @@
                 )
             </sqlCheck>
         </preConditions>
-        <dropTable tableName="rel_asset_registration__business_document"/>
+        <sql>SELECT 'Business document relationships validated successfully';</sql>
     </changeSet>
 
-    <changeSet id="20240804191506-4" author="devin">
+    <changeSet id="20240804191505-validate-4" author="devin">
         <preConditions onFail="HALT">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM rel_asset_registration__payment_invoices old_rel
@@ -66,10 +67,10 @@
                 )
             </sqlCheck>
         </preConditions>
-        <dropTable tableName="rel_asset_registration__payment_invoices"/>
+        <sql>SELECT 'Payment invoice relationships validated successfully';</sql>
     </changeSet>
 
-    <changeSet id="20240804191506-5" author="devin">
+    <changeSet id="20240804191505-validate-5" author="devin">
         <preConditions onFail="HALT">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM rel_asset_registration__job_sheet old_rel
@@ -80,7 +81,7 @@
                 )
             </sqlCheck>
         </preConditions>
-        <dropTable tableName="rel_asset_registration__job_sheet"/>
+        <sql>SELECT 'Job sheet relationships validated successfully';</sql>
     </changeSet>
 
 </databaseChangeLog>

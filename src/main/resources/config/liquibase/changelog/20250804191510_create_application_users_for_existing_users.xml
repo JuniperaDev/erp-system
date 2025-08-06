@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20250804191510-1" author="devin" context="dev">
+        <comment>Create ApplicationUser records for existing admin and user accounts</comment>
+        
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="application_user"/>
+            <tableExists tableName="dealer"/>
+            <tableExists tableName="security_clearance"/>
+        </preConditions>
+        
+        <!-- Insert basic Dealer records for organization and department -->
+        <insert tableName="dealer">
+            <column name="id" valueNumeric="1001"/>
+            <column name="dealer_name" value="System Organization"/>
+            <column name="organization_name" value="ERP System"/>
+            <column name="department" value="Administration"/>
+        </insert>
+        
+        <insert tableName="dealer">
+            <column name="id" valueNumeric="1002"/>
+            <column name="dealer_name" value="User Department"/>
+            <column name="organization_name" value="ERP System"/>
+            <column name="department" value="Operations"/>
+        </insert>
+        
+        <!-- Insert basic SecurityClearance records -->
+        <insert tableName="security_clearance">
+            <column name="id" valueNumeric="1001"/>
+            <column name="clearance_level" value="ADMIN"/>
+        </insert>
+        
+        <insert tableName="security_clearance">
+            <column name="id" valueNumeric="1002"/>
+            <column name="clearance_level" value="USER"/>
+        </insert>
+        
+        <!-- Insert ApplicationUser for admin -->
+        <insert tableName="application_user">
+            <column name="id" valueNumeric="1001"/>
+            <column name="designation" value="550e8400-e29b-41d4-a716-446655440001"/>
+            <column name="application_identity" value="admin"/>
+            <column name="organization_id" valueNumeric="1001"/>
+            <column name="department_id" valueNumeric="1001"/>
+            <column name="security_clearance_id" valueNumeric="1001"/>
+            <column name="system_identity_id" valueNumeric="1"/>
+            <column name="dealer_identity_id" valueNumeric="1001"/>
+        </insert>
+        
+        <!-- Insert ApplicationUser for user -->
+        <insert tableName="application_user">
+            <column name="id" valueNumeric="1002"/>
+            <column name="designation" value="550e8400-e29b-41d4-a716-446655440002"/>
+            <column name="application_identity" value="user"/>
+            <column name="organization_id" valueNumeric="1002"/>
+            <column name="department_id" valueNumeric="1002"/>
+            <column name="security_clearance_id" valueNumeric="1002"/>
+            <column name="system_identity_id" valueNumeric="2"/>
+            <column name="dealer_identity_id" valueNumeric="1002"/>
+        </insert>
+        
+        <rollback>
+            <delete tableName="application_user">
+                <where>id IN (1001, 1002)</where>
+            </delete>
+            <delete tableName="security_clearance">
+                <where>id IN (1001, 1002)</where>
+            </delete>
+            <delete tableName="dealer">
+                <where>id IN (1001, 1002)</where>
+            </delete>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20250804191511-1" author="devin" context="dev">
+        <comment>Load test data for intermediate entities</comment>
+        
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="asset_warranty_assignment"/>
+            <tableExists tableName="asset_purchase_order_assignment"/>
+            <tableExists tableName="asset_document_assignment"/>
+            <tableExists tableName="asset_payment_invoice_assignment"/>
+            <tableExists tableName="asset_job_sheet_assignment"/>
+        </preConditions>
+        
+        <loadData file="config/liquibase/data/asset_warranty_assignment_test.csv"
+                  separator=";"
+                  tableName="asset_warranty_assignment"
+                  usePreparedStatements="true">
+            <column name="id" type="numeric"/>
+            <column name="assignment_date" type="date"/>
+            <column name="assignment_details" type="string"/>
+            <column name="asset_registration_id" type="numeric"/>
+            <column name="asset_warranty_id" type="numeric"/>
+        </loadData>
+        
+        <loadData file="config/liquibase/data/asset_purchase_order_assignment_test.csv"
+                  separator=";"
+                  tableName="asset_purchase_order_assignment"
+                  usePreparedStatements="true">
+            <column name="id" type="numeric"/>
+            <column name="assignment_date" type="date"/>
+            <column name="assignment_details" type="string"/>
+            <column name="asset_registration_id" type="numeric"/>
+            <column name="purchase_order_id" type="numeric"/>
+        </loadData>
+        
+        <loadData file="config/liquibase/data/asset_document_assignment_test.csv"
+                  separator=";"
+                  tableName="asset_document_assignment"
+                  usePreparedStatements="true">
+            <column name="id" type="numeric"/>
+            <column name="assignment_date" type="date"/>
+            <column name="assignment_details" type="string"/>
+            <column name="asset_registration_id" type="numeric"/>
+            <column name="business_document_id" type="numeric"/>
+        </loadData>
+        
+        <loadData file="config/liquibase/data/asset_payment_invoice_assignment_test.csv"
+                  separator=";"
+                  tableName="asset_payment_invoice_assignment"
+                  usePreparedStatements="true">
+            <column name="id" type="numeric"/>
+            <column name="assignment_date" type="date"/>
+            <column name="assignment_details" type="string"/>
+            <column name="asset_registration_id" type="numeric"/>
+            <column name="payment_invoice_id" type="numeric"/>
+        </loadData>
+        
+        <loadData file="config/liquibase/data/asset_job_sheet_assignment_test.csv"
+                  separator=";"
+                  tableName="asset_job_sheet_assignment"
+                  usePreparedStatements="true">
+            <column name="id" type="numeric"/>
+            <column name="assignment_date" type="date"/>
+            <column name="assignment_details" type="string"/>
+            <column name="asset_registration_id" type="numeric"/>
+            <column name="job_sheet_id" type="numeric"/>
+        </loadData>
+        
+        <rollback>
+            <delete tableName="asset_warranty_assignment">
+                <where>id IN (1, 2, 3)</where>
+            </delete>
+            <delete tableName="asset_purchase_order_assignment">
+                <where>id IN (1, 2, 3)</where>
+            </delete>
+            <delete tableName="asset_document_assignment">
+                <where>id IN (1, 2, 3)</where>
+            </delete>
+            <delete tableName="asset_payment_invoice_assignment">
+                <where>id IN (1, 2, 3)</where>
+            </delete>
+            <delete tableName="asset_job_sheet_assignment">
+                <where>id IN (1, 2, 3)</where>
+            </delete>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

@@ -19,7 +19,6 @@ package io.github.erp.erp.resources;
  */
 import io.github.erp.IntegrationTest;
 import io.github.erp.domain.*;
-import io.github.erp.erp.resources.leases.DetailedLeaseContractResourceProd;
 import io.github.erp.repository.DetailedLeaseContractRepository;
 import io.github.erp.repository.search.DetailedLeaseContractSearchRepository;
 import io.github.erp.service.dto.DetailedLeaseContractDTO;

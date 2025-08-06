@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd">
+
+    <changeSet id="20250105120000-1" author="devin">
+        <createSequence sequenceName="domain_event_sequence" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="20250105120000-2" author="devin">
+        <createTable tableName="domain_event">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="event_id" type="${uuidType}">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="event_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="occurred_on" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="correlation_id" type="${uuidType}"/>
+            <column name="aggregate_id" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="aggregate_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="processed" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="retry_count" type="integer" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="${datetimeType}"/>
+            <column name="last_modified_by" type="varchar(50)"/>
+            <column name="last_modified_date" type="${datetimeType}"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20250105120000-3" author="devin">
+        <createIndex indexName="idx_domain_event_type" tableName="domain_event">
+            <column name="event_type"/>
+        </createIndex>
+        <createIndex indexName="idx_domain_event_aggregate" tableName="domain_event">
+            <column name="aggregate_type"/>
+            <column name="aggregate_id"/>
+        </createIndex>
+        <createIndex indexName="idx_domain_event_correlation" tableName="domain_event">
+            <column name="correlation_id"/>
+        </createIndex>
+        <createIndex indexName="idx_domain_event_processed" tableName="domain_event">
+            <column name="processed"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

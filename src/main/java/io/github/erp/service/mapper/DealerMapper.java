@@ -26,10 +26,10 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity {@link Dealer} and its DTO {@link DealerDTO}.
  */
-@Mapper(componentModel = "spring", uses = { PaymentLabelMapper.class, PlaceholderMapper.class })
+@Mapper(componentModel = "spring", uses = { PaymentLabelMapper.class, DealerGroupMapper.class, PlaceholderMapper.class })
 public interface DealerMapper extends EntityMapper<DealerDTO, Dealer> {
     @Mapping(target = "paymentLabels", source = "paymentLabels", qualifiedByName = "descriptionSet")
-    @Mapping(target = "dealerGroup", source = "dealerGroup", qualifiedByName = "dealerName")
+    @Mapping(target = "dealerGroup", source = "dealerGroup", qualifiedByName = "groupName")
     @Mapping(target = "placeholders", source = "placeholders", qualifiedByName = "idSet")
     DealerDTO toDto(Dealer s);
 

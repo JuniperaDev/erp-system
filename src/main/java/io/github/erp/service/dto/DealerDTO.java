@@ -70,7 +70,7 @@ public class DealerDTO implements Serializable {
 
     private Set<PaymentLabelDTO> paymentLabels = new HashSet<>();
 
-    private DealerDTO dealerGroup;
+    private DealerGroupDTO dealerGroup;
 
     private Set<PlaceholderDTO> placeholders = new HashSet<>();
 
@@ -226,11 +226,11 @@ public class DealerDTO implements Serializable {
         this.paymentLabels = paymentLabels;
     }
 
-    public DealerDTO getDealerGroup() {
+    public DealerGroupDTO getDealerGroup() {
         return dealerGroup;
     }
 
-    public void setDealerGroup(DealerDTO dealerGroup) {
+    public void setDealerGroup(DealerGroupDTO dealerGroup) {
         this.dealerGroup = dealerGroup;
     }
 

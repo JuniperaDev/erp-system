@@ -326,6 +326,9 @@
     <include file="config/liquibase/changelog/20210627082202_added_entity_constraints_Invoice.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210627092712_added_entity_constraints_Payment.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210721163636_added_entity_constraints_Dealer.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250804184800_added_entity_DealerGroup.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250804184800_added_entity_constraints_DealerGroup.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250804184801_migrate_dealer_groups.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210721172450_added_entity_constraints_PaymentCalculation.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210721173014_added_entity_constraints_PaymentRequisition.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210721174739_added_entity_constraints_TaxReference.xml" relativeToChangelogFile="false"/>
@@ -605,6 +608,13 @@
     <include file="config/liquibase/changelog/20240804191505_validate_migration_data.xml" relativeToChangelogFile="false"/>
     <!-- Drop old join tables after validation passes -->
     <include file="config/liquibase/changelog/20240804191506_drop_old_join_tables.xml" relativeToChangelogFile="false"/>
+    <!-- Domain Event Infrastructure migrations -->
+    <include file="config/liquibase/changelog/20250105120000_added_entity_DomainEvent.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250105120001_added_entity_AssetCreatedEvent.xml" relativeToChangelogFile="false"/>
+    <!-- SettlementGroup entity migrations -->
+    <include file="config/liquibase/changelog/20250804182800_added_entity_SettlementGroup.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250804182801_added_entity_constraints_SettlementGroup.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250804182802_migrate_settlement_group_data.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

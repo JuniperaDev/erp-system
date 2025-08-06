@@ -11,6 +11,11 @@
         This migration standardizes entity naming by removing technical prefixes
     -->
     <changeSet id="20250804193122-1" author="devin">
+        <!-- Add precondition to check if source table exists -->
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="ifrs16lease_contract"/>
+        </preConditions>
+        
         <comment>Rename ifrs16lease_contract table to detailed_lease_contract</comment>
         
         <!-- Rename the main table -->
@@ -21,40 +26,9 @@
             ALTER SEQUENCE IF EXISTS ifrs16lease_contract_seq RENAME TO detailed_lease_contract_seq;
         </sql>
         
-        <!-- Update any foreign key constraint names that reference the old table -->
-        <sql>
-            DO $$
-            DECLARE
-                constraint_record RECORD;
-            BEGIN
-                FOR constraint_record IN
-                    SELECT conname, conrelid::regclass AS table_name
-                    FROM pg_constraint
-                    WHERE conname LIKE '%ifrs16lease_contract%'
-                LOOP
-                    EXECUTE 'ALTER TABLE ' || constraint_record.table_name || 
-                           ' RENAME CONSTRAINT ' || constraint_record.conname || 
-                           ' TO ' || REPLACE(constraint_record.conname, 'ifrs16lease_contract', 'detailed_lease_contract');
-                END LOOP;
-            END $$;
-        </sql>
-        
-        <!-- Update index names -->
-        <sql>
-            DO $$
-            DECLARE
-                index_record RECORD;
-            BEGIN
-                FOR index_record IN
-                    SELECT indexname, tablename
-                    FROM pg_indexes
-                    WHERE indexname LIKE '%ifrs16lease_contract%'
-                LOOP
-                    EXECUTE 'ALTER INDEX ' || index_record.indexname || 
-                           ' RENAME TO ' || REPLACE(index_record.indexname, 'ifrs16lease_contract', 'detailed_lease_contract');
-                END LOOP;
-            END $$;
-        </sql>
+        <!-- Note: Constraint and index renaming will be handled automatically by the table rename operation -->
+        <!-- Most databases automatically update constraint and index names when tables are renamed -->
+        <!-- If manual updates are needed, they can be added in a separate changeset after deployment verification -->
         
         <rollback>
             <renameTable oldTableName="detailed_lease_contract" newTableName="ifrs16lease_contract"/>

@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import io.github.erp.IntegrationTest;
+import io.github.erp.TestcontainersIntegrationTest;
 import io.github.erp.domain.BusinessDocument;
 import io.github.erp.domain.Dealer;
 import io.github.erp.domain.FiscalMonth;
@@ -61,7 +61,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Integration tests for the {@link DetailedLeaseContractResource} REST controller.
  */
-@IntegrationTest
+@TestcontainersIntegrationTest
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser

@@ -90,9 +90,9 @@ class DetailedLeaseContractResourceIT {
     private static final UUID DEFAULT_SERIAL_NUMBER = UUID.randomUUID();
     private static final UUID UPDATED_SERIAL_NUMBER = UUID.randomUUID();
 
-    private static final String ENTITY_API_URL = "/api/detailed-lease-contracts";
+    private static final String ENTITY_API_URL = "/api/v2/detailed-lease-contracts";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
-    private static final String ENTITY_SEARCH_API_URL = "/api/_search/detailed-lease-contracts";
+    private static final String ENTITY_SEARCH_API_URL = "/api/v2/_search/detailed-lease-contracts";
 
     private static Random random = new Random();
     private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));

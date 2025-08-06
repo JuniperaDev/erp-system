@@ -5,7 +5,11 @@
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1709922467221-13">
         <preConditions onFail="MARK_RAN">
-            <uniqueConstraintExists tableName="detailed_lease_contract" constraintName="ux_detailed_lease_contract__lease_title"/>
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*) FROM information_schema.table_constraints 
+                WHERE constraint_name = 'ux_detailed_lease_contract__lease_title' 
+                AND table_name = 'detailed_lease_contract'
+            </sqlCheck>
         </preConditions>
         <dropUniqueConstraint constraintName="ux_detailed_lease_contract__lease_title" tableName="detailed_lease_contract"/>
     </changeSet>

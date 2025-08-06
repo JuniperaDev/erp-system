@@ -12,7 +12,11 @@
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1715076299658-20">
         <preConditions onFail="MARK_RAN">
-            <uniqueConstraintExists tableName="monthly_prepayment_report_req" constraintName="ux_monthly_prepayment_report_req__report_name"/>
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*) FROM information_schema.table_constraints 
+                WHERE constraint_name = 'ux_monthly_prepayment_report_req__report_name' 
+                AND table_name = 'monthly_prepayment_report_req'
+            </sqlCheck>
         </preConditions>
         <dropUniqueConstraint constraintName="ux_monthly_prepayment_report_req__report_name" tableName="monthly_prepayment_report_req"/>
     </changeSet>

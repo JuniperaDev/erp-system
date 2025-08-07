@@ -30,7 +30,7 @@ import org.mapstruct.*;
     uses = {
         TransactionAccountMapper.class,
         AssetCategoryMapper.class,
-        IFRS16LeaseContractMapper.class,
+        DetailedLeaseContractMapper.class,
         RouModelMetadataMapper.class,
         LeasePeriodMapper.class,
     }

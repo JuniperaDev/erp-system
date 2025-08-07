@@ -51,7 +51,7 @@ public interface InternalLeaseLiabilityReportItemRepository
             "   sched.interest_payable_closing as interestPayableAmount " +
             "FROM lease_liability_schedule_item sched " +
             "LEFT JOIN lease_liability ll ON sched.lease_liability_id = ll.id " +
-            "LEFT JOIN ifrs16lease_contract lc ON sched.lease_contract_id = lc.id " +
+            "LEFT JOIN detailed_lease_contract lc ON sched.lease_contract_id = lc.id " +
             "LEFT JOIN lease_repayment_period lp ON sched.lease_period_id = lp.id " +
             "WHERE sched.lease_period_id = :leasePeriodId",
         countQuery = "" +
@@ -65,7 +65,7 @@ public interface InternalLeaseLiabilityReportItemRepository
             "   sched.interest_payable_closing as interestPayableAmount " +
             "FROM lease_liability_schedule_item sched " +
             "LEFT JOIN lease_liability ll ON sched.lease_liability_id = ll.id " +
-            "LEFT JOIN ifrs16lease_contract lc ON sched.lease_contract_id = lc.id " +
+            "LEFT JOIN detailed_lease_contract lc ON sched.lease_contract_id = lc.id " +
             "LEFT JOIN lease_repayment_period lp ON sched.lease_period_id = lp.id " +
             "WHERE sched.lease_period_id = :leasePeriodId"
     )

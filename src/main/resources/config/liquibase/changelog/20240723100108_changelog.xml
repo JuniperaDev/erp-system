@@ -16,18 +16,33 @@
         <addForeignKeyConstraint baseColumnNames="original_settlement_id" baseTableName="work_in_progress_transfer" constraintName="FKfyqmwp5qn6ypsmbchw81wji58" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="settlement" validate="true"/>
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1721728966823-13">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyTableName="batch_job_execution_context" foreignKeyName="job_exec_ctx_fk"/>
+        </preConditions>
         <dropForeignKeyConstraint baseTableName="batch_job_execution_context" constraintName="job_exec_ctx_fk"/>
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1721728966823-14">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyTableName="batch_job_execution_params" foreignKeyName="job_exec_params_fk"/>
+        </preConditions>
         <dropForeignKeyConstraint baseTableName="batch_job_execution_params" constraintName="job_exec_params_fk"/>
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1721728966823-15">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyTableName="batch_step_execution" foreignKeyName="job_execution_step_fk"/>
+        </preConditions>
         <dropForeignKeyConstraint baseTableName="batch_step_execution" constraintName="job_execution_step_fk"/>
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1721728966823-16">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyTableName="batch_job_execution" foreignKeyName="job_instance_execution_fk"/>
+        </preConditions>
         <dropForeignKeyConstraint baseTableName="batch_job_execution" constraintName="job_instance_execution_fk"/>
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1721728966823-17">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyTableName="batch_step_execution_context" foreignKeyName="step_exec_ctx_fk"/>
+        </preConditions>
         <dropForeignKeyConstraint baseTableName="batch_step_execution_context" constraintName="step_exec_ctx_fk"/>
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1721728966823-18">

@@ -52,7 +52,7 @@ public interface ROUAmortizationTransactionDetailsRepository
             "FROM " +
             "    rou_depreciation_entry re " +
             "JOIN " +
-            "    ifrs16lease_contract lc ON re.lease_contract_id = lc.id " +
+            "    detailed_lease_contract lc ON re.lease_contract_id = lc.id " +
             "JOIN " +
             "    taamortization_rule ar ON ar.lease_contract_id = lc.id " +
             "LEFT JOIN " +

@@ -78,7 +78,7 @@ public class RouModelMetadataCriteria implements Serializable, Criteria {
 
     private ZonedDateTimeFilter compilationTime;
 
-    private LongFilter ifrs16LeaseContractId;
+    private LongFilter detailedLeaseContractId;
 
     private LongFilter assetAccountId;
 
@@ -113,7 +113,7 @@ public class RouModelMetadataCriteria implements Serializable, Criteria {
             other.outstandingAmountStepIdentifier == null ? null : other.outstandingAmountStepIdentifier.copy();
         this.flagAmortisedStepIdentifier = other.flagAmortisedStepIdentifier == null ? null : other.flagAmortisedStepIdentifier.copy();
         this.compilationTime = other.compilationTime == null ? null : other.compilationTime.copy();
-        this.ifrs16LeaseContractId = other.ifrs16LeaseContractId == null ? null : other.ifrs16LeaseContractId.copy();
+        this.detailedLeaseContractId = other.detailedLeaseContractId == null ? null : other.detailedLeaseContractId.copy();
         this.assetAccountId = other.assetAccountId == null ? null : other.assetAccountId.copy();
         this.depreciationAccountId = other.depreciationAccountId == null ? null : other.depreciationAccountId.copy();
         this.accruedDepreciationAccountId = other.accruedDepreciationAccountId == null ? null : other.accruedDepreciationAccountId.copy();
@@ -367,19 +367,19 @@ public class RouModelMetadataCriteria implements Serializable, Criteria {
         this.compilationTime = compilationTime;
     }
 
-    public LongFilter getIfrs16LeaseContractId() {
-        return ifrs16LeaseContractId;
+    public LongFilter getDetailedLeaseContractId() {
+        return detailedLeaseContractId;
     }
 
-    public LongFilter ifrs16LeaseContractId() {
-        if (ifrs16LeaseContractId == null) {
-            ifrs16LeaseContractId = new LongFilter();
+    public LongFilter detailedLeaseContractId() {
+        if (detailedLeaseContractId == null) {
+            detailedLeaseContractId = new LongFilter();
         }
-        return ifrs16LeaseContractId;
+        return detailedLeaseContractId;
     }
 
-    public void setIfrs16LeaseContractId(LongFilter ifrs16LeaseContractId) {
-        this.ifrs16LeaseContractId = ifrs16LeaseContractId;
+    public void setDetailedLeaseContractId(LongFilter detailedLeaseContractId) {
+        this.detailedLeaseContractId = detailedLeaseContractId;
     }
 
     public LongFilter getAssetAccountId() {
@@ -491,7 +491,7 @@ public class RouModelMetadataCriteria implements Serializable, Criteria {
             Objects.equals(outstandingAmountStepIdentifier, that.outstandingAmountStepIdentifier) &&
             Objects.equals(flagAmortisedStepIdentifier, that.flagAmortisedStepIdentifier) &&
             Objects.equals(compilationTime, that.compilationTime) &&
-            Objects.equals(ifrs16LeaseContractId, that.ifrs16LeaseContractId) &&
+            Objects.equals(detailedLeaseContractId, that.detailedLeaseContractId) &&
             Objects.equals(assetAccountId, that.assetAccountId) &&
             Objects.equals(depreciationAccountId, that.depreciationAccountId) &&
             Objects.equals(accruedDepreciationAccountId, that.accruedDepreciationAccountId) &&
@@ -520,7 +520,7 @@ public class RouModelMetadataCriteria implements Serializable, Criteria {
             outstandingAmountStepIdentifier,
             flagAmortisedStepIdentifier,
             compilationTime,
-            ifrs16LeaseContractId,
+            detailedLeaseContractId,
             assetAccountId,
             depreciationAccountId,
             accruedDepreciationAccountId,
@@ -550,7 +550,7 @@ public class RouModelMetadataCriteria implements Serializable, Criteria {
             (outstandingAmountStepIdentifier != null ? "outstandingAmountStepIdentifier=" + outstandingAmountStepIdentifier + ", " : "") +
             (flagAmortisedStepIdentifier != null ? "flagAmortisedStepIdentifier=" + flagAmortisedStepIdentifier + ", " : "") +
             (compilationTime != null ? "compilationTime=" + compilationTime + ", " : "") +
-            (ifrs16LeaseContractId != null ? "ifrs16LeaseContractId=" + ifrs16LeaseContractId + ", " : "") +
+            (detailedLeaseContractId != null ? "detailedLeaseContractId=" + detailedLeaseContractId + ", " : "") +
             (assetAccountId != null ? "assetAccountId=" + assetAccountId + ", " : "") +
             (depreciationAccountId != null ? "depreciationAccountId=" + depreciationAccountId + ", " : "") +
             (accruedDepreciationAccountId != null ? "accruedDepreciationAccountId=" + accruedDepreciationAccountId + ", " : "") +

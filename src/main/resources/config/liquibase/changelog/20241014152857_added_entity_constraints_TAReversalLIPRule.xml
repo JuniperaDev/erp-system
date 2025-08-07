@@ -12,7 +12,7 @@
                                  baseTableName="tareversalliprule"
                                  constraintName="fk_tareversalliprule__lease_contract_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="ifrs16lease_contract"/>
+                                 referencedTableName="detailed_lease_contract"/>
 
         <addForeignKeyConstraint baseColumnNames="debit_id"
                                  baseTableName="tareversalliprule"

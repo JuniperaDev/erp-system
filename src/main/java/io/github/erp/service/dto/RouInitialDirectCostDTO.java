@@ -44,7 +44,7 @@ public class RouInitialDirectCostDTO implements Serializable {
 
     private Long referenceNumber;
 
-    private IFRS16LeaseContractDTO leaseContract;
+    private DetailedLeaseContractDTO leaseContract;
 
     private SettlementDTO settlementDetails;
 
@@ -94,11 +94,11 @@ public class RouInitialDirectCostDTO implements Serializable {
         this.referenceNumber = referenceNumber;
     }
 
-    public IFRS16LeaseContractDTO getLeaseContract() {
+    public DetailedLeaseContractDTO getLeaseContract() {
         return leaseContract;
     }
 
-    public void setLeaseContract(IFRS16LeaseContractDTO leaseContract) {
+    public void setLeaseContract(DetailedLeaseContractDTO leaseContract) {
         this.leaseContract = leaseContract;
     }
 

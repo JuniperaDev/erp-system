@@ -87,7 +87,8 @@
   "jpaMetamodelFiltering": true,
   "readOnly": false,
   "pagination": "pagination",
-  "name": "IFRS16LeaseContract",
+  "name": "DetailedLeaseContract",
   "changelogDate": "20240307045420",
+  "tableName": "detailed_lease_contract",
   "incrementalChangelog": false
 }

@@ -21,7 +21,7 @@ import io.github.erp.domain.LeaseRepaymentPeriod;
 import io.github.erp.internal.repository.InternalLeaseRepaymentPeriodRepository;
 import io.github.erp.repository.LeaseRepaymentPeriodRepository;
 import io.github.erp.repository.search.LeaseRepaymentPeriodSearchRepository;
-import io.github.erp.service.dto.IFRS16LeaseContractDTO;
+import io.github.erp.service.dto.DetailedLeaseContractDTO;
 import io.github.erp.service.dto.LeaseRepaymentPeriodDTO;
 import io.github.erp.service.mapper.LeaseRepaymentPeriodMapper;
 import org.slf4j.Logger;
@@ -120,7 +120,7 @@ public class InternalLeaseRepaymentPeriodServiceImpl implements InternalLeaseRep
     }
 
     /**
-     * List of lease-repayment-period items related to the IFRS16 contract.
+     * List of lease-repayment-period items related to the detailed lease contract.
      *
      * @param commencementDate of the lease-contract
      * @param numberOfPeriods for the lease-contract

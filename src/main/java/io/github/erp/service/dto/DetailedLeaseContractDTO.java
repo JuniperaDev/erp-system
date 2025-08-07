@@ -25,9 +25,9 @@ import java.util.UUID;
 import javax.validation.constraints.*;
 
 /**
- * A DTO for the {@link io.github.erp.domain.IFRS16LeaseContract} entity.
+ * A DTO for the {@link io.github.erp.domain.DetailedLeaseContract} entity.
  */
-public class IFRS16LeaseContractDTO implements Serializable {
+public class DetailedLeaseContractDTO implements Serializable {
 
     private Long id;
 
@@ -178,15 +178,15 @@ public class IFRS16LeaseContractDTO implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof IFRS16LeaseContractDTO)) {
+        if (!(o instanceof DetailedLeaseContractDTO)) {
             return false;
         }
 
-        IFRS16LeaseContractDTO iFRS16LeaseContractDTO = (IFRS16LeaseContractDTO) o;
+        DetailedLeaseContractDTO detailedLeaseContractDTO = (DetailedLeaseContractDTO) o;
         if (this.id == null) {
             return false;
         }
-        return Objects.equals(this.id, iFRS16LeaseContractDTO.id);
+        return Objects.equals(this.id, detailedLeaseContractDTO.id);
     }
 
     @Override
@@ -197,7 +197,7 @@ public class IFRS16LeaseContractDTO implements Serializable {
     // prettier-ignore
     @Override
     public String toString() {
-        return "IFRS16LeaseContractDTO{" +
+        return "DetailedLeaseContractDTO{" +
             "id=" + getId() +
             ", bookingId='" + getBookingId() + "'" +
             ", leaseTitle='" + getLeaseTitle() + "'" +

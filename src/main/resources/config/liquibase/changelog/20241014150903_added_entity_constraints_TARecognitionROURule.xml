@@ -12,7 +12,7 @@
                                  baseTableName="tarecognitionrourule"
                                  constraintName="fk_tarecognitionrourule__lease_contract_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="ifrs16lease_contract"/>
+                                 referencedTableName="detailed_lease_contract"/>
 
         <addForeignKeyConstraint baseColumnNames="debit_id"
                                  baseTableName="tarecognitionrourule"

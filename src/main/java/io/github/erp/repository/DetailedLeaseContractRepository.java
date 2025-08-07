@@ -1,4 +1,4 @@
-package io.github.erp.service.mapper;
+package io.github.erp.repository;
 
 /*-
  * Erp System - Mark X No 10 (Jehoiada Series) Server ver 1.8.2
@@ -18,17 +18,14 @@ package io.github.erp.service.mapper;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.erp.domain.DetailedLeaseContract;
+import org.springframework.data.jpa.repository.*;
+import org.springframework.stereotype.Repository;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class IFRS16LeaseContractMapperTest {
-
-    private IFRS16LeaseContractMapper iFRS16LeaseContractMapper;
-
-    @BeforeEach
-    public void setUp() {
-        iFRS16LeaseContractMapper = new IFRS16LeaseContractMapperImpl();
-    }
-}
+/**
+ * Spring Data SQL repository for the DetailedLeaseContract entity.
+ */
+@SuppressWarnings("unused")
+@Repository
+public interface DetailedLeaseContractRepository
+    extends JpaRepository<DetailedLeaseContract, Long>, JpaSpecificationExecutor<DetailedLeaseContract> {}

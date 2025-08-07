@@ -52,7 +52,7 @@ public interface LeaseInterestAccrualTransactionDetailsRepository
             "FROM  " +
             "    lease_liability_schedule_item lls  " +
             "LEFT JOIN  " +
-            "    ifrs16lease_contract lc ON lls.lease_contract_id = lc.id  " +
+            "    detailed_lease_contract lc ON lls.lease_contract_id = lc.id  " +
             "LEFT JOIN  " +
             "    talease_interest_accrual_rule lia ON lls.lease_contract_id = lia.lease_contract_id   " +
             "LEFT JOIN  " +

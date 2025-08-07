@@ -86,7 +86,7 @@
     },
     {
       "relationshipName": "leaseContract",
-      "otherEntityName": "iFRS16LeaseContract",
+      "otherEntityName": "detailedLeaseContract",
       "relationshipType": "many-to-one",
       "relationshipValidateRules": ["required"],
       "otherEntityField": "bookingId"

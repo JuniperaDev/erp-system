@@ -68,7 +68,7 @@ public class TALeaseRecognitionRule implements Serializable {
     @OneToOne(optional = false)
     @NotNull
     @JoinColumn(unique = true)
-    private IFRS16LeaseContract leaseContract;
+    private DetailedLeaseContract leaseContract;
 
     @ManyToOne(optional = false)
     @NotNull
@@ -137,16 +137,16 @@ public class TALeaseRecognitionRule implements Serializable {
         this.identifier = identifier;
     }
 
-    public IFRS16LeaseContract getLeaseContract() {
+    public DetailedLeaseContract getLeaseContract() {
         return this.leaseContract;
     }
 
-    public void setLeaseContract(IFRS16LeaseContract iFRS16LeaseContract) {
-        this.leaseContract = iFRS16LeaseContract;
+    public void setLeaseContract(DetailedLeaseContract detailedLeaseContract) {
+        this.leaseContract = detailedLeaseContract;
     }
 
-    public TALeaseRecognitionRule leaseContract(IFRS16LeaseContract iFRS16LeaseContract) {
-        this.setLeaseContract(iFRS16LeaseContract);
+    public TALeaseRecognitionRule leaseContract(DetailedLeaseContract detailedLeaseContract) {
+        this.setLeaseContract(detailedLeaseContract);
         return this;
     }
 

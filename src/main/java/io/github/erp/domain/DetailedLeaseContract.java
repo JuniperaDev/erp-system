@@ -31,13 +31,13 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 /**
- * A IFRS16LeaseContract.
+ * A DetailedLeaseContract.
  */
 @Entity
-@Table(name = "ifrs16lease_contract")
+@Table(name = "detailed_lease_contract")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "ifrs16leasecontract-" + "#{ T(java.time.LocalDate).now().format(T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM')) }")
-public class IFRS16LeaseContract implements Serializable {
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "detailedleasecontract-" + "#{ T(java.time.LocalDate).now().format(T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM')) }")
+public class DetailedLeaseContract implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -144,7 +144,7 @@ public class IFRS16LeaseContract implements Serializable {
         return this.id;
     }
 
-    public IFRS16LeaseContract id(Long id) {
+    public DetailedLeaseContract id(Long id) {
         this.setId(id);
         return this;
     }
@@ -157,7 +157,7 @@ public class IFRS16LeaseContract implements Serializable {
         return this.bookingId;
     }
 
-    public IFRS16LeaseContract bookingId(String bookingId) {
+    public DetailedLeaseContract bookingId(String bookingId) {
         this.setBookingId(bookingId);
         return this;
     }
@@ -170,7 +170,7 @@ public class IFRS16LeaseContract implements Serializable {
         return this.leaseTitle;
     }
 
-    public IFRS16LeaseContract leaseTitle(String leaseTitle) {
+    public DetailedLeaseContract leaseTitle(String leaseTitle) {
         this.setLeaseTitle(leaseTitle);
         return this;
     }
@@ -183,7 +183,7 @@ public class IFRS16LeaseContract implements Serializable {
         return this.shortTitle;
     }
 
-    public IFRS16LeaseContract shortTitle(String shortTitle) {
+    public DetailedLeaseContract shortTitle(String shortTitle) {
         this.setShortTitle(shortTitle);
         return this;
     }
@@ -196,7 +196,7 @@ public class IFRS16LeaseContract implements Serializable {
         return this.description;
     }
 
-    public IFRS16LeaseContract description(String description) {
+    public DetailedLeaseContract description(String description) {
         this.setDescription(description);
         return this;
     }
@@ -209,7 +209,7 @@ public class IFRS16LeaseContract implements Serializable {
         return this.inceptionDate;
     }
 
-    public IFRS16LeaseContract inceptionDate(LocalDate inceptionDate) {
+    public DetailedLeaseContract inceptionDate(LocalDate inceptionDate) {
         this.setInceptionDate(inceptionDate);
         return this;
     }
@@ -222,7 +222,7 @@ public class IFRS16LeaseContract implements Serializable {
         return this.commencementDate;
     }
 
-    public IFRS16LeaseContract commencementDate(LocalDate commencementDate) {
+    public DetailedLeaseContract commencementDate(LocalDate commencementDate) {
         this.setCommencementDate(commencementDate);
         return this;
     }
@@ -235,7 +235,7 @@ public class IFRS16LeaseContract implements Serializable {
         return this.serialNumber;
     }
 
-    public IFRS16LeaseContract serialNumber(UUID serialNumber) {
+    public DetailedLeaseContract serialNumber(UUID serialNumber) {
         this.setSerialNumber(serialNumber);
         return this;
     }
@@ -252,7 +252,7 @@ public class IFRS16LeaseContract implements Serializable {
         this.superintendentServiceOutlet = serviceOutlet;
     }
 
-    public IFRS16LeaseContract superintendentServiceOutlet(ServiceOutlet serviceOutlet) {
+    public DetailedLeaseContract superintendentServiceOutlet(ServiceOutlet serviceOutlet) {
         this.setSuperintendentServiceOutlet(serviceOutlet);
         return this;
     }
@@ -265,7 +265,7 @@ public class IFRS16LeaseContract implements Serializable {
         this.mainDealer = dealer;
     }
 
-    public IFRS16LeaseContract mainDealer(Dealer dealer) {
+    public DetailedLeaseContract mainDealer(Dealer dealer) {
         this.setMainDealer(dealer);
         return this;
     }
@@ -278,7 +278,7 @@ public class IFRS16LeaseContract implements Serializable {
         this.firstReportingPeriod = fiscalMonth;
     }
 
-    public IFRS16LeaseContract firstReportingPeriod(FiscalMonth fiscalMonth) {
+    public DetailedLeaseContract firstReportingPeriod(FiscalMonth fiscalMonth) {
         this.setFirstReportingPeriod(fiscalMonth);
         return this;
     }
@@ -291,7 +291,7 @@ public class IFRS16LeaseContract implements Serializable {
         this.lastReportingPeriod = fiscalMonth;
     }
 
-    public IFRS16LeaseContract lastReportingPeriod(FiscalMonth fiscalMonth) {
+    public DetailedLeaseContract lastReportingPeriod(FiscalMonth fiscalMonth) {
         this.setLastReportingPeriod(fiscalMonth);
         return this;
     }
@@ -304,7 +304,7 @@ public class IFRS16LeaseContract implements Serializable {
         this.leaseContractDocument = businessDocument;
     }
 
-    public IFRS16LeaseContract leaseContractDocument(BusinessDocument businessDocument) {
+    public DetailedLeaseContract leaseContractDocument(BusinessDocument businessDocument) {
         this.setLeaseContractDocument(businessDocument);
         return this;
     }
@@ -317,7 +317,7 @@ public class IFRS16LeaseContract implements Serializable {
         this.leaseContractCalculations = businessDocument;
     }
 
-    public IFRS16LeaseContract leaseContractCalculations(BusinessDocument businessDocument) {
+    public DetailedLeaseContract leaseContractCalculations(BusinessDocument businessDocument) {
         this.setLeaseContractCalculations(businessDocument);
         return this;
     }
@@ -336,18 +336,18 @@ public class IFRS16LeaseContract implements Serializable {
         this.leasePayments = leasePayments;
     }
 
-    public IFRS16LeaseContract leasePayments(Set<LeasePayment> leasePayments) {
+    public DetailedLeaseContract leasePayments(Set<LeasePayment> leasePayments) {
         this.setLeasePayments(leasePayments);
         return this;
     }
 
-    public IFRS16LeaseContract addLeasePayment(LeasePayment leasePayment) {
+    public DetailedLeaseContract addLeasePayment(LeasePayment leasePayment) {
         this.leasePayments.add(leasePayment);
         leasePayment.setLeaseContract(this);
         return this;
     }
 
-    public IFRS16LeaseContract removeLeasePayment(LeasePayment leasePayment) {
+    public DetailedLeaseContract removeLeasePayment(LeasePayment leasePayment) {
         this.leasePayments.remove(leasePayment);
         leasePayment.setLeaseContract(null);
         return this;
@@ -360,10 +360,10 @@ public class IFRS16LeaseContract implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof IFRS16LeaseContract)) {
+        if (!(o instanceof DetailedLeaseContract)) {
             return false;
         }
-        return id != null && id.equals(((IFRS16LeaseContract) o).id);
+        return id != null && id.equals(((DetailedLeaseContract) o).id);
     }
 
     @Override
@@ -375,7 +375,7 @@ public class IFRS16LeaseContract implements Serializable {
     // prettier-ignore
     @Override
     public String toString() {
-        return "IFRS16LeaseContract{" +
+        return "DetailedLeaseContract{" +
             "id=" + getId() +
             ", bookingId='" + getBookingId() + "'" +
             ", leaseTitle='" + getLeaseTitle() + "'" +

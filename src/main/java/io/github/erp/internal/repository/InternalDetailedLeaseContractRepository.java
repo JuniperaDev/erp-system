@@ -1,4 +1,4 @@
-package io.github.erp.repository;
+package io.github.erp.internal.repository;
 
 /*-
  * Erp System - Mark X No 10 (Jehoiada Series) Server ver 1.8.2
@@ -17,15 +17,15 @@ package io.github.erp.repository;
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-import io.github.erp.domain.IFRS16LeaseContract;
-import org.springframework.data.jpa.repository.*;
+import io.github.erp.domain.DetailedLeaseContract;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 /**
- * Spring Data SQL repository for the IFRS16LeaseContract entity.
+ * Spring Data SQL repository for the DetailedLeaseContract entity.
  */
 @SuppressWarnings("unused")
 @Repository
-public interface IFRS16LeaseContractRepository
-    extends JpaRepository<IFRS16LeaseContract, Long>, JpaSpecificationExecutor<IFRS16LeaseContract> {}
+public interface InternalDetailedLeaseContractRepository
+    extends JpaRepository<DetailedLeaseContract, Long>, JpaSpecificationExecutor<DetailedLeaseContract> {}

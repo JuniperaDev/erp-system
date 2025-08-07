@@ -1,4 +1,4 @@
-package io.github.erp.internal.repository;
+package io.github.erp.repository.search;
 
 /*-
  * Erp System - Mark X No 10 (Jehoiada Series) Server ver 1.8.2
@@ -17,15 +17,17 @@ package io.github.erp.internal.repository;
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import io.github.erp.domain.IFRS16LeaseContract;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.stereotype.Repository;
+
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * Spring Data SQL repository for the IFRS16LeaseContract entity.
+ * Configure a Mock version of {@link DetailedLeaseContractSearchRepository} to test the
+ * application without starting Elasticsearch.
  */
-@SuppressWarnings("unused")
-@Repository
-public interface InternalIFRS16LeaseContractRepository
-    extends JpaRepository<IFRS16LeaseContract, Long>, JpaSpecificationExecutor<IFRS16LeaseContract> {}
+@Configuration
+public class DetailedLeaseContractSearchRepositoryMockConfiguration {
+
+    @MockBean
+    private DetailedLeaseContractSearchRepository mockDetailedLeaseContractSearchRepository;
+}

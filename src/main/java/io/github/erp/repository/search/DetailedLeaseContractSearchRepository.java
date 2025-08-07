@@ -20,7 +20,7 @@ package io.github.erp.repository.search;
 
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
-import io.github.erp.domain.IFRS16LeaseContract;
+import io.github.erp.domain.DetailedLeaseContract;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -33,29 +33,29 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 /**
- * Spring Data Elasticsearch repository for the {@link IFRS16LeaseContract} entity.
+ * Spring Data Elasticsearch repository for the {@link DetailedLeaseContract} entity.
  */
-public interface IFRS16LeaseContractSearchRepository
-    extends ElasticsearchRepository<IFRS16LeaseContract, Long>, IFRS16LeaseContractSearchRepositoryInternal {}
+public interface DetailedLeaseContractSearchRepository
+    extends ElasticsearchRepository<DetailedLeaseContract, Long>, DetailedLeaseContractSearchRepositoryInternal {}
 
-interface IFRS16LeaseContractSearchRepositoryInternal {
-    Page<IFRS16LeaseContract> search(String query, Pageable pageable);
+interface DetailedLeaseContractSearchRepositoryInternal {
+    Page<DetailedLeaseContract> search(String query, Pageable pageable);
 }
 
-class IFRS16LeaseContractSearchRepositoryInternalImpl implements IFRS16LeaseContractSearchRepositoryInternal {
+class DetailedLeaseContractSearchRepositoryInternalImpl implements DetailedLeaseContractSearchRepositoryInternal {
 
     private final ElasticsearchRestTemplate elasticsearchTemplate;
 
-    IFRS16LeaseContractSearchRepositoryInternalImpl(ElasticsearchRestTemplate elasticsearchTemplate) {
+    DetailedLeaseContractSearchRepositoryInternalImpl(ElasticsearchRestTemplate elasticsearchTemplate) {
         this.elasticsearchTemplate = elasticsearchTemplate;
     }
 
     @Override
-    public Page<IFRS16LeaseContract> search(String query, Pageable pageable) {
+    public Page<DetailedLeaseContract> search(String query, Pageable pageable) {
         NativeSearchQuery nativeSearchQuery = new NativeSearchQuery(queryStringQuery(query));
         nativeSearchQuery.setPageable(pageable);
-        List<IFRS16LeaseContract> hits = elasticsearchTemplate
-            .search(nativeSearchQuery, IFRS16LeaseContract.class)
+        List<DetailedLeaseContract> hits = elasticsearchTemplate
+            .search(nativeSearchQuery, DetailedLeaseContract.class)
             .map(SearchHit::getContent)
             .stream()
             .collect(Collectors.toList());

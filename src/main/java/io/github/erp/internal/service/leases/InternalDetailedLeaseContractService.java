@@ -1,4 +1,4 @@
-package io.github.erp.service;
+package io.github.erp.internal.service.leases;
 
 /*-
  * Erp System - Mark X No 10 (Jehoiada Series) Server ver 1.8.2
@@ -17,62 +17,62 @@ package io.github.erp.service;
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-import io.github.erp.service.dto.IFRS16LeaseContractDTO;
-import java.util.Optional;
+import io.github.erp.service.dto.DetailedLeaseContractDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Optional;
+
 /**
- * Service Interface for managing {@link io.github.erp.domain.IFRS16LeaseContract}.
+ * Service Interface for managing {@link io.github.erp.domain.DetailedLeaseContract}.
  */
-public interface IFRS16LeaseContractService {
+public interface InternalDetailedLeaseContractService {
     /**
-     * Save a iFRS16LeaseContract.
+     * Save a detailedLeaseContract.
      *
-     * @param iFRS16LeaseContractDTO the entity to save.
+     * @param detailedLeaseContractDTO the entity to save.
      * @return the persisted entity.
      */
-    IFRS16LeaseContractDTO save(IFRS16LeaseContractDTO iFRS16LeaseContractDTO);
+    DetailedLeaseContractDTO save(DetailedLeaseContractDTO detailedLeaseContractDTO);
 
     /**
-     * Partially updates a iFRS16LeaseContract.
+     * Partially updates a detailedLeaseContract.
      *
-     * @param iFRS16LeaseContractDTO the entity to update partially.
+     * @param detailedLeaseContractDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<IFRS16LeaseContractDTO> partialUpdate(IFRS16LeaseContractDTO iFRS16LeaseContractDTO);
+    Optional<DetailedLeaseContractDTO> partialUpdate(DetailedLeaseContractDTO detailedLeaseContractDTO);
 
     /**
-     * Get all the iFRS16LeaseContracts.
+     * Get all the detailedLeaseContracts.
      *
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Page<IFRS16LeaseContractDTO> findAll(Pageable pageable);
+    Page<DetailedLeaseContractDTO> findAll(Pageable pageable);
 
     /**
-     * Get the "id" iFRS16LeaseContract.
+     * Get the "id" detailedLeaseContract.
      *
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<IFRS16LeaseContractDTO> findOne(Long id);
+    Optional<DetailedLeaseContractDTO> findOne(Long id);
 
     /**
-     * Delete the "id" iFRS16LeaseContract.
+     * Delete the "id" detailedLeaseContract.
      *
      * @param id the id of the entity.
      */
     void delete(Long id);
 
     /**
-     * Search for the iFRS16LeaseContract corresponding to the query.
+     * Search for the detailedLeaseContract corresponding to the query.
      *
      * @param query the query of the search.
      *
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Page<IFRS16LeaseContractDTO> search(String query, Pageable pageable);
+    Page<DetailedLeaseContractDTO> search(String query, Pageable pageable);
 }

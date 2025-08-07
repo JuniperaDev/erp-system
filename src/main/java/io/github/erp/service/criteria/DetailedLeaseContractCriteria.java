@@ -32,15 +32,15 @@ import tech.jhipster.service.filter.StringFilter;
 import tech.jhipster.service.filter.UUIDFilter;
 
 /**
- * Criteria class for the {@link io.github.erp.domain.IFRS16LeaseContract} entity. This class is used
- * in {@link io.github.erp.web.rest.IFRS16LeaseContractResource} to receive all the possible filtering options from
+ * Criteria class for the {@link io.github.erp.domain.DetailedLeaseContract} entity. This class is used
+ * in {@link io.github.erp.web.rest.DetailedLeaseContractResource} to receive all the possible filtering options from
  * the Http GET request parameters.
  * For example the following could be a valid request:
- * {@code /ifrs-16-lease-contracts?id.greaterThan=5&attr1.contains=something&attr2.specified=false}
+ * {@code /detailed-lease-contracts?id.greaterThan=5&attr1.contains=something&attr2.specified=false}
  * As Spring is unable to properly convert the types, unless specific {@link Filter} class are used, we need to use
  * fix type specific filters.
  */
-public class IFRS16LeaseContractCriteria implements Serializable, Criteria {
+public class DetailedLeaseContractCriteria implements Serializable, Criteria {
 
     private static final long serialVersionUID = 1L;
 
@@ -76,9 +76,9 @@ public class IFRS16LeaseContractCriteria implements Serializable, Criteria {
 
     private Boolean distinct;
 
-    public IFRS16LeaseContractCriteria() {}
+    public DetailedLeaseContractCriteria() {}
 
-    public IFRS16LeaseContractCriteria(IFRS16LeaseContractCriteria other) {
+    public DetailedLeaseContractCriteria(DetailedLeaseContractCriteria other) {
         this.id = other.id == null ? null : other.id.copy();
         this.bookingId = other.bookingId == null ? null : other.bookingId.copy();
         this.leaseTitle = other.leaseTitle == null ? null : other.leaseTitle.copy();
@@ -99,8 +99,8 @@ public class IFRS16LeaseContractCriteria implements Serializable, Criteria {
     }
 
     @Override
-    public IFRS16LeaseContractCriteria copy() {
-        return new IFRS16LeaseContractCriteria(this);
+    public DetailedLeaseContractCriteria copy() {
+        return new DetailedLeaseContractCriteria(this);
     }
 
     public LongFilter getId() {
@@ -344,7 +344,7 @@ public class IFRS16LeaseContractCriteria implements Serializable, Criteria {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final IFRS16LeaseContractCriteria that = (IFRS16LeaseContractCriteria) o;
+        final DetailedLeaseContractCriteria that = (DetailedLeaseContractCriteria) o;
         return (
             Objects.equals(id, that.id) &&
             Objects.equals(bookingId, that.bookingId) &&
@@ -390,7 +390,7 @@ public class IFRS16LeaseContractCriteria implements Serializable, Criteria {
     // prettier-ignore
     @Override
     public String toString() {
-        return "IFRS16LeaseContractCriteria{" +
+        return "DetailedLeaseContractCriteria{" +
             (id != null ? "id=" + id + ", " : "") +
             (bookingId != null ? "bookingId=" + bookingId + ", " : "") +
             (leaseTitle != null ? "leaseTitle=" + leaseTitle + ", " : "") +

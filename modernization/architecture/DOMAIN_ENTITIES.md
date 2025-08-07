@@ -25,7 +25,7 @@ graph TB
     end
     
     subgraph "IFRS16 Leasing Domain"
-        LC[IFRS16LeaseContract]
+        LC[DetailedLeaseContract]
         LL[LeaseLiability]
         LP[LeasePayment]
         LAS[LeaseAmortizationSchedule]
@@ -123,7 +123,7 @@ erDiagram
 Handles lease accounting compliance with International Financial Reporting Standard 16.
 
 #### Core Entities:
-- **IFRS16LeaseContract**: Lease agreements with terms and conditions
+- **DetailedLeaseContract**: Lease agreements with terms and conditions
 - **LeaseLiability**: Financial obligations from lease agreements
 - **LeasePayment**: Individual lease payment records
 - **LeaseAmortizationSchedule**: Systematic lease liability reduction
@@ -133,12 +133,12 @@ Handles lease accounting compliance with International Financial Reporting Stand
 #### Key Relationships:
 ```mermaid
 erDiagram
-    IFRS16LeaseContract ||--|| LeaseLiability : "creates"
-    IFRS16LeaseContract ||--o{ LeasePayment : "generates"
+    DetailedLeaseContract ||--|| LeaseLiability : "creates"
+    DetailedLeaseContract ||--o{ LeasePayment : "generates"
     LeaseLiability ||--|| LeaseAmortizationCalculation : "calculated by"
     LeaseAmortizationSchedule ||--o{ LeaseLiabilityScheduleItem : "contains"
-    IFRS16LeaseContract ||--|| ServiceOutlet : "managed by"
-    IFRS16LeaseContract ||--|| Dealer : "with lessor"
+    DetailedLeaseContract ||--|| ServiceOutlet : "managed by"
+    DetailedLeaseContract ||--|| Dealer : "with lessor"
 ```
 
 ### 4. Depreciation Processing Domain
@@ -227,7 +227,7 @@ erDiagram
 |--------|-------------|----------------|------------------|
 | Asset Management | ~45 | AssetRegistration | High |
 | Financial Core | ~60 | Settlement, TransactionAccount | Very High |
-| IFRS16 Leasing | ~25 | IFRS16LeaseContract | Medium |
+| IFRS16 Leasing | ~25 | DetailedLeaseContract | Medium |
 | Depreciation | ~20 | DepreciationJob | Medium |
 | Work-in-Progress | ~15 | WorkInProgressRegistration | Medium |
 | Fiscal Calendar | ~8 | FiscalYear | Low |
@@ -241,7 +241,7 @@ erDiagram
 ### 1. Aggregate Root Pattern
 - **AssetRegistration** serves as aggregate root for asset lifecycle
 - **Settlement** aggregates payment-related entities
-- **IFRS16LeaseContract** coordinates lease accounting entities
+- **DetailedLeaseContract** coordinates lease accounting entities
 
 ### 2. Self-Referencing Hierarchies
 - **Dealer** can reference parent dealer groups

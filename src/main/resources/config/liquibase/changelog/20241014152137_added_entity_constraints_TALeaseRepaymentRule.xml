@@ -12,7 +12,7 @@
                                  baseTableName="talease_repayment_rule"
                                  constraintName="fk_talease_repayment_rule__lease_contract_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="ifrs16lease_contract"/>
+                                 referencedTableName="detailed_lease_contract"/>
 
         <addForeignKeyConstraint baseColumnNames="debit_id"
                                  baseTableName="talease_repayment_rule"

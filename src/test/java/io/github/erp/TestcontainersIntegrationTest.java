@@ -1,4 +1,4 @@
-package io.github.erp.repository.search;
+package io.github.erp;
 
 /*-
  * Erp System - Mark X No 10 (Jehoiada Series) Server ver 1.8.2
@@ -18,16 +18,19 @@ package io.github.erp.repository.search;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Configuration;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 /**
- * Configure a Mock version of {@link IFRS16LeaseContractSearchRepository} to test the
- * application without starting Elasticsearch.
+ * Base composite annotation for integration tests using Testcontainers with PostgreSQL.
  */
-@Configuration
-public class IFRS16LeaseContractSearchRepositoryMockConfiguration {
-
-    @MockBean
-    private IFRS16LeaseContractSearchRepository mockIFRS16LeaseContractSearchRepository;
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@SpringBootTest(classes = ErpSystemApp.class)
+@ActiveProfiles("testcontainers")
+public @interface TestcontainersIntegrationTest {
 }

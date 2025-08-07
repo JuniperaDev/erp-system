@@ -34,7 +34,7 @@ A couple of environment variables need to be setup for any of the containers or 
 - ERP_SYSTEM_DEV_MAIL_BASE_URL
 - SECURITY_AUTHENTICATION_JWT_BASE64_SECRET
 - ERP_DOCUMENTS_MAX_FILE_SIZE - String designation of the maximum file size for document uploads (default: 10MB)
-- UPLOADS_SIZE - String designation of the chunk size of the Excel processing system
+- UPLOADS_SIZE - String designation of the chunk size of the Excel processing system (default: 1000)
 
 ## Troubleshooting Common Startup Issues
 
@@ -978,4 +978,4 @@ enthralling read; because the efficiency of their model is simply out of this wo
 academic illustrations of the accounting process such as the one I have done [myself](https://github.com/ghacupha/book-keeper) with very 
 little regard for concerns like persistence.
 Why someone would create an accounting tool without instructions on how to save data beyond some school illustration is beyond me,
-because book keeping is about keeping records.        
+because book keeping is about keeping records.          

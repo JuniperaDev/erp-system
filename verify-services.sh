@@ -58,6 +58,7 @@ echo "   PG_DATABASE_DEV_USER: ${PG_DATABASE_DEV_USER:-'NOT SET (will use defaul
 echo "   SPRING_DATA_JEST_URI: ${SPRING_DATA_JEST_URI:-'NOT SET (will use default http://localhost:9200)'}"
 echo "   ERP_INDEX_ENABLED: ${ERP_INDEX_ENABLED:-'NOT SET (will use default true)'}"
 echo "   ERP_INDEX_REBUILD_ENABLED: ${ERP_INDEX_REBUILD_ENABLED:-'NOT SET (will use default false)'}"
+echo "   UPLOADS_SIZE: ${UPLOADS_SIZE:-'NOT SET (will use default 1000)'}"
 
 if [ -n "$PG_DATABASE_DEV_USER" ] && [ "$PG_DATABASE_DEV_USER" != "erpSystem" ]; then
     echo "⚠️  WARNING: PG_DATABASE_DEV_USER is set to '$PG_DATABASE_DEV_USER' but should be 'erpSystem' or unset"

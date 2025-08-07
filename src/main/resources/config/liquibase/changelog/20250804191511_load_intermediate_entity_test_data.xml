@@ -13,6 +13,11 @@
             <tableExists tableName="asset_document_assignment"/>
             <tableExists tableName="asset_payment_invoice_assignment"/>
             <tableExists tableName="asset_job_sheet_assignment"/>
+            <columnExists tableName="asset_warranty_assignment" columnName="assignment_details"/>
+            <columnExists tableName="asset_purchase_order_assignment" columnName="assignment_details"/>
+            <columnExists tableName="asset_document_assignment" columnName="assignment_details"/>
+            <columnExists tableName="asset_payment_invoice_assignment" columnName="assignment_details"/>
+            <columnExists tableName="asset_job_sheet_assignment" columnName="assignment_details"/>
         </preConditions>
         
         <comment>Load test data for intermediate entities</comment>

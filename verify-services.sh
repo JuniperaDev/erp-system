@@ -26,6 +26,13 @@ echo
 echo "2. Testing PostgreSQL connectivity..."
 if docker exec -it docker-erpsystem-postgresql-1 psql -U erpSystem -c "SELECT current_user, current_database();" 2>/dev/null | grep -q erpSystem; then
     echo "✅ PostgreSQL: Connected successfully as erpSystem user"
+    
+    if docker exec -it docker-erpsystem-postgresql-1 psql -U erpSystem -l 2>/dev/null | grep -q erp_system_dev; then
+        echo "✅ PostgreSQL: Database erp_system_dev exists"
+    else
+        echo "❌ PostgreSQL: Database erp_system_dev does not exist"
+        echo "   Create with: docker exec -it docker-erpsystem-postgresql-1 psql -U erpSystem -c \"CREATE DATABASE erp_system_dev;\""
+    fi
 else
     echo "❌ PostgreSQL: Connection failed"
     echo "   Check if container is running and user exists"
@@ -49,6 +56,8 @@ echo "4. Checking environment variables..."
 echo "   ERP_DOCUMENTS_MAX_FILE_SIZE: ${ERP_DOCUMENTS_MAX_FILE_SIZE:-'NOT SET (will use default 10MB)'}"
 echo "   PG_DATABASE_DEV_USER: ${PG_DATABASE_DEV_USER:-'NOT SET (will use default erpSystem)'}"
 echo "   SPRING_DATA_JEST_URI: ${SPRING_DATA_JEST_URI:-'NOT SET (will use default http://localhost:9200)'}"
+echo "   ERP_INDEX_ENABLED: ${ERP_INDEX_ENABLED:-'NOT SET (will use default true)'}"
+echo "   ERP_INDEX_REBUILD_ENABLED: ${ERP_INDEX_REBUILD_ENABLED:-'NOT SET (will use default false)'}"
 
 if [ -n "$PG_DATABASE_DEV_USER" ] && [ "$PG_DATABASE_DEV_USER" != "erpSystem" ]; then
     echo "⚠️  WARNING: PG_DATABASE_DEV_USER is set to '$PG_DATABASE_DEV_USER' but should be 'erpSystem' or unset"

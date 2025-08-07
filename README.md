@@ -101,12 +101,20 @@ echo "ERP_DOCUMENTS_MAX_FILE_SIZE: ${ERP_DOCUMENTS_MAX_FILE_SIZE:-'NOT SET (will
 
 2. Wait for services (30-60 seconds)
 
-3. Set environment variables:
+3. Create the development database (first time only):
    ```bash
-   export ERP_DOCUMENTS_MAX_FILE_SIZE="10MB"
+   docker exec -it docker-erpsystem-postgresql-1 psql -U erpSystem -c "CREATE DATABASE erp_system_dev;"
    ```
 
-4. Start application:
+4. Set environment variables:
+   ```bash
+   export ERP_DOCUMENTS_MAX_FILE_SIZE="10MB"
+   # Optional: Override index configuration defaults
+   # export ERP_INDEX_ENABLED="true"
+   # export ERP_INDEX_REBUILD_ENABLED="false"
+   ```
+
+5. Start application:
    ```bash
    ./mvnw
    ```
@@ -970,4 +978,4 @@ enthralling read; because the efficiency of their model is simply out of this wo
 academic illustrations of the accounting process such as the one I have done [myself](https://github.com/ghacupha/book-keeper) with very 
 little regard for concerns like persistence.
 Why someone would create an accounting tool without instructions on how to save data beyond some school illustration is beyond me,
-because book keeping is about keeping records.      
+because book keeping is about keeping records.        

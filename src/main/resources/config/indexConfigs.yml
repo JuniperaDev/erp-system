@@ -1,4 +1,4 @@
 erp-index:
-    enabled: ${ERP_INDEX_ENABLED}
+    enabled: ${ERP_INDEX_ENABLED:true}
     rebuild:
-      enabled: ${ERP_INDEX_REBUILD_ENABLED}
+      enabled: ${ERP_INDEX_REBUILD_ENABLED:false}

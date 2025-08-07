@@ -36,6 +36,81 @@ A couple of environment variables need to be setup for any of the containers or 
 - ERP_DOCUMENTS_MAX_FILE_SIZE - String designation of the maximum file size for document uploads (default: 10MB)
 - UPLOADS_SIZE - String designation of the chunk size of the Excel processing system
 
+## Troubleshooting Common Startup Issues
+
+### PostgreSQL Connection Issues
+
+If you encounter "FATAL: role 'erp_user' does not exist":
+1. Ensure you have the latest changes: `git pull origin master`
+2. Check if you have environment variables overriding the default user:
+   ```bash
+   echo $PG_DATABASE_DEV_USER
+   # Should be empty or "erpSystem"
+   ```
+3. If set incorrectly, unset it: `unset PG_DATABASE_DEV_USER`
+4. Restart PostgreSQL container:
+   ```bash
+   docker-compose -f src/main/docker/postgresql.yml down
+   docker-compose -f src/main/docker/postgresql.yml up -d
+   ```
+5. Verify database user: `docker exec -it docker-erpsystem-postgresql-1 psql -U erpSystem -c "SELECT current_user;"`
+
+### Elasticsearch Connection Issues
+
+If you encounter "Connection refused" for Elasticsearch:
+1. Verify Elasticsearch is running: `docker ps | grep elasticsearch`
+2. Check port accessibility: `curl http://localhost:9200/_cluster/health`
+3. If port 9200 is not accessible, restart Elasticsearch:
+   ```bash
+   docker-compose -f src/main/docker/elasticsearch.yml down
+   docker-compose -f src/main/docker/elasticsearch.yml up -d
+   ```
+4. Wait for service to be ready (30-60 seconds)
+
+### Environment Variables
+
+Required environment variables for local development:
+```bash
+export ERP_DOCUMENTS_MAX_FILE_SIZE="10MB"
+# Optional overrides (use defaults if not set):
+# export PG_DATABASE_DEV_USER="erpSystem"
+# export SPRING_DATA_JEST_URI="http://localhost:9200"
+```
+
+### Service Verification Script
+
+Before starting the application, verify all services are accessible:
+```bash
+# Check PostgreSQL
+docker exec -it docker-erpsystem-postgresql-1 psql -U erpSystem -c "SELECT 1;" || echo "PostgreSQL not accessible"
+
+# Check Elasticsearch
+curl -s http://localhost:9200/_cluster/health || echo "Elasticsearch not accessible"
+
+# Check required environment variables
+echo "ERP_DOCUMENTS_MAX_FILE_SIZE: ${ERP_DOCUMENTS_MAX_FILE_SIZE:-'NOT SET (will use default 10MB)'}"
+```
+
+### Complete Startup Process
+
+1. Start services:
+   ```bash
+   docker-compose -f src/main/docker/postgresql.yml up -d
+   docker-compose -f src/main/docker/elasticsearch.yml up -d
+   ```
+
+2. Wait for services (30-60 seconds)
+
+3. Set environment variables:
+   ```bash
+   export ERP_DOCUMENTS_MAX_FILE_SIZE="10MB"
+   ```
+
+4. Start application:
+   ```bash
+   ./mvnw
+   ```
+
 ### JHipster Control Center
 
 JHipster Control Center can help you manage and control your application(s). You can start a local control center server (accessible on http://localhost:7419) with:
@@ -895,4 +970,4 @@ enthralling read; because the efficiency of their model is simply out of this wo
 academic illustrations of the accounting process such as the one I have done [myself](https://github.com/ghacupha/book-keeper) with very 
 little regard for concerns like persistence.
 Why someone would create an accounting tool without instructions on how to save data beyond some school illustration is beyond me,
-because book keeping is about keeping records.    
+because book keeping is about keeping records.      

@@ -24,7 +24,7 @@ A couple of environment variables need to be setup for any of the containers or 
 - SPRING_DATA_JEST_URI - String designation of the search engine address
 - ERP_SYSTEM_DEV_DB - String designation of the development DB
 - ERP_SYSTEM_PORT - String designation of the server port. Thee client will be looking for 8980
-- PG_DATABASE_DEV_USER - String designation of the development db login credentials
+- PG_DATABASE_DEV_USER - String designation of the development db login credentials (default: erpSystem)
 - PG_DATABASE_PROD_USER - String designation of the production db login credentials
 - PG_DATABASE_DEV_PASSWORD - String designation of the development db login password credentials
 - PG_DATABASE_PROD_PASSWORD - String designation of the production db login password credentials
@@ -894,4 +894,4 @@ enthralling read; because the efficiency of their model is simply out of this wo
 academic illustrations of the accounting process such as the one I have done [myself](https://github.com/ghacupha/book-keeper) with very 
 little regard for concerns like persistence.
 Why someone would create an accounting tool without instructions on how to save data beyond some school illustration is beyond me,
-because book keeping is about keeping records. 
+because book keeping is about keeping records.  

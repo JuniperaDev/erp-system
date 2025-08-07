@@ -62,7 +62,7 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: ${LOCAL_PG_SERVER:jdbc:postgresql://localhost:5432}/${ERP_SYSTEM_DEV_DB:erp_system_dev}
-    username: ${PG_DATABASE_DEV_USER:erp_user}
+    username: ${PG_DATABASE_DEV_USER:erpSystem}
     password: ${PG_DATABASE_DEV_PASSWORD:password}
     hikari:
       poolName: Hikari

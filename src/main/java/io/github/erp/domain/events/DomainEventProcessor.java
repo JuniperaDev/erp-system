@@ -25,6 +25,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class DomainEventProcessor {
     private final DomainEventStore eventStore;
     private final DomainEventErrorHandler errorHandler;
 
-    public DomainEventProcessor(DomainEventStore eventStore, DomainEventErrorHandler errorHandler) {
+    public DomainEventProcessor(DomainEventStore eventStore, @Lazy DomainEventErrorHandler errorHandler) {
         this.eventStore = eventStore;
         this.errorHandler = errorHandler;
     }

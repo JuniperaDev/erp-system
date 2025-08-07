@@ -7,8 +7,6 @@
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <changeSet id="20250804191511-1" author="devin" context="dev">
-        <comment>Load test data for intermediate entities</comment>
-        
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="asset_warranty_assignment"/>
             <tableExists tableName="asset_purchase_order_assignment"/>
@@ -16,6 +14,8 @@
             <tableExists tableName="asset_payment_invoice_assignment"/>
             <tableExists tableName="asset_job_sheet_assignment"/>
         </preConditions>
+        
+        <comment>Load test data for intermediate entities</comment>
         
         <loadData file="config/liquibase/data/asset_warranty_assignment_test.csv"
                   separator=";"

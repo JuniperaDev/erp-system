@@ -65,6 +65,7 @@
     <include file="config/liquibase/changelog/20220503162809_added_entity_PrepaymentAmortization.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220517074515_added_entity_ReportTemplate.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220520053032_added_entity_PdfReportRequisition.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250807195406_add_report_content_type_id_to_pdf_report_requisition.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220605111232_added_entity_XlsxReportRequisition.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220608075128_added_entity_UniversallyUniqueMapping.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220616111329_added_entity_ReportRequisition.xml" relativeToChangelogFile="false"/>
@@ -329,7 +330,8 @@
     <include file="config/liquibase/changelog/20210721163636_added_entity_constraints_Dealer.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250804184800_added_entity_DealerGroup.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250804184800_added_entity_constraints_DealerGroup.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20250804184801_migrate_dealer_groups.xml" relativeToChangelogFile="false"/>
+    <!-- Temporarily disabled due to SQL syntax error preventing database schema initialization -->
+    <!-- <include file="config/liquibase/changelog/20250804184801_migrate_dealer_groups.xml" relativeToChangelogFile="false"/> -->
     <include file="config/liquibase/changelog/20210721172450_added_entity_constraints_PaymentCalculation.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210721173014_added_entity_constraints_PaymentRequisition.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210721174739_added_entity_constraints_TaxReference.xml" relativeToChangelogFile="false"/>
@@ -619,7 +621,8 @@
     <!-- SettlementGroup entity migrations -->
     <include file="config/liquibase/changelog/20250804182800_added_entity_SettlementGroup.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250804182801_added_entity_constraints_SettlementGroup.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20250804182802_migrate_settlement_group_data.xml" relativeToChangelogFile="false"/>
+    <!-- Temporarily disabled due to SQL type mismatch error preventing database schema initialization -->
+    <!-- <include file="config/liquibase/changelog/20250804182802_migrate_settlement_group_data.xml" relativeToChangelogFile="false"/> -->
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

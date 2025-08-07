@@ -7,13 +7,13 @@
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <changeSet id="20250804191510-1" author="devin" context="dev">
-        <comment>Create ApplicationUser records for existing admin and user accounts</comment>
-        
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="application_user"/>
             <tableExists tableName="dealer"/>
             <tableExists tableName="security_clearance"/>
         </preConditions>
+        
+        <comment>Create ApplicationUser records for existing admin and user accounts</comment>
         
         <!-- Insert basic Dealer records for organization and department -->
         <insert tableName="dealer">

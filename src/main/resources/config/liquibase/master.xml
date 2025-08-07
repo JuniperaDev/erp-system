@@ -613,13 +613,13 @@
     <include file="config/liquibase/changelog/20240804191506_drop_old_join_tables.xml" relativeToChangelogFile="false"/>
     <!-- Create ApplicationUser records for existing users to enable API testing -->
     <include file="config/liquibase/changelog/20250804191510_create_application_users_for_existing_users.xml" relativeToChangelogFile="false"/>
+    <!-- Add missing assignment_details column to assignment tables -->
+    <include file="config/liquibase/changelog/20250807201500_add_assignment_details_column.xml" relativeToChangelogFile="false"/>
     <!-- Load test data for intermediate entities -->
     <include file="config/liquibase/changelog/20250804191511_load_intermediate_entity_test_data.xml" relativeToChangelogFile="false"/>
     <!-- Domain Event Infrastructure migrations -->
     <include file="config/liquibase/changelog/20250105120000_added_entity_DomainEvent.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250105120001_added_entity_AssetCreatedEvent.xml" relativeToChangelogFile="false"/>
-    <!-- Add missing assignment_details column to assignment tables -->
-    <include file="config/liquibase/changelog/20250807201500_add_assignment_details_column.xml" relativeToChangelogFile="false"/>
     <!-- Temporarily disabled due to foreign key constraint violations - test data references non-existent asset_registration records -->
     <!-- <include file="config/liquibase/changelog/20250804191511_load_intermediate_entity_test_data.xml" relativeToChangelogFile="false"/> -->
     <!-- SettlementGroup entity migrations -->

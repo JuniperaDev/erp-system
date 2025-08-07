@@ -620,6 +620,8 @@
     <include file="config/liquibase/changelog/20250105120001_added_entity_AssetCreatedEvent.xml" relativeToChangelogFile="false"/>
     <!-- Add missing assignment_details column to assignment tables -->
     <include file="config/liquibase/changelog/20250807201500_add_assignment_details_column.xml" relativeToChangelogFile="false"/>
+    <!-- Temporarily disabled due to foreign key constraint violations - test data references non-existent asset_registration records -->
+    <!-- <include file="config/liquibase/changelog/20250804191511_load_intermediate_entity_test_data.xml" relativeToChangelogFile="false"/> -->
     <!-- SettlementGroup entity migrations -->
     <include file="config/liquibase/changelog/20250804182800_added_entity_SettlementGroup.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250804182801_added_entity_constraints_SettlementGroup.xml" relativeToChangelogFile="false"/>

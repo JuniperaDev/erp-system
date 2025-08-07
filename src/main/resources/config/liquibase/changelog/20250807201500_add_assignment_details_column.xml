@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20250807201500-1" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="asset_warranty_assignment"/>
+            <not>
+                <columnExists tableName="asset_warranty_assignment" columnName="assignment_details"/>
+            </not>
+        </preConditions>
+        
+        <comment>Add missing assignment_details column to asset_warranty_assignment table</comment>
+        
+        <addColumn tableName="asset_warranty_assignment">
+            <column name="assignment_details" type="varchar(1000)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20250807201500-2" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="asset_purchase_order_assignment"/>
+            <not>
+                <columnExists tableName="asset_purchase_order_assignment" columnName="assignment_details"/>
+            </not>
+        </preConditions>
+        
+        <comment>Add missing assignment_details column to asset_purchase_order_assignment table</comment>
+        
+        <addColumn tableName="asset_purchase_order_assignment">
+            <column name="assignment_details" type="varchar(1000)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20250807201500-3" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="asset_document_assignment"/>
+            <not>
+                <columnExists tableName="asset_document_assignment" columnName="assignment_details"/>
+            </not>
+        </preConditions>
+        
+        <comment>Add missing assignment_details column to asset_document_assignment table</comment>
+        
+        <addColumn tableName="asset_document_assignment">
+            <column name="assignment_details" type="varchar(1000)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20250807201500-4" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="asset_payment_invoice_assignment"/>
+            <not>
+                <columnExists tableName="asset_payment_invoice_assignment" columnName="assignment_details"/>
+            </not>
+        </preConditions>
+        
+        <comment>Add missing assignment_details column to asset_payment_invoice_assignment table</comment>
+        
+        <addColumn tableName="asset_payment_invoice_assignment">
+            <column name="assignment_details" type="varchar(1000)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20250807201500-5" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="asset_job_sheet_assignment"/>
+            <not>
+                <columnExists tableName="asset_job_sheet_assignment" columnName="assignment_details"/>
+            </not>
+        </preConditions>
+        
+        <comment>Add missing assignment_details column to asset_job_sheet_assignment table</comment>
+        
+        <addColumn tableName="asset_job_sheet_assignment">
+            <column name="assignment_details" type="varchar(1000)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

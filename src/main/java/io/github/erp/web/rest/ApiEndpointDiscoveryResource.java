@@ -28,7 +28,7 @@ public class ApiEndpointDiscoveryResource {
      *
      * @return the ResponseEntity with status 200 (OK) and list of endpoints
      */
-    @GetMapping("/endpoints")
+    @GetMapping(value = "/endpoints", produces = "application/json")
     public ResponseEntity<Map<String, Object>> getAllEndpoints() {
         RequestMappingHandlerMapping mapping = applicationContext.getBean(RequestMappingHandlerMapping.class);
         Map<RequestMappingInfo, HandlerMethod> handlerMethods = mapping.getHandlerMethods();
@@ -71,15 +71,15 @@ public class ApiEndpointDiscoveryResource {
     }
 
     private String categorizeEndpoint(String path) {
-        if (path.contains("/fixed-asset")) return "Asset Management";
-        if (path.contains("/payments")) return "Payment Processing";
+        if (path.contains("/fixed-asset")) return "AssetManagement";
+        if (path.contains("/payments")) return "PaymentProcessing";
         if (path.contains("/reports") || path.contains("/report")) return "Reporting";
-        if (path.contains("/leases")) return "Lease Management";
-        if (path.contains("/app/")) return "Application Services";
-        if (path.contains("/granular-data")) return "Granular Data Integration";
-        if (path.contains("/taxes")) return "Tax Management";
-        if (path.contains("/docs")) return "Document Management";
-        if (path.contains("/system")) return "System Administration";
+        if (path.contains("/leases")) return "LeaseManagement";
+        if (path.contains("/app/")) return "ApplicationServices";
+        if (path.contains("/granular-data")) return "GranularDataIntegration";
+        if (path.contains("/taxes")) return "TaxManagement";
+        if (path.contains("/docs")) return "DocumentManagement";
+        if (path.contains("/system")) return "SystemAdministration";
         return "General";
     }
 }

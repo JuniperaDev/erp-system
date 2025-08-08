@@ -20,7 +20,7 @@ public class ApiDocumentationResource {
      *
      * @return the ResponseEntity with status 200 (OK) and dashboard data
      */
-    @GetMapping("/dashboard")
+    @GetMapping(value = "/dashboard", produces = "application/json")
     public ResponseEntity<Map<String, Object>> getDashboard() {
         Map<String, Object> dashboard = new HashMap<>();
         
@@ -35,12 +35,12 @@ public class ApiDocumentationResource {
         dashboard.put("links", links);
         
         Map<String, String> categories = new HashMap<>();
-        categories.put("Asset Management", "Fixed asset registration, depreciation, and lifecycle management");
-        categories.put("Payment Processing", "Settlement processing and payment management");
+        categories.put("AssetManagement", "Fixed asset registration, depreciation, and lifecycle management");
+        categories.put("PaymentProcessing", "Settlement processing and payment management");
         categories.put("Reporting", "Financial and operational reporting system");
-        categories.put("Lease Management", "IFRS 16 compliant lease accounting");
-        categories.put("Document Management", "File upload and document handling");
-        categories.put("Granular Data Integration", "Central bank reporting and data integration");
+        categories.put("LeaseManagement", "IFRS 16 compliant lease accounting");
+        categories.put("DocumentManagement", "File upload and document handling");
+        categories.put("GranularDataIntegration", "Central bank reporting and data integration");
         dashboard.put("categories", categories);
         
         return ResponseEntity.ok(dashboard);

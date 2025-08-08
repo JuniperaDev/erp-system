@@ -26,6 +26,7 @@ public class SwaggerConfiguration {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("erp-system-api")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("io.github.erp"))
                 .paths(PathSelectors.regex("/api/.*"))

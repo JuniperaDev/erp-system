@@ -20,6 +20,7 @@ package io.github.erp.domain.events.financial;
 
 import io.github.erp.ErpSystemApp;
 import io.github.erp.domain.events.DomainEventStore;
+import io.github.erp.domain.enumeration.CurrencyTypes;
 import io.github.erp.service.SettlementService;
 import io.github.erp.service.PaymentService;
 import io.github.erp.service.InvoiceService;
@@ -112,13 +113,13 @@ public class FinancialAuditTrailIntegrationTest {
         invoice1.setInvoiceNumber("AUDIT-INV-001");
         invoice1.setInvoiceAmount(BigDecimal.valueOf(300.00));
         invoice1.setInvoiceDate(LocalDate.now());
-        invoice1.setCurrency("USD");
+        invoice1.setCurrency(CurrencyTypes.USD);
 
         InvoiceDTO invoice2 = new InvoiceDTO();
         invoice2.setInvoiceNumber("AUDIT-INV-002");
         invoice2.setInvoiceAmount(BigDecimal.valueOf(450.00));
         invoice2.setInvoiceDate(LocalDate.now());
-        invoice2.setCurrency("EUR");
+        invoice2.setCurrency(CurrencyTypes.EUR);
 
         invoiceService.save(invoice1);
         invoiceService.save(invoice2);
@@ -149,7 +150,7 @@ public class FinancialAuditTrailIntegrationTest {
         invoice.setInvoiceNumber("MIXED-INV-001");
         invoice.setInvoiceAmount(BigDecimal.valueOf(2000.00));
         invoice.setInvoiceDate(LocalDate.now());
-        invoice.setCurrency("GBP");
+        invoice.setCurrency(CurrencyTypes.GBP);
 
         SettlementDTO savedSettlement = settlementService.save(settlement);
         PaymentDTO savedPayment = paymentService.save(payment);

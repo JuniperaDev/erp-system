@@ -21,13 +21,13 @@ package io.github.erp.domain.events.asset;
 import io.github.erp.domain.events.AbstractDomainEvent;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
-@Table(name = "asset_created_event")
+@DiscriminatorValue("AssetCreatedEvent")
 public class AssetCreatedEvent extends AbstractDomainEvent {
 
     @Column(name = "asset_registration_number")

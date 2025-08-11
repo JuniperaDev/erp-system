@@ -23,13 +23,13 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "lease_contract_created_event")
+@DiscriminatorValue("LeaseContractCreatedEvent")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class LeaseContractCreatedEvent extends AbstractDomainEvent {
 

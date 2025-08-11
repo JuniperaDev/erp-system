@@ -26,7 +26,10 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
-@MappedSuperclass
+@Entity
+@Table(name = "domain_event")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "event_type", discriminatorType = DiscriminatorType.STRING)
 @EntityListeners(AuditingEntityListener.class)
 public abstract class AbstractDomainEvent extends AbstractAuditingEntity implements DomainEvent {
 
@@ -38,7 +41,7 @@ public abstract class AbstractDomainEvent extends AbstractAuditingEntity impleme
     @Column(name = "event_id", nullable = false, unique = true)
     private UUID eventId;
 
-    @Column(name = "event_type", nullable = false)
+    @Transient
     private String eventType;
 
     @Column(name = "occurred_on", nullable = false)

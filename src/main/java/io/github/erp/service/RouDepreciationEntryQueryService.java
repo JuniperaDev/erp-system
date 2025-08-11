@@ -214,7 +214,7 @@ public class RouDepreciationEntryQueryService extends QueryService<RouDepreciati
                     specification.and(
                         buildSpecification(
                             criteria.getLeaseContractId(),
-                            root -> root.join(RouDepreciationEntry_.leaseContract, JoinType.LEFT).get(IFRS16LeaseContract_.id)
+                            root -> root.join(RouDepreciationEntry_.leaseContract, JoinType.LEFT).get(DetailedLeaseContract_.id)
                         )
                     );
             }

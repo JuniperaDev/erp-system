@@ -152,15 +152,15 @@ class LeaseLiabilityScheduleItemResourceIT {
             .interestAccrued(DEFAULT_INTEREST_ACCRUED)
             .interestPayableClosing(DEFAULT_INTEREST_PAYABLE_CLOSING);
         // Add required entity
-        IFRS16LeaseContract iFRS16LeaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            iFRS16LeaseContract = IFRS16LeaseContractResourceIT.createEntity(em);
-            em.persist(iFRS16LeaseContract);
+        DetailedLeaseContract detailedLeaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            detailedLeaseContract = DetailedLeaseContractResourceIT.createEntity(em);
+            em.persist(detailedLeaseContract);
             em.flush();
         } else {
-            iFRS16LeaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            detailedLeaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
-        leaseLiabilityScheduleItem.setLeaseContract(iFRS16LeaseContract);
+        leaseLiabilityScheduleItem.setLeaseContract(detailedLeaseContract);
         // Add required entity
         LeaseLiability leaseLiability;
         if (TestUtil.findAll(em, LeaseLiability.class).isEmpty()) {
@@ -202,15 +202,15 @@ class LeaseLiabilityScheduleItemResourceIT {
             .interestAccrued(UPDATED_INTEREST_ACCRUED)
             .interestPayableClosing(UPDATED_INTEREST_PAYABLE_CLOSING);
         // Add required entity
-        IFRS16LeaseContract iFRS16LeaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            iFRS16LeaseContract = IFRS16LeaseContractResourceIT.createUpdatedEntity(em);
-            em.persist(iFRS16LeaseContract);
+        DetailedLeaseContract detailedLeaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            detailedLeaseContract = DetailedLeaseContractResourceIT.createUpdatedEntity(em);
+            em.persist(detailedLeaseContract);
             em.flush();
         } else {
-            iFRS16LeaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            detailedLeaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
-        leaseLiabilityScheduleItem.setLeaseContract(iFRS16LeaseContract);
+        leaseLiabilityScheduleItem.setLeaseContract(detailedLeaseContract);
         // Add required entity
         LeaseLiability leaseLiability;
         if (TestUtil.findAll(em, LeaseLiability.class).isEmpty()) {
@@ -1408,13 +1408,13 @@ class LeaseLiabilityScheduleItemResourceIT {
     void getAllLeaseLiabilityScheduleItemsByLeaseContractIsEqualToSomething() throws Exception {
         // Initialize the database
         leaseLiabilityScheduleItemRepository.saveAndFlush(leaseLiabilityScheduleItem);
-        IFRS16LeaseContract leaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            leaseContract = IFRS16LeaseContractResourceIT.createEntity(em);
+        DetailedLeaseContract leaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            leaseContract = DetailedLeaseContractResourceIT.createEntity(em);
             em.persist(leaseContract);
             em.flush();
         } else {
-            leaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            leaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
         em.persist(leaseContract);
         em.flush();

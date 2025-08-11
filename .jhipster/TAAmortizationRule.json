@@ -15,7 +15,7 @@
   "relationships": [
     {
       "relationshipName": "leaseContract",
-      "otherEntityName": "iFRS16LeaseContract",
+      "otherEntityName": "detailedLeaseContract",
       "relationshipType": "one-to-one",
       "relationshipValidateRules": ["required"],
       "otherEntityField": "shortTitle",

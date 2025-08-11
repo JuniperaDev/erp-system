@@ -53,6 +53,11 @@ public interface AssetRegistrationMapper extends EntityMapper<AssetRegistrationD
     @Mapping(target = "removePlaceholder", ignore = true)
     AssetRegistration toEntity(AssetRegistrationDTO assetRegistrationDTO);
 
+    @Named("assetRegistrationId")
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", source = "id")
+    AssetRegistration fromId(Long id);
+
     @Named("assetNumber")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")

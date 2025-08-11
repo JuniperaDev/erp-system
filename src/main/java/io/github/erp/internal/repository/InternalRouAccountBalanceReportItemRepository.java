@@ -87,7 +87,7 @@ public interface InternalRouAccountBalanceReportItemRepository
             "LEFT JOIN transaction_account dta ON rde.debit_account_id = dta.id  " +
             "LEFT JOIN transaction_account cta ON rde.credit_account_id = cta.id  " +
             "LEFT JOIN rou_model_metadata rmm ON rde.rou_metadata_id = rmm.id " +
-            "LEFT JOIN ifrs16lease_contract ifr ON rmm.ifrs16lease_contract_id = ifr.id " +
+            "LEFT JOIN detailed_lease_contract ifr ON rmm.ifrs16lease_contract_id = ifr.id " +
             "LEFT JOIN accrued_depreciation ad ON cta.id = ad.account_id " +
             "LEFT JOIN total_lease_amount tla ON cta.id = tla.account_id " +
             "WHERE  " +
@@ -146,7 +146,7 @@ public interface InternalRouAccountBalanceReportItemRepository
             "LEFT JOIN transaction_account dta ON rde.debit_account_id = dta.id  " +
             "LEFT JOIN transaction_account cta ON rde.credit_account_id = cta.id  " +
             "LEFT JOIN rou_model_metadata rmm ON rde.rou_metadata_id = rmm.id " +
-            "LEFT JOIN ifrs16lease_contract ifr ON rmm.ifrs16lease_contract_id = ifr.id " +
+            "LEFT JOIN detailed_lease_contract ifr ON rmm.ifrs16lease_contract_id = ifr.id " +
             "LEFT JOIN accrued_depreciation ad ON cta.id = ad.account_id " +
             "LEFT JOIN total_lease_amount tla ON cta.id = tla.account_id " +
             "WHERE  " +

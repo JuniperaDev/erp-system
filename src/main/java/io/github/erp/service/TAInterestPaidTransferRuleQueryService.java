@@ -127,7 +127,7 @@ public class TAInterestPaidTransferRuleQueryService extends QueryService<TAInter
                     specification.and(
                         buildSpecification(
                             criteria.getLeaseContractId(),
-                            root -> root.join(TAInterestPaidTransferRule_.leaseContract, JoinType.LEFT).get(IFRS16LeaseContract_.id)
+                            root -> root.join(TAInterestPaidTransferRule_.leaseContract, JoinType.LEFT).get(DetailedLeaseContract_.id)
                         )
                     );
             }

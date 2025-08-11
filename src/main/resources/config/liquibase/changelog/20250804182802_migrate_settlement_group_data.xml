@@ -15,7 +15,7 @@
             INSERT INTO settlement_group (id, group_name, description, remarks)
             SELECT DISTINCT 
                 s.id,
-                CONCAT('Group-', COALESCE(s.payment_number, s.id)),
+                CONCAT('Group-', COALESCE(s.payment_number, CAST(s.id AS VARCHAR))),
                 CONCAT('Settlement group for ', COALESCE(s.description, 'Settlement')),
                 'Migrated from existing settlement group relationship'
             FROM settlement s

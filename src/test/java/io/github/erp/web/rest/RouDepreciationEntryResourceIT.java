@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import io.github.erp.IntegrationTest;
 import io.github.erp.domain.AssetCategory;
-import io.github.erp.domain.IFRS16LeaseContract;
+import io.github.erp.domain.DetailedLeaseContract;
 import io.github.erp.domain.LeasePeriod;
 import io.github.erp.domain.RouDepreciationEntry;
 import io.github.erp.domain.RouModelMetadata;
@@ -192,15 +192,15 @@ class RouDepreciationEntryResourceIT {
         }
         rouDepreciationEntry.setAssetCategory(assetCategory);
         // Add required entity
-        IFRS16LeaseContract iFRS16LeaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            iFRS16LeaseContract = IFRS16LeaseContractResourceIT.createEntity(em);
-            em.persist(iFRS16LeaseContract);
+        DetailedLeaseContract detailedLeaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            detailedLeaseContract = DetailedLeaseContractResourceIT.createEntity(em);
+            em.persist(detailedLeaseContract);
             em.flush();
         } else {
-            iFRS16LeaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            detailedLeaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
-        rouDepreciationEntry.setLeaseContract(iFRS16LeaseContract);
+        rouDepreciationEntry.setLeaseContract(detailedLeaseContract);
         // Add required entity
         RouModelMetadata rouModelMetadata;
         if (TestUtil.findAll(em, RouModelMetadata.class).isEmpty()) {
@@ -269,15 +269,15 @@ class RouDepreciationEntryResourceIT {
         }
         rouDepreciationEntry.setAssetCategory(assetCategory);
         // Add required entity
-        IFRS16LeaseContract iFRS16LeaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            iFRS16LeaseContract = IFRS16LeaseContractResourceIT.createUpdatedEntity(em);
-            em.persist(iFRS16LeaseContract);
+        DetailedLeaseContract detailedLeaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            detailedLeaseContract = DetailedLeaseContractResourceIT.createUpdatedEntity(em);
+            em.persist(detailedLeaseContract);
             em.flush();
         } else {
-            iFRS16LeaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            detailedLeaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
-        rouDepreciationEntry.setLeaseContract(iFRS16LeaseContract);
+        rouDepreciationEntry.setLeaseContract(detailedLeaseContract);
         // Add required entity
         RouModelMetadata rouModelMetadata;
         if (TestUtil.findAll(em, RouModelMetadata.class).isEmpty()) {
@@ -1586,13 +1586,13 @@ class RouDepreciationEntryResourceIT {
     void getAllRouDepreciationEntriesByLeaseContractIsEqualToSomething() throws Exception {
         // Initialize the database
         rouDepreciationEntryRepository.saveAndFlush(rouDepreciationEntry);
-        IFRS16LeaseContract leaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            leaseContract = IFRS16LeaseContractResourceIT.createEntity(em);
+        DetailedLeaseContract leaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            leaseContract = DetailedLeaseContractResourceIT.createEntity(em);
             em.persist(leaseContract);
             em.flush();
         } else {
-            leaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            leaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
         em.persist(leaseContract);
         em.flush();

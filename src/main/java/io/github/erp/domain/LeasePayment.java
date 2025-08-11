@@ -64,7 +64,7 @@ public class LeasePayment implements Serializable {
         },
         allowSetters = true
     )
-    private IFRS16LeaseContract leaseContract;
+    private DetailedLeaseContract leaseContract;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -107,16 +107,16 @@ public class LeasePayment implements Serializable {
         this.paymentDate = paymentDate;
     }
 
-    public IFRS16LeaseContract getLeaseContract() {
+    public DetailedLeaseContract getLeaseContract() {
         return this.leaseContract;
     }
 
-    public void setLeaseContract(IFRS16LeaseContract iFRS16LeaseContract) {
-        this.leaseContract = iFRS16LeaseContract;
+    public void setLeaseContract(DetailedLeaseContract detailedLeaseContract) {
+        this.leaseContract = detailedLeaseContract;
     }
 
-    public LeasePayment leaseContract(IFRS16LeaseContract iFRS16LeaseContract) {
-        this.setLeaseContract(iFRS16LeaseContract);
+    public LeasePayment leaseContract(DetailedLeaseContract detailedLeaseContract) {
+        this.setLeaseContract(detailedLeaseContract);
         return this;
     }
 

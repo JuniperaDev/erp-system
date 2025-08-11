@@ -1,0 +1,4 @@
+id;assignment_date;assignment_details;asset_registration_id;purchase_order_id
+1;2024-01-01;Test purchase order assignment for Asset 1;1;1
+2;2024-01-02;Test purchase order assignment for Asset 2;2;2
+3;2024-01-03;Additional purchase order assignment;1;2

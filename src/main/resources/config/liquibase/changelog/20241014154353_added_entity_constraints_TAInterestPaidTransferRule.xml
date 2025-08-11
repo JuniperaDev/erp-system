@@ -12,7 +12,7 @@
                                  baseTableName="tainterest_paid_transfer_rule"
                                  constraintName="fk_tainterest_paid_transfer_rule__lease_contract_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="ifrs16lease_contract"/>
+                                 referencedTableName="detailed_lease_contract"/>
 
         <addForeignKeyConstraint baseColumnNames="debit_id"
                                  baseTableName="tainterest_paid_transfer_rule"

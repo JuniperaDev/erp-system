@@ -31,7 +31,7 @@ import org.mapstruct.*;
         PlaceholderMapper.class,
         UniversallyUniqueMappingMapper.class,
         LeaseAmortizationScheduleMapper.class,
-        IFRS16LeaseContractMapper.class,
+        DetailedLeaseContractMapper.class,
         LeaseLiabilityMapper.class,
         LeaseRepaymentPeriodMapper.class,
     }

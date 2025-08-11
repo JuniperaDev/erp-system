@@ -33,18 +33,18 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CreditNoteRepository extends JpaRepository<CreditNote, Long>, JpaSpecificationExecutor<CreditNote> {
     @Query(
-        value = "select distinct creditNote from CreditNote creditNote left join fetch creditNote.purchaseOrders left join fetch creditNote.invoices left join fetch creditNote.paymentLabels left join fetch creditNote.placeholders",
+        value = "select distinct creditNote from CreditNote creditNote left join fetch creditNote.invoices left join fetch creditNote.paymentLabels left join fetch creditNote.placeholders",
         countQuery = "select count(distinct creditNote) from CreditNote creditNote"
     )
     Page<CreditNote> findAllWithEagerRelationships(Pageable pageable);
 
     @Query(
-        "select distinct creditNote from CreditNote creditNote left join fetch creditNote.purchaseOrders left join fetch creditNote.invoices left join fetch creditNote.paymentLabels left join fetch creditNote.placeholders"
+        "select distinct creditNote from CreditNote creditNote left join fetch creditNote.invoices left join fetch creditNote.paymentLabels left join fetch creditNote.placeholders"
     )
     List<CreditNote> findAllWithEagerRelationships();
 
     @Query(
-        "select creditNote from CreditNote creditNote left join fetch creditNote.purchaseOrders left join fetch creditNote.invoices left join fetch creditNote.paymentLabels left join fetch creditNote.placeholders where creditNote.id =:id"
+        "select creditNote from CreditNote creditNote left join fetch creditNote.invoices left join fetch creditNote.paymentLabels left join fetch creditNote.placeholders where creditNote.id =:id"
     )
     Optional<CreditNote> findOneWithEagerRelationships(@Param("id") Long id);
 }

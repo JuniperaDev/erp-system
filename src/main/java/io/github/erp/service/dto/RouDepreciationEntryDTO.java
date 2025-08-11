@@ -71,7 +71,7 @@ public class RouDepreciationEntryDTO implements Serializable {
 
     private AssetCategoryDTO assetCategory;
 
-    private IFRS16LeaseContractDTO leaseContract;
+    private DetailedLeaseContractDTO leaseContract;
 
     private RouModelMetadataDTO rouMetadata;
 
@@ -221,11 +221,11 @@ public class RouDepreciationEntryDTO implements Serializable {
         this.assetCategory = assetCategory;
     }
 
-    public IFRS16LeaseContractDTO getLeaseContract() {
+    public DetailedLeaseContractDTO getLeaseContract() {
         return leaseContract;
     }
 
-    public void setLeaseContract(IFRS16LeaseContractDTO leaseContract) {
+    public void setLeaseContract(DetailedLeaseContractDTO leaseContract) {
         this.leaseContract = leaseContract;
     }
 

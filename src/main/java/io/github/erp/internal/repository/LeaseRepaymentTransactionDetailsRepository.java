@@ -52,7 +52,7 @@ public interface LeaseRepaymentTransactionDetailsRepository
             "FROM " +
             "    lease_liability_schedule_item lls " +
             "LEFT JOIN " +
-            "    ifrs16lease_contract lc ON lls.lease_contract_id = lc.id " +
+            "    detailed_lease_contract lc ON lls.lease_contract_id = lc.id " +
             "LEFT JOIN " +
             "    talease_repayment_rule lrr ON lls.lease_contract_id = lrr.lease_contract_id  " +
             "LEFT JOIN " +

@@ -21,12 +21,16 @@ package io.github.erp.service.impl;
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
 import io.github.erp.domain.Invoice;
+import io.github.erp.domain.events.DomainEventPublisher;
+import io.github.erp.domain.events.financial.InvoiceSettledEvent;
 import io.github.erp.repository.InvoiceRepository;
 import io.github.erp.repository.search.InvoiceSearchRepository;
 import io.github.erp.service.InvoiceService;
 import io.github.erp.service.dto.InvoiceDTO;
 import io.github.erp.service.mapper.InvoiceMapper;
+import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -49,14 +53,18 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private final InvoiceSearchRepository invoiceSearchRepository;
 
+    private final DomainEventPublisher domainEventPublisher;
+
     public InvoiceServiceImpl(
         InvoiceRepository invoiceRepository,
         InvoiceMapper invoiceMapper,
-        InvoiceSearchRepository invoiceSearchRepository
+        InvoiceSearchRepository invoiceSearchRepository,
+        DomainEventPublisher domainEventPublisher
     ) {
         this.invoiceRepository = invoiceRepository;
         this.invoiceMapper = invoiceMapper;
         this.invoiceSearchRepository = invoiceSearchRepository;
+        this.domainEventPublisher = domainEventPublisher;
     }
 
     @Override
@@ -66,6 +74,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice = invoiceRepository.save(invoice);
         InvoiceDTO result = invoiceMapper.toDto(invoice);
         invoiceSearchRepository.save(invoice);
+        
+        publishInvoiceSettledEvent(invoice);
+        
         return result;
     }
 
@@ -119,5 +130,30 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Page<InvoiceDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of Invoices for query {}", query);
         return invoiceSearchRepository.search(query, pageable).map(invoiceMapper::toDto);
+    }
+
+    private void publishInvoiceSettledEvent(Invoice invoice) {
+        try {
+            String currency = invoice.getCurrency() != null ? 
+                invoice.getCurrency().toString() : null;
+
+            InvoiceSettledEvent event = new InvoiceSettledEvent(
+                invoice.getId().toString(),
+                invoice.getInvoiceNumber(),
+                invoice.getInvoiceAmount(),
+                invoice.getInvoiceDate(),
+                currency,
+                invoice.getPaymentReference(),
+                invoice.getDealerName(),
+                invoice.getInvoiceAmount(),
+                LocalDate.now(),
+                UUID.randomUUID()
+            );
+
+            domainEventPublisher.publish(event);
+            log.info("Published InvoiceSettledEvent for invoice: {}", invoice.getId());
+        } catch (Exception e) {
+            log.error("Failed to publish InvoiceSettledEvent for invoice: {}", invoice.getId(), e);
+        }
     }
 }

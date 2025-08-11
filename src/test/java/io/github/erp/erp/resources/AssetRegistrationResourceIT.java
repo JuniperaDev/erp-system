@@ -1351,7 +1351,63 @@ public class AssetRegistrationResourceIT {
     }
 
 
+    @Test
+    @Transactional
+    void getAllAssetRegistrationsByDeliveryNoteIsEqualToSomething() throws Exception {
+        // Initialize the database
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        DeliveryNote deliveryNote;
+        if (TestUtil.findAll(em, DeliveryNote.class).isEmpty()) {
+            deliveryNote = DeliveryNoteResourceIT.createEntity(em);
+            em.persist(deliveryNote);
+            em.flush();
+        } else {
+            deliveryNote = TestUtil.findAll(em, DeliveryNote.class).get(0);
+        }
+        em.persist(deliveryNote);
+        em.flush();
+        assetRegistration.addDeliveryNote(deliveryNote);
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        Long deliveryNoteId = deliveryNote.getId();
 
+        // Get all the assetRegistrationList where deliveryNote equals to deliveryNoteId
+        defaultAssetRegistrationShouldBeFound("deliveryNoteId.equals=" + deliveryNoteId);
+
+        // Get all the assetRegistrationList where deliveryNote equals to (deliveryNoteId + 1)
+        defaultAssetRegistrationShouldNotBeFound("deliveryNoteId.equals=" + (deliveryNoteId + 1));
+    }
+
+    @Test
+    @Transactional
+    void getAllAssetRegistrationsByJobSheetIsEqualToSomething() throws Exception {
+        // Initialize the database
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        JobSheet jobSheet;
+        if (TestUtil.findAll(em, JobSheet.class).isEmpty()) {
+            jobSheet = JobSheetResourceIT.createEntity(em);
+            em.persist(jobSheet);
+            em.flush();
+        } else {
+            jobSheet = TestUtil.findAll(em, JobSheet.class).get(0);
+        }
+        em.persist(jobSheet);
+        em.flush();
+        // Create intermediate entity assignment instead of direct relationship
+        AssetJobSheetAssignment assignment = new AssetJobSheetAssignment();
+        assignment.setAssetRegistration(assetRegistration);
+        assignment.setJobSheet(jobSheet);
+        assignment.setAssignmentDate(LocalDate.now());
+        assignment.setAssignmentStatus("ACTIVE");
+        em.persist(assignment);
+        em.flush();
+        Long jobSheetId = jobSheet.getId();
+
+        // Get all the assetRegistrationList where jobSheet equals to jobSheetId
+        defaultAssetRegistrationShouldBeFound("jobSheetId.equals=" + jobSheetId);
+
+        // Get all the assetRegistrationList where jobSheet equals to (jobSheetId + 1)
+        defaultAssetRegistrationShouldNotBeFound("jobSheetId.equals=" + (jobSheetId + 1));
+    }
 
     @Test
     @Transactional
@@ -1405,7 +1461,6 @@ public class AssetRegistrationResourceIT {
         // Get all the assetRegistrationList where settlementCurrency equals to (settlementCurrencyId + 1)
         defaultAssetRegistrationShouldNotBeFound("settlementCurrencyId.equals=" + (settlementCurrencyId + 1));
     }
-
 
 
 

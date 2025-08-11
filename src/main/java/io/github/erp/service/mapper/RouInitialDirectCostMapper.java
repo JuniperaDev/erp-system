@@ -27,7 +27,7 @@ import org.mapstruct.*;
  */
 @Mapper(
     componentModel = "spring",
-    uses = { IFRS16LeaseContractMapper.class, SettlementMapper.class, TransactionAccountMapper.class, PlaceholderMapper.class }
+    uses = { DetailedLeaseContractMapper.class, SettlementMapper.class, TransactionAccountMapper.class, PlaceholderMapper.class }
 )
 public interface RouInitialDirectCostMapper extends EntityMapper<RouInitialDirectCostDTO, RouInitialDirectCost> {
     @Mapping(target = "leaseContract", source = "leaseContract", qualifiedByName = "shortTitle")

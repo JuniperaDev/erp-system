@@ -113,12 +113,10 @@ public class AssetRegistration implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "containingPlaceholder" }, allowSetters = true)
     private Set<Placeholder> placeholders = new HashSet<>();
-
     @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties(value = { "depreciationMethod", "placeholders" }, allowSetters = true)
     private AssetCategory assetCategory;
-
     @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties(value = { "paymentLabels", "dealerGroup", "placeholders" }, allowSetters = true)
@@ -127,7 +125,6 @@ public class AssetRegistration implements Serializable {
     @ManyToOne
     @JsonIgnoreProperties(value = { "placeholders" }, allowSetters = true)
     private SettlementCurrency settlementCurrency;
-
     @ManyToOne
     @JsonIgnoreProperties(
         value = { "placeholders", "bankCode", "outletType", "outletStatus", "countyName", "subCountyName" },

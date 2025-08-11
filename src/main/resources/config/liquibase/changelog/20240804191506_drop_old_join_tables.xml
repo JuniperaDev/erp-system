@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Production-safe table cleanup for AssetRegistration many-to-many relationships.
+    This migration drops old join tables only after data validation passes.
+    Each changeset includes preconditions to ensure all data was successfully migrated
+    to the new intermediate entities before dropping the old tables.
+    This follows the incremental migration approach specified in MIGRATION_STRATEGY_BACKLOG.md.
+-->
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20240804191506-1" author="devin">
+        <preConditions onFail="HALT">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM rel_asset_registration__asset_warranty old_rel
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM asset_warranty_assignment new_rel 
+                    WHERE new_rel.asset_registration_id = old_rel.asset_registration_id 
+                    AND new_rel.asset_warranty_id = old_rel.asset_warranty_id
+                )
+            </sqlCheck>
+        </preConditions>
+        <dropTable tableName="rel_asset_registration__asset_warranty"/>
+    </changeSet>
+
+    <changeSet id="20240804191506-2" author="devin">
+        <preConditions onFail="HALT">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM rel_asset_registration__purchase_order old_rel
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM asset_purchase_order_assignment new_rel 
+                    WHERE new_rel.asset_registration_id = old_rel.asset_registration_id 
+                    AND new_rel.purchase_order_id = old_rel.purchase_order_id
+                )
+            </sqlCheck>
+        </preConditions>
+        <dropTable tableName="rel_asset_registration__purchase_order"/>
+    </changeSet>
+
+    <changeSet id="20240804191506-3" author="devin">
+        <preConditions onFail="HALT">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM rel_asset_registration__business_document old_rel
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM asset_document_assignment new_rel 
+                    WHERE new_rel.asset_registration_id = old_rel.asset_registration_id 
+                    AND new_rel.business_document_id = old_rel.business_document_id
+                )
+            </sqlCheck>
+        </preConditions>
+        <dropTable tableName="rel_asset_registration__business_document"/>
+    </changeSet>
+
+    <changeSet id="20240804191506-4" author="devin">
+        <preConditions onFail="HALT">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM rel_asset_registration__payment_invoices old_rel
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM asset_payment_invoice_assignment new_rel 
+                    WHERE new_rel.asset_registration_id = old_rel.asset_registration_id 
+                    AND new_rel.payment_invoice_id = old_rel.payment_invoices_id
+                )
+            </sqlCheck>
+        </preConditions>
+        <dropTable tableName="rel_asset_registration__payment_invoices"/>
+    </changeSet>
+
+    <changeSet id="20240804191506-5" author="devin">
+        <preConditions onFail="HALT">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM rel_asset_registration__job_sheet old_rel
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM asset_job_sheet_assignment new_rel 
+                    WHERE new_rel.asset_registration_id = old_rel.asset_registration_id 
+                    AND new_rel.job_sheet_id = old_rel.job_sheet_id
+                )
+            </sqlCheck>
+        </preConditions>
+        <dropTable tableName="rel_asset_registration__job_sheet"/>
+    </changeSet>
+
+</databaseChangeLog>

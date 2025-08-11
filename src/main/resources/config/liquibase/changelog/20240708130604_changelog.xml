@@ -8,6 +8,6 @@
         </addColumn>
     </changeSet>
     <changeSet author="edwin.njeru (generated)" id="1720444093236-14">
-        <addForeignKeyConstraint baseColumnNames="lease_contract_id" baseTableName="lease_payment" constraintName="FKl6qycv16briq5mypa7ryvrxf4" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="ifrs16lease_contract" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="lease_contract_id" baseTableName="lease_payment" constraintName="FKl6qycv16briq5mypa7ryvrxf4" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="detailed_lease_contract" validate="true"/>
     </changeSet>
 </databaseChangeLog>

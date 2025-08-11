@@ -30,6 +30,11 @@ import io.github.erp.domain.AssetAccessory;
 import io.github.erp.domain.AssetCategory;
 import io.github.erp.domain.AssetRegistration;
 import io.github.erp.domain.AssetWarranty;
+import io.github.erp.domain.AssetWarrantyAssignment;
+import io.github.erp.domain.AssetPurchaseOrderAssignment;
+import io.github.erp.domain.AssetDocumentAssignment;
+import io.github.erp.domain.AssetPaymentInvoiceAssignment;
+import io.github.erp.domain.AssetJobSheetAssignment;
 import io.github.erp.domain.BusinessDocument;
 import io.github.erp.domain.Dealer;
 import io.github.erp.domain.DeliveryNote;
@@ -1363,9 +1368,6 @@ class AssetRegistrationResourceIT {
         defaultAssetRegistrationShouldNotBeFound("assetCategoryId.equals=" + (assetCategoryId + 1));
     }
 
-
-
-
     @Test
     @Transactional
     void getAllAssetRegistrationsByDealerIsEqualToSomething() throws Exception {
@@ -1391,7 +1393,6 @@ class AssetRegistrationResourceIT {
         // Get all the assetRegistrationList where dealer equals to (dealerId + 1)
         defaultAssetRegistrationShouldNotBeFound("dealerId.equals=" + (dealerId + 1));
     }
-
 
     @Test
     @Transactional
@@ -1419,9 +1420,266 @@ class AssetRegistrationResourceIT {
         defaultAssetRegistrationShouldNotBeFound("settlementCurrencyId.equals=" + (settlementCurrencyId + 1));
     }
 
+    @Test
+    @Transactional
+    void getAllAssetRegistrationsByMainServiceOutletIsEqualToSomething() throws Exception {
+        // Initialize the database
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        ServiceOutlet mainServiceOutlet;
+        if (TestUtil.findAll(em, ServiceOutlet.class).isEmpty()) {
+            mainServiceOutlet = ServiceOutletResourceIT.createEntity(em);
+            em.persist(mainServiceOutlet);
+            em.flush();
+        } else {
+            mainServiceOutlet = TestUtil.findAll(em, ServiceOutlet.class).get(0);
+        }
+        em.persist(mainServiceOutlet);
+        em.flush();
+        assetRegistration.setMainServiceOutlet(mainServiceOutlet);
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        Long mainServiceOutletId = mainServiceOutlet.getId();
+
+        // Get all the assetRegistrationList where mainServiceOutlet equals to mainServiceOutletId
+        defaultAssetRegistrationShouldBeFound("mainServiceOutletId.equals=" + mainServiceOutletId);
+
+        // Get all the assetRegistrationList where mainServiceOutlet equals to (mainServiceOutletId + 1)
+        defaultAssetRegistrationShouldNotBeFound("mainServiceOutletId.equals=" + (mainServiceOutletId + 1));
+    }
+
+    @Test
+    @Transactional
+    void getAllAssetRegistrationsByAcquiringTransactionIsEqualToSomething() throws Exception {
+        // Initialize the database
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        Settlement acquiringTransaction;
+        if (TestUtil.findAll(em, Settlement.class).isEmpty()) {
+            acquiringTransaction = SettlementResourceIT.createEntity(em);
+            em.persist(acquiringTransaction);
+            em.flush();
+        } else {
+            acquiringTransaction = TestUtil.findAll(em, Settlement.class).get(0);
+        }
+        em.persist(acquiringTransaction);
+        em.flush();
+        assetRegistration.setAcquiringTransaction(acquiringTransaction);
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        Long acquiringTransactionId = acquiringTransaction.getId();
+
+        // Get all the assetRegistrationList where acquiringTransaction equals to acquiringTransactionId
+        defaultAssetRegistrationShouldBeFound("acquiringTransactionId.equals=" + acquiringTransactionId);
+
+        // Get all the assetRegistrationList where acquiringTransaction equals to (acquiringTransactionId + 1)
+        defaultAssetRegistrationShouldNotBeFound("acquiringTransactionId.equals=" + (acquiringTransactionId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    void getAllAssetRegistrationsByBusinessDocumentIsEqualToSomething() throws Exception {
+        // Initialize the database
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        BusinessDocument businessDocument;
+        if (TestUtil.findAll(em, BusinessDocument.class).isEmpty()) {
+            businessDocument = BusinessDocumentResourceIT.createEntity(em);
+            em.persist(businessDocument);
+            em.flush();
+        } else {
+            businessDocument = TestUtil.findAll(em, BusinessDocument.class).get(0);
+        }
+        em.persist(businessDocument);
+        em.flush();
+        assetRegistration.addBusinessDocument(businessDocument);
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        Long businessDocumentId = businessDocument.getId();
+=======
+    @Test
+    @Transactional
+    void getAllAssetRegistrationsByBusinessDocumentIsEqualToSomething() throws Exception {
+        // Initialize the database
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        BusinessDocument businessDocument;
+        if (TestUtil.findAll(em, BusinessDocument.class).isEmpty()) {
+            businessDocument = BusinessDocumentResourceIT.createEntity(em);
+            em.persist(businessDocument);
+            em.flush();
+        } else {
+            businessDocument = TestUtil.findAll(em, BusinessDocument.class).get(0);
+        }
+        em.persist(businessDocument);
+        em.flush();
+        // Create intermediate entity assignment instead of direct relationship
+        AssetDocumentAssignment assignment = new AssetDocumentAssignment();
+        assignment.setAssetRegistration(assetRegistration);
+        assignment.setBusinessDocument(businessDocument);
+        assignment.setAssignmentDate(LocalDate.now());
+        assignment.setAssignmentStatus("ACTIVE");
+        em.persist(assignment);
+        em.flush();
+        Long businessDocumentId = businessDocument.getId();
 
 
 
+    @Test
+    @Transactional
+    void getAllAssetRegistrationsByAssetWarrantyIsEqualToSomething() throws Exception {
+        // Initialize the database
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        AssetWarranty assetWarranty;
+        if (TestUtil.findAll(em, AssetWarranty.class).isEmpty()) {
+            assetWarranty = AssetWarrantyResourceIT.createEntity(em);
+            em.persist(assetWarranty);
+            em.flush();
+        } else {
+            assetWarranty = TestUtil.findAll(em, AssetWarranty.class).get(0);
+        }
+        em.persist(assetWarranty);
+        em.flush();
+        assetRegistration.addAssetWarranty(assetWarranty);
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        Long assetWarrantyId = assetWarranty.getId();
+
+        // Get all the assetRegistrationList where assetWarranty equals to assetWarrantyId
+        defaultAssetRegistrationShouldBeFound("assetWarrantyId.equals=" + assetWarrantyId);
+
+        // Get all the assetRegistrationList where assetWarranty equals to (assetWarrantyId + 1)
+        defaultAssetRegistrationShouldNotBeFound("assetWarrantyId.equals=" + (assetWarrantyId + 1));
+    }
+
+    @Test
+    @Transactional
+    void getAllAssetRegistrationsByUniversallyUniqueMappingIsEqualToSomething() throws Exception {
+        // Initialize the database
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        UniversallyUniqueMapping universallyUniqueMapping;
+        if (TestUtil.findAll(em, UniversallyUniqueMapping.class).isEmpty()) {
+            universallyUniqueMapping = UniversallyUniqueMappingResourceIT.createEntity(em);
+            em.persist(universallyUniqueMapping);
+            em.flush();
+        } else {
+            universallyUniqueMapping = TestUtil.findAll(em, UniversallyUniqueMapping.class).get(0);
+        }
+        em.persist(universallyUniqueMapping);
+        em.flush();
+        assetRegistration.addUniversallyUniqueMapping(universallyUniqueMapping);
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        Long universallyUniqueMappingId = universallyUniqueMapping.getId();
+
+        // Get all the assetRegistrationList where universallyUniqueMapping equals to universallyUniqueMappingId
+        defaultAssetRegistrationShouldBeFound("universallyUniqueMappingId.equals=" + universallyUniqueMappingId);
+
+        // Get all the assetRegistrationList where universallyUniqueMapping equals to (universallyUniqueMappingId + 1)
+        defaultAssetRegistrationShouldNotBeFound("universallyUniqueMappingId.equals=" + (universallyUniqueMappingId + 1));
+    }
+
+    @Test
+    @Transactional
+    void getAllAssetRegistrationsByAssetAccessoryIsEqualToSomething() throws Exception {
+        // Initialize the database
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        AssetAccessory assetAccessory;
+        if (TestUtil.findAll(em, AssetAccessory.class).isEmpty()) {
+            assetAccessory = AssetAccessoryResourceIT.createEntity(em);
+            em.persist(assetAccessory);
+            em.flush();
+        } else {
+            assetAccessory = TestUtil.findAll(em, AssetAccessory.class).get(0);
+        }
+        em.persist(assetAccessory);
+        em.flush();
+        assetRegistration.addAssetAccessory(assetAccessory);
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        Long assetAccessoryId = assetAccessory.getId();
+
+        // Get all the assetRegistrationList where assetAccessory equals to assetAccessoryId
+        defaultAssetRegistrationShouldBeFound("assetAccessoryId.equals=" + assetAccessoryId);
+
+        // Get all the assetRegistrationList where assetAccessory equals to (assetAccessoryId + 1)
+        defaultAssetRegistrationShouldNotBeFound("assetAccessoryId.equals=" + (assetAccessoryId + 1));
+    }
+=======
+    @Test
+    @Transactional
+    void getAllAssetRegistrationsByAssetWarrantyIsEqualToSomething() throws Exception {
+        // Initialize the database
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        AssetWarranty assetWarranty;
+        if (TestUtil.findAll(em, AssetWarranty.class).isEmpty()) {
+            assetWarranty = AssetWarrantyResourceIT.createEntity(em);
+            em.persist(assetWarranty);
+            em.flush();
+        } else {
+            assetWarranty = TestUtil.findAll(em, AssetWarranty.class).get(0);
+        }
+        em.persist(assetWarranty);
+        em.flush();
+        // Create intermediate entity assignment instead of direct relationship
+        AssetWarrantyAssignment assignment = new AssetWarrantyAssignment();
+        assignment.setAssetRegistration(assetRegistration);
+        assignment.setAssetWarranty(assetWarranty);
+        assignment.setAssignmentDate(LocalDate.now());
+        assignment.setAssignmentStatus("ACTIVE");
+        em.persist(assignment);
+        em.flush();
+        Long assetWarrantyId = assetWarranty.getId();
+
+        // Get all the assetRegistrationList where assetWarranty equals to assetWarrantyId
+        defaultAssetRegistrationShouldBeFound("assetWarrantyId.equals=" + assetWarrantyId);
+
+        // Get all the assetRegistrationList where assetWarranty equals to (assetWarrantyId + 1)
+        defaultAssetRegistrationShouldNotBeFound("assetWarrantyId.equals=" + (assetWarrantyId + 1));
+    }
+
+    @Test
+    @Transactional
+    void getAllAssetRegistrationsByUniversallyUniqueMappingIsEqualToSomething() throws Exception {
+        // Initialize the database
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        UniversallyUniqueMapping universallyUniqueMapping;
+        if (TestUtil.findAll(em, UniversallyUniqueMapping.class).isEmpty()) {
+            universallyUniqueMapping = UniversallyUniqueMappingResourceIT.createEntity(em);
+            em.persist(universallyUniqueMapping);
+            em.flush();
+        } else {
+            universallyUniqueMapping = TestUtil.findAll(em, UniversallyUniqueMapping.class).get(0);
+        }
+        em.persist(universallyUniqueMapping);
+        em.flush();
+        assetRegistration.addUniversallyUniqueMapping(universallyUniqueMapping);
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        Long universallyUniqueMappingId = universallyUniqueMapping.getId();
+
+        // Get all the assetRegistrationList where universallyUniqueMapping equals to universallyUniqueMappingId
+        defaultAssetRegistrationShouldBeFound("universallyUniqueMappingId.equals=" + universallyUniqueMappingId);
+
+        // Get all the assetRegistrationList where universallyUniqueMapping equals to (universallyUniqueMappingId + 1)
+        defaultAssetRegistrationShouldNotBeFound("universallyUniqueMappingId.equals=" + (universallyUniqueMappingId + 1));
+    }
+
+    @Test
+    @Transactional
+    void getAllAssetRegistrationsByAssetAccessoryIsEqualToSomething() throws Exception {
+        // Initialize the database
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        AssetAccessory assetAccessory;
+        if (TestUtil.findAll(em, AssetAccessory.class).isEmpty()) {
+            assetAccessory = AssetAccessoryResourceIT.createEntity(em);
+            em.persist(assetAccessory);
+            em.flush();
+        } else {
+            assetAccessory = TestUtil.findAll(em, AssetAccessory.class).get(0);
+        }
+        em.persist(assetAccessory);
+        em.flush();
+        assetRegistration.addAssetAccessory(assetAccessory);
+        assetRegistrationRepository.saveAndFlush(assetRegistration);
+        Long assetAccessoryId = assetAccessory.getId();
+
+        // Get all the assetRegistrationList where assetAccessory equals to assetAccessoryId
+        defaultAssetRegistrationShouldBeFound("assetAccessoryId.equals=" + assetAccessoryId);
+
+        // Get all the assetRegistrationList where assetAccessory equals to (assetAccessoryId + 1)
+        defaultAssetRegistrationShouldNotBeFound("assetAccessoryId.equals=" + (assetAccessoryId + 1));
+    }
 
     @Test
     @Transactional

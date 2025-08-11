@@ -27,10 +27,10 @@ import org.mapstruct.*;
  */
 @Mapper(
     componentModel = "spring",
-    uses = { IFRS16LeaseContractMapper.class, TransactionAccountMapper.class, AssetCategoryMapper.class, BusinessDocumentMapper.class }
+    uses = { DetailedLeaseContractMapper.class, TransactionAccountMapper.class, AssetCategoryMapper.class, BusinessDocumentMapper.class }
 )
 public interface RouModelMetadataMapper extends EntityMapper<RouModelMetadataDTO, RouModelMetadata> {
-    @Mapping(target = "ifrs16LeaseContract", source = "ifrs16LeaseContract", qualifiedByName = "shortTitle")
+    @Mapping(target = "detailedLeaseContract", source = "detailedLeaseContract", qualifiedByName = "shortTitle")
     @Mapping(target = "assetAccount", source = "assetAccount", qualifiedByName = "accountName")
     @Mapping(target = "depreciationAccount", source = "depreciationAccount", qualifiedByName = "accountName")
     @Mapping(target = "accruedDepreciationAccount", source = "accruedDepreciationAccount", qualifiedByName = "accountName")

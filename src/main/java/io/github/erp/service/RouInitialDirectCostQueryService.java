@@ -135,7 +135,7 @@ public class RouInitialDirectCostQueryService extends QueryService<RouInitialDir
                     specification.and(
                         buildSpecification(
                             criteria.getLeaseContractId(),
-                            root -> root.join(RouInitialDirectCost_.leaseContract, JoinType.LEFT).get(IFRS16LeaseContract_.id)
+                            root -> root.join(RouInitialDirectCost_.leaseContract, JoinType.LEFT).get(DetailedLeaseContract_.id)
                         )
                     );
             }

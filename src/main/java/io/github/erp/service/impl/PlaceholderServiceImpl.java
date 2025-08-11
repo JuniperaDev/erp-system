@@ -24,12 +24,19 @@ import io.github.erp.domain.Placeholder;
 import io.github.erp.repository.PlaceholderRepository;
 import io.github.erp.repository.search.PlaceholderSearchRepository;
 import io.github.erp.service.PlaceholderService;
+import io.github.erp.service.AuditTrailService;
 import io.github.erp.service.dto.PlaceholderDTO;
 import io.github.erp.service.mapper.PlaceholderMapper;
+import io.github.erp.repository.AssetWarrantyRepository;
+import io.github.erp.repository.LeaseModelMetadataRepository;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,15 +55,24 @@ public class PlaceholderServiceImpl implements PlaceholderService {
     private final PlaceholderMapper placeholderMapper;
 
     private final PlaceholderSearchRepository placeholderSearchRepository;
+    private final AuditTrailService auditTrailService;
+    private final AssetWarrantyRepository assetWarrantyRepository;
+    private final LeaseModelMetadataRepository leaseModelMetadataRepository;
 
     public PlaceholderServiceImpl(
         PlaceholderRepository placeholderRepository,
         PlaceholderMapper placeholderMapper,
-        PlaceholderSearchRepository placeholderSearchRepository
+        PlaceholderSearchRepository placeholderSearchRepository,
+        AuditTrailService auditTrailService,
+        AssetWarrantyRepository assetWarrantyRepository,
+        LeaseModelMetadataRepository leaseModelMetadataRepository
     ) {
         this.placeholderRepository = placeholderRepository;
         this.placeholderMapper = placeholderMapper;
         this.placeholderSearchRepository = placeholderSearchRepository;
+        this.auditTrailService = auditTrailService;
+        this.assetWarrantyRepository = assetWarrantyRepository;
+        this.leaseModelMetadataRepository = leaseModelMetadataRepository;
     }
 
     @Override
@@ -115,5 +131,148 @@ public class PlaceholderServiceImpl implements PlaceholderService {
     public Page<PlaceholderDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of Placeholders for query {}", query);
         return placeholderSearchRepository.search(query, pageable).map(placeholderMapper::toDto);
+    }
+
+    @Override
+    public Set<PlaceholderDTO> attachPlaceholders(Long entityId, String entityType, Set<PlaceholderDTO> placeholders) {
+        log.debug("Request to attach {} placeholders to {} with id {}", placeholders.size(), entityType, entityId);
+        
+        Set<PlaceholderDTO> attachedPlaceholders = new HashSet<>();
+        
+        for (PlaceholderDTO placeholder : placeholders) {
+            if (addPlaceholderToEntity(entityId, entityType, placeholder)) {
+                attachedPlaceholders.add(placeholder);
+                auditTrailService.logPlaceholderEvent(entityType, entityId, placeholder.getId(), "ATTACH", getCurrentUser());
+            }
+        }
+        
+        return attachedPlaceholders;
+    }
+
+    @Override
+    public Set<PlaceholderDTO> detachPlaceholders(Long entityId, String entityType, Set<Long> placeholderIds) {
+        log.debug("Request to detach {} placeholders from {} with id {}", placeholderIds.size(), entityType, entityId);
+        
+        Set<PlaceholderDTO> remainingPlaceholders = getAttachedPlaceholders(entityId, entityType);
+        
+        for (Long placeholderId : placeholderIds) {
+            if (removePlaceholderFromEntity(entityId, entityType, placeholderId)) {
+                remainingPlaceholders.removeIf(placeholder -> placeholder.getId().equals(placeholderId));
+                auditTrailService.logPlaceholderEvent(entityType, entityId, placeholderId, "DETACH", getCurrentUser());
+            }
+        }
+        
+        return remainingPlaceholders;
+    }
+
+    @Override
+    public Set<PlaceholderDTO> getAttachedPlaceholders(Long entityId, String entityType) {
+        log.debug("Request to get attached placeholders for {} with id {}", entityType, entityId);
+        
+        switch (entityType.toLowerCase()) {
+            case "assetwarranty":
+                return assetWarrantyRepository.findById(entityId)
+                    .map(entity -> entity.getPlaceholders().stream()
+                        .map(placeholderMapper::toDto)
+                        .collect(Collectors.toSet()))
+                    .orElse(new HashSet<>());
+                    
+            case "leasemodelmetadata":
+                return leaseModelMetadataRepository.findById(entityId)
+                    .map(entity -> entity.getPlaceholders().stream()
+                        .map(placeholderMapper::toDto)
+                        .collect(Collectors.toSet()))
+                    .orElse(new HashSet<>());
+                    
+            default:
+                log.warn("Unsupported entity type for placeholder attachments: {}", entityType);
+                return new HashSet<>();
+        }
+    }
+
+    @Override
+    public Page<PlaceholderDTO> findByTokenPattern(String tokenPattern, Pageable pageable) {
+        log.debug("Request to find placeholders by token pattern: {}", tokenPattern);
+        return placeholderSearchRepository.search("token:" + tokenPattern, pageable).map(placeholderMapper::toDto);
+    }
+
+    @Override
+    public Set<PlaceholderDTO> createFromTemplates(Set<PlaceholderDTO> templates) {
+        log.debug("Request to create {} placeholders from templates", templates.size());
+        
+        Set<PlaceholderDTO> createdPlaceholders = new HashSet<>();
+        
+        for (PlaceholderDTO template : templates) {
+            PlaceholderDTO newPlaceholder = new PlaceholderDTO();
+            newPlaceholder.setDescription(template.getDescription());
+            newPlaceholder.setToken(template.getToken());
+            newPlaceholder.setFileUploadToken(template.getFileUploadToken());
+            newPlaceholder.setCompilationToken(template.getCompilationToken());
+            
+            PlaceholderDTO saved = save(newPlaceholder);
+            createdPlaceholders.add(saved);
+        }
+        
+        return createdPlaceholders;
+    }
+
+    private boolean addPlaceholderToEntity(Long entityId, String entityType, PlaceholderDTO placeholder) {
+        switch (entityType.toLowerCase()) {
+            case "assetwarranty":
+                return assetWarrantyRepository.findById(entityId)
+                    .map(entity -> {
+                        entity.getPlaceholders().add(placeholderMapper.toEntity(placeholder));
+                        assetWarrantyRepository.save(entity);
+                        return true;
+                    })
+                    .orElse(false);
+                    
+            case "leasemodelmetadata":
+                return leaseModelMetadataRepository.findById(entityId)
+                    .map(entity -> {
+                        entity.getPlaceholders().add(placeholderMapper.toEntity(placeholder));
+                        leaseModelMetadataRepository.save(entity);
+                        return true;
+                    })
+                    .orElse(false);
+                    
+            default:
+                log.warn("Unsupported entity type for placeholder attachments: {}", entityType);
+                return false;
+        }
+    }
+
+    private boolean removePlaceholderFromEntity(Long entityId, String entityType, Long placeholderId) {
+        switch (entityType.toLowerCase()) {
+            case "assetwarranty":
+                return assetWarrantyRepository.findById(entityId)
+                    .map(entity -> {
+                        boolean removed = entity.getPlaceholders().removeIf(placeholder -> placeholder.getId().equals(placeholderId));
+                        if (removed) {
+                            assetWarrantyRepository.save(entity);
+                        }
+                        return removed;
+                    })
+                    .orElse(false);
+                    
+            case "leasemodelmetadata":
+                return leaseModelMetadataRepository.findById(entityId)
+                    .map(entity -> {
+                        boolean removed = entity.getPlaceholders().removeIf(placeholder -> placeholder.getId().equals(placeholderId));
+                        if (removed) {
+                            leaseModelMetadataRepository.save(entity);
+                        }
+                        return removed;
+                    })
+                    .orElse(false);
+                    
+            default:
+                log.warn("Unsupported entity type for placeholder attachments: {}", entityType);
+                return false;
+        }
+    }
+
+    private String getCurrentUser() {
+        return "system";
     }
 }

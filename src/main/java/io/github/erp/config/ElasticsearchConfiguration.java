@@ -24,13 +24,17 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
 import org.springframework.data.elasticsearch.config.ElasticsearchConfigurationSupport;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchCustomConversions;
 
 @Configuration
+@Profile("!test & !testcontainers")
+@EnableElasticsearchRepositories("io.github.erp.repository.search")
 public class ElasticsearchConfiguration extends ElasticsearchConfigurationSupport {
 
     @Bean

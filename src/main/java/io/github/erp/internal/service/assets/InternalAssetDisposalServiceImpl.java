@@ -19,6 +19,8 @@ package io.github.erp.internal.service.assets;
  */
 import io.github.erp.domain.ApplicationUser;
 import io.github.erp.domain.AssetDisposal;
+import io.github.erp.domain.events.DomainEventPublisher;
+import io.github.erp.domain.events.asset.AssetDisposedEvent;
 import io.github.erp.erp.assets.nbv.buffer.BufferedSinkProcessor;
 import io.github.erp.internal.repository.InternalAssetDisposalRepository;
 import io.github.erp.internal.service.applicationUser.CurrentUserContext;
@@ -39,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Implementation for managing {@link AssetDisposal}.
@@ -63,12 +66,14 @@ public class InternalAssetDisposalServiceImpl implements InternalAssetDisposalSe
 
     private final BufferedSinkProcessor<AssetDisposal> bufferedSinkProcessor;
 
+    private final DomainEventPublisher domainEventPublisher;
+
     public InternalAssetDisposalServiceImpl(
         InternalAssetDisposalRepository assetDisposalRepository,
         AssetDisposalMapper assetDisposalMapper,
         AssetDisposalSearchRepository assetDisposalSearchRepository,
         AssetDisposalQueryService assetDisposalQueryService,
-        @Qualifier("scheduledAssetRegistrationCacheRefreshService") ScheduledCacheRefreshService scheduledAssetRegistrationCacheRefreshService, InternalAssetRegistrationService assetRegistrationService, BufferedSinkProcessor<AssetDisposal> bufferedSinkProcessor) {
+        @Qualifier("scheduledAssetRegistrationCacheRefreshService") ScheduledCacheRefreshService scheduledAssetRegistrationCacheRefreshService, InternalAssetRegistrationService assetRegistrationService, BufferedSinkProcessor<AssetDisposal> bufferedSinkProcessor, DomainEventPublisher domainEventPublisher) {
         this.assetDisposalRepository = assetDisposalRepository;
         this.assetDisposalMapper = assetDisposalMapper;
         this.assetDisposalSearchRepository = assetDisposalSearchRepository;
@@ -76,6 +81,7 @@ public class InternalAssetDisposalServiceImpl implements InternalAssetDisposalSe
         this.scheduledAssetRegistrationCacheRefreshService = scheduledAssetRegistrationCacheRefreshService;
         this.assetRegistrationService = assetRegistrationService;
         this.bufferedSinkProcessor = bufferedSinkProcessor;
+        this.domainEventPublisher = domainEventPublisher;
     }
 
     @Override
@@ -89,6 +95,21 @@ public class InternalAssetDisposalServiceImpl implements InternalAssetDisposalSe
         assetDisposal = assetDisposalRepository.save(assetDisposal);
         AssetDisposalDTO result = assetDisposalMapper.toDto(assetDisposal);
         assetDisposalSearchRepository.save(assetDisposal);
+        
+        if (assetDisposal.getAssetDisposed() != null) {
+            AssetDisposedEvent event = new AssetDisposedEvent(
+                assetDisposal.getAssetDisposed().getId().toString(),
+                assetDisposal.getAssetDisposed().getAssetNumber(),
+                assetDisposal.getAssetDisposed().getAssetDetails(),
+                assetDisposal.getDisposalDate(),
+                assetDisposal.getNetBookValue(),
+                assetDisposal.getAssetCost(),
+                assetDisposal.getAssetDisposalReference() != null ? assetDisposal.getAssetDisposalReference().toString() : null,
+                UUID.randomUUID()
+            );
+            domainEventPublisher.publish(event);
+        }
+        
         return result;
     }
 
@@ -112,6 +133,21 @@ public class InternalAssetDisposalServiceImpl implements InternalAssetDisposalSe
             .map(assetDisposalRepository::save)
             .map(savedAssetDisposal -> {
                 assetDisposalSearchRepository.save(savedAssetDisposal);
+                
+                if (savedAssetDisposal.getAssetDisposed() != null) {
+                    AssetDisposedEvent event = new AssetDisposedEvent(
+                        savedAssetDisposal.getAssetDisposed().getId().toString(),
+                        savedAssetDisposal.getAssetDisposed().getAssetNumber(),
+                        savedAssetDisposal.getAssetDisposed().getAssetDetails(),
+                        savedAssetDisposal.getDisposalDate(),
+                        savedAssetDisposal.getNetBookValue(),
+                        savedAssetDisposal.getAssetCost(),
+                        savedAssetDisposal.getAssetDisposalReference() != null ? 
+                            savedAssetDisposal.getAssetDisposalReference().toString() : null,
+                        UUID.randomUUID()
+                    );
+                    domainEventPublisher.publish(event);
+                }
 
                 return savedAssetDisposal;
             })

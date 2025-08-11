@@ -17,8 +17,8 @@ package io.github.erp.internal.service.rou;
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import io.github.erp.domain.*; // for static metamodels
 import io.github.erp.domain.RouDepreciationEntryReportItem;
-import io.github.erp.domain.RouDepreciationEntryReportItem_;
 import io.github.erp.internal.repository.InternalRouDepreciationEntryReportItemRepository;
 import io.github.erp.repository.RouDepreciationEntryReportItemRepository;
 import io.github.erp.repository.search.RouDepreciationEntryReportItemSearchRepository;

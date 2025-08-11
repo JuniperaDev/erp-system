@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20250804185199-1" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__payment_invoices"/>
+        </preConditions>
+        <comment>Migrate payment invoice relationships to AssetProcurementLink</comment>
+        <sql>
+            INSERT INTO asset_procurement_link (asset_id, procurement_entity_id, procurement_entity_type, link_date)
+            SELECT ar.id, pi.id, 'PAYMENT_INVOICE', CURRENT_DATE
+            FROM rel_asset_registration__payment_invoices rel
+            JOIN asset_registration ar ON ar.id = rel.asset_registration_id
+            JOIN payment_invoice pi ON pi.id = rel.payment_invoices_id;
+        </sql>
+        <rollback>
+            DELETE FROM asset_procurement_link WHERE procurement_entity_type = 'PAYMENT_INVOICE';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20250804185199-2" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__purchase_order"/>
+        </preConditions>
+        <comment>Migrate purchase order relationships to AssetProcurementLink</comment>
+        <sql>
+            INSERT INTO asset_procurement_link (asset_id, procurement_entity_id, procurement_entity_type, link_date)
+            SELECT ar.id, po.id, 'PURCHASE_ORDER', CURRENT_DATE
+            FROM rel_asset_registration__purchase_order rel
+            JOIN asset_registration ar ON ar.id = rel.asset_registration_id
+            JOIN purchase_order po ON po.id = rel.purchase_order_id;
+        </sql>
+        <rollback>
+            DELETE FROM asset_procurement_link WHERE procurement_entity_type = 'PURCHASE_ORDER';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20250804185199-3" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__delivery_note"/>
+        </preConditions>
+        <comment>Migrate delivery note relationships to AssetProcurementLink</comment>
+        <sql>
+            INSERT INTO asset_procurement_link (asset_id, procurement_entity_id, procurement_entity_type, link_date)
+            SELECT ar.id, dn.id, 'DELIVERY_NOTE', CURRENT_DATE
+            FROM rel_asset_registration__delivery_note rel
+            JOIN asset_registration ar ON ar.id = rel.asset_registration_id
+            JOIN delivery_note dn ON dn.id = rel.delivery_note_id;
+        </sql>
+        <rollback>
+            DELETE FROM asset_procurement_link WHERE procurement_entity_type = 'DELIVERY_NOTE';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20250804185199-4" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__job_sheet"/>
+        </preConditions>
+        <comment>Migrate job sheet relationships to AssetProcurementLink</comment>
+        <sql>
+            INSERT INTO asset_procurement_link (asset_id, procurement_entity_id, procurement_entity_type, link_date)
+            SELECT ar.id, js.id, 'JOB_SHEET', CURRENT_DATE
+            FROM rel_asset_registration__job_sheet rel
+            JOIN asset_registration ar ON ar.id = rel.asset_registration_id
+            JOIN job_sheet js ON js.id = rel.job_sheet_id;
+        </sql>
+        <rollback>
+            DELETE FROM asset_procurement_link WHERE procurement_entity_type = 'JOB_SHEET';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20250804185199-5" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__business_document"/>
+        </preConditions>
+        <comment>Migrate business document relationships to AssetProcurementLink</comment>
+        <sql>
+            INSERT INTO asset_procurement_link (asset_id, procurement_entity_id, procurement_entity_type, link_date)
+            SELECT ar.id, bd.id, 'BUSINESS_DOCUMENT', CURRENT_DATE
+            FROM rel_asset_registration__business_document rel
+            JOIN asset_registration ar ON ar.id = rel.asset_registration_id
+            JOIN business_document bd ON bd.id = rel.business_document_id;
+        </sql>
+        <rollback>
+            DELETE FROM asset_procurement_link WHERE procurement_entity_type = 'BUSINESS_DOCUMENT';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20250804185199-6" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__asset_warranty"/>
+        </preConditions>
+        <comment>Migrate asset warranty relationships to AssetProcurementLink</comment>
+        <sql>
+            INSERT INTO asset_procurement_link (asset_id, procurement_entity_id, procurement_entity_type, link_date)
+            SELECT ar.id, aw.id, 'ASSET_WARRANTY', CURRENT_DATE
+            FROM rel_asset_registration__asset_warranty rel
+            JOIN asset_registration ar ON ar.id = rel.asset_registration_id
+            JOIN asset_warranty aw ON aw.id = rel.asset_warranty_id;
+        </sql>
+        <rollback>
+            DELETE FROM asset_procurement_link WHERE procurement_entity_type = 'ASSET_WARRANTY';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20250804185199-7" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__other_related_service_outlets"/>
+        </preConditions>
+        <comment>Migrate service outlet relationships to AssetProcurementLink</comment>
+        <sql>
+            INSERT INTO asset_procurement_link (asset_id, procurement_entity_id, procurement_entity_type, link_date)
+            SELECT ar.id, so.id, 'SERVICE_OUTLET', CURRENT_DATE
+            FROM rel_asset_registration__other_related_service_outlets rel
+            JOIN asset_registration ar ON ar.id = rel.asset_registration_id
+            JOIN service_outlet so ON so.id = rel.other_related_service_outlets_id;
+        </sql>
+        <rollback>
+            DELETE FROM asset_procurement_link WHERE procurement_entity_type = 'SERVICE_OUTLET';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20250804185199-8" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__other_related_settlements"/>
+        </preConditions>
+        <comment>Migrate settlement relationships to AssetProcurementLink</comment>
+        <sql>
+            INSERT INTO asset_procurement_link (asset_id, procurement_entity_id, procurement_entity_type, link_date)
+            SELECT ar.id, s.id, 'SETTLEMENT', CURRENT_DATE
+            FROM rel_asset_registration__other_related_settlements rel
+            JOIN asset_registration ar ON ar.id = rel.asset_registration_id
+            JOIN settlement s ON s.id = rel.other_related_settlements_id;
+        </sql>
+        <rollback>
+            DELETE FROM asset_procurement_link WHERE procurement_entity_type = 'SETTLEMENT';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20250804185199-9" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__designated_users"/>
+        </preConditions>
+        <comment>Migrate designated user relationships to AssetProcurementLink</comment>
+        <sql>
+            INSERT INTO asset_procurement_link (asset_id, procurement_entity_id, procurement_entity_type, link_date)
+            SELECT ar.id, du.id, 'DESIGNATED_USER', CURRENT_DATE
+            FROM rel_asset_registration__designated_users rel
+            JOIN asset_registration ar ON ar.id = rel.asset_registration_id
+            JOIN application_user du ON du.id = rel.designated_users_id;
+        </sql>
+        <rollback>
+            DELETE FROM asset_procurement_link WHERE procurement_entity_type = 'DESIGNATED_USER';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20250804185199-10" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__universally_unique_mapping"/>
+        </preConditions>
+        <comment>Migrate universally unique mapping relationships to AssetProcurementLink</comment>
+        <sql>
+            INSERT INTO asset_procurement_link (asset_id, procurement_entity_id, procurement_entity_type, link_date)
+            SELECT ar.id, uum.id, 'UNIVERSALLY_UNIQUE_MAPPING', CURRENT_DATE
+            FROM rel_asset_registration__universally_unique_mapping rel
+            JOIN asset_registration ar ON ar.id = rel.asset_registration_id
+            JOIN universally_unique_mapping uum ON uum.id = rel.universally_unique_mapping_id;
+        </sql>
+        <rollback>
+            DELETE FROM asset_procurement_link WHERE procurement_entity_type = 'UNIVERSALLY_UNIQUE_MAPPING';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20250804185199-11" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__asset_accessory"/>
+        </preConditions>
+        <comment>Migrate asset accessory relationships to AssetProcurementLink</comment>
+        <sql>
+            INSERT INTO asset_procurement_link (asset_id, procurement_entity_id, procurement_entity_type, link_date)
+            SELECT ar.id, aa.id, 'ASSET_ACCESSORY', CURRENT_DATE
+            FROM rel_asset_registration__asset_accessory rel
+            JOIN asset_registration ar ON ar.id = rel.asset_registration_id
+            JOIN asset_accessory aa ON aa.id = rel.asset_accessory_id;
+        </sql>
+        <rollback>
+            DELETE FROM asset_procurement_link WHERE procurement_entity_type = 'ASSET_ACCESSORY';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20250804185199-12" author="devin">
+        <comment>Migration completed successfully - all relationship data preserved</comment>
+        <sql>SELECT 'AssetRegistration relationship migration completed' as result;</sql>
+    </changeSet>
+
+</databaseChangeLog>

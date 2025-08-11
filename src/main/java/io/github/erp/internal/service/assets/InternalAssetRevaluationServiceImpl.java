@@ -18,6 +18,8 @@ package io.github.erp.internal.service.assets;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import io.github.erp.domain.AssetRevaluation;
+import io.github.erp.domain.events.DomainEventPublisher;
+import io.github.erp.domain.events.asset.AssetRevaluedEvent;
 import io.github.erp.internal.repository.InternalAssetRevaluationRepository;
 import io.github.erp.repository.search.AssetRevaluationSearchRepository;
 import io.github.erp.service.dto.AssetRevaluationDTO;
@@ -32,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Implementation for managing {@link AssetRevaluation}.
@@ -48,14 +51,18 @@ public class InternalAssetRevaluationServiceImpl implements InternalAssetRevalua
 
     private final AssetRevaluationSearchRepository assetRevaluationSearchRepository;
 
+    private final DomainEventPublisher domainEventPublisher;
+
     public InternalAssetRevaluationServiceImpl(
         InternalAssetRevaluationRepository assetRevaluationRepository,
         AssetRevaluationMapper assetRevaluationMapper,
-        AssetRevaluationSearchRepository assetRevaluationSearchRepository
+        AssetRevaluationSearchRepository assetRevaluationSearchRepository,
+        DomainEventPublisher domainEventPublisher
     ) {
         this.assetRevaluationRepository = assetRevaluationRepository;
         this.assetRevaluationMapper = assetRevaluationMapper;
         this.assetRevaluationSearchRepository = assetRevaluationSearchRepository;
+        this.domainEventPublisher = domainEventPublisher;
     }
 
     @Override
@@ -65,6 +72,21 @@ public class InternalAssetRevaluationServiceImpl implements InternalAssetRevalua
         assetRevaluation = assetRevaluationRepository.save(assetRevaluation);
         AssetRevaluationDTO result = assetRevaluationMapper.toDto(assetRevaluation);
         assetRevaluationSearchRepository.save(assetRevaluation);
+        
+        if (assetRevaluation.getRevaluedAsset() != null) {
+            AssetRevaluedEvent event = new AssetRevaluedEvent(
+                assetRevaluation.getRevaluedAsset().getId().toString(),
+                assetRevaluation.getRevaluedAsset().getAssetNumber(),
+                assetRevaluation.getRevaluedAsset().getAssetDetails(),
+                assetRevaluation.getRevaluationDate(),
+                assetRevaluation.getRevaluedAsset().getAssetCost(),
+                assetRevaluation.getDevaluationAmount(),
+                assetRevaluation.getRevaluationReferenceId() != null ? assetRevaluation.getRevaluationReferenceId().toString() : null,
+                UUID.randomUUID()
+            );
+            domainEventPublisher.publish(event);
+        }
+        
         return result;
     }
 
@@ -82,6 +104,21 @@ public class InternalAssetRevaluationServiceImpl implements InternalAssetRevalua
             .map(assetRevaluationRepository::save)
             .map(savedAssetRevaluation -> {
                 assetRevaluationSearchRepository.save(savedAssetRevaluation);
+                
+                if (savedAssetRevaluation.getRevaluedAsset() != null) {
+                    AssetRevaluedEvent event = new AssetRevaluedEvent(
+                        savedAssetRevaluation.getRevaluedAsset().getId().toString(),
+                        savedAssetRevaluation.getRevaluedAsset().getAssetNumber(),
+                        savedAssetRevaluation.getRevaluedAsset().getAssetDetails(),
+                        savedAssetRevaluation.getRevaluationDate(),
+                        savedAssetRevaluation.getRevaluedAsset().getAssetCost(),
+                        savedAssetRevaluation.getDevaluationAmount(),
+                        savedAssetRevaluation.getRevaluationReferenceId() != null ? 
+                            savedAssetRevaluation.getRevaluationReferenceId().toString() : null,
+                        UUID.randomUUID()
+                    );
+                    domainEventPublisher.publish(event);
+                }
 
                 return savedAssetRevaluation;
             })

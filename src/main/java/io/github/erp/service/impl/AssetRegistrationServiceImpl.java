@@ -21,6 +21,7 @@ package io.github.erp.service.impl;
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
 import io.github.erp.domain.AssetRegistration;
+import io.github.erp.domain.events.AssetAcquiredEvent;
 import io.github.erp.repository.AssetRegistrationRepository;
 import io.github.erp.repository.search.AssetRegistrationSearchRepository;
 import io.github.erp.service.AssetRegistrationService;
@@ -29,6 +30,7 @@ import io.github.erp.service.mapper.AssetRegistrationMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -48,15 +50,19 @@ public class AssetRegistrationServiceImpl implements AssetRegistrationService {
     private final AssetRegistrationMapper assetRegistrationMapper;
 
     private final AssetRegistrationSearchRepository assetRegistrationSearchRepository;
+    
+    private final ApplicationEventPublisher eventPublisher;
 
     public AssetRegistrationServiceImpl(
         AssetRegistrationRepository assetRegistrationRepository,
         AssetRegistrationMapper assetRegistrationMapper,
-        AssetRegistrationSearchRepository assetRegistrationSearchRepository
+        AssetRegistrationSearchRepository assetRegistrationSearchRepository,
+        ApplicationEventPublisher eventPublisher
     ) {
         this.assetRegistrationRepository = assetRegistrationRepository;
         this.assetRegistrationMapper = assetRegistrationMapper;
         this.assetRegistrationSearchRepository = assetRegistrationSearchRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -66,6 +72,16 @@ public class AssetRegistrationServiceImpl implements AssetRegistrationService {
         assetRegistration = assetRegistrationRepository.save(assetRegistration);
         AssetRegistrationDTO result = assetRegistrationMapper.toDto(assetRegistration);
         assetRegistrationSearchRepository.save(assetRegistration);
+        
+        if (assetRegistration.getAcquiringTransaction() != null) {
+            eventPublisher.publishEvent(new AssetAcquiredEvent(
+                this,
+                assetRegistration.getId(),
+                assetRegistration.getAcquiringTransaction().getId(),
+                assetRegistration.getCapitalizationDate()
+            ));
+        }
+        
         return result;
     }
 
@@ -83,6 +99,15 @@ public class AssetRegistrationServiceImpl implements AssetRegistrationService {
             .map(assetRegistrationRepository::save)
             .map(savedAssetRegistration -> {
                 assetRegistrationSearchRepository.save(savedAssetRegistration);
+
+                if (savedAssetRegistration.getAcquiringTransaction() != null) {
+                    eventPublisher.publishEvent(new AssetAcquiredEvent(
+                        this,
+                        savedAssetRegistration.getId(),
+                        savedAssetRegistration.getAcquiringTransaction().getId(),
+                        savedAssetRegistration.getCapitalizationDate()
+                    ));
+                }
 
                 return savedAssetRegistration;
             })

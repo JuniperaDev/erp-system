@@ -21,29 +21,41 @@
         <!-- Rename the main table -->
         <renameTable oldTableName="ifrs16lease_contract" newTableName="detailed_lease_contract"/>
         
+        <rollback>
+            <renameTable oldTableName="detailed_lease_contract" newTableName="ifrs16lease_contract"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20250804193122-2" author="devin">
         <!-- Update sequence name if it exists - H2 compatible approach -->
+        <preConditions onFail="MARK_RAN">
+            <sequenceExists sequenceName="ifrs16lease_contract_seq"/>
+        </preConditions>
+        
+        <comment>Rename sequence from ifrs16lease_contract_seq to detailed_lease_contract_seq</comment>
+        
+        <!-- H2 compatible sequence handling -->
         <sql dbms="h2">
             DROP SEQUENCE IF EXISTS detailed_lease_contract_seq;
             CREATE SEQUENCE IF NOT EXISTS detailed_lease_contract_seq START WITH (SELECT COALESCE(MAX(id), 0) + 1 FROM detailed_lease_contract);
             DROP SEQUENCE IF EXISTS ifrs16lease_contract_seq;
         </sql>
+        
+        <!-- Other databases use standard approach -->
         <sql dbms="!h2">
-            ALTER SEQUENCE IF EXISTS ifrs16lease_contract_seq RENAME TO detailed_lease_contract_seq;
+            DROP SEQUENCE IF EXISTS ifrs16lease_contract_seq;
+            CREATE SEQUENCE detailed_lease_contract_seq START WITH 1 INCREMENT BY 50;
         </sql>
         
-        <!-- Note: Constraint and index renaming will be handled automatically by the table rename operation -->
-        <!-- Most databases automatically update constraint and index names when tables are renamed -->
-        <!-- If manual updates are needed, they can be added in a separate changeset after deployment verification -->
-        
         <rollback>
-            <renameTable oldTableName="detailed_lease_contract" newTableName="ifrs16lease_contract"/>
             <sql dbms="h2">
                 DROP SEQUENCE IF EXISTS ifrs16lease_contract_seq;
                 CREATE SEQUENCE IF NOT EXISTS ifrs16lease_contract_seq START WITH (SELECT COALESCE(MAX(id), 0) + 1 FROM ifrs16lease_contract);
                 DROP SEQUENCE IF EXISTS detailed_lease_contract_seq;
             </sql>
             <sql dbms="!h2">
-                ALTER SEQUENCE IF EXISTS detailed_lease_contract_seq RENAME TO ifrs16lease_contract_seq;
+                DROP SEQUENCE IF EXISTS detailed_lease_contract_seq;
+                CREATE SEQUENCE ifrs16lease_contract_seq START WITH 1 INCREMENT BY 50;
             </sql>
         </rollback>
     </changeSet>

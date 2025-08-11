@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20250811170202-1" author="devin">
+        <createTable tableName="compliance_audit_event">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="event_id" type="${uuidType}">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="event_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="occurred_on" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="correlation_id" type="${uuidType}"/>
+            <column name="aggregate_id" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="aggregate_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="processed" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="retry_count" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)"/>
+            <column name="last_modified_date" type="${datetimeType}"/>
+            <column name="compliance_type" type="varchar(255)"/>
+            <column name="regulation_reference" type="varchar(255)"/>
+            <column name="compliance_status" type="varchar(255)"/>
+            <column name="audit_details" type="clob"/>
+            <column name="auditor_id" type="varchar(255)"/>
+            <column name="risk_level" type="varchar(255)"/>
+            <column name="remediation_required" type="boolean"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20250811170202-2" author="devin">
+        <createIndex indexName="idx_compliance_audit_aggregate" tableName="compliance_audit_event">
+            <column name="aggregate_type"/>
+            <column name="aggregate_id"/>
+        </createIndex>
+        <createIndex indexName="idx_compliance_audit_occurred_on" tableName="compliance_audit_event">
+            <column name="occurred_on"/>
+        </createIndex>
+        <createIndex indexName="idx_compliance_audit_type" tableName="compliance_audit_event">
+            <column name="compliance_type"/>
+        </createIndex>
+        <createIndex indexName="idx_compliance_audit_status" tableName="compliance_audit_event">
+            <column name="compliance_status"/>
+        </createIndex>
+        <createIndex indexName="idx_compliance_audit_risk" tableName="compliance_audit_event">
+            <column name="risk_level"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

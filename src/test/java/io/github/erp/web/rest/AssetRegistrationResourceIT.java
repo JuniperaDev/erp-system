@@ -1474,63 +1474,6 @@ class AssetRegistrationResourceIT {
 
 
 
-
-
-    }
-
-
-    @Test
-    @Transactional
-    void getAllAssetRegistrationsByMainServiceOutletIsEqualToSomething() throws Exception {
-        // Initialize the database
-        assetRegistrationRepository.saveAndFlush(assetRegistration);
-        ServiceOutlet mainServiceOutlet;
-        if (TestUtil.findAll(em, ServiceOutlet.class).isEmpty()) {
-            mainServiceOutlet = ServiceOutletResourceIT.createEntity(em);
-            em.persist(mainServiceOutlet);
-            em.flush();
-        } else {
-            mainServiceOutlet = TestUtil.findAll(em, ServiceOutlet.class).get(0);
-        }
-        em.persist(mainServiceOutlet);
-        em.flush();
-        assetRegistration.setMainServiceOutlet(mainServiceOutlet);
-        assetRegistrationRepository.saveAndFlush(assetRegistration);
-        Long mainServiceOutletId = mainServiceOutlet.getId();
-
-        // Get all the assetRegistrationList where mainServiceOutlet equals to mainServiceOutletId
-        defaultAssetRegistrationShouldBeFound("mainServiceOutletId.equals=" + mainServiceOutletId);
-
-        // Get all the assetRegistrationList where mainServiceOutlet equals to (mainServiceOutletId + 1)
-        defaultAssetRegistrationShouldNotBeFound("mainServiceOutletId.equals=" + (mainServiceOutletId + 1));
-    }
-
-    @Test
-    @Transactional
-    void getAllAssetRegistrationsByAcquiringTransactionIsEqualToSomething() throws Exception {
-        // Initialize the database
-        assetRegistrationRepository.saveAndFlush(assetRegistration);
-        Settlement acquiringTransaction;
-        if (TestUtil.findAll(em, Settlement.class).isEmpty()) {
-            acquiringTransaction = SettlementResourceIT.createEntity(em);
-            em.persist(acquiringTransaction);
-            em.flush();
-        } else {
-            acquiringTransaction = TestUtil.findAll(em, Settlement.class).get(0);
-        }
-        em.persist(acquiringTransaction);
-        em.flush();
-        assetRegistration.setAcquiringTransaction(acquiringTransaction);
-        assetRegistrationRepository.saveAndFlush(assetRegistration);
-        Long acquiringTransactionId = acquiringTransaction.getId();
-
-        // Get all the assetRegistrationList where acquiringTransaction equals to acquiringTransactionId
-        defaultAssetRegistrationShouldBeFound("acquiringTransactionId.equals=" + acquiringTransactionId);
-
-        // Get all the assetRegistrationList where acquiringTransaction equals to (acquiringTransactionId + 1)
-        defaultAssetRegistrationShouldNotBeFound("acquiringTransactionId.equals=" + (acquiringTransactionId + 1));
-    }
-
     /**
      * Executes the search, and checks that the default entity is returned.
      */

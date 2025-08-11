@@ -93,7 +93,7 @@ public class FinancialReportingEventHandler {
         updatePaymentSummaryReports(event.getPaymentNumber(), event.getPaymentAmount(), 
                                   event.getBillerName(), event.getPaymentDate());
         updateAuditTrail("SETTLEMENT_CREATED", event.getAggregateId(), event.getPaymentNumber(), 
-                        event.getPaymentAmount(), event.getEventTimestamp());
+                        event.getPaymentAmount(), event.getOccurredOn());
         
         log.info("Financial reports updated for settlement: {} - Amount: {} {}", 
                 event.getPaymentNumber(), event.getPaymentAmount(), event.getSettlementCurrencyCode());
@@ -109,7 +109,7 @@ public class FinancialReportingEventHandler {
         updateInvoiceReconciliationReports(event.getPaymentNumber(), event.getPaymentAmount(), 
                                          event.getInvoicedAmount(), event.getPurchaseOrderNumber());
         updateAuditTrail("PAYMENT_PROCESSED", event.getAggregateId(), event.getPaymentNumber(), 
-                        event.getPaymentAmount(), event.getEventTimestamp());
+                        event.getPaymentAmount(), event.getOccurredOn());
         
         log.info("Financial reports updated for payment: {} - Payment: {}, Invoiced: {} {}", 
                 event.getPaymentNumber(), event.getPaymentAmount(), 
@@ -126,7 +126,7 @@ public class FinancialReportingEventHandler {
         updateAccountsReceivableReports(event.getInvoiceNumber(), event.getInvoiceAmount(), 
                                       event.getSettlementAmount(), event.getPaymentReference());
         updateAuditTrail("INVOICE_SETTLED", event.getAggregateId(), event.getInvoiceNumber(), 
-                        event.getSettlementAmount(), event.getEventTimestamp());
+                        event.getSettlementAmount(), event.getOccurredOn());
         
         log.info("Financial reports updated for invoice settlement: {} - Invoice: {}, Settlement: {} {}", 
                 event.getInvoiceNumber(), event.getInvoiceAmount(), 

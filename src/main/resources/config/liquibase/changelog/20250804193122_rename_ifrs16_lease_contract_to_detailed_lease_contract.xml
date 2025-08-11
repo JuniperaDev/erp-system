@@ -21,20 +21,25 @@
         <!-- Rename the main table -->
         <renameTable oldTableName="ifrs16lease_contract" newTableName="detailed_lease_contract"/>
         
-        <!-- Update sequence name if it exists -->
-        <sql>
-            ALTER SEQUENCE IF EXISTS ifrs16lease_contract_seq RENAME TO detailed_lease_contract_seq;
-        </sql>
-        
-        <!-- Note: Constraint and index renaming will be handled automatically by the table rename operation -->
-        <!-- Most databases automatically update constraint and index names when tables are renamed -->
-        <!-- If manual updates are needed, they can be added in a separate changeset after deployment verification -->
-        
         <rollback>
             <renameTable oldTableName="detailed_lease_contract" newTableName="ifrs16lease_contract"/>
-            <sql>
-                ALTER SEQUENCE IF EXISTS detailed_lease_contract_seq RENAME TO ifrs16lease_contract_seq;
-            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20250804193122-2" author="devin">
+        <!-- Update sequence name if it exists - using database-agnostic approach -->
+        <preConditions onFail="MARK_RAN">
+            <sequenceExists sequenceName="ifrs16lease_contract_seq"/>
+        </preConditions>
+        
+        <comment>Rename sequence from ifrs16lease_contract_seq to detailed_lease_contract_seq</comment>
+        
+        <dropSequence sequenceName="ifrs16lease_contract_seq"/>
+        <createSequence sequenceName="detailed_lease_contract_seq" startValue="1" incrementBy="50"/>
+        
+        <rollback>
+            <dropSequence sequenceName="detailed_lease_contract_seq"/>
+            <createSequence sequenceName="ifrs16lease_contract_seq" startValue="1" incrementBy="50"/>
         </rollback>
     </changeSet>
 

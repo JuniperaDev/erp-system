@@ -7,16 +7,79 @@
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <changeSet id="20250804185200-1" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__payment_invoices"/>
+        </preConditions>
         <dropTable tableName="rel_asset_registration__payment_invoices"/>
+    </changeSet>
+
+    <changeSet id="20250804185200-2" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__other_related_service_outlets"/>
+        </preConditions>
         <dropTable tableName="rel_asset_registration__other_related_service_outlets"/>
+    </changeSet>
+
+    <changeSet id="20250804185200-3" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__other_related_settlements"/>
+        </preConditions>
         <dropTable tableName="rel_asset_registration__other_related_settlements"/>
+    </changeSet>
+
+    <changeSet id="20250804185200-4" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__purchase_order"/>
+        </preConditions>
         <dropTable tableName="rel_asset_registration__purchase_order"/>
+    </changeSet>
+
+    <changeSet id="20250804185200-5" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__delivery_note"/>
+        </preConditions>
         <dropTable tableName="rel_asset_registration__delivery_note"/>
+    </changeSet>
+
+    <changeSet id="20250804185200-6" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__job_sheet"/>
+        </preConditions>
         <dropTable tableName="rel_asset_registration__job_sheet"/>
+    </changeSet>
+
+    <changeSet id="20250804185200-7" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__designated_users"/>
+        </preConditions>
         <dropTable tableName="rel_asset_registration__designated_users"/>
+    </changeSet>
+
+    <changeSet id="20250804185200-8" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__business_document"/>
+        </preConditions>
         <dropTable tableName="rel_asset_registration__business_document"/>
+    </changeSet>
+
+    <changeSet id="20250804185200-9" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__asset_warranty"/>
+        </preConditions>
         <dropTable tableName="rel_asset_registration__asset_warranty"/>
+    </changeSet>
+
+    <changeSet id="20250804185200-10" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__universally_unique_mapping"/>
+        </preConditions>
         <dropTable tableName="rel_asset_registration__universally_unique_mapping"/>
+    </changeSet>
+
+    <changeSet id="20250804185200-11" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__asset_accessory"/>
+        </preConditions>
         <dropTable tableName="rel_asset_registration__asset_accessory"/>
     </changeSet>
 

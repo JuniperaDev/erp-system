@@ -161,7 +161,6 @@
     </changeSet>
 
     <changeSet id="20250804185199-12" author="devin">
-        <comment>Validate data migration - ensure all relationships were migrated</comment>
         <preConditions onFail="HALT">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM rel_asset_registration__payment_invoices old_rel
@@ -173,6 +172,7 @@
                 )
             </sqlCheck>
         </preConditions>
+        <comment>Validate data migration - ensure all relationships were migrated</comment>
         <sql>SELECT 'Payment invoice migration validation passed' as result;</sql>
     </changeSet>
 

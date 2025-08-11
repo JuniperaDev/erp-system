@@ -25,7 +25,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -120,6 +122,60 @@ public class DomainEventStoreImpl implements DomainEventStore {
         query.setParameter("aggregateId", aggregateId);
         query.setParameter("fromTime", fromTime);
         return (List<DomainEvent>) (List<?>) query.getResultList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DomainEvent> findAuditTrailEvents(String entityType, String entityId, Instant fromDate, Instant toDate) {
+        TypedQuery<AbstractDomainEvent> query = entityManager.createQuery(
+            "SELECT e FROM AbstractDomainEvent e WHERE e.aggregateType = :entityType AND e.aggregateId = :entityId " +
+            "AND e.occurredOn >= :fromDate AND e.occurredOn <= :toDate ORDER BY e.occurredOn", 
+            AbstractDomainEvent.class);
+        query.setParameter("entityType", entityType);
+        query.setParameter("entityId", entityId);
+        query.setParameter("fromDate", fromDate);
+        query.setParameter("toDate", toDate);
+        return (List<DomainEvent>) (List<?>) query.getResultList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DomainEvent> findComplianceAuditEvents(Instant fromDate, Instant toDate) {
+        TypedQuery<AbstractDomainEvent> query = entityManager.createQuery(
+            "SELECT e FROM AbstractDomainEvent e WHERE e.occurredOn >= :fromDate AND e.occurredOn <= :toDate " +
+            "AND (e.eventType LIKE '%Created%' OR e.eventType LIKE '%Updated%' OR e.eventType LIKE '%Deleted%' " +
+            "OR e.eventType LIKE '%Processed%' OR e.eventType LIKE '%Settled%') ORDER BY e.occurredOn", 
+            AbstractDomainEvent.class);
+        query.setParameter("fromDate", fromDate);
+        query.setParameter("toDate", toDate);
+        return (List<DomainEvent>) (List<?>) query.getResultList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DomainEvent> findEventsByCorrelationId(UUID correlationId) {
+        TypedQuery<AbstractDomainEvent> query = entityManager.createQuery(
+            "SELECT e FROM AbstractDomainEvent e WHERE e.correlationId = :correlationId ORDER BY e.occurredOn", 
+            AbstractDomainEvent.class);
+        query.setParameter("correlationId", correlationId);
+        return (List<DomainEvent>) (List<?>) query.getResultList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Long> getAuditEventSummary(Instant fromDate, Instant toDate) {
+        TypedQuery<Object[]> query = entityManager.createQuery(
+            "SELECT e.eventType, COUNT(e) FROM AbstractDomainEvent e WHERE e.occurredOn >= :fromDate " +
+            "AND e.occurredOn <= :toDate GROUP BY e.eventType", Object[].class);
+        query.setParameter("fromDate", fromDate);
+        query.setParameter("toDate", toDate);
+        
+        Map<String, Long> summary = new HashMap<>();
+        List<Object[]> results = query.getResultList();
+        for (Object[] result : results) {
+            summary.put((String) result[0], (Long) result[1]);
+        }
+        return summary;
     }
 
     @Override

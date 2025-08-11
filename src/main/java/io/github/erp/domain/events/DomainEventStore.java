@@ -43,5 +43,13 @@ public interface DomainEventStore {
     
     List<DomainEvent> findEventsForReplay(String aggregateId, Instant fromTime);
     
+    List<DomainEvent> findAuditTrailEvents(String entityType, String entityId, Instant fromDate, Instant toDate);
+    
+    List<DomainEvent> findComplianceAuditEvents(Instant fromDate, Instant toDate);
+    
+    List<DomainEvent> findEventsByCorrelationId(UUID correlationId);
+    
+    Map<String, Long> getAuditEventSummary(Instant fromDate, Instant toDate);
+    
     long count();
 }

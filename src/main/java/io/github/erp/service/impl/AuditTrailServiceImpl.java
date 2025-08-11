@@ -18,7 +18,10 @@ package io.github.erp.service.impl;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import io.github.erp.domain.events.DomainEvent;
+import io.github.erp.domain.events.DomainEventStore;
 import io.github.erp.service.AuditTrailService;
+import io.github.erp.service.EventSourcingAuditTrailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,7 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing audit trails and change tracking.
@@ -37,6 +42,15 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 
     private final Logger log = LoggerFactory.getLogger(AuditTrailServiceImpl.class);
     private final Logger auditLog = LoggerFactory.getLogger("AUDIT");
+    
+    private final DomainEventStore eventStore;
+    private final EventSourcingAuditTrailService eventSourcingAuditTrailService;
+
+    public AuditTrailServiceImpl(DomainEventStore eventStore, 
+                               EventSourcingAuditTrailService eventSourcingAuditTrailService) {
+        this.eventStore = eventStore;
+        this.eventSourcingAuditTrailService = eventSourcingAuditTrailService;
+    }
 
     @Override
     public void logBusinessEvent(String entityType, Long entityId, String eventType, 
@@ -82,12 +96,21 @@ public class AuditTrailServiceImpl implements AuditTrailService {
         log.debug("Retrieving audit trail for {} with id {} from {} to {}", 
                  entityType, entityId, fromDate, toDate);
         
+        String entityIdStr = entityId != null ? entityId.toString() : null;
+        List<DomainEvent> events = eventSourcingAuditTrailService.reconstructAuditTrail(
+            entityType, entityIdStr, fromDate, toDate);
+        
         Map<String, Object> auditTrail = new HashMap<>();
         auditTrail.put("entityType", entityType);
         auditTrail.put("entityId", entityId);
         auditTrail.put("fromDate", fromDate);
         auditTrail.put("toDate", toDate);
-        auditTrail.put("message", "Audit trail retrieval not yet implemented - requires audit storage backend");
+        auditTrail.put("eventCount", events.size());
+        
+        List<Map<String, Object>> auditEntries = events.stream()
+            .map(this::mapEventToAuditEntry)
+            .collect(Collectors.toList());
+        auditTrail.put("auditEntries", auditEntries);
         
         return auditTrail;
     }
@@ -113,5 +136,17 @@ public class AuditTrailServiceImpl implements AuditTrailService {
         auditEntry.put("eventType", eventType);
         auditEntry.put("userId", userId);
         return auditEntry;
+    }
+
+    private Map<String, Object> mapEventToAuditEntry(DomainEvent event) {
+        Map<String, Object> entry = new HashMap<>();
+        entry.put("eventId", event.getEventId());
+        entry.put("eventType", event.getEventType());
+        entry.put("aggregateType", event.getAggregateType());
+        entry.put("aggregateId", event.getAggregateId());
+        entry.put("timestamp", event.getOccurredOn());
+        entry.put("version", event.getVersion());
+        entry.put("correlationId", event.getCorrelationId());
+        return entry;
     }
 }

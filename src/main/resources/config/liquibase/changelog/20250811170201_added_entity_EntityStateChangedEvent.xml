@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20250811170201-1" author="devin">
+        <createTable tableName="entity_state_changed_event">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="event_id" type="${uuidType}">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="event_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="occurred_on" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="correlation_id" type="${uuidType}"/>
+            <column name="aggregate_id" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="aggregate_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="processed" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="retry_count" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)"/>
+            <column name="last_modified_date" type="${datetimeType}"/>
+            <column name="change_type" type="varchar(255)"/>
+            <column name="field_name" type="varchar(255)"/>
+            <column name="old_value" type="varchar(1000)"/>
+            <column name="new_value" type="varchar(1000)"/>
+            <column name="changed_by" type="varchar(255)"/>
+            <column name="change_reason" type="varchar(500)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20250811170201-2" author="devin">
+        <createIndex indexName="idx_entity_state_changed_aggregate" tableName="entity_state_changed_event">
+            <column name="aggregate_type"/>
+            <column name="aggregate_id"/>
+        </createIndex>
+        <createIndex indexName="idx_entity_state_changed_occurred_on" tableName="entity_state_changed_event">
+            <column name="occurred_on"/>
+        </createIndex>
+        <createIndex indexName="idx_entity_state_changed_field" tableName="entity_state_changed_event">
+            <column name="field_name"/>
+        </createIndex>
+        <createIndex indexName="idx_entity_state_changed_by" tableName="entity_state_changed_event">
+            <column name="changed_by"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

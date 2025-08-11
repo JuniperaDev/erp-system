@@ -18,10 +18,12 @@ package io.github.erp.service;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import io.github.erp.domain.events.DomainEventStore;
 import io.github.erp.service.impl.AuditTrailServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
@@ -38,7 +40,9 @@ class AuditTrailServiceTest {
 
     @BeforeEach
     void setUp() {
-        auditTrailService = new AuditTrailServiceImpl();
+        DomainEventStore mockEventStore = Mockito.mock(DomainEventStore.class);
+        EventSourcingAuditTrailService mockEventSourcingService = Mockito.mock(EventSourcingAuditTrailService.class);
+        auditTrailService = new AuditTrailServiceImpl(mockEventStore, mockEventSourcingService);
     }
 
     @Test

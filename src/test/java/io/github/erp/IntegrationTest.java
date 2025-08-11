@@ -18,11 +18,13 @@ package io.github.erp;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import io.github.erp.ErpSystemApp;
+import io.github.erp.config.TestElasticsearchConfiguration;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
 /**
  * Base composite annotation for integration tests.
@@ -30,5 +32,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @SpringBootTest(classes = ErpSystemApp.class)
+@Import(TestElasticsearchConfiguration.class)
 public @interface IntegrationTest {
 }

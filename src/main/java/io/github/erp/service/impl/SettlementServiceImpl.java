@@ -21,12 +21,15 @@ package io.github.erp.service.impl;
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
 import io.github.erp.domain.Settlement;
+import io.github.erp.domain.events.DomainEventPublisher;
+import io.github.erp.domain.events.financial.SettlementCreatedEvent;
 import io.github.erp.repository.SettlementRepository;
 import io.github.erp.repository.search.SettlementSearchRepository;
 import io.github.erp.service.SettlementService;
 import io.github.erp.service.dto.SettlementDTO;
 import io.github.erp.service.mapper.SettlementMapper;
 import java.util.Optional;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -49,14 +52,18 @@ public class SettlementServiceImpl implements SettlementService {
 
     private final SettlementSearchRepository settlementSearchRepository;
 
+    private final DomainEventPublisher domainEventPublisher;
+
     public SettlementServiceImpl(
         SettlementRepository settlementRepository,
         SettlementMapper settlementMapper,
-        SettlementSearchRepository settlementSearchRepository
+        SettlementSearchRepository settlementSearchRepository,
+        DomainEventPublisher domainEventPublisher
     ) {
         this.settlementRepository = settlementRepository;
         this.settlementMapper = settlementMapper;
         this.settlementSearchRepository = settlementSearchRepository;
+        this.domainEventPublisher = domainEventPublisher;
     }
 
     @Override
@@ -66,6 +73,9 @@ public class SettlementServiceImpl implements SettlementService {
         settlement = settlementRepository.save(settlement);
         SettlementDTO result = settlementMapper.toDto(settlement);
         settlementSearchRepository.save(settlement);
+        
+        publishSettlementCreatedEvent(settlement);
+        
         return result;
     }
 
@@ -119,5 +129,30 @@ public class SettlementServiceImpl implements SettlementService {
     public Page<SettlementDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of Settlements for query {}", query);
         return settlementSearchRepository.search(query, pageable).map(settlementMapper::toDto);
+    }
+
+    private void publishSettlementCreatedEvent(Settlement settlement) {
+        try {
+            String settlementCurrencyCode = settlement.getSettlementCurrency() != null ? 
+                settlement.getSettlementCurrency().getIso4217CurrencyCode() : null;
+            String billerName = settlement.getBiller() != null ? 
+                settlement.getBiller().getDealerName() : null;
+
+            SettlementCreatedEvent event = new SettlementCreatedEvent(
+                settlement.getId().toString(),
+                settlement.getPaymentNumber(),
+                settlement.getPaymentAmount(),
+                settlement.getPaymentDate(),
+                settlementCurrencyCode,
+                settlement.getDescription(),
+                billerName,
+                UUID.randomUUID()
+            );
+
+            domainEventPublisher.publish(event);
+            log.info("Published SettlementCreatedEvent for settlement: {}", settlement.getId());
+        } catch (Exception e) {
+            log.error("Failed to publish SettlementCreatedEvent for settlement: {}", settlement.getId(), e);
+        }
     }
 }

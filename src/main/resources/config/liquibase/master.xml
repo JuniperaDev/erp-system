@@ -629,6 +629,12 @@
     <include file="config/liquibase/changelog/20250807210100_add_missing_settlement_group_id_column.xml" relativeToChangelogFile="false"/>
     <!-- Temporarily disabled due to SQL type mismatch error preventing database schema initialization -->
     <!-- <include file="config/liquibase/changelog/20250804182802_migrate_settlement_group_data.xml" relativeToChangelogFile="false"/> -->
+    
+    <!-- Financial Domain Events -->
+    <include file="config/liquibase/changelog/20250811121155_added_entity_SettlementCreatedEvent.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250811121156_added_entity_PaymentProcessedEvent.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250811121157_added_entity_InvoiceSettledEvent.xml" relativeToChangelogFile="false"/>
+    
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

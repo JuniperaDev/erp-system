@@ -21,12 +21,15 @@ package io.github.erp.service.impl;
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
 import io.github.erp.domain.Payment;
+import io.github.erp.domain.events.DomainEventPublisher;
+import io.github.erp.domain.events.financial.PaymentProcessedEvent;
 import io.github.erp.repository.PaymentRepository;
 import io.github.erp.repository.search.PaymentSearchRepository;
 import io.github.erp.service.PaymentService;
 import io.github.erp.service.dto.PaymentDTO;
 import io.github.erp.service.mapper.PaymentMapper;
 import java.util.Optional;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -49,14 +52,18 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentSearchRepository paymentSearchRepository;
 
+    private final DomainEventPublisher domainEventPublisher;
+
     public PaymentServiceImpl(
         PaymentRepository paymentRepository,
         PaymentMapper paymentMapper,
-        PaymentSearchRepository paymentSearchRepository
+        PaymentSearchRepository paymentSearchRepository,
+        DomainEventPublisher domainEventPublisher
     ) {
         this.paymentRepository = paymentRepository;
         this.paymentMapper = paymentMapper;
         this.paymentSearchRepository = paymentSearchRepository;
+        this.domainEventPublisher = domainEventPublisher;
     }
 
     @Override
@@ -66,6 +73,9 @@ public class PaymentServiceImpl implements PaymentService {
         payment = paymentRepository.save(payment);
         PaymentDTO result = paymentMapper.toDto(payment);
         paymentSearchRepository.save(payment);
+        
+        publishPaymentProcessedEvent(payment);
+        
         return result;
     }
 
@@ -119,5 +129,30 @@ public class PaymentServiceImpl implements PaymentService {
     public Page<PaymentDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of Payments for query {}", query);
         return paymentSearchRepository.search(query, pageable).map(paymentMapper::toDto);
+    }
+
+    private void publishPaymentProcessedEvent(Payment payment) {
+        try {
+            String settlementCurrency = payment.getSettlementCurrency() != null ? 
+                payment.getSettlementCurrency().toString() : null;
+
+            PaymentProcessedEvent event = new PaymentProcessedEvent(
+                payment.getId().toString(),
+                payment.getPaymentNumber(),
+                payment.getPaymentAmount(),
+                payment.getInvoicedAmount(),
+                payment.getPaymentDate(),
+                settlementCurrency,
+                payment.getDescription(),
+                payment.getDealerName(),
+                payment.getPurchaseOrderNumber(),
+                UUID.randomUUID()
+            );
+
+            domainEventPublisher.publish(event);
+            log.info("Published PaymentProcessedEvent for payment: {}", payment.getId());
+        } catch (Exception e) {
+            log.error("Failed to publish PaymentProcessedEvent for payment: {}", payment.getId(), e);
+        }
     }
 }

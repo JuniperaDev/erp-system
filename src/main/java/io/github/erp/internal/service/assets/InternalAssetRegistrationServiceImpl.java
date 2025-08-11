@@ -18,6 +18,9 @@ package io.github.erp.internal.service.assets;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import io.github.erp.domain.AssetRegistration;
+import io.github.erp.domain.events.DomainEventPublisher;
+import io.github.erp.domain.events.asset.AssetCategoryChangedEvent;
+import io.github.erp.domain.events.asset.AssetCreatedEvent;
 import io.github.erp.internal.repository.InternalAssetRegistrationRepository;
 import io.github.erp.internal.utilities.NextIntegerFiller;
 import io.github.erp.repository.search.AssetRegistrationSearchRepository;
@@ -34,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,20 +55,37 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
 
     private final InternalAssetRegistrationRepository internalAssetRegistrationRepository;
 
-    public InternalAssetRegistrationServiceImpl(InternalAssetRegistrationRepository assetRegistrationRepository, AssetRegistrationMapper assetRegistrationMapper, AssetRegistrationSearchRepository assetRegistrationSearchRepository, InternalAssetRegistrationRepository internalAssetRegistrationRepository) {
+    private final DomainEventPublisher domainEventPublisher;
+
+    public InternalAssetRegistrationServiceImpl(InternalAssetRegistrationRepository assetRegistrationRepository, AssetRegistrationMapper assetRegistrationMapper, AssetRegistrationSearchRepository assetRegistrationSearchRepository, InternalAssetRegistrationRepository internalAssetRegistrationRepository, DomainEventPublisher domainEventPublisher) {
         this.assetRegistrationRepository = assetRegistrationRepository;
         this.assetRegistrationMapper = assetRegistrationMapper;
         this.assetRegistrationSearchRepository = assetRegistrationSearchRepository;
         this.internalAssetRegistrationRepository = internalAssetRegistrationRepository;
+        this.domainEventPublisher = domainEventPublisher;
     }
 
     @Override
     public AssetRegistrationDTO save(AssetRegistrationDTO assetRegistrationDTO) {
         log.debug("Request to save AssetRegistration : {}", assetRegistrationDTO);
+        boolean isNewAsset = assetRegistrationDTO.getId() == null;
         AssetRegistration assetRegistration = assetRegistrationMapper.toEntity(assetRegistrationDTO);
         assetRegistration = assetRegistrationRepository.save(assetRegistration);
         AssetRegistrationDTO result = assetRegistrationMapper.toDto(assetRegistration);
         assetRegistrationSearchRepository.save(assetRegistration);
+        
+        if (isNewAsset) {
+            AssetCreatedEvent event = new AssetCreatedEvent(
+                assetRegistration.getId().toString(),
+                assetRegistration.getAssetNumber(),
+                assetRegistration.getAssetDetails(),
+                assetRegistration.getAssetCost(),
+                assetRegistration.getAssetCategory().getId(),
+                UUID.randomUUID()
+            );
+            domainEventPublisher.publish(event);
+        }
+        
         return result;
     }
 
@@ -75,7 +96,31 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
         return assetRegistrationRepository
             .findById(assetRegistrationDTO.getId())
             .map(existingAssetRegistration -> {
+                Long previousCategoryId = existingAssetRegistration.getAssetCategory() != null ? 
+                    existingAssetRegistration.getAssetCategory().getId() : null;
+                String previousCategoryName = existingAssetRegistration.getAssetCategory() != null ? 
+                    existingAssetRegistration.getAssetCategory().getAssetCategoryName() : null;
+
                 assetRegistrationMapper.partialUpdate(existingAssetRegistration, assetRegistrationDTO);
+
+                Long newCategoryId = existingAssetRegistration.getAssetCategory() != null ? 
+                    existingAssetRegistration.getAssetCategory().getId() : null;
+                String newCategoryName = existingAssetRegistration.getAssetCategory() != null ? 
+                    existingAssetRegistration.getAssetCategory().getAssetCategoryName() : null;
+
+                if (previousCategoryId != null && newCategoryId != null && 
+                    !previousCategoryId.equals(newCategoryId)) {
+                    AssetCategoryChangedEvent event = new AssetCategoryChangedEvent(
+                        existingAssetRegistration.getId().toString(),
+                        existingAssetRegistration.getAssetNumber(),
+                        previousCategoryId,
+                        newCategoryId,
+                        previousCategoryName,
+                        newCategoryName,
+                        UUID.randomUUID()
+                    );
+                    domainEventPublisher.publish(event);
+                }
 
                 return existingAssetRegistration;
             })

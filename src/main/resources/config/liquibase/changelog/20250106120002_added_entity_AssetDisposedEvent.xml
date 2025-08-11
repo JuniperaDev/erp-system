@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Added the entity AssetDisposedEvent.
+    -->
+    <changeSet id="20250106120002-1" author="devin">
+        <createTable tableName="asset_disposed_event">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="event_id" type="${uuidType}">
+                <constraints nullable="false" unique="true" uniqueConstraintName="ux_asset_disposed_event__event_id" />
+            </column>
+            <column name="event_type" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="occurred_on" type="${datetimeType}">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="integer">
+                <constraints nullable="false" />
+            </column>
+            <column name="correlation_id" type="${uuidType}">
+                <constraints nullable="true" />
+            </column>
+            <column name="aggregate_id" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="aggregate_type" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="processed" type="boolean">
+                <constraints nullable="false" />
+            </column>
+            <column name="retry_count" type="integer">
+                <constraints nullable="false" />
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)"/>
+            <column name="last_modified_date" type="${datetimeType}"/>
+            <column name="asset_registration_number" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="asset_description" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="disposal_date" type="date">
+                <constraints nullable="true" />
+            </column>
+            <column name="net_book_value" type="decimal(21,2)">
+                <constraints nullable="true" />
+            </column>
+            <column name="disposal_proceeds" type="decimal(21,2)">
+                <constraints nullable="true" />
+            </column>
+            <column name="disposal_reference" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

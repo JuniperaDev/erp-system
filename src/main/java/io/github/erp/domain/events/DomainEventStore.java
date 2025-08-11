@@ -20,6 +20,7 @@ package io.github.erp.domain.events;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,6 +43,14 @@ public interface DomainEventStore {
     void incrementRetryCount(UUID eventId);
     
     List<DomainEvent> findEventsForReplay(String aggregateId, Instant fromTime);
+    
+    List<DomainEvent> findAuditTrailEvents(String entityType, String entityId, Instant fromDate, Instant toDate);
+    
+    List<DomainEvent> findComplianceAuditEvents(Instant fromDate, Instant toDate);
+    
+    List<DomainEvent> findEventsByCorrelationId(UUID correlationId);
+    
+    Map<String, Long> getAuditEventSummary(Instant fromDate, Instant toDate);
     
     long count();
 }

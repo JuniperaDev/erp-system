@@ -21,8 +21,13 @@
         <!-- Rename the main table -->
         <renameTable oldTableName="ifrs16lease_contract" newTableName="detailed_lease_contract"/>
         
-        <!-- Update sequence name if it exists -->
-        <sql>
+        <!-- Update sequence name if it exists - H2 compatible approach -->
+        <sql dbms="h2">
+            DROP SEQUENCE IF EXISTS detailed_lease_contract_seq;
+            CREATE SEQUENCE IF NOT EXISTS detailed_lease_contract_seq START WITH (SELECT COALESCE(MAX(id), 0) + 1 FROM detailed_lease_contract);
+            DROP SEQUENCE IF EXISTS ifrs16lease_contract_seq;
+        </sql>
+        <sql dbms="!h2">
             ALTER SEQUENCE IF EXISTS ifrs16lease_contract_seq RENAME TO detailed_lease_contract_seq;
         </sql>
         
@@ -32,7 +37,12 @@
         
         <rollback>
             <renameTable oldTableName="detailed_lease_contract" newTableName="ifrs16lease_contract"/>
-            <sql>
+            <sql dbms="h2">
+                DROP SEQUENCE IF EXISTS ifrs16lease_contract_seq;
+                CREATE SEQUENCE IF NOT EXISTS ifrs16lease_contract_seq START WITH (SELECT COALESCE(MAX(id), 0) + 1 FROM ifrs16lease_contract);
+                DROP SEQUENCE IF EXISTS detailed_lease_contract_seq;
+            </sql>
+            <sql dbms="!h2">
                 ALTER SEQUENCE IF EXISTS detailed_lease_contract_seq RENAME TO ifrs16lease_contract_seq;
             </sql>
         </rollback>

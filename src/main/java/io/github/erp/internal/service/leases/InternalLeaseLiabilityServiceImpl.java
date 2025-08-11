@@ -93,7 +93,7 @@ public class InternalLeaseLiabilityServiceImpl implements InternalLeaseLiability
                 UUID.randomUUID()
             );
             
-            domainEventPublisher.publishEvent(event);
+            domainEventPublisher.publish(event);
             log.debug("Published LeaseLiabilityCalculatedEvent for lease: {} with amount: {}", 
                      leaseLiability.getLeaseId(), leaseLiability.getLiabilityAmount());
         } catch (Exception e) {

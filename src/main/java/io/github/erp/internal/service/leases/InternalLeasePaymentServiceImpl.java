@@ -89,7 +89,7 @@ public class InternalLeasePaymentServiceImpl implements InternalLeasePaymentServ
                 UUID.randomUUID()
             );
             
-            domainEventPublisher.publishEvent(event);
+            domainEventPublisher.publish(event);
             log.debug("Published LeasePaymentMadeEvent for payment amount: {}", leasePayment.getPaymentAmount());
         } catch (Exception e) {
             log.error("Failed to publish LeasePaymentMadeEvent for payment: {}", leasePayment.getId(), e);

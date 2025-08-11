@@ -94,7 +94,7 @@ public class InternalDetailedLeaseContractServiceImpl implements InternalDetaile
                 UUID.randomUUID()
             );
             
-            domainEventPublisher.publishEvent(event);
+            domainEventPublisher.publish(event);
             log.debug("Published LeaseContractCreatedEvent for lease contract: {}", leaseContract.getBookingId());
         } catch (Exception e) {
             log.error("Failed to publish LeaseContractCreatedEvent for lease contract: {}", leaseContract.getBookingId(), e);

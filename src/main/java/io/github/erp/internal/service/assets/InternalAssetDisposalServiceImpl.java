@@ -133,6 +133,21 @@ public class InternalAssetDisposalServiceImpl implements InternalAssetDisposalSe
             .map(assetDisposalRepository::save)
             .map(savedAssetDisposal -> {
                 assetDisposalSearchRepository.save(savedAssetDisposal);
+                
+                if (savedAssetDisposal.getAssetDisposed() != null) {
+                    AssetDisposedEvent event = new AssetDisposedEvent(
+                        savedAssetDisposal.getAssetDisposed().getId().toString(),
+                        savedAssetDisposal.getAssetDisposed().getAssetNumber(),
+                        savedAssetDisposal.getAssetDisposed().getAssetDetails(),
+                        savedAssetDisposal.getDisposalDate(),
+                        savedAssetDisposal.getNetBookValue(),
+                        savedAssetDisposal.getAssetCost(),
+                        savedAssetDisposal.getAssetDisposalReference() != null ? 
+                            savedAssetDisposal.getAssetDisposalReference().toString() : null,
+                        UUID.randomUUID()
+                    );
+                    domainEventPublisher.publish(event);
+                }
 
                 return savedAssetDisposal;
             })

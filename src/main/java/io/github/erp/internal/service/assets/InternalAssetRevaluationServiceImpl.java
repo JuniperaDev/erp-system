@@ -104,6 +104,21 @@ public class InternalAssetRevaluationServiceImpl implements InternalAssetRevalua
             .map(assetRevaluationRepository::save)
             .map(savedAssetRevaluation -> {
                 assetRevaluationSearchRepository.save(savedAssetRevaluation);
+                
+                if (savedAssetRevaluation.getRevaluedAsset() != null) {
+                    AssetRevaluedEvent event = new AssetRevaluedEvent(
+                        savedAssetRevaluation.getRevaluedAsset().getId().toString(),
+                        savedAssetRevaluation.getRevaluedAsset().getAssetNumber(),
+                        savedAssetRevaluation.getRevaluedAsset().getAssetDetails(),
+                        savedAssetRevaluation.getRevaluationDate(),
+                        savedAssetRevaluation.getRevaluedAsset().getAssetCost(),
+                        savedAssetRevaluation.getDevaluationAmount(),
+                        savedAssetRevaluation.getRevaluationReferenceId() != null ? 
+                            savedAssetRevaluation.getRevaluationReferenceId().toString() : null,
+                        UUID.randomUUID()
+                    );
+                    domainEventPublisher.publish(event);
+                }
 
                 return savedAssetRevaluation;
             })

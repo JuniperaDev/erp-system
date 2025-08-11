@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.erp.IntegrationTest;
 import io.github.erp.domain.AssetProcurementLink;
+import io.github.erp.domain.enumeration.ProcurementEntityType;
 import io.github.erp.repository.AssetProcurementLinkRepository;
 import io.github.erp.service.dto.AssetProcurementLinkDTO;
 import java.time.LocalDate;
@@ -20,7 +21,7 @@ class AssetProcurementLinkServiceIT {
 
     private static final Long DEFAULT_ASSET_ID = 1L;
     private static final Long DEFAULT_PROCUREMENT_ENTITY_ID = 1L;
-    private static final String DEFAULT_PROCUREMENT_ENTITY_TYPE = "PurchaseOrder";
+    private static final ProcurementEntityType DEFAULT_PROCUREMENT_ENTITY_TYPE = ProcurementEntityType.PURCHASE_ORDER;
     private static final LocalDate DEFAULT_LINK_DATE = LocalDate.ofEpochDay(0L);
 
     @Autowired

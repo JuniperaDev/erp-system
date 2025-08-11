@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import io.github.erp.IntegrationTest;
-import io.github.erp.domain.IFRS16LeaseContract;
+import io.github.erp.domain.DetailedLeaseContract;
 import io.github.erp.domain.Placeholder;
 import io.github.erp.domain.RouInitialDirectCost;
 import io.github.erp.domain.Settlement;
@@ -132,15 +132,15 @@ class RouInitialDirectCostResourceIT {
             .cost(DEFAULT_COST)
             .referenceNumber(DEFAULT_REFERENCE_NUMBER);
         // Add required entity
-        IFRS16LeaseContract iFRS16LeaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            iFRS16LeaseContract = IFRS16LeaseContractResourceIT.createEntity(em);
-            em.persist(iFRS16LeaseContract);
+        DetailedLeaseContract detailedLeaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            detailedLeaseContract = DetailedLeaseContractResourceIT.createEntity(em);
+            em.persist(detailedLeaseContract);
             em.flush();
         } else {
-            iFRS16LeaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            detailedLeaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
-        rouInitialDirectCost.setLeaseContract(iFRS16LeaseContract);
+        rouInitialDirectCost.setLeaseContract(detailedLeaseContract);
         // Add required entity
         Settlement settlement;
         if (TestUtil.findAll(em, Settlement.class).isEmpty()) {
@@ -179,15 +179,15 @@ class RouInitialDirectCostResourceIT {
             .cost(UPDATED_COST)
             .referenceNumber(UPDATED_REFERENCE_NUMBER);
         // Add required entity
-        IFRS16LeaseContract iFRS16LeaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            iFRS16LeaseContract = IFRS16LeaseContractResourceIT.createUpdatedEntity(em);
-            em.persist(iFRS16LeaseContract);
+        DetailedLeaseContract detailedLeaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            detailedLeaseContract = DetailedLeaseContractResourceIT.createUpdatedEntity(em);
+            em.persist(detailedLeaseContract);
             em.flush();
         } else {
-            iFRS16LeaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            detailedLeaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
-        rouInitialDirectCost.setLeaseContract(iFRS16LeaseContract);
+        rouInitialDirectCost.setLeaseContract(detailedLeaseContract);
         // Add required entity
         Settlement settlement;
         if (TestUtil.findAll(em, Settlement.class).isEmpty()) {
@@ -782,13 +782,13 @@ class RouInitialDirectCostResourceIT {
     void getAllRouInitialDirectCostsByLeaseContractIsEqualToSomething() throws Exception {
         // Initialize the database
         rouInitialDirectCostRepository.saveAndFlush(rouInitialDirectCost);
-        IFRS16LeaseContract leaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            leaseContract = IFRS16LeaseContractResourceIT.createEntity(em);
+        DetailedLeaseContract leaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            leaseContract = DetailedLeaseContractResourceIT.createEntity(em);
             em.persist(leaseContract);
             em.flush();
         } else {
-            leaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            leaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
         em.persist(leaseContract);
         em.flush();

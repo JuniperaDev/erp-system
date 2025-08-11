@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import io.github.erp.IntegrationTest;
-import io.github.erp.domain.IFRS16LeaseContract;
+import io.github.erp.domain.DetailedLeaseContract;
 import io.github.erp.domain.LeasePayment;
 import io.github.erp.repository.LeasePaymentRepository;
 import io.github.erp.repository.search.LeasePaymentSearchRepository;
@@ -110,15 +110,15 @@ class LeasePaymentResourceIT {
     public static LeasePayment createEntity(EntityManager em) {
         LeasePayment leasePayment = new LeasePayment().paymentAmount(DEFAULT_PAYMENT_AMOUNT).paymentDate(DEFAULT_PAYMENT_DATE);
         // Add required entity
-        IFRS16LeaseContract iFRS16LeaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            iFRS16LeaseContract = IFRS16LeaseContractResourceIT.createEntity(em);
-            em.persist(iFRS16LeaseContract);
+        DetailedLeaseContract detailedLeaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            detailedLeaseContract = DetailedLeaseContractResourceIT.createEntity(em);
+            em.persist(detailedLeaseContract);
             em.flush();
         } else {
-            iFRS16LeaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            detailedLeaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
-        leasePayment.setLeaseContract(iFRS16LeaseContract);
+        leasePayment.setLeaseContract(detailedLeaseContract);
         return leasePayment;
     }
 
@@ -131,15 +131,15 @@ class LeasePaymentResourceIT {
     public static LeasePayment createUpdatedEntity(EntityManager em) {
         LeasePayment leasePayment = new LeasePayment().paymentAmount(UPDATED_PAYMENT_AMOUNT).paymentDate(UPDATED_PAYMENT_DATE);
         // Add required entity
-        IFRS16LeaseContract iFRS16LeaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            iFRS16LeaseContract = IFRS16LeaseContractResourceIT.createUpdatedEntity(em);
-            em.persist(iFRS16LeaseContract);
+        DetailedLeaseContract detailedLeaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            detailedLeaseContract = DetailedLeaseContractResourceIT.createUpdatedEntity(em);
+            em.persist(detailedLeaseContract);
             em.flush();
         } else {
-            iFRS16LeaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            detailedLeaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
-        leasePayment.setLeaseContract(iFRS16LeaseContract);
+        leasePayment.setLeaseContract(detailedLeaseContract);
         return leasePayment;
     }
 
@@ -458,13 +458,13 @@ class LeasePaymentResourceIT {
     void getAllLeasePaymentsByLeaseContractIsEqualToSomething() throws Exception {
         // Initialize the database
         leasePaymentRepository.saveAndFlush(leasePayment);
-        IFRS16LeaseContract leaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            leaseContract = IFRS16LeaseContractResourceIT.createEntity(em);
+        DetailedLeaseContract leaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            leaseContract = DetailedLeaseContractResourceIT.createEntity(em);
             em.persist(leaseContract);
             em.flush();
         } else {
-            leaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            leaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
         em.persist(leaseContract);
         em.flush();

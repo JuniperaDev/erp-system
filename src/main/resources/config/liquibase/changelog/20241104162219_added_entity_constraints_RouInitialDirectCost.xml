@@ -12,7 +12,7 @@
                                  baseTableName="rou_initial_direct_cost"
                                  constraintName="fk_rou_initial_direct_cost__lease_contract_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="ifrs16lease_contract"/>
+                                 referencedTableName="detailed_lease_contract"/>
 
         <addForeignKeyConstraint baseColumnNames="settlement_details_id"
                                  baseTableName="rou_initial_direct_cost"

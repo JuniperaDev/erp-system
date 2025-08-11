@@ -34,18 +34,18 @@ import org.springframework.stereotype.Repository;
 public interface WorkProjectRegisterRepository
     extends JpaRepository<WorkProjectRegister, Long>, JpaSpecificationExecutor<WorkProjectRegister> {
     @Query(
-        value = "select distinct workProjectRegister from WorkProjectRegister workProjectRegister left join fetch workProjectRegister.dealers left join fetch workProjectRegister.placeholders left join fetch workProjectRegister.businessDocuments",
+        value = "select distinct workProjectRegister from WorkProjectRegister workProjectRegister left join fetch workProjectRegister.dealers left join fetch workProjectRegister.placeholders",
         countQuery = "select count(distinct workProjectRegister) from WorkProjectRegister workProjectRegister"
     )
     Page<WorkProjectRegister> findAllWithEagerRelationships(Pageable pageable);
 
     @Query(
-        "select distinct workProjectRegister from WorkProjectRegister workProjectRegister left join fetch workProjectRegister.dealers left join fetch workProjectRegister.placeholders left join fetch workProjectRegister.businessDocuments"
+        "select distinct workProjectRegister from WorkProjectRegister workProjectRegister left join fetch workProjectRegister.dealers left join fetch workProjectRegister.placeholders"
     )
     List<WorkProjectRegister> findAllWithEagerRelationships();
 
     @Query(
-        "select workProjectRegister from WorkProjectRegister workProjectRegister left join fetch workProjectRegister.dealers left join fetch workProjectRegister.placeholders left join fetch workProjectRegister.businessDocuments where workProjectRegister.id =:id"
+        "select workProjectRegister from WorkProjectRegister workProjectRegister left join fetch workProjectRegister.dealers left join fetch workProjectRegister.placeholders where workProjectRegister.id =:id"
     )
     Optional<WorkProjectRegister> findOneWithEagerRelationships(@Param("id") Long id);
 }

@@ -38,7 +38,7 @@ public class TALeaseInterestAccrualRuleDTO implements Serializable {
     @NotNull
     private UUID identifier;
 
-    private IFRS16LeaseContractDTO leaseContract;
+    private DetailedLeaseContractDTO leaseContract;
 
     private TransactionAccountDTO debit;
 
@@ -70,11 +70,11 @@ public class TALeaseInterestAccrualRuleDTO implements Serializable {
         this.identifier = identifier;
     }
 
-    public IFRS16LeaseContractDTO getLeaseContract() {
+    public DetailedLeaseContractDTO getLeaseContract() {
         return leaseContract;
     }
 
-    public void setLeaseContract(IFRS16LeaseContractDTO leaseContract) {
+    public void setLeaseContract(DetailedLeaseContractDTO leaseContract) {
         this.leaseContract = leaseContract;
     }
 

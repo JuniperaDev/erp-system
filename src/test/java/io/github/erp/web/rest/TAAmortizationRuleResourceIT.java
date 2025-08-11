@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import io.github.erp.IntegrationTest;
-import io.github.erp.domain.IFRS16LeaseContract;
+import io.github.erp.domain.DetailedLeaseContract;
 import io.github.erp.domain.Placeholder;
 import io.github.erp.domain.TAAmortizationRule;
 import io.github.erp.domain.TransactionAccount;
@@ -115,15 +115,15 @@ class TAAmortizationRuleResourceIT {
     public static TAAmortizationRule createEntity(EntityManager em) {
         TAAmortizationRule tAAmortizationRule = new TAAmortizationRule().name(DEFAULT_NAME).identifier(DEFAULT_IDENTIFIER);
         // Add required entity
-        IFRS16LeaseContract iFRS16LeaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            iFRS16LeaseContract = IFRS16LeaseContractResourceIT.createEntity(em);
-            em.persist(iFRS16LeaseContract);
+        DetailedLeaseContract detailedLeaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            detailedLeaseContract = DetailedLeaseContractResourceIT.createEntity(em);
+            em.persist(detailedLeaseContract);
             em.flush();
         } else {
-            iFRS16LeaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            detailedLeaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
-        tAAmortizationRule.setLeaseContract(iFRS16LeaseContract);
+        tAAmortizationRule.setLeaseContract(detailedLeaseContract);
         // Add required entity
         TransactionAccount transactionAccount;
         if (TestUtil.findAll(em, TransactionAccount.class).isEmpty()) {
@@ -148,15 +148,15 @@ class TAAmortizationRuleResourceIT {
     public static TAAmortizationRule createUpdatedEntity(EntityManager em) {
         TAAmortizationRule tAAmortizationRule = new TAAmortizationRule().name(UPDATED_NAME).identifier(UPDATED_IDENTIFIER);
         // Add required entity
-        IFRS16LeaseContract iFRS16LeaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            iFRS16LeaseContract = IFRS16LeaseContractResourceIT.createUpdatedEntity(em);
-            em.persist(iFRS16LeaseContract);
+        DetailedLeaseContract detailedLeaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            detailedLeaseContract = DetailedLeaseContractResourceIT.createUpdatedEntity(em);
+            em.persist(detailedLeaseContract);
             em.flush();
         } else {
-            iFRS16LeaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            detailedLeaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
-        tAAmortizationRule.setLeaseContract(iFRS16LeaseContract);
+        tAAmortizationRule.setLeaseContract(detailedLeaseContract);
         // Add required entity
         TransactionAccount transactionAccount;
         if (TestUtil.findAll(em, TransactionAccount.class).isEmpty()) {
@@ -474,7 +474,7 @@ class TAAmortizationRuleResourceIT {
     @Transactional
     void getAllTAAmortizationRulesByLeaseContractIsEqualToSomething() throws Exception {
         // Get already existing entity
-        IFRS16LeaseContract leaseContract = tAAmortizationRule.getLeaseContract();
+        DetailedLeaseContract leaseContract = tAAmortizationRule.getLeaseContract();
         tAAmortizationRuleRepository.saveAndFlush(tAAmortizationRule);
         Long leaseContractId = leaseContract.getId();
 

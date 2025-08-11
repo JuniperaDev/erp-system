@@ -42,4 +42,6 @@ public interface DomainEventStore {
     void incrementRetryCount(UUID eventId);
     
     List<DomainEvent> findEventsForReplay(String aggregateId, Instant fromTime);
+    
+    long count();
 }

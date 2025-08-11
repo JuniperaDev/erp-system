@@ -172,15 +172,15 @@ class RouModelMetadataResourceIT {
             .flagAmortisedStepIdentifier(DEFAULT_FLAG_AMORTISED_STEP_IDENTIFIER)
             .compilationTime(DEFAULT_COMPILATION_TIME);
         // Add required entity
-        IFRS16LeaseContract iFRS16LeaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            iFRS16LeaseContract = IFRS16LeaseContractResourceIT.createEntity(em);
-            em.persist(iFRS16LeaseContract);
+        DetailedLeaseContract detailedLeaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            detailedLeaseContract = DetailedLeaseContractResourceIT.createEntity(em);
+            em.persist(detailedLeaseContract);
             em.flush();
         } else {
-            iFRS16LeaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            detailedLeaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
-        rouModelMetadata.setIfrs16LeaseContract(iFRS16LeaseContract);
+        rouModelMetadata.setDetailedLeaseContract(detailedLeaseContract);
         // Add required entity
         TransactionAccount transactionAccount;
         if (TestUtil.findAll(em, TransactionAccount.class).isEmpty()) {
@@ -222,15 +222,15 @@ class RouModelMetadataResourceIT {
             .flagAmortisedStepIdentifier(UPDATED_FLAG_AMORTISED_STEP_IDENTIFIER)
             .compilationTime(UPDATED_COMPILATION_TIME);
         // Add required entity
-        IFRS16LeaseContract iFRS16LeaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            iFRS16LeaseContract = IFRS16LeaseContractResourceIT.createUpdatedEntity(em);
-            em.persist(iFRS16LeaseContract);
+        DetailedLeaseContract detailedLeaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            detailedLeaseContract = DetailedLeaseContractResourceIT.createUpdatedEntity(em);
+            em.persist(detailedLeaseContract);
             em.flush();
         } else {
-            iFRS16LeaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            detailedLeaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
-        rouModelMetadata.setIfrs16LeaseContract(iFRS16LeaseContract);
+        rouModelMetadata.setDetailedLeaseContract(detailedLeaseContract);
         // Add required entity
         TransactionAccount transactionAccount;
         if (TestUtil.findAll(em, TransactionAccount.class).isEmpty()) {
@@ -1655,28 +1655,28 @@ class RouModelMetadataResourceIT {
 
     @Test
     @Transactional
-    void getAllRouModelMetadataByIfrs16LeaseContractIsEqualToSomething() throws Exception {
+    void getAllRouModelMetadataByDetailedLeaseContractIsEqualToSomething() throws Exception {
         // Initialize the database
         rouModelMetadataRepository.saveAndFlush(rouModelMetadata);
-        IFRS16LeaseContract ifrs16LeaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            ifrs16LeaseContract = IFRS16LeaseContractResourceIT.createEntity(em);
-            em.persist(ifrs16LeaseContract);
+        DetailedLeaseContract detailedLeaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            detailedLeaseContract = DetailedLeaseContractResourceIT.createEntity(em);
+            em.persist(detailedLeaseContract);
             em.flush();
         } else {
-            ifrs16LeaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            detailedLeaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
-        em.persist(ifrs16LeaseContract);
+        em.persist(detailedLeaseContract);
         em.flush();
-        rouModelMetadata.setIfrs16LeaseContract(ifrs16LeaseContract);
+        rouModelMetadata.setDetailedLeaseContract(detailedLeaseContract);
         rouModelMetadataRepository.saveAndFlush(rouModelMetadata);
-        Long ifrs16LeaseContractId = ifrs16LeaseContract.getId();
+        Long detailedLeaseContractId = detailedLeaseContract.getId();
 
-        // Get all the rouModelMetadataList where ifrs16LeaseContract equals to ifrs16LeaseContractId
-        defaultRouModelMetadataShouldBeFound("ifrs16LeaseContractId.equals=" + ifrs16LeaseContractId);
+        // Get all the rouModelMetadataList where detailedLeaseContract equals to detailedLeaseContractId
+        defaultRouModelMetadataShouldBeFound("detailedLeaseContractId.equals=" + detailedLeaseContractId);
 
-        // Get all the rouModelMetadataList where ifrs16LeaseContract equals to (ifrs16LeaseContractId + 1)
-        defaultRouModelMetadataShouldNotBeFound("ifrs16LeaseContractId.equals=" + (ifrs16LeaseContractId + 1));
+        // Get all the rouModelMetadataList where detailedLeaseContract equals to (detailedLeaseContractId + 1)
+        defaultRouModelMetadataShouldNotBeFound("detailedLeaseContractId.equals=" + (detailedLeaseContractId + 1));
     }
 
     @Test

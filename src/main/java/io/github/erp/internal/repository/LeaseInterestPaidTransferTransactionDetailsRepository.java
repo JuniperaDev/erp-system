@@ -52,7 +52,7 @@ public interface LeaseInterestPaidTransferTransactionDetailsRepository
             "FROM " +
             "    lease_liability_schedule_item lls " +
             "LEFT JOIN " +
-            "    ifrs16lease_contract lc ON lls.lease_contract_id = lc.id " +
+            "    detailed_lease_contract lc ON lls.lease_contract_id = lc.id " +
             "LEFT JOIN " +
             "    tainterest_paid_transfer_rule iptr ON lls.lease_contract_id = iptr.lease_contract_id  " +
             "LEFT JOIN " +

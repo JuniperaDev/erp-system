@@ -127,7 +127,7 @@ public class TARecognitionROURuleQueryService extends QueryService<TARecognition
                     specification.and(
                         buildSpecification(
                             criteria.getLeaseContractId(),
-                            root -> root.join(TARecognitionROURule_.leaseContract, JoinType.LEFT).get(IFRS16LeaseContract_.id)
+                            root -> root.join(TARecognitionROURule_.leaseContract, JoinType.LEFT).get(DetailedLeaseContract_.id)
                         )
                     );
             }

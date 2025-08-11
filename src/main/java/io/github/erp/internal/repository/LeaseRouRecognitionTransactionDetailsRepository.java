@@ -53,7 +53,7 @@ public interface LeaseRouRecognitionTransactionDetailsRepository
             "FROM  " +
             "    rou_initial_direct_cost rid  " +
             "LEFT JOIN  " +
-            "    ifrs16lease_contract lc ON rid.lease_contract_id = lc.id"
+            "    detailed_lease_contract lc ON rid.lease_contract_id = lc.id"
     )
     void insertTransactionDetails(@Param("requisitionId") UUID requisitionId, @Param("postedById") Long postedById, @Param("transactionType") String transactionType);
 }

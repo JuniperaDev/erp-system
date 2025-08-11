@@ -34,18 +34,18 @@ import org.springframework.stereotype.Repository;
 public interface SettlementRequisitionRepository
     extends JpaRepository<SettlementRequisition, Long>, JpaSpecificationExecutor<SettlementRequisition> {
     @Query(
-        value = "select distinct settlementRequisition from SettlementRequisition settlementRequisition left join fetch settlementRequisition.paymentInvoices left join fetch settlementRequisition.deliveryNotes left join fetch settlementRequisition.jobSheets left join fetch settlementRequisition.signatures left join fetch settlementRequisition.businessDocuments left join fetch settlementRequisition.applicationMappings left join fetch settlementRequisition.placeholders left join fetch settlementRequisition.settlements",
+        value = "select distinct settlementRequisition from SettlementRequisition settlementRequisition left join fetch settlementRequisition.deliveryNotes left join fetch settlementRequisition.signatures left join fetch settlementRequisition.applicationMappings left join fetch settlementRequisition.placeholders left join fetch settlementRequisition.settlements",
         countQuery = "select count(distinct settlementRequisition) from SettlementRequisition settlementRequisition"
     )
     Page<SettlementRequisition> findAllWithEagerRelationships(Pageable pageable);
 
     @Query(
-        "select distinct settlementRequisition from SettlementRequisition settlementRequisition left join fetch settlementRequisition.paymentInvoices left join fetch settlementRequisition.deliveryNotes left join fetch settlementRequisition.jobSheets left join fetch settlementRequisition.signatures left join fetch settlementRequisition.businessDocuments left join fetch settlementRequisition.applicationMappings left join fetch settlementRequisition.placeholders left join fetch settlementRequisition.settlements"
+        "select distinct settlementRequisition from SettlementRequisition settlementRequisition left join fetch settlementRequisition.deliveryNotes left join fetch settlementRequisition.signatures left join fetch settlementRequisition.applicationMappings left join fetch settlementRequisition.placeholders left join fetch settlementRequisition.settlements"
     )
     List<SettlementRequisition> findAllWithEagerRelationships();
 
     @Query(
-        "select settlementRequisition from SettlementRequisition settlementRequisition left join fetch settlementRequisition.paymentInvoices left join fetch settlementRequisition.deliveryNotes left join fetch settlementRequisition.jobSheets left join fetch settlementRequisition.signatures left join fetch settlementRequisition.businessDocuments left join fetch settlementRequisition.applicationMappings left join fetch settlementRequisition.placeholders left join fetch settlementRequisition.settlements where settlementRequisition.id =:id"
+        "select settlementRequisition from SettlementRequisition settlementRequisition left join fetch settlementRequisition.deliveryNotes left join fetch settlementRequisition.signatures left join fetch settlementRequisition.applicationMappings left join fetch settlementRequisition.placeholders left join fetch settlementRequisition.settlements where settlementRequisition.id =:id"
     )
     Optional<SettlementRequisition> findOneWithEagerRelationships(@Param("id") Long id);
 }

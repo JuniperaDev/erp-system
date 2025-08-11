@@ -132,7 +132,7 @@ As a **Developer**, I want consistent entity naming conventions so that the code
 #### Technical Tasks
 - [ ] Audit all 300+ entities for naming inconsistencies
 - [ ] Create naming standards document
-- [ ] Plan entity renames (e.g., IFRS16LeaseContract → LeaseContract)
+- [ ] Plan entity renames (e.g., IFRS16LeaseContract → DetailedLeaseContract)
 - [ ] Create database migration scripts
 - [ ] Update all Java classes, services, and repositories
 - [ ] Update REST API endpoints and DTOs

@@ -17,7 +17,7 @@ package io.github.erp.internal.service.leases;
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import io.github.erp.service.dto.IFRS16LeaseContractDTO;
+import io.github.erp.service.dto.DetailedLeaseContractDTO;
 import io.github.erp.service.dto.LeaseRepaymentPeriodDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -80,10 +80,10 @@ public interface InternalLeaseRepaymentPeriodService {
     Page<LeaseRepaymentPeriodDTO> search(String query, Pageable pageable);
 
     /**
-     * List of lease-repayment-period items related to the IFRS16 contract.
+     * List of lease-repayment-period items related to the detailed lease contract.
      *
-     * @param commencementDate of the ifrs16LeaseContract
-     * @param numberOfPeriods of the ifrs16LeaseContract
+     * @param commencementDate of the detailedLeaseContract
+     * @param numberOfPeriods of the detailedLeaseContract
      *
      * @return the list of entities.
      */

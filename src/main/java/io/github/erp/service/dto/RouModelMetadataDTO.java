@@ -70,7 +70,7 @@ public class RouModelMetadataDTO implements Serializable {
 
     private ZonedDateTime compilationTime;
 
-    private IFRS16LeaseContractDTO ifrs16LeaseContract;
+    private DetailedLeaseContractDTO detailedLeaseContract;
 
     private TransactionAccountDTO assetAccount;
 
@@ -210,12 +210,12 @@ public class RouModelMetadataDTO implements Serializable {
         this.compilationTime = compilationTime;
     }
 
-    public IFRS16LeaseContractDTO getIfrs16LeaseContract() {
-        return ifrs16LeaseContract;
+    public DetailedLeaseContractDTO getDetailedLeaseContract() {
+        return detailedLeaseContract;
     }
 
-    public void setIfrs16LeaseContract(IFRS16LeaseContractDTO ifrs16LeaseContract) {
-        this.ifrs16LeaseContract = ifrs16LeaseContract;
+    public void setDetailedLeaseContract(DetailedLeaseContractDTO detailedLeaseContract) {
+        this.detailedLeaseContract = detailedLeaseContract;
     }
 
     public TransactionAccountDTO getAssetAccount() {
@@ -299,7 +299,7 @@ public class RouModelMetadataDTO implements Serializable {
             ", outstandingAmountStepIdentifier='" + getOutstandingAmountStepIdentifier() + "'" +
             ", flagAmortisedStepIdentifier='" + getFlagAmortisedStepIdentifier() + "'" +
             ", compilationTime='" + getCompilationTime() + "'" +
-            ", ifrs16LeaseContract=" + getIfrs16LeaseContract() +
+            ", detailedLeaseContract=" + getDetailedLeaseContract() +
             ", assetAccount=" + getAssetAccount() +
             ", depreciationAccount=" + getDepreciationAccount() +
             ", accruedDepreciationAccount=" + getAccruedDepreciationAccount() +

@@ -121,4 +121,12 @@ public class DomainEventStoreImpl implements DomainEventStore {
         query.setParameter("fromTime", fromTime);
         return (List<DomainEvent>) (List<?>) query.getResultList();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long count() {
+        TypedQuery<Long> query = entityManager.createQuery(
+            "SELECT COUNT(e) FROM AbstractDomainEvent e", Long.class);
+        return query.getSingleResult();
+    }
 }

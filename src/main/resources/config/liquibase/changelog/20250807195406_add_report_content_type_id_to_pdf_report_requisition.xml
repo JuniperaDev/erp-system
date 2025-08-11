@@ -1,0 +1,39 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.6.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+    <changeSet author="devin" id="20250807195406-1">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="pdf_report_requisition"/>
+            <tableExists tableName="report_content_type"/>
+            <not>
+                <columnExists tableName="pdf_report_requisition" columnName="report_content_type_id"/>
+            </not>
+        </preConditions>
+        
+        <comment>Add missing report_content_type_id column to pdf_report_requisition table</comment>
+        
+        <addColumn tableName="pdf_report_requisition">
+            <column name="report_content_type_id" type="int8">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet author="devin" id="20250807195406-2">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="pdf_report_requisition"/>
+            <tableExists tableName="report_content_type"/>
+            <columnExists tableName="pdf_report_requisition" columnName="report_content_type_id"/>
+        </preConditions>
+        
+        <comment>Add foreign key constraint for report_content_type_id in pdf_report_requisition table</comment>
+        
+        <addForeignKeyConstraint baseColumnNames="report_content_type_id" 
+                                 baseTableName="pdf_report_requisition" 
+                                 constraintName="fk_pdf_report_requisition_report_content_type_id" 
+                                 deferrable="false" 
+                                 initiallyDeferred="false" 
+                                 referencedColumnNames="id" 
+                                 referencedTableName="report_content_type" 
+                                 validate="true"/>
+    </changeSet>
+</databaseChangeLog>

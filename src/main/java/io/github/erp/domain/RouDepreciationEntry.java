@@ -127,13 +127,13 @@ public class RouDepreciationEntry implements Serializable {
         },
         allowSetters = true
     )
-    private IFRS16LeaseContract leaseContract;
+    private DetailedLeaseContract leaseContract;
 
     @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties(
         value = {
-            "ifrs16LeaseContract",
+            "detailedLeaseContract",
             "assetAccount",
             "depreciationAccount",
             "accruedDepreciationAccount",
@@ -385,16 +385,16 @@ public class RouDepreciationEntry implements Serializable {
         return this;
     }
 
-    public IFRS16LeaseContract getLeaseContract() {
+    public DetailedLeaseContract getLeaseContract() {
         return this.leaseContract;
     }
 
-    public void setLeaseContract(IFRS16LeaseContract iFRS16LeaseContract) {
-        this.leaseContract = iFRS16LeaseContract;
+    public void setLeaseContract(DetailedLeaseContract detailedLeaseContract) {
+        this.leaseContract = detailedLeaseContract;
     }
 
-    public RouDepreciationEntry leaseContract(IFRS16LeaseContract iFRS16LeaseContract) {
-        this.setLeaseContract(iFRS16LeaseContract);
+    public RouDepreciationEntry leaseContract(DetailedLeaseContract detailedLeaseContract) {
+        this.setLeaseContract(detailedLeaseContract);
         return this;
     }
 

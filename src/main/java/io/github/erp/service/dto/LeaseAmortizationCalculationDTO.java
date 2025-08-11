@@ -40,7 +40,7 @@ public class LeaseAmortizationCalculationDTO implements Serializable {
     @DecimalMin(value = "0")
     private BigDecimal interestRate;
 
-    private IFRS16LeaseContractDTO leaseContract;
+    private DetailedLeaseContractDTO leaseContract;
 
     public Long getId() {
         return id;
@@ -82,11 +82,11 @@ public class LeaseAmortizationCalculationDTO implements Serializable {
         this.interestRate = interestRate;
     }
 
-    public IFRS16LeaseContractDTO getLeaseContract() {
+    public DetailedLeaseContractDTO getLeaseContract() {
         return leaseContract;
     }
 
-    public void setLeaseContract(IFRS16LeaseContractDTO leaseContract) {
+    public void setLeaseContract(DetailedLeaseContractDTO leaseContract) {
         this.leaseContract = leaseContract;
     }
 

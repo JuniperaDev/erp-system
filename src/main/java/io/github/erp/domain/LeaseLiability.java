@@ -93,7 +93,7 @@ public class LeaseLiability implements Serializable {
     @OneToOne(optional = false)
     @NotNull
     @JoinColumn(unique = true)
-    private IFRS16LeaseContract leaseContract;
+    private DetailedLeaseContract leaseContract;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -188,16 +188,16 @@ public class LeaseLiability implements Serializable {
         return this;
     }
 
-    public IFRS16LeaseContract getLeaseContract() {
+    public DetailedLeaseContract getLeaseContract() {
         return this.leaseContract;
     }
 
-    public void setLeaseContract(IFRS16LeaseContract iFRS16LeaseContract) {
-        this.leaseContract = iFRS16LeaseContract;
+    public void setLeaseContract(DetailedLeaseContract detailedLeaseContract) {
+        this.leaseContract = detailedLeaseContract;
     }
 
-    public LeaseLiability leaseContract(IFRS16LeaseContract iFRS16LeaseContract) {
-        this.setLeaseContract(iFRS16LeaseContract);
+    public LeaseLiability leaseContract(DetailedLeaseContract detailedLeaseContract) {
+        this.setLeaseContract(detailedLeaseContract);
         return this;
     }
 

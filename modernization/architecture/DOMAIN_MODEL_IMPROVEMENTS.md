@@ -159,7 +159,7 @@ graph TB
 **Problem**: Mixed naming patterns across entities.
 
 **Examples**:
-- `IFRS16LeaseContract` vs `LeaseContract`
+- `DetailedLeaseContract` vs `LeaseContract` (formerly IFRS16LeaseContract - renamed to remove technical prefix)
 - `WorkInProgressRegistration` vs `AssetRegistration`
 - Inconsistent use of abbreviations
 

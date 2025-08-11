@@ -65,6 +65,7 @@
     <include file="config/liquibase/changelog/20220503162809_added_entity_PrepaymentAmortization.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220517074515_added_entity_ReportTemplate.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220520053032_added_entity_PdfReportRequisition.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250807195406_add_report_content_type_id_to_pdf_report_requisition.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220605111232_added_entity_XlsxReportRequisition.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220608075128_added_entity_UniversallyUniqueMapping.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220616111329_added_entity_ReportRequisition.xml" relativeToChangelogFile="false"/>
@@ -252,6 +253,7 @@
     <include file="config/liquibase/changelog/20240219151405_added_entity_NbvReport.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240304133311_added_entity_MonthlyPrepaymentOutstandingReportItem.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240307045420_added_entity_IFRS16LeaseContract.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250804193122_rename_ifrs16_lease_contract_to_detailed_lease_contract.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240307081647_added_entity_RouModelMetadata.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240307105511_added_entity_RouDepreciationEntry.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240313073952_added_entity_RouDepreciationEntryReportItem.xml" relativeToChangelogFile="false"/>
@@ -328,7 +330,8 @@
     <include file="config/liquibase/changelog/20210721163636_added_entity_constraints_Dealer.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250804184800_added_entity_DealerGroup.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250804184800_added_entity_constraints_DealerGroup.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20250804184801_migrate_dealer_groups.xml" relativeToChangelogFile="false"/>
+    <!-- Temporarily disabled due to SQL syntax error preventing database schema initialization -->
+    <!-- <include file="config/liquibase/changelog/20250804184801_migrate_dealer_groups.xml" relativeToChangelogFile="false"/> -->
     <include file="config/liquibase/changelog/20210721172450_added_entity_constraints_PaymentCalculation.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210721173014_added_entity_constraints_PaymentRequisition.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210721174739_added_entity_constraints_TaxReference.xml" relativeToChangelogFile="false"/>
@@ -596,14 +599,48 @@
     <include file="config/liquibase/changelog/20241115103432_added_entity_constraints_ReportingEntity.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250203103056_added_entity_constraints_WIPListReport.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250203110822_added_entity_constraints_WIPTransferListReport.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20250804182800_added_entity_SettlementGroup.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20250804182801_added_entity_constraints_SettlementGroup.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20250804182802_migrate_settlement_group_data.xml" relativeToChangelogFile="false"/>
+    <!-- Intermediate entity migrations for AssetRegistration relationships -->
+    <include file="config/liquibase/changelog/20240804191500_added_entity_AssetWarrantyAssignment.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240804191501_added_entity_AssetPurchaseOrderAssignment.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240804191502_added_entity_AssetDocumentAssignment.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240804191503_added_entity_AssetPaymentInvoiceAssignment.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240804191504_added_entity_AssetJobSheetAssignment.xml" relativeToChangelogFile="false"/>
+    <!-- Data migration from old join tables to intermediate entities -->
+    <include file="config/liquibase/changelog/20240804191505_migrate_asset_warranty_data.xml" relativeToChangelogFile="false"/>
+    <!-- Validation that all data was migrated successfully -->
+    <include file="config/liquibase/changelog/20240804191505_validate_migration_data.xml" relativeToChangelogFile="false"/>
+    <!-- Drop old join tables after validation passes -->
+    <include file="config/liquibase/changelog/20240804191506_drop_old_join_tables.xml" relativeToChangelogFile="false"/>
+    <!-- Create ApplicationUser records for existing users to enable API testing -->
+    <include file="config/liquibase/changelog/20250804191510_create_application_users_for_existing_users.xml" relativeToChangelogFile="false"/>
+    <!-- Add missing assignment_details column to assignment tables -->
+    <include file="config/liquibase/changelog/20250807201500_add_assignment_details_column.xml" relativeToChangelogFile="false"/>
+    <!-- Load test data for intermediate entities -->
+    <include file="config/liquibase/changelog/20250804191511_load_intermediate_entity_test_data.xml" relativeToChangelogFile="false"/>
+    <!-- Domain Event Infrastructure migrations -->
     <include file="config/liquibase/changelog/20250105120000_added_entity_DomainEvent.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250105120001_added_entity_AssetCreatedEvent.xml" relativeToChangelogFile="false"/>
+    <!-- Asset Domain Events -->
     <include file="config/liquibase/changelog/20250106120001_added_entity_AssetCategoryChangedEvent.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250106120002_added_entity_AssetDisposedEvent.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250106120003_added_entity_AssetRevaluedEvent.xml" relativeToChangelogFile="false"/>
+    <!-- SettlementGroup entity migrations -->
+    <include file="config/liquibase/changelog/20250804182800_added_entity_SettlementGroup.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250804182801_added_entity_constraints_SettlementGroup.xml" relativeToChangelogFile="false"/>
+    <!-- Add missing settlement_group_id column to settlement table -->
+    <include file="config/liquibase/changelog/20250807210100_add_missing_settlement_group_id_column.xml" relativeToChangelogFile="false"/>
+    <!-- Temporarily disabled due to SQL type mismatch error preventing database schema initialization -->
+    <!-- <include file="config/liquibase/changelog/20250804182802_migrate_settlement_group_data.xml" relativeToChangelogFile="false"/> -->
+    
+    <!-- Financial Domain Events -->
+    <include file="config/liquibase/changelog/20250811121155_added_entity_SettlementCreatedEvent.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250811121156_added_entity_PaymentProcessedEvent.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250811121157_added_entity_InvoiceSettledEvent.xml" relativeToChangelogFile="false"/>
+    
+    <!-- AssetRegistration Aggregate Boundary Optimization -->
+    <include file="config/liquibase/changelog/20250804185100_added_entity_AssetProcurementLink.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250804185199_migrate_asset_registration_relationships_to_procurement_link.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250804185200_remove_asset_registration_relationships.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

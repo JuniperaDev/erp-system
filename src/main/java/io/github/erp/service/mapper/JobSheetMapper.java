@@ -55,6 +55,11 @@ public interface JobSheetMapper extends EntityMapper<JobSheetDTO, JobSheet> {
     @Mapping(target = "serialNumber", source = "serialNumber")
     Set<JobSheetDTO> toDtoSerialNumberSet(Set<JobSheet> jobSheet);
 
+    @Named("jobSheetId")
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", source = "id")
+    JobSheet fromId(Long id);
+
     @Named("serialNumber")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")

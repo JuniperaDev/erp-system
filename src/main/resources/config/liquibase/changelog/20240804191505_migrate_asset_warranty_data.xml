@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Production-safe data migration for AssetRegistration many-to-many relationships.
+    This migration follows the incremental migration approach specified in MIGRATION_STRATEGY_BACKLOG.md:
+    1. Migrate data from old join tables to new intermediate entities
+    2. Include rollback procedures for each changeset
+    3. Validate data migration before dropping old tables (see 20240804191505_validate_migration_data.xml)
+    4. Drop old tables only after validation passes (see 20240804191506_drop_old_join_tables.xml)
+-->
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20240804191505-1" author="devin">
+        <sql>
+            INSERT INTO asset_warranty_assignment (id, assignment_date, assignment_status, asset_registration_id, asset_warranty_id)
+            SELECT 
+                nextval('sequence_generator'),
+                CURRENT_DATE,
+                'ACTIVE',
+                asset_registration_id,
+                asset_warranty_id
+            FROM rel_asset_registration__asset_warranty
+            WHERE EXISTS (SELECT 1 FROM asset_registration WHERE id = asset_registration_id)
+            AND EXISTS (SELECT 1 FROM asset_warranty WHERE id = asset_warranty_id);
+        </sql>
+        <rollback>
+            DELETE FROM asset_warranty_assignment WHERE assignment_date = CURRENT_DATE AND assignment_status = 'ACTIVE';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20240804191505-2" author="devin">
+        <sql>
+            INSERT INTO asset_purchase_order_assignment (id, assignment_date, assignment_status, asset_registration_id, purchase_order_id)
+            SELECT 
+                nextval('sequence_generator'),
+                CURRENT_DATE,
+                'ACTIVE',
+                asset_registration_id,
+                purchase_order_id
+            FROM rel_asset_registration__purchase_order
+            WHERE EXISTS (SELECT 1 FROM asset_registration WHERE id = asset_registration_id)
+            AND EXISTS (SELECT 1 FROM purchase_order WHERE id = purchase_order_id);
+        </sql>
+        <rollback>
+            DELETE FROM asset_purchase_order_assignment WHERE assignment_date = CURRENT_DATE AND assignment_status = 'ACTIVE';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20240804191505-3" author="devin">
+        <sql>
+            INSERT INTO asset_document_assignment (id, assignment_date, assignment_status, asset_registration_id, business_document_id)
+            SELECT 
+                nextval('sequence_generator'),
+                CURRENT_DATE,
+                'ACTIVE',
+                asset_registration_id,
+                business_document_id
+            FROM rel_asset_registration__business_document
+            WHERE EXISTS (SELECT 1 FROM asset_registration WHERE id = asset_registration_id)
+            AND EXISTS (SELECT 1 FROM business_document WHERE id = business_document_id);
+        </sql>
+        <rollback>
+            DELETE FROM asset_document_assignment WHERE assignment_date = CURRENT_DATE AND assignment_status = 'ACTIVE';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20240804191505-4" author="devin">
+        <sql>
+            INSERT INTO asset_payment_invoice_assignment (id, assignment_date, assignment_status, asset_registration_id, payment_invoice_id)
+            SELECT 
+                nextval('sequence_generator'),
+                CURRENT_DATE,
+                'ACTIVE',
+                asset_registration_id,
+                payment_invoices_id
+            FROM rel_asset_registration__payment_invoices
+            WHERE EXISTS (SELECT 1 FROM asset_registration WHERE id = asset_registration_id)
+            AND EXISTS (SELECT 1 FROM payment_invoice WHERE id = payment_invoices_id);
+        </sql>
+        <rollback>
+            DELETE FROM asset_payment_invoice_assignment WHERE assignment_date = CURRENT_DATE AND assignment_status = 'ACTIVE';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20240804191505-5" author="devin">
+        <sql>
+            INSERT INTO asset_job_sheet_assignment (id, assignment_date, assignment_status, asset_registration_id, job_sheet_id)
+            SELECT 
+                nextval('sequence_generator'),
+                CURRENT_DATE,
+                'ACTIVE',
+                asset_registration_id,
+                job_sheet_id
+            FROM rel_asset_registration__job_sheet
+            WHERE EXISTS (SELECT 1 FROM asset_registration WHERE id = asset_registration_id)
+            AND EXISTS (SELECT 1 FROM job_sheet WHERE id = job_sheet_id);
+        </sql>
+        <rollback>
+            DELETE FROM asset_job_sheet_assignment WHERE assignment_date = CURRENT_DATE AND assignment_status = 'ACTIVE';
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

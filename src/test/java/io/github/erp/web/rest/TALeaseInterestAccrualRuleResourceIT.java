@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import io.github.erp.IntegrationTest;
-import io.github.erp.domain.IFRS16LeaseContract;
+import io.github.erp.domain.DetailedLeaseContract;
 import io.github.erp.domain.Placeholder;
 import io.github.erp.domain.TALeaseInterestAccrualRule;
 import io.github.erp.domain.TransactionAccount;
@@ -117,15 +117,15 @@ class TALeaseInterestAccrualRuleResourceIT {
             .name(DEFAULT_NAME)
             .identifier(DEFAULT_IDENTIFIER);
         // Add required entity
-        IFRS16LeaseContract iFRS16LeaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            iFRS16LeaseContract = IFRS16LeaseContractResourceIT.createEntity(em);
-            em.persist(iFRS16LeaseContract);
+        DetailedLeaseContract detailedLeaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            detailedLeaseContract = DetailedLeaseContractResourceIT.createEntity(em);
+            em.persist(detailedLeaseContract);
             em.flush();
         } else {
-            iFRS16LeaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            detailedLeaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
-        tALeaseInterestAccrualRule.setLeaseContract(iFRS16LeaseContract);
+        tALeaseInterestAccrualRule.setLeaseContract(detailedLeaseContract);
         // Add required entity
         TransactionAccount transactionAccount;
         if (TestUtil.findAll(em, TransactionAccount.class).isEmpty()) {
@@ -152,15 +152,15 @@ class TALeaseInterestAccrualRuleResourceIT {
             .name(UPDATED_NAME)
             .identifier(UPDATED_IDENTIFIER);
         // Add required entity
-        IFRS16LeaseContract iFRS16LeaseContract;
-        if (TestUtil.findAll(em, IFRS16LeaseContract.class).isEmpty()) {
-            iFRS16LeaseContract = IFRS16LeaseContractResourceIT.createUpdatedEntity(em);
-            em.persist(iFRS16LeaseContract);
+        DetailedLeaseContract detailedLeaseContract;
+        if (TestUtil.findAll(em, DetailedLeaseContract.class).isEmpty()) {
+            detailedLeaseContract = DetailedLeaseContractResourceIT.createUpdatedEntity(em);
+            em.persist(detailedLeaseContract);
             em.flush();
         } else {
-            iFRS16LeaseContract = TestUtil.findAll(em, IFRS16LeaseContract.class).get(0);
+            detailedLeaseContract = TestUtil.findAll(em, DetailedLeaseContract.class).get(0);
         }
-        tALeaseInterestAccrualRule.setLeaseContract(iFRS16LeaseContract);
+        tALeaseInterestAccrualRule.setLeaseContract(detailedLeaseContract);
         // Add required entity
         TransactionAccount transactionAccount;
         if (TestUtil.findAll(em, TransactionAccount.class).isEmpty()) {
@@ -480,7 +480,7 @@ class TALeaseInterestAccrualRuleResourceIT {
     @Transactional
     void getAllTALeaseInterestAccrualRulesByLeaseContractIsEqualToSomething() throws Exception {
         // Get already existing entity
-        IFRS16LeaseContract leaseContract = tALeaseInterestAccrualRule.getLeaseContract();
+        DetailedLeaseContract leaseContract = tALeaseInterestAccrualRule.getLeaseContract();
         tALeaseInterestAccrualRuleRepository.saveAndFlush(tALeaseInterestAccrualRule);
         Long leaseContractId = leaseContract.getId();
 

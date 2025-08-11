@@ -68,7 +68,7 @@ public class TAAmortizationRule implements Serializable {
     @OneToOne(optional = false)
     @NotNull
     @JoinColumn(unique = true)
-    private IFRS16LeaseContract leaseContract;
+    private DetailedLeaseContract leaseContract;
 
     @ManyToOne(optional = false)
     @NotNull
@@ -131,16 +131,16 @@ public class TAAmortizationRule implements Serializable {
         this.identifier = identifier;
     }
 
-    public IFRS16LeaseContract getLeaseContract() {
+    public DetailedLeaseContract getLeaseContract() {
         return this.leaseContract;
     }
 
-    public void setLeaseContract(IFRS16LeaseContract iFRS16LeaseContract) {
-        this.leaseContract = iFRS16LeaseContract;
+    public void setLeaseContract(DetailedLeaseContract detailedLeaseContract) {
+        this.leaseContract = detailedLeaseContract;
     }
 
-    public TAAmortizationRule leaseContract(IFRS16LeaseContract iFRS16LeaseContract) {
-        this.setLeaseContract(iFRS16LeaseContract);
+    public TAAmortizationRule leaseContract(DetailedLeaseContract detailedLeaseContract) {
+        this.setLeaseContract(detailedLeaseContract);
         return this;
     }
 

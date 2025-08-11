@@ -33,18 +33,18 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Long>, JpaSpecificationExecutor<PurchaseOrder> {
     @Query(
-        value = "select distinct purchaseOrder from PurchaseOrder purchaseOrder left join fetch purchaseOrder.placeholders left join fetch purchaseOrder.signatories left join fetch purchaseOrder.businessDocuments",
+        value = "select distinct purchaseOrder from PurchaseOrder purchaseOrder left join fetch purchaseOrder.placeholders left join fetch purchaseOrder.signatories",
         countQuery = "select count(distinct purchaseOrder) from PurchaseOrder purchaseOrder"
     )
     Page<PurchaseOrder> findAllWithEagerRelationships(Pageable pageable);
 
     @Query(
-        "select distinct purchaseOrder from PurchaseOrder purchaseOrder left join fetch purchaseOrder.placeholders left join fetch purchaseOrder.signatories left join fetch purchaseOrder.businessDocuments"
+        "select distinct purchaseOrder from PurchaseOrder purchaseOrder left join fetch purchaseOrder.placeholders left join fetch purchaseOrder.signatories"
     )
     List<PurchaseOrder> findAllWithEagerRelationships();
 
     @Query(
-        "select purchaseOrder from PurchaseOrder purchaseOrder left join fetch purchaseOrder.placeholders left join fetch purchaseOrder.signatories left join fetch purchaseOrder.businessDocuments where purchaseOrder.id =:id"
+        "select purchaseOrder from PurchaseOrder purchaseOrder left join fetch purchaseOrder.placeholders left join fetch purchaseOrder.signatories where purchaseOrder.id =:id"
     )
     Optional<PurchaseOrder> findOneWithEagerRelationships(@Param("id") Long id);
 }

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20250807210100-1" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="settlement"/>
+            <tableExists tableName="settlement_group"/>
+            <not>
+                <columnExists tableName="settlement" columnName="settlement_group_id"/>
+            </not>
+        </preConditions>
+        
+        <comment>Add missing settlement_group_id column to settlement table</comment>
+        
+        <addColumn tableName="settlement">
+            <column name="settlement_group_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20250807210100-2" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="settlement"/>
+            <tableExists tableName="settlement_group"/>
+            <columnExists tableName="settlement" columnName="settlement_group_id"/>
+            <columnExists tableName="settlement" columnName="group_settlement_id"/>
+        </preConditions>
+        
+        <comment>Migrate data from group_settlement_id to settlement_group_id</comment>
+        
+        <sql>
+            UPDATE settlement 
+            SET settlement_group_id = group_settlement_id 
+            WHERE group_settlement_id IS NOT NULL;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20250807210100-3" author="devin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="settlement"/>
+            <tableExists tableName="settlement_group"/>
+            <columnExists tableName="settlement" columnName="settlement_group_id"/>
+        </preConditions>
+        
+        <comment>Add foreign key constraint for settlement_group_id</comment>
+        
+        <addForeignKeyConstraint baseColumnNames="settlement_group_id"
+                                 baseTableName="settlement"
+                                 constraintName="fk_settlement__settlement_group_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="settlement_group"/>
+    </changeSet>
+</databaseChangeLog>

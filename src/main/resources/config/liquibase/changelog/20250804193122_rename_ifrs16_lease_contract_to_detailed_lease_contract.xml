@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Rename IFRS16LeaseContract table to DetailedLeaseContract
+        This migration standardizes entity naming by removing technical prefixes
+    -->
+    <changeSet id="20250804193122-1" author="devin">
+        <!-- Add precondition to check if source table exists -->
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="ifrs16lease_contract"/>
+        </preConditions>
+        
+        <comment>Rename ifrs16lease_contract table to detailed_lease_contract</comment>
+        
+        <!-- Rename the main table -->
+        <renameTable oldTableName="ifrs16lease_contract" newTableName="detailed_lease_contract"/>
+        
+        <!-- Update sequence name if it exists -->
+        <sql>
+            ALTER SEQUENCE IF EXISTS ifrs16lease_contract_seq RENAME TO detailed_lease_contract_seq;
+        </sql>
+        
+        <!-- Note: Constraint and index renaming will be handled automatically by the table rename operation -->
+        <!-- Most databases automatically update constraint and index names when tables are renamed -->
+        <!-- If manual updates are needed, they can be added in a separate changeset after deployment verification -->
+        
+        <rollback>
+            <renameTable oldTableName="detailed_lease_contract" newTableName="ifrs16lease_contract"/>
+            <sql>
+                ALTER SEQUENCE IF EXISTS detailed_lease_contract_seq RENAME TO ifrs16lease_contract_seq;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

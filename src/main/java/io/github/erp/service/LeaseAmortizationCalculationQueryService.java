@@ -148,7 +148,7 @@ public class LeaseAmortizationCalculationQueryService extends QueryService<Lease
                     specification.and(
                         buildSpecification(
                             criteria.getLeaseContractId(),
-                            root -> root.join(LeaseAmortizationCalculation_.leaseContract, JoinType.LEFT).get(IFRS16LeaseContract_.id)
+                            root -> root.join(LeaseAmortizationCalculation_.leaseContract, JoinType.LEFT).get(DetailedLeaseContract_.id)
                         )
                     );
             }

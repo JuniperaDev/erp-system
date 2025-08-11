@@ -25,7 +25,7 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity {@link TALeaseRepaymentRule} and its DTO {@link TALeaseRepaymentRuleDTO}.
  */
-@Mapper(componentModel = "spring", uses = { IFRS16LeaseContractMapper.class, TransactionAccountMapper.class, PlaceholderMapper.class })
+@Mapper(componentModel = "spring", uses = { DetailedLeaseContractMapper.class, TransactionAccountMapper.class, PlaceholderMapper.class })
 public interface TALeaseRepaymentRuleMapper extends EntityMapper<TALeaseRepaymentRuleDTO, TALeaseRepaymentRule> {
     @Mapping(target = "leaseContract", source = "leaseContract", qualifiedByName = "shortTitle")
     @Mapping(target = "debit", source = "debit", qualifiedByName = "accountName")

@@ -172,8 +172,8 @@ spring:
     multipart:
       enabled: true
       #max-file-size: 100MB
-      max-file-size: ${ERP_DOCUMENTS_MAX_FILE_SIZE}
-      max-request-size: ${ERP_DOCUMENTS_MAX_FILE_SIZE}
+      max-file-size: ${ERP_DOCUMENTS_MAX_FILE_SIZE:10MB}
+      max-request-size: ${ERP_DOCUMENTS_MAX_FILE_SIZE:10MB}
   task:
     execution:
       thread-name-prefix: erp-system-task-

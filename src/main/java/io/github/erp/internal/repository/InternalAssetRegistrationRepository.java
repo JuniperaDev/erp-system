@@ -40,18 +40,7 @@ public interface InternalAssetRegistrationRepository
     @Query(
         value = "select distinct assetRegistration " +
             "from AssetRegistration assetRegistration " +
-            "left join fetch assetRegistration.placeholders " +
-            "left join fetch assetRegistration.paymentInvoices " +
-            "left join fetch assetRegistration.otherRelatedServiceOutlets " +
-            "left join fetch assetRegistration.otherRelatedSettlements " +
-            "left join fetch assetRegistration.purchaseOrders " +
-            "left join fetch assetRegistration.deliveryNotes " +
-            "left join fetch assetRegistration.jobSheets " +
-            "left join fetch assetRegistration.designatedUsers " +
-            "left join fetch assetRegistration.businessDocuments " +
-            "left join fetch assetRegistration.assetWarranties " +
-            "left join fetch assetRegistration.universallyUniqueMappings " +
-            "left join fetch assetRegistration.assetAccessories",
+            "left join fetch assetRegistration.placeholders",
         countQuery = "select count(distinct assetRegistration) from AssetRegistration assetRegistration"
     )
     Page<AssetRegistration> findAllWithEagerRelationships(Pageable pageable);
@@ -59,18 +48,7 @@ public interface InternalAssetRegistrationRepository
     @Query(
         "select distinct assetRegistration " +
             "from AssetRegistration assetRegistration " +
-            "left join fetch assetRegistration.placeholders " +
-            "left join fetch assetRegistration.paymentInvoices " +
-            "left join fetch assetRegistration.otherRelatedServiceOutlets " +
-            "left join fetch assetRegistration.otherRelatedSettlements " +
-            "left join fetch assetRegistration.purchaseOrders " +
-            "left join fetch assetRegistration.deliveryNotes " +
-            "left join fetch assetRegistration.jobSheets " +
-            "left join fetch assetRegistration.designatedUsers " +
-            "left join fetch assetRegistration.businessDocuments " +
-            "left join fetch assetRegistration.assetWarranties " +
-            "left join fetch assetRegistration.universallyUniqueMappings " +
-            "left join fetch assetRegistration.assetAccessories"
+            "left join fetch assetRegistration.placeholders"
     )
     List<AssetRegistration> findAllWithEagerRelationships();
 
@@ -79,17 +57,6 @@ public interface InternalAssetRegistrationRepository
             "from AssetRegistration assetRegistration " +
             "left join fetch assetRegistration.acquiringTransaction " +
             "left join fetch assetRegistration.placeholders " +
-            "left join fetch assetRegistration.paymentInvoices " +
-            "left join fetch assetRegistration.otherRelatedServiceOutlets " +
-            "left join fetch assetRegistration.otherRelatedSettlements " +
-            "left join fetch assetRegistration.purchaseOrders " +
-            "left join fetch assetRegistration.deliveryNotes " +
-            "left join fetch assetRegistration.jobSheets " +
-            "left join fetch assetRegistration.designatedUsers " +
-            "left join fetch assetRegistration.businessDocuments " +
-            "left join fetch assetRegistration.assetWarranties " +
-            "left join fetch assetRegistration.universallyUniqueMappings " +
-            "left join fetch assetRegistration.assetAccessories " +
             "where assetRegistration.id =:id"
     )
     Optional<AssetRegistration> findOneWithEagerRelationships(@Param("id") Long id);

@@ -11,7 +11,7 @@
 
 # Configure list-page sizes
 reader:
-  listSize: ${UPLOADS_SIZE}
+  listSize: ${UPLOADS_SIZE:1000}
 spring:
   batch:
     job:

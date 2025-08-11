@@ -625,13 +625,6 @@
     <!-- SettlementGroup entity migrations -->
     <include file="config/liquibase/changelog/20250804182800_added_entity_SettlementGroup.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250804182801_added_entity_constraints_SettlementGroup.xml" relativeToChangelogFile="false"/>
-<<<<<<< HEAD
-    <include file="config/liquibase/changelog/20250804182802_migrate_settlement_group_data.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20250804185100_added_entity_AssetProcurementLink.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20250804185200_remove_asset_registration_relationships.xml" relativeToChangelogFile="false"/>
-||||||| bd481add0a
-    <include file="config/liquibase/changelog/20250804182802_migrate_settlement_group_data.xml" relativeToChangelogFile="false"/>
-=======
     <!-- Add missing settlement_group_id column to settlement table -->
     <include file="config/liquibase/changelog/20250807210100_add_missing_settlement_group_id_column.xml" relativeToChangelogFile="false"/>
     <!-- Temporarily disabled due to SQL type mismatch error preventing database schema initialization -->
@@ -642,7 +635,9 @@
     <include file="config/liquibase/changelog/20250811121156_added_entity_PaymentProcessedEvent.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250811121157_added_entity_InvoiceSettledEvent.xml" relativeToChangelogFile="false"/>
     
->>>>>>> origin/master
+    <!-- AssetRegistration Aggregate Boundary Optimization -->
+    <include file="config/liquibase/changelog/20250804185100_added_entity_AssetProcurementLink.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250804185200_remove_asset_registration_relationships.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

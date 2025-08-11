@@ -11,7 +11,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("assetProcurementEventHandler")
 public class AssetEventHandler {
 
     private final Logger log = LoggerFactory.getLogger(AssetEventHandler.class);

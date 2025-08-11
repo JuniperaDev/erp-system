@@ -18,6 +18,8 @@ package io.github.erp.internal.service.leases;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import io.github.erp.domain.LeaseLiability;
+import io.github.erp.domain.events.DomainEventPublisher;
+import io.github.erp.domain.events.lease.LeaseLiabilityCalculatedEvent;
 import io.github.erp.internal.repository.InternalLeaseLiabilityRepository;
 import io.github.erp.repository.search.LeaseLiabilitySearchRepository;
 import io.github.erp.service.dto.LeaseLiabilityDTO;
@@ -31,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Implementation for managing {@link LeaseLiability}.
@@ -47,14 +50,18 @@ public class InternalLeaseLiabilityServiceImpl implements InternalLeaseLiability
 
     private final LeaseLiabilitySearchRepository leaseLiabilitySearchRepository;
 
+    private final DomainEventPublisher domainEventPublisher;
+
     public InternalLeaseLiabilityServiceImpl(
         InternalLeaseLiabilityRepository leaseLiabilityRepository,
         LeaseLiabilityMapper leaseLiabilityMapper,
-        LeaseLiabilitySearchRepository leaseLiabilitySearchRepository
+        LeaseLiabilitySearchRepository leaseLiabilitySearchRepository,
+        DomainEventPublisher domainEventPublisher
     ) {
         this.leaseLiabilityRepository = leaseLiabilityRepository;
         this.leaseLiabilityMapper = leaseLiabilityMapper;
         this.leaseLiabilitySearchRepository = leaseLiabilitySearchRepository;
+        this.domainEventPublisher = domainEventPublisher;
     }
 
     @Override
@@ -64,7 +71,34 @@ public class InternalLeaseLiabilityServiceImpl implements InternalLeaseLiability
         leaseLiability = leaseLiabilityRepository.save(leaseLiability);
         LeaseLiabilityDTO result = leaseLiabilityMapper.toDto(leaseLiability);
         leaseLiabilitySearchRepository.save(leaseLiability);
+        
+        publishLeaseLiabilityCalculatedEvent(result);
+        
         return result;
+    }
+
+    private void publishLeaseLiabilityCalculatedEvent(LeaseLiabilityDTO leaseLiability) {
+        try {
+            LeaseLiabilityCalculatedEvent event = new LeaseLiabilityCalculatedEvent(
+                leaseLiability.getId().toString(),
+                leaseLiability.getLeaseId(),
+                leaseLiability.getLiabilityAmount(),
+                leaseLiability.getInterestRate(),
+                leaseLiability.getStartDate(),
+                leaseLiability.getEndDate(),
+                leaseLiability.getLeaseContract() != null ? leaseLiability.getLeaseContract().getId() : null,
+                leaseLiability.getLeaseContract() != null ? leaseLiability.getLeaseContract().getBookingId() : null,
+                leaseLiability.getLeaseContract() != null ? leaseLiability.getLeaseContract().getLeaseTitle() : null,
+                leaseLiability.getLeaseAmortizationCalculation() != null ? leaseLiability.getLeaseAmortizationCalculation().getId() : null,
+                UUID.randomUUID()
+            );
+            
+            domainEventPublisher.publishEvent(event);
+            log.debug("Published LeaseLiabilityCalculatedEvent for lease: {} with amount: {}", 
+                     leaseLiability.getLeaseId(), leaseLiability.getLiabilityAmount());
+        } catch (Exception e) {
+            log.error("Failed to publish LeaseLiabilityCalculatedEvent for lease liability: {}", leaseLiability.getId(), e);
+        }
     }
 
     @Override

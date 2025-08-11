@@ -18,6 +18,8 @@ package io.github.erp.internal.service.leases;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import io.github.erp.domain.DetailedLeaseContract;
+import io.github.erp.domain.events.DomainEventPublisher;
+import io.github.erp.domain.events.lease.LeaseContractCreatedEvent;
 import io.github.erp.internal.repository.InternalDetailedLeaseContractRepository;
 import io.github.erp.repository.DetailedLeaseContractRepository;
 import io.github.erp.repository.search.DetailedLeaseContractSearchRepository;
@@ -31,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Implementation for managing {@link DetailedLeaseContract}.
@@ -47,14 +50,18 @@ public class InternalDetailedLeaseContractServiceImpl implements InternalDetaile
 
     private final DetailedLeaseContractSearchRepository detailedLeaseContractSearchRepository;
 
+    private final DomainEventPublisher domainEventPublisher;
+
     public InternalDetailedLeaseContractServiceImpl(
         InternalDetailedLeaseContractRepository detailedLeaseContractRepository,
         DetailedLeaseContractMapper detailedLeaseContractMapper,
-        DetailedLeaseContractSearchRepository detailedLeaseContractSearchRepository
+        DetailedLeaseContractSearchRepository detailedLeaseContractSearchRepository,
+        DomainEventPublisher domainEventPublisher
     ) {
         this.detailedLeaseContractRepository = detailedLeaseContractRepository;
         this.detailedLeaseContractMapper = detailedLeaseContractMapper;
         this.detailedLeaseContractSearchRepository = detailedLeaseContractSearchRepository;
+        this.domainEventPublisher = domainEventPublisher;
     }
 
     @Override
@@ -64,7 +71,34 @@ public class InternalDetailedLeaseContractServiceImpl implements InternalDetaile
         detailedLeaseContract = detailedLeaseContractRepository.save(detailedLeaseContract);
         DetailedLeaseContractDTO result = detailedLeaseContractMapper.toDto(detailedLeaseContract);
         detailedLeaseContractSearchRepository.save(detailedLeaseContract);
+        
+        publishLeaseContractCreatedEvent(result);
+        
         return result;
+    }
+
+    private void publishLeaseContractCreatedEvent(DetailedLeaseContractDTO leaseContract) {
+        try {
+            LeaseContractCreatedEvent event = new LeaseContractCreatedEvent(
+                leaseContract.getId().toString(),
+                leaseContract.getBookingId(),
+                leaseContract.getLeaseTitle(),
+                leaseContract.getShortTitle(),
+                leaseContract.getInceptionDate(),
+                leaseContract.getCommencementDate(),
+                leaseContract.getSerialNumber(),
+                leaseContract.getSuperintendentServiceOutlet() != null ? leaseContract.getSuperintendentServiceOutlet().getId() : null,
+                leaseContract.getMainDealer() != null ? leaseContract.getMainDealer().getId() : null,
+                leaseContract.getFirstReportingPeriod() != null ? leaseContract.getFirstReportingPeriod().getId() : null,
+                leaseContract.getLastReportingPeriod() != null ? leaseContract.getLastReportingPeriod().getId() : null,
+                UUID.randomUUID()
+            );
+            
+            domainEventPublisher.publishEvent(event);
+            log.debug("Published LeaseContractCreatedEvent for lease contract: {}", leaseContract.getBookingId());
+        } catch (Exception e) {
+            log.error("Failed to publish LeaseContractCreatedEvent for lease contract: {}", leaseContract.getBookingId(), e);
+        }
     }
 
     @Override

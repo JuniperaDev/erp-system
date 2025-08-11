@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Added the entity LeasePaymentMadeEvent.
+    -->
+    <changeSet id="20250811162446-1" author="jhipster">
+        <createTable tableName="lease_payment_made_event">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="event_id" type="${uuidType}">
+                <constraints nullable="false" unique="true" uniqueConstraintName="ux_lease_payment_made_event__event_id" />
+            </column>
+            <column name="event_type" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="occurred_on" type="${datetimeType}">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="integer">
+                <constraints nullable="false" />
+            </column>
+            <column name="correlation_id" type="${uuidType}">
+                <constraints nullable="false" />
+            </column>
+            <column name="aggregate_id" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="aggregate_type" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="payment_amount" type="decimal(21,2)">
+                <constraints nullable="true" />
+            </column>
+            <column name="payment_date" type="date">
+                <constraints nullable="true" />
+            </column>
+            <column name="lease_contract_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <column name="lease_contract_booking_id" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="lease_contract_title" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+        <dropDefaultValue tableName="lease_payment_made_event" columnName="occurred_on" columnDataType="${datetimeType}"/>
+    </changeSet>
+</databaseChangeLog>

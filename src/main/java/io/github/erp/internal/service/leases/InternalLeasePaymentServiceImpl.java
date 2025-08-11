@@ -18,6 +18,8 @@ package io.github.erp.internal.service.leases;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import io.github.erp.domain.LeasePayment;
+import io.github.erp.domain.events.DomainEventPublisher;
+import io.github.erp.domain.events.lease.LeasePaymentMadeEvent;
 import io.github.erp.internal.repository.InternalLeasePaymentRepository;
 import io.github.erp.repository.search.LeasePaymentSearchRepository;
 import io.github.erp.service.dto.LeasePaymentDTO;
@@ -31,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Implementation for managing {@link LeasePayment}.
@@ -47,14 +50,18 @@ public class InternalLeasePaymentServiceImpl implements InternalLeasePaymentServ
 
     private final LeasePaymentSearchRepository leasePaymentSearchRepository;
 
+    private final DomainEventPublisher domainEventPublisher;
+
     public InternalLeasePaymentServiceImpl(
         InternalLeasePaymentRepository leasePaymentRepository,
         LeasePaymentMapper leasePaymentMapper,
-        LeasePaymentSearchRepository leasePaymentSearchRepository
+        LeasePaymentSearchRepository leasePaymentSearchRepository,
+        DomainEventPublisher domainEventPublisher
     ) {
         this.leasePaymentRepository = leasePaymentRepository;
         this.leasePaymentMapper = leasePaymentMapper;
         this.leasePaymentSearchRepository = leasePaymentSearchRepository;
+        this.domainEventPublisher = domainEventPublisher;
     }
 
     @Override
@@ -64,7 +71,29 @@ public class InternalLeasePaymentServiceImpl implements InternalLeasePaymentServ
         leasePayment = leasePaymentRepository.save(leasePayment);
         LeasePaymentDTO result = leasePaymentMapper.toDto(leasePayment);
         leasePaymentSearchRepository.save(leasePayment);
+        
+        publishLeasePaymentMadeEvent(result);
+        
         return result;
+    }
+
+    private void publishLeasePaymentMadeEvent(LeasePaymentDTO leasePayment) {
+        try {
+            LeasePaymentMadeEvent event = new LeasePaymentMadeEvent(
+                leasePayment.getId().toString(),
+                leasePayment.getPaymentAmount(),
+                leasePayment.getPaymentDate(),
+                leasePayment.getLeaseContract() != null ? leasePayment.getLeaseContract().getId() : null,
+                leasePayment.getLeaseContract() != null ? leasePayment.getLeaseContract().getBookingId() : null,
+                leasePayment.getLeaseContract() != null ? leasePayment.getLeaseContract().getLeaseTitle() : null,
+                UUID.randomUUID()
+            );
+            
+            domainEventPublisher.publishEvent(event);
+            log.debug("Published LeasePaymentMadeEvent for payment amount: {}", leasePayment.getPaymentAmount());
+        } catch (Exception e) {
+            log.error("Failed to publish LeasePaymentMadeEvent for payment: {}", leasePayment.getId(), e);
+        }
     }
 
     @Override

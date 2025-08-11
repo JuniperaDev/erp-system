@@ -635,6 +635,11 @@
     <include file="config/liquibase/changelog/20250811121156_added_entity_PaymentProcessedEvent.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250811121157_added_entity_InvoiceSettledEvent.xml" relativeToChangelogFile="false"/>
     
+    <!-- Lease Domain Events -->
+    <include file="config/liquibase/changelog/20250811162445_added_entity_LeaseContractCreatedEvent.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250811162446_added_entity_LeasePaymentMadeEvent.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250811162447_added_entity_LeaseLiabilityCalculatedEvent.xml" relativeToChangelogFile="false"/>
+    
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

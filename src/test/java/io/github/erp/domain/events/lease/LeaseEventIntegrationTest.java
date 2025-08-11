@@ -67,7 +67,7 @@ class LeaseEventIntegrationTest {
 
         detailedLeaseContractService.save(leaseContract);
 
-        verify(domainEventPublisher, times(1)).publishEvent(any(LeaseContractCreatedEvent.class));
+        verify(domainEventPublisher, times(1)).publish(any(LeaseContractCreatedEvent.class));
     }
 
     @Test
@@ -79,7 +79,7 @@ class LeaseEventIntegrationTest {
 
         leasePaymentService.save(leasePayment);
 
-        verify(domainEventPublisher, times(1)).publishEvent(any(LeasePaymentMadeEvent.class));
+        verify(domainEventPublisher, times(1)).publish(any(LeasePaymentMadeEvent.class));
     }
 
     @Test
@@ -94,6 +94,6 @@ class LeaseEventIntegrationTest {
 
         leaseLiabilityService.save(leaseLiability);
 
-        verify(domainEventPublisher, times(1)).publishEvent(any(LeaseLiabilityCalculatedEvent.class));
+        verify(domainEventPublisher, times(1)).publish(any(LeaseLiabilityCalculatedEvent.class));
     }
 }

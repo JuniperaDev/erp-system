@@ -1,5 +1,6 @@
 package io.github.erp.service.events;
 
+import io.github.erp.domain.enumeration.ProcurementEntityType;
 import io.github.erp.domain.events.AssetAcquiredEvent;
 import io.github.erp.domain.events.AssetProcurementLinkedEvent;
 import io.github.erp.service.AssetProcurementLinkService;
@@ -30,7 +31,7 @@ public class AssetEventHandler {
         AssetProcurementLinkDTO linkDTO = new AssetProcurementLinkDTO();
         linkDTO.setAssetId(event.getAssetId());
         linkDTO.setProcurementEntityId(event.getSettlementId());
-        linkDTO.setProcurementEntityType("Settlement");
+        linkDTO.setProcurementEntityType(ProcurementEntityType.SETTLEMENT);
         linkDTO.setLinkDate(event.getAcquisitionDate());
         
         assetProcurementLinkService.save(linkDTO);
@@ -45,7 +46,12 @@ public class AssetEventHandler {
         AssetProcurementLinkDTO linkDTO = new AssetProcurementLinkDTO();
         linkDTO.setAssetId(event.getAssetId());
         linkDTO.setProcurementEntityId(event.getProcurementEntityId());
-        linkDTO.setProcurementEntityType(event.getProcurementEntityType());
+        try {
+            linkDTO.setProcurementEntityType(ProcurementEntityType.valueOf(event.getProcurementEntityType()));
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid procurement entity type: {}", event.getProcurementEntityType());
+            return;
+        }
         linkDTO.setLinkDate(LocalDate.now());
         
         assetProcurementLinkService.save(linkDTO);

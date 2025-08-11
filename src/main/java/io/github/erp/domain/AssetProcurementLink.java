@@ -2,6 +2,7 @@ package io.github.erp.domain;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import io.github.erp.domain.enumeration.ProcurementEntityType;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
@@ -30,8 +31,9 @@ public class AssetProcurementLink implements Serializable {
     private Long procurementEntityId;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "procurement_entity_type", nullable = false)
-    private String procurementEntityType;
+    private ProcurementEntityType procurementEntityType;
 
     @Column(name = "link_date")
     private LocalDate linkDate;
@@ -75,16 +77,16 @@ public class AssetProcurementLink implements Serializable {
         this.procurementEntityId = procurementEntityId;
     }
 
-    public String getProcurementEntityType() {
+    public ProcurementEntityType getProcurementEntityType() {
         return this.procurementEntityType;
     }
 
-    public AssetProcurementLink procurementEntityType(String procurementEntityType) {
+    public AssetProcurementLink procurementEntityType(ProcurementEntityType procurementEntityType) {
         this.setProcurementEntityType(procurementEntityType);
         return this;
     }
 
-    public void setProcurementEntityType(String procurementEntityType) {
+    public void setProcurementEntityType(ProcurementEntityType procurementEntityType) {
         this.procurementEntityType = procurementEntityType;
     }
 

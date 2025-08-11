@@ -1,5 +1,6 @@
 package io.github.erp.service.dto;
 
+import io.github.erp.domain.enumeration.ProcurementEntityType;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -16,7 +17,7 @@ public class AssetProcurementLinkDTO implements Serializable {
     private Long procurementEntityId;
 
     @NotNull
-    private String procurementEntityType;
+    private ProcurementEntityType procurementEntityType;
 
     private LocalDate linkDate;
 
@@ -44,11 +45,11 @@ public class AssetProcurementLinkDTO implements Serializable {
         this.procurementEntityId = procurementEntityId;
     }
 
-    public String getProcurementEntityType() {
+    public ProcurementEntityType getProcurementEntityType() {
         return procurementEntityType;
     }
 
-    public void setProcurementEntityType(String procurementEntityType) {
+    public void setProcurementEntityType(ProcurementEntityType procurementEntityType) {
         this.procurementEntityType = procurementEntityType;
     }
 

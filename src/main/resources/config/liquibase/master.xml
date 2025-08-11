@@ -637,6 +637,7 @@
     
     <!-- AssetRegistration Aggregate Boundary Optimization -->
     <include file="config/liquibase/changelog/20250804185100_added_entity_AssetProcurementLink.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250804185199_migrate_asset_registration_relationships_to_procurement_link.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250804185200_remove_asset_registration_relationships.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->

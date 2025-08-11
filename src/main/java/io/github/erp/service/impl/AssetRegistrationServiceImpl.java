@@ -100,6 +100,15 @@ public class AssetRegistrationServiceImpl implements AssetRegistrationService {
             .map(savedAssetRegistration -> {
                 assetRegistrationSearchRepository.save(savedAssetRegistration);
 
+                if (savedAssetRegistration.getAcquiringTransaction() != null) {
+                    eventPublisher.publishEvent(new AssetAcquiredEvent(
+                        this,
+                        savedAssetRegistration.getId(),
+                        savedAssetRegistration.getAcquiringTransaction().getId(),
+                        savedAssetRegistration.getCapitalizationDate()
+                    ));
+                }
+
                 return savedAssetRegistration;
             })
             .map(assetRegistrationMapper::toDto);

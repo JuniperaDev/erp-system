@@ -5,6 +5,7 @@ import io.github.erp.repository.AssetProcurementLinkRepository;
 import io.github.erp.service.AssetProcurementLinkService;
 import io.github.erp.service.dto.AssetProcurementLinkDTO;
 import io.github.erp.service.mapper.AssetProcurementLinkMapper;
+import io.github.erp.service.validation.AssetProcurementLinkValidationService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,17 +26,34 @@ public class AssetProcurementLinkServiceImpl implements AssetProcurementLinkServ
 
     private final AssetProcurementLinkMapper assetProcurementLinkMapper;
 
+    private final AssetProcurementLinkValidationService validationService;
+
     public AssetProcurementLinkServiceImpl(
         AssetProcurementLinkRepository assetProcurementLinkRepository,
-        AssetProcurementLinkMapper assetProcurementLinkMapper
+        AssetProcurementLinkMapper assetProcurementLinkMapper,
+        AssetProcurementLinkValidationService validationService
     ) {
         this.assetProcurementLinkRepository = assetProcurementLinkRepository;
         this.assetProcurementLinkMapper = assetProcurementLinkMapper;
+        this.validationService = validationService;
     }
 
     @Override
     public AssetProcurementLinkDTO save(AssetProcurementLinkDTO assetProcurementLinkDTO) {
         log.debug("Request to save AssetProcurementLink : {}", assetProcurementLinkDTO);
+        
+        if (!validationService.isValidAssetId(assetProcurementLinkDTO.getAssetId())) {
+            throw new IllegalArgumentException("Invalid asset ID");
+        }
+        
+        if (!validationService.isValidProcurementEntityId(assetProcurementLinkDTO.getProcurementEntityId())) {
+            throw new IllegalArgumentException("Invalid procurement entity ID");
+        }
+        
+        if (!validationService.isValidProcurementEntityType(assetProcurementLinkDTO.getProcurementEntityType())) {
+            throw new IllegalArgumentException("Invalid procurement entity type: " + assetProcurementLinkDTO.getProcurementEntityType());
+        }
+        
         AssetProcurementLink assetProcurementLink = assetProcurementLinkMapper.toEntity(assetProcurementLinkDTO);
         assetProcurementLink = assetProcurementLinkRepository.save(assetProcurementLink);
         return assetProcurementLinkMapper.toDto(assetProcurementLink);
@@ -44,6 +62,18 @@ public class AssetProcurementLinkServiceImpl implements AssetProcurementLinkServ
     @Override
     public Optional<AssetProcurementLinkDTO> partialUpdate(AssetProcurementLinkDTO assetProcurementLinkDTO) {
         log.debug("Request to partially update AssetProcurementLink : {}", assetProcurementLinkDTO);
+
+        if (assetProcurementLinkDTO.getAssetId() != null && !validationService.isValidAssetId(assetProcurementLinkDTO.getAssetId())) {
+            throw new IllegalArgumentException("Invalid asset ID");
+        }
+        
+        if (assetProcurementLinkDTO.getProcurementEntityId() != null && !validationService.isValidProcurementEntityId(assetProcurementLinkDTO.getProcurementEntityId())) {
+            throw new IllegalArgumentException("Invalid procurement entity ID");
+        }
+        
+        if (assetProcurementLinkDTO.getProcurementEntityType() != null && !validationService.isValidProcurementEntityType(assetProcurementLinkDTO.getProcurementEntityType())) {
+            throw new IllegalArgumentException("Invalid procurement entity type: " + assetProcurementLinkDTO.getProcurementEntityType());
+        }
 
         return assetProcurementLinkRepository
             .findById(assetProcurementLinkDTO.getId())

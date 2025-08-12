@@ -637,10 +637,20 @@
     <include file="config/liquibase/changelog/20250811121156_added_entity_PaymentProcessedEvent.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250811121157_added_entity_InvoiceSettledEvent.xml" relativeToChangelogFile="false"/>
     
+    <!-- Lease Domain Events -->
+    <include file="config/liquibase/changelog/20250811162445_added_entity_LeaseContractCreatedEvent.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250811162446_added_entity_LeasePaymentMadeEvent.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250811162447_added_entity_LeaseLiabilityCalculatedEvent.xml" relativeToChangelogFile="false"/>
+    
     <!-- AssetRegistration Aggregate Boundary Optimization -->
     <include file="config/liquibase/changelog/20250804185100_added_entity_AssetProcurementLink.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250804185199_migrate_asset_registration_relationships_to_procurement_link.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250804185200_remove_asset_registration_relationships.xml" relativeToChangelogFile="false"/>
+    
+    <!-- Audit Trail Domain Events -->
+    <include file="config/liquibase/changelog/20250811170200_added_entity_AuditTrailEvent.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250811170201_added_entity_EntityStateChangedEvent.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250811170202_added_entity_ComplianceAuditEvent.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

@@ -21,14 +21,14 @@ package io.github.erp.domain.events.financial;
 import io.github.erp.domain.events.AbstractDomainEvent;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "settlement_created_event")
+@DiscriminatorValue("SettlementCreatedEvent")
 public class SettlementCreatedEvent extends AbstractDomainEvent {
 
     @Column(name = "payment_number")

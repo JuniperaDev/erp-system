@@ -27,19 +27,36 @@
     </changeSet>
 
     <changeSet id="20250804193122-2" author="devin">
-        <!-- Update sequence name if it exists - using database-agnostic approach -->
+        <!-- Update sequence name if it exists - H2 compatible approach -->
         <preConditions onFail="MARK_RAN">
             <sequenceExists sequenceName="ifrs16lease_contract_seq"/>
         </preConditions>
         
         <comment>Rename sequence from ifrs16lease_contract_seq to detailed_lease_contract_seq</comment>
         
-        <dropSequence sequenceName="ifrs16lease_contract_seq"/>
-        <createSequence sequenceName="detailed_lease_contract_seq" startValue="1" incrementBy="50"/>
+        <!-- H2 compatible sequence handling -->
+        <sql dbms="h2">
+            DROP SEQUENCE IF EXISTS detailed_lease_contract_seq;
+            CREATE SEQUENCE IF NOT EXISTS detailed_lease_contract_seq START WITH (SELECT COALESCE(MAX(id), 0) + 1 FROM detailed_lease_contract);
+            DROP SEQUENCE IF EXISTS ifrs16lease_contract_seq;
+        </sql>
+        
+        <!-- Other databases use standard approach -->
+        <sql dbms="!h2">
+            DROP SEQUENCE IF EXISTS ifrs16lease_contract_seq;
+            CREATE SEQUENCE detailed_lease_contract_seq START WITH 1 INCREMENT BY 50;
+        </sql>
         
         <rollback>
-            <dropSequence sequenceName="detailed_lease_contract_seq"/>
-            <createSequence sequenceName="ifrs16lease_contract_seq" startValue="1" incrementBy="50"/>
+            <sql dbms="h2">
+                DROP SEQUENCE IF EXISTS ifrs16lease_contract_seq;
+                CREATE SEQUENCE IF NOT EXISTS ifrs16lease_contract_seq START WITH (SELECT COALESCE(MAX(id), 0) + 1 FROM ifrs16lease_contract);
+                DROP SEQUENCE IF EXISTS detailed_lease_contract_seq;
+            </sql>
+            <sql dbms="!h2">
+                DROP SEQUENCE IF EXISTS detailed_lease_contract_seq;
+                CREATE SEQUENCE ifrs16lease_contract_seq START WITH 1 INCREMENT BY 50;
+            </sql>
         </rollback>
     </changeSet>
 

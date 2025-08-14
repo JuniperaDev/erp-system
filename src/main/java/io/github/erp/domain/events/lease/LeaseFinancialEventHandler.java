@@ -118,4 +118,70 @@ public class LeaseFinancialEventHandler {
                     event.getEndDate());
         }
     }
+
+    @DomainEventHandlerMethodAnnotation(eventType = "LeaseContractCreatedEvent", order = 2)
+    public void handleLeaseContractCreatedForReporting(DomainEvent event) {
+        if (event instanceof LeaseContractCreatedEvent) {
+            LeaseContractCreatedEvent leaseEvent = (LeaseContractCreatedEvent) event;
+            log.info("Processing lease contract creation for CQRS reporting: Contract {} - {}", 
+                    leaseEvent.getBookingId(), leaseEvent.getLeaseTitle());
+            
+            try {
+                updateLeaseReportReadModels(leaseEvent);
+                log.info("Successfully updated lease report read models for contract {}", 
+                        leaseEvent.getBookingId());
+            } catch (Exception e) {
+                log.error("Failed to update lease report read models for contract {}", 
+                        leaseEvent.getBookingId(), e);
+            }
+        }
+    }
+
+    @DomainEventHandlerMethodAnnotation(eventType = "LeaseLiabilityCalculatedEvent", order = 2)
+    public void handleLeaseLiabilityCalculatedForReporting(DomainEvent event) {
+        if (event instanceof LeaseLiabilityCalculatedEvent) {
+            LeaseLiabilityCalculatedEvent liabilityEvent = (LeaseLiabilityCalculatedEvent) event;
+            log.info("Processing lease liability calculation for CQRS reporting: Lease {} with liability {}", 
+                    liabilityEvent.getLeaseId(), liabilityEvent.getLiabilityAmount());
+            
+            try {
+                updateLeaseLiabilityReportReadModels(liabilityEvent);
+                log.info("Successfully updated lease liability report read models for lease {}", 
+                        liabilityEvent.getLeaseId());
+            } catch (Exception e) {
+                log.error("Failed to update lease liability report read models for lease {}", 
+                        liabilityEvent.getLeaseId(), e);
+            }
+        }
+    }
+
+    @DomainEventHandlerMethodAnnotation(eventType = "RouDepreciationCalculatedEvent", order = 2)
+    public void handleRouDepreciationCalculatedForReporting(DomainEvent event) {
+        if (event instanceof RouDepreciationCalculatedEvent) {
+            RouDepreciationCalculatedEvent depreciationEvent = (RouDepreciationCalculatedEvent) event;
+            log.info("Processing ROU depreciation calculation for CQRS reporting: Asset {} with depreciation {}", 
+                    depreciationEvent.getRouAssetIdentifier(), depreciationEvent.getDepreciationAmount());
+            
+            try {
+                updateRouAssetReportReadModels(depreciationEvent);
+                log.info("Successfully updated ROU asset report read models for asset {}", 
+                        depreciationEvent.getRouAssetIdentifier());
+            } catch (Exception e) {
+                log.error("Failed to update ROU asset report read models for asset {}", 
+                        depreciationEvent.getRouAssetIdentifier(), e);
+            }
+        }
+    }
+
+    private void updateLeaseReportReadModels(LeaseContractCreatedEvent event) {
+        log.debug("Updating lease report read models for lease contract: {}", event.getBookingId());
+    }
+
+    private void updateLeaseLiabilityReportReadModels(LeaseLiabilityCalculatedEvent event) {
+        log.debug("Updating lease liability report read models for lease: {}", event.getLeaseId());
+    }
+
+    private void updateRouAssetReportReadModels(RouDepreciationCalculatedEvent event) {
+        log.debug("Updating ROU asset report read models for asset: {}", event.getRouAssetIdentifier());
+    }
 }

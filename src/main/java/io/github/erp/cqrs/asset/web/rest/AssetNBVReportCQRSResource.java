@@ -51,7 +51,7 @@ public class AssetNBVReportCQRSResource {
 
     @GetMapping("/asset-nbv-reports")
     public ResponseEntity<List<AssetNBVReportReadModel>> getAllAssetNBVReports(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get a page of AssetNBVReports");
         Page<AssetNBVReportReadModel> page = assetNBVReportCQRSService.findAllAssetNBVReports(pageable);
@@ -69,7 +69,7 @@ public class AssetNBVReportCQRSResource {
     @GetMapping("/asset-nbv-reports/by-date")
     public ResponseEntity<List<AssetNBVReportReadModel>> getAssetNBVReportsByDate(
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportingDate,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get AssetNBVReports by date : {}", reportingDate);
         Page<AssetNBVReportReadModel> page = assetNBVReportCQRSService.findAssetNBVReportsByDate(reportingDate, pageable);
@@ -80,7 +80,7 @@ public class AssetNBVReportCQRSResource {
     @GetMapping("/asset-nbv-reports/by-category")
     public ResponseEntity<List<AssetNBVReportReadModel>> getAssetNBVReportsByCategory(
         @RequestParam String categoryName,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get AssetNBVReports by category : {}", categoryName);
         Page<AssetNBVReportReadModel> page = assetNBVReportCQRSService.findAssetNBVReportsByCategory(categoryName, pageable);
@@ -91,7 +91,7 @@ public class AssetNBVReportCQRSResource {
     @GetMapping("/asset-nbv-reports/by-fiscal-year")
     public ResponseEntity<List<AssetNBVReportReadModel>> getAssetNBVReportsByFiscalYear(
         @RequestParam Integer fiscalYear,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get AssetNBVReports by fiscal year : {}", fiscalYear);
         Page<AssetNBVReportReadModel> page = assetNBVReportCQRSService.findAssetNBVReportsByFiscalYear(fiscalYear, pageable);
@@ -103,7 +103,7 @@ public class AssetNBVReportCQRSResource {
     public ResponseEntity<List<AssetNBVReportReadModel>> getAssetNBVReportsByDateRange(
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get AssetNBVReports by date range : {} to {}", startDate, endDate);
         Page<AssetNBVReportReadModel> page = assetNBVReportCQRSService.findAssetNBVReportsByDateRange(startDate, endDate, pageable);

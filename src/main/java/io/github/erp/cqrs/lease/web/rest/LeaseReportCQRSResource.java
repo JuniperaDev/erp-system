@@ -51,7 +51,7 @@ public class LeaseReportCQRSResource {
 
     @GetMapping("/lease-reports")
     public ResponseEntity<List<LeaseReportReadModel>> getAllLeaseReports(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get a page of LeaseReports");
         Page<LeaseReportReadModel> page = leaseReportCQRSService.findAllLeaseReports(pageable);
@@ -69,7 +69,7 @@ public class LeaseReportCQRSResource {
     @GetMapping("/lease-reports/by-date")
     public ResponseEntity<List<LeaseReportReadModel>> getLeaseReportsByDate(
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportingDate,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get LeaseReports by date : {}", reportingDate);
         Page<LeaseReportReadModel> page = leaseReportCQRSService.findLeaseReportsByDate(reportingDate, pageable);
@@ -80,7 +80,7 @@ public class LeaseReportCQRSResource {
     @GetMapping("/lease-reports/by-status")
     public ResponseEntity<List<LeaseReportReadModel>> getLeaseReportsByStatus(
         @RequestParam String leaseStatus,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get LeaseReports by status : {}", leaseStatus);
         Page<LeaseReportReadModel> page = leaseReportCQRSService.findLeaseReportsByStatus(leaseStatus, pageable);
@@ -91,7 +91,7 @@ public class LeaseReportCQRSResource {
     @GetMapping("/lease-reports/by-fiscal-year")
     public ResponseEntity<List<LeaseReportReadModel>> getLeaseReportsByFiscalYear(
         @RequestParam Integer fiscalYear,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get LeaseReports by fiscal year : {}", fiscalYear);
         Page<LeaseReportReadModel> page = leaseReportCQRSService.findLeaseReportsByFiscalYear(fiscalYear, pageable);
@@ -103,7 +103,7 @@ public class LeaseReportCQRSResource {
     public ResponseEntity<List<LeaseReportReadModel>> getLeaseReportsByDateRange(
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get LeaseReports by date range : {} to {}", startDate, endDate);
         Page<LeaseReportReadModel> page = leaseReportCQRSService.findLeaseReportsByDateRange(startDate, endDate, pageable);

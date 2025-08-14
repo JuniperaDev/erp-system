@@ -51,7 +51,7 @@ public class AssetReportCQRSResource {
 
     @GetMapping("/asset-reports")
     public ResponseEntity<List<AssetReportReadModel>> getAllAssetReports(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get a page of AssetReports");
         Page<AssetReportReadModel> page = assetReportCQRSService.findAllAssetReports(pageable);
@@ -69,7 +69,7 @@ public class AssetReportCQRSResource {
     @GetMapping("/asset-reports/by-date")
     public ResponseEntity<List<AssetReportReadModel>> getAssetReportsByDate(
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportingDate,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get AssetReports by date : {}", reportingDate);
         Page<AssetReportReadModel> page = assetReportCQRSService.findAssetReportsByDate(reportingDate, pageable);
@@ -80,7 +80,7 @@ public class AssetReportCQRSResource {
     @GetMapping("/asset-reports/by-category")
     public ResponseEntity<List<AssetReportReadModel>> getAssetReportsByCategory(
         @RequestParam String categoryName,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get AssetReports by category : {}", categoryName);
         Page<AssetReportReadModel> page = assetReportCQRSService.findAssetReportsByCategory(categoryName, pageable);
@@ -91,7 +91,7 @@ public class AssetReportCQRSResource {
     @GetMapping("/asset-reports/by-dealer")
     public ResponseEntity<List<AssetReportReadModel>> getAssetReportsByDealer(
         @RequestParam String dealerName,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get AssetReports by dealer : {}", dealerName);
         Page<AssetReportReadModel> page = assetReportCQRSService.findAssetReportsByDealer(dealerName, pageable);
@@ -103,7 +103,7 @@ public class AssetReportCQRSResource {
     public ResponseEntity<List<AssetReportReadModel>> getAssetReportsByDateRange(
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get AssetReports by date range : {} to {}", startDate, endDate);
         Page<AssetReportReadModel> page = assetReportCQRSService.findAssetReportsByDateRange(startDate, endDate, pageable);

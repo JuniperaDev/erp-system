@@ -51,7 +51,7 @@ public class LeaseLiabilityReportCQRSResource {
 
     @GetMapping("/lease-liability-reports")
     public ResponseEntity<List<LeaseLiabilityReportReadModel>> getAllLeaseLiabilityReports(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get a page of LeaseLiabilityReports");
         Page<LeaseLiabilityReportReadModel> page = leaseLiabilityReportCQRSService.findAllLeaseLiabilityReports(pageable);
@@ -69,7 +69,7 @@ public class LeaseLiabilityReportCQRSResource {
     @GetMapping("/lease-liability-reports/by-date")
     public ResponseEntity<List<LeaseLiabilityReportReadModel>> getLeaseLiabilityReportsByDate(
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportingDate,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get LeaseLiabilityReports by date : {}", reportingDate);
         Page<LeaseLiabilityReportReadModel> page = leaseLiabilityReportCQRSService.findLeaseLiabilityReportsByDate(reportingDate, pageable);
@@ -80,7 +80,7 @@ public class LeaseLiabilityReportCQRSResource {
     @GetMapping("/lease-liability-reports/by-fiscal-year")
     public ResponseEntity<List<LeaseLiabilityReportReadModel>> getLeaseLiabilityReportsByFiscalYear(
         @RequestParam Integer fiscalYear,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get LeaseLiabilityReports by fiscal year : {}", fiscalYear);
         Page<LeaseLiabilityReportReadModel> page = leaseLiabilityReportCQRSService.findLeaseLiabilityReportsByFiscalYear(fiscalYear, pageable);
@@ -92,7 +92,7 @@ public class LeaseLiabilityReportCQRSResource {
     public ResponseEntity<List<LeaseLiabilityReportReadModel>> getLeaseLiabilityReportsByDateRange(
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get LeaseLiabilityReports by date range : {} to {}", startDate, endDate);
         Page<LeaseLiabilityReportReadModel> page = leaseLiabilityReportCQRSService.findLeaseLiabilityReportsByDateRange(startDate, endDate, pageable);

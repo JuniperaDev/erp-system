@@ -51,7 +51,7 @@ public class DepreciationReportCQRSResource {
 
     @GetMapping("/depreciation-reports")
     public ResponseEntity<List<DepreciationReportReadModel>> getAllDepreciationReports(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get a page of DepreciationReports");
         Page<DepreciationReportReadModel> page = depreciationReportCQRSService.findAllDepreciationReports(pageable);
@@ -69,7 +69,7 @@ public class DepreciationReportCQRSResource {
     @GetMapping("/depreciation-reports/by-period")
     public ResponseEntity<List<DepreciationReportReadModel>> getDepreciationReportsByPeriod(
         @RequestParam String depreciationPeriod,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get DepreciationReports by period : {}", depreciationPeriod);
         Page<DepreciationReportReadModel> page = depreciationReportCQRSService.findDepreciationReportsByPeriod(depreciationPeriod, pageable);
@@ -80,7 +80,7 @@ public class DepreciationReportCQRSResource {
     @GetMapping("/depreciation-reports/by-category")
     public ResponseEntity<List<DepreciationReportReadModel>> getDepreciationReportsByCategory(
         @RequestParam String categoryName,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get DepreciationReports by category : {}", categoryName);
         Page<DepreciationReportReadModel> page = depreciationReportCQRSService.findDepreciationReportsByCategory(categoryName, pageable);
@@ -91,7 +91,7 @@ public class DepreciationReportCQRSResource {
     @GetMapping("/depreciation-reports/by-fiscal-year")
     public ResponseEntity<List<DepreciationReportReadModel>> getDepreciationReportsByFiscalYear(
         @RequestParam Integer fiscalYear,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get DepreciationReports by fiscal year : {}", fiscalYear);
         Page<DepreciationReportReadModel> page = depreciationReportCQRSService.findDepreciationReportsByFiscalYear(fiscalYear, pageable);
@@ -103,7 +103,7 @@ public class DepreciationReportCQRSResource {
     public ResponseEntity<List<DepreciationReportReadModel>> getDepreciationReportsByDateRange(
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get DepreciationReports by date range : {} to {}", startDate, endDate);
         Page<DepreciationReportReadModel> page = depreciationReportCQRSService.findDepreciationReportsByDateRange(startDate, endDate, pageable);

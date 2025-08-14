@@ -52,7 +52,7 @@ public class RouAssetReportCQRSResource {
 
     @GetMapping("/rou-asset-reports")
     public ResponseEntity<List<RouAssetReportReadModel>> getAllRouAssetReports(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get a page of RouAssetReports");
         Page<RouAssetReportReadModel> page = rouAssetReportCQRSService.findAllRouAssetReports(pageable);
@@ -70,7 +70,7 @@ public class RouAssetReportCQRSResource {
     @GetMapping("/rou-asset-reports/by-date")
     public ResponseEntity<List<RouAssetReportReadModel>> getRouAssetReportsByDate(
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportingDate,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get RouAssetReports by date : {}", reportingDate);
         Page<RouAssetReportReadModel> page = rouAssetReportCQRSService.findRouAssetReportsByDate(reportingDate, pageable);
@@ -81,7 +81,7 @@ public class RouAssetReportCQRSResource {
     @GetMapping("/rou-asset-reports/by-category")
     public ResponseEntity<List<RouAssetReportReadModel>> getRouAssetReportsByCategory(
         @RequestParam String assetCategoryName,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get RouAssetReports by category : {}", assetCategoryName);
         Page<RouAssetReportReadModel> page = rouAssetReportCQRSService.findRouAssetReportsByCategory(assetCategoryName, pageable);
@@ -92,7 +92,7 @@ public class RouAssetReportCQRSResource {
     @GetMapping("/rou-asset-reports/by-fiscal-year")
     public ResponseEntity<List<RouAssetReportReadModel>> getRouAssetReportsByFiscalYear(
         @RequestParam Integer fiscalYear,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get RouAssetReports by fiscal year : {}", fiscalYear);
         Page<RouAssetReportReadModel> page = rouAssetReportCQRSService.findRouAssetReportsByFiscalYear(fiscalYear, pageable);
@@ -104,7 +104,7 @@ public class RouAssetReportCQRSResource {
     public ResponseEntity<List<RouAssetReportReadModel>> getRouAssetReportsByDateRange(
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get RouAssetReports by date range : {} to {}", startDate, endDate);
         Page<RouAssetReportReadModel> page = rouAssetReportCQRSService.findRouAssetReportsByDateRange(startDate, endDate, pageable);

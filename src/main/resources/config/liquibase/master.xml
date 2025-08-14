@@ -654,6 +654,7 @@
     <!-- CQRS Read Models -->
     <include file="config/liquibase/changelog/cqrs_asset_read_models.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/cqrs_lease_read_models.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/cqrs_financial_read_models.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

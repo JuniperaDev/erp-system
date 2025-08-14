@@ -128,8 +128,16 @@ public class DepreciationReportEventHandler {
 
         if (depreciationEntry.getDepreciationPeriod() != null && 
             depreciationEntry.getDepreciationPeriod().getFiscalMonth() != null) {
-            readModel.fiscalMonthCode(depreciationEntry.getDepreciationPeriod().getFiscalMonth().getFiscalMonthCode())
-                     .fiscalYear(depreciationEntry.getDepreciationPeriod().getFiscalMonth().getFiscalYear().getFiscalYearCode());
+            readModel.fiscalMonthCode(depreciationEntry.getDepreciationPeriod().getFiscalMonth().getFiscalMonthCode());
+            
+            if (depreciationEntry.getDepreciationPeriod().getFiscalMonth().getFiscalYear() != null) {
+                String fiscalYearCode = depreciationEntry.getDepreciationPeriod().getFiscalMonth().getFiscalYear().getFiscalYearCode();
+                try {
+                    readModel.fiscalYear(Integer.parseInt(fiscalYearCode));
+                } catch (NumberFormatException e) {
+                    log.warn("Could not parse fiscal year code as integer: {}", fiscalYearCode);
+                }
+            }
         }
 
         return readModel;

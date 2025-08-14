@@ -60,6 +60,8 @@ public class DepreciationWriteModelService {
         depreciationEntry = depreciationEntryRepository.save(depreciationEntry);
         DepreciationEntryDTO result = depreciationEntryMapper.toDto(depreciationEntry);
 
+        BigDecimal accumulatedDepreciation = calculateAccumulatedDepreciation(depreciationEntry);
+        
         DepreciationCalculatedEvent event = new DepreciationCalculatedEvent(
             depreciationEntry.getId().toString(),
             depreciationEntry.getAssetRegistration() != null ? 
@@ -67,7 +69,7 @@ public class DepreciationWriteModelService {
             depreciationEntry.getAssetRegistration() != null ? 
                 depreciationEntry.getAssetRegistration().getAssetNumber() : null,
             depreciationEntry.getDepreciationAmount(),
-            depreciationEntry.getAccumulatedDepreciation(),
+            accumulatedDepreciation,
             depreciationEntry.getNetBookValue(),
             depreciationEntry.getDepreciationPeriod() != null ? 
                 depreciationEntry.getDepreciationPeriod().getPeriodCode() : null,
@@ -91,6 +93,8 @@ public class DepreciationWriteModelService {
             })
             .map(depreciationEntryRepository::save)
             .map(updatedEntry -> {
+                BigDecimal accumulatedDepreciation = calculateAccumulatedDepreciation(updatedEntry);
+                
                 DepreciationCalculatedEvent event = new DepreciationCalculatedEvent(
                     updatedEntry.getId().toString(),
                     updatedEntry.getAssetRegistration() != null ? 
@@ -98,7 +102,7 @@ public class DepreciationWriteModelService {
                     updatedEntry.getAssetRegistration() != null ? 
                         updatedEntry.getAssetRegistration().getAssetNumber() : null,
                     updatedEntry.getDepreciationAmount(),
-                    updatedEntry.getAccumulatedDepreciation(),
+                    accumulatedDepreciation,
                     updatedEntry.getNetBookValue(),
                     updatedEntry.getDepreciationPeriod() != null ? 
                         updatedEntry.getDepreciationPeriod().getPeriodCode() : null,
@@ -122,5 +126,17 @@ public class DepreciationWriteModelService {
         log.debug("Request to calculate depreciation for period : {}", periodCode);
         
         log.info("Depreciation calculation completed for period: {}", periodCode);
+    }
+
+    private BigDecimal calculateAccumulatedDepreciation(DepreciationEntry depreciationEntry) {
+        if (depreciationEntry.getAssetRegistration() != null && 
+            depreciationEntry.getAssetRegistration().getAssetCost() != null &&
+            depreciationEntry.getNetBookValue() != null) {
+            return depreciationEntry.getAssetRegistration().getAssetCost()
+                .subtract(depreciationEntry.getNetBookValue());
+        }
+        
+        return depreciationEntry.getDepreciationAmount() != null ? 
+            depreciationEntry.getDepreciationAmount() : BigDecimal.ZERO;
     }
 }

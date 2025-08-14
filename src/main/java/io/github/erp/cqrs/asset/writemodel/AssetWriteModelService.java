@@ -82,44 +82,44 @@ public class AssetWriteModelService {
     public Optional<AssetRegistrationDTO> updateAsset(AssetRegistrationDTO assetRegistrationDTO) {
         log.debug("Request to update Asset : {}", assetRegistrationDTO);
 
-        return assetRegistrationRepository
-            .findById(assetRegistrationDTO.getId())
-            .map(existingAsset -> {
-                Long previousCategoryId = existingAsset.getAssetCategory() != null ? 
-                    existingAsset.getAssetCategory().getId() : null;
-                String previousCategoryName = existingAsset.getAssetCategory() != null ? 
-                    existingAsset.getAssetCategory().getAssetCategoryName() : null;
+        Optional<AssetRegistration> existingAssetOpt = assetRegistrationRepository.findById(assetRegistrationDTO.getId());
+        if (!existingAssetOpt.isPresent()) {
+            return Optional.empty();
+        }
 
-                assetRegistrationMapper.partialUpdate(existingAsset, assetRegistrationDTO);
-                return existingAsset;
-            })
-            .map(assetRegistrationRepository::save)
-            .map(updatedAsset -> {
-                Long newCategoryId = updatedAsset.getAssetCategory() != null ? 
-                    updatedAsset.getAssetCategory().getId() : null;
-                String newCategoryName = updatedAsset.getAssetCategory() != null ? 
-                    updatedAsset.getAssetCategory().getAssetCategoryName() : null;
+        AssetRegistration existingAsset = existingAssetOpt.get();
+        
+        Long previousCategoryId = existingAsset.getAssetCategory() != null ? 
+            existingAsset.getAssetCategory().getId() : null;
+        String previousCategoryName = existingAsset.getAssetCategory() != null ? 
+            existingAsset.getAssetCategory().getAssetCategoryName() : null;
 
-                if (previousCategoryId != null && newCategoryId != null && 
-                    !previousCategoryId.equals(newCategoryId)) {
-                    
-                    AssetCategoryChangedEvent event = new AssetCategoryChangedEvent(
-                        updatedAsset.getId().toString(),
-                        updatedAsset.getAssetNumber(),
-                        previousCategoryId,
-                        newCategoryId,
-                        previousCategoryName,
-                        newCategoryName,
-                        java.util.UUID.randomUUID()
-                    );
-                    
-                    domainEventStore.store(event);
-                    log.info("Asset category changed and event published: {}", updatedAsset.getId());
-                }
+        assetRegistrationMapper.partialUpdate(existingAsset, assetRegistrationDTO);
+        AssetRegistration updatedAsset = assetRegistrationRepository.save(existingAsset);
+        
+        Long newCategoryId = updatedAsset.getAssetCategory() != null ? 
+            updatedAsset.getAssetCategory().getId() : null;
+        String newCategoryName = updatedAsset.getAssetCategory() != null ? 
+            updatedAsset.getAssetCategory().getAssetCategoryName() : null;
 
-                return updatedAsset;
-            })
-            .map(assetRegistrationMapper::toDto);
+        if (previousCategoryId != null && newCategoryId != null && 
+            !previousCategoryId.equals(newCategoryId)) {
+            
+            AssetCategoryChangedEvent event = new AssetCategoryChangedEvent(
+                updatedAsset.getId().toString(),
+                updatedAsset.getAssetNumber(),
+                previousCategoryId,
+                newCategoryId,
+                previousCategoryName,
+                newCategoryName,
+                java.util.UUID.randomUUID()
+            );
+            
+            domainEventStore.store(event);
+            log.info("Asset category changed and event published: {}", updatedAsset.getId());
+        }
+
+        return Optional.of(assetRegistrationMapper.toDto(updatedAsset));
     }
 
     public void deleteAsset(Long id) {

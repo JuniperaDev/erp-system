@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="create-financial-report-read-model" author="devin">
+        <createTable tableName="financial_report_read_model">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="transaction_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="transaction_type" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="transaction_number" type="varchar(255)"/>
+            <column name="transaction_date" type="date"/>
+            <column name="transaction_amount" type="decimal(21,2)"/>
+            <column name="settlement_amount" type="decimal(21,2)"/>
+            <column name="outstanding_amount" type="decimal(21,2)"/>
+            <column name="currency_code" type="varchar(10)"/>
+            <column name="dealer_name" type="varchar(255)"/>
+            <column name="payment_reference" type="varchar(255)"/>
+            <column name="description" type="varchar(1000)"/>
+            <column name="reporting_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fiscal_year" type="integer"/>
+            <column name="fiscal_month" type="integer"/>
+            <column name="last_updated" type="date">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add-financial-report-indexes" author="devin">
+        <createIndex indexName="idx_financial_report_transaction_id" tableName="financial_report_read_model">
+            <column name="transaction_id"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_financial_report_transaction_type" tableName="financial_report_read_model">
+            <column name="transaction_type"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_financial_report_reporting_date" tableName="financial_report_read_model">
+            <column name="reporting_date"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_financial_report_transaction_date" tableName="financial_report_read_model">
+            <column name="transaction_date"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_financial_report_fiscal_year" tableName="financial_report_read_model">
+            <column name="fiscal_year"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_financial_report_fiscal_month" tableName="financial_report_read_model">
+            <column name="fiscal_month"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_financial_report_dealer_name" tableName="financial_report_read_model">
+            <column name="dealer_name"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_financial_report_currency_code" tableName="financial_report_read_model">
+            <column name="currency_code"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_financial_report_transaction_number" tableName="financial_report_read_model">
+            <column name="transaction_number"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_financial_report_composite" tableName="financial_report_read_model">
+            <column name="transaction_type"/>
+            <column name="reporting_date"/>
+            <column name="fiscal_year"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

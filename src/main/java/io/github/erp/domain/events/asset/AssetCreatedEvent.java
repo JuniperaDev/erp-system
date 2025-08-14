@@ -55,6 +55,15 @@ public class AssetCreatedEvent extends AbstractDomainEvent {
         this.assetCategoryId = assetCategoryId;
     }
 
+    public AssetCreatedEvent(String assetId, String assetRegistrationNumber, String assetTag, 
+                           String assetDetails, BigDecimal assetCost, java.time.LocalDate capitalizationDate, UUID correlationId) {
+        super(assetId, "Asset", correlationId);
+        this.assetRegistrationNumber = assetRegistrationNumber;
+        this.assetDescription = assetDetails;
+        this.assetCost = assetCost;
+        this.assetCategoryId = null;
+    }
+
     public String getAssetRegistrationNumber() {
         return assetRegistrationNumber;
     }

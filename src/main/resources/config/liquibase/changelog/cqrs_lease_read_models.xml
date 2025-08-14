@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="create-lease-report-read-model" author="devin">
+        <createTable tableName="lease_report_read_model">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="lease_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lease_contract_number" type="varchar(255)"/>
+            <column name="lease_title" type="varchar(255)"/>
+            <column name="lessee_name" type="varchar(255)"/>
+            <column name="lessee_id" type="bigint"/>
+            <column name="lessor_name" type="varchar(255)"/>
+            <column name="lessor_id" type="bigint"/>
+            <column name="lease_amount" type="decimal(21,2)"/>
+            <column name="lease_liability" type="decimal(21,2)"/>
+            <column name="rou_asset_value" type="decimal(21,2)"/>
+            <column name="lease_commencement_date" type="date"/>
+            <column name="lease_expiry_date" type="date"/>
+            <column name="lease_status" type="varchar(255)"/>
+            <column name="fiscal_month_code" type="varchar(255)"/>
+            <column name="fiscal_quarter" type="varchar(255)"/>
+            <column name="fiscal_year" type="integer"/>
+            <column name="reporting_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated" type="date">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="lease_report_read_model" indexName="idx_lease_report_date">
+            <column name="reporting_date"/>
+        </createIndex>
+        <createIndex tableName="lease_report_read_model" indexName="idx_lease_report_lease_id">
+            <column name="lease_id"/>
+        </createIndex>
+        <createIndex tableName="lease_report_read_model" indexName="idx_lease_report_status">
+            <column name="lease_status"/>
+        </createIndex>
+        <createIndex tableName="lease_report_read_model" indexName="idx_lease_report_fiscal_year">
+            <column name="fiscal_year"/>
+        </createIndex>
+        <createIndex tableName="lease_report_read_model" indexName="idx_lease_report_contract_number">
+            <column name="lease_contract_number"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="create-lease-liability-report-read-model" author="devin">
+        <createTable tableName="lease_liability_report_read_model">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="lease_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lease_contract_number" type="varchar(255)"/>
+            <column name="lease_title" type="varchar(255)"/>
+            <column name="lessee_name" type="varchar(255)"/>
+            <column name="lessee_id" type="bigint"/>
+            <column name="opening_balance" type="decimal(21,2)"/>
+            <column name="cash_payment" type="decimal(21,2)"/>
+            <column name="principal_payment" type="decimal(21,2)"/>
+            <column name="interest_payment" type="decimal(21,2)"/>
+            <column name="outstanding_balance" type="decimal(21,2)"/>
+            <column name="interest_rate" type="decimal(21,4)"/>
+            <column name="liability_period_start_date" type="date"/>
+            <column name="liability_period_end_date" type="date"/>
+            <column name="fiscal_month_code" type="varchar(255)"/>
+            <column name="fiscal_quarter" type="varchar(255)"/>
+            <column name="fiscal_year" type="integer"/>
+            <column name="reporting_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated" type="date">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="lease_liability_report_read_model" indexName="idx_lease_liability_report_date">
+            <column name="reporting_date"/>
+        </createIndex>
+        <createIndex tableName="lease_liability_report_read_model" indexName="idx_lease_liability_report_lease_id">
+            <column name="lease_id"/>
+        </createIndex>
+        <createIndex tableName="lease_liability_report_read_model" indexName="idx_lease_liability_report_fiscal_year">
+            <column name="fiscal_year"/>
+        </createIndex>
+        <createIndex tableName="lease_liability_report_read_model" indexName="idx_lease_liability_report_contract_number">
+            <column name="lease_contract_number"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="create-rou-asset-report-read-model" author="devin">
+        <createTable tableName="rou_asset_report_read_model">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="rou_asset_identifier" type="uuid"/>
+            <column name="rou_depreciation_identifier" type="uuid"/>
+            <column name="lease_contract_id" type="bigint"/>
+            <column name="lease_contract_number" type="varchar(255)"/>
+            <column name="lease_title" type="varchar(255)"/>
+            <column name="asset_category_name" type="varchar(255)"/>
+            <column name="asset_category_id" type="bigint"/>
+            <column name="depreciation_amount" type="decimal(21,2)"/>
+            <column name="outstanding_amount" type="decimal(21,2)"/>
+            <column name="accumulated_depreciation" type="decimal(21,2)"/>
+            <column name="net_book_value" type="decimal(21,2)"/>
+            <column name="lease_period_code" type="varchar(255)"/>
+            <column name="depreciation_date" type="date"/>
+            <column name="fiscal_month_code" type="varchar(255)"/>
+            <column name="fiscal_quarter" type="varchar(255)"/>
+            <column name="fiscal_year" type="integer"/>
+            <column name="reporting_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated" type="date">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="rou_asset_report_read_model" indexName="idx_rou_asset_report_date">
+            <column name="reporting_date"/>
+        </createIndex>
+        <createIndex tableName="rou_asset_report_read_model" indexName="idx_rou_asset_report_identifier">
+            <column name="rou_asset_identifier"/>
+        </createIndex>
+        <createIndex tableName="rou_asset_report_read_model" indexName="idx_rou_asset_report_lease_id">
+            <column name="lease_contract_id"/>
+        </createIndex>
+        <createIndex tableName="rou_asset_report_read_model" indexName="idx_rou_asset_report_category">
+            <column name="asset_category_name"/>
+        </createIndex>
+        <createIndex tableName="rou_asset_report_read_model" indexName="idx_rou_asset_report_fiscal_year">
+            <column name="fiscal_year"/>
+        </createIndex>
+        <createIndex tableName="rou_asset_report_read_model" indexName="idx_rou_asset_report_depreciation_date">
+            <column name="depreciation_date"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

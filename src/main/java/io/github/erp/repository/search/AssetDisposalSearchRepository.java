@@ -20,7 +20,7 @@ package io.github.erp.repository.search;
 
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
-import io.github.erp.domain.AssetDisposal;
+import io.github.erp.context.assets.domain.AssetDisposal;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

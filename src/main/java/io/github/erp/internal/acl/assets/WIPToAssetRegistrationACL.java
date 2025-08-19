@@ -3,6 +3,7 @@ package io.github.erp.context.assets.acl;
 import io.github.erp.internal.acl.AbstractTranslationACL;
 import io.github.erp.internal.acl.dto.AssetAcquisitionData;
 import io.github.erp.internal.acl.dto.ProjectCostData;
+import io.github.erp.internal.acl.assets.WIPTransferIntegrationACL;
 import io.github.erp.service.dto.WorkInProgressRegistrationDTO;
 import org.springframework.stereotype.Component;
 

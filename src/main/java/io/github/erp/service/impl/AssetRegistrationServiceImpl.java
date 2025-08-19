@@ -20,7 +20,7 @@ package io.github.erp.service.impl;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
-import io.github.erp.domain.AssetRegistration;
+import io.github.erp.context.assets.domain.AssetRegistration;
 import io.github.erp.domain.events.AssetAcquiredEvent;
 import io.github.erp.repository.AssetRegistrationRepository;
 import io.github.erp.repository.search.AssetRegistrationSearchRepository;

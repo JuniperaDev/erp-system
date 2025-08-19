@@ -20,6 +20,7 @@ package io.github.erp.service;
 
 import io.github.erp.domain.*; // for static metamodels
 import io.github.erp.domain.LeaseModelMetadata;
+import io.github.erp.context.assets.domain.AssetCategory_;
 import io.github.erp.repository.LeaseModelMetadataRepository;
 import io.github.erp.repository.search.LeaseModelMetadataSearchRepository;
 import io.github.erp.service.criteria.LeaseModelMetadataCriteria;

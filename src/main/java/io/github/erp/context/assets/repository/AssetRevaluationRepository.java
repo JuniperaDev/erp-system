@@ -18,7 +18,7 @@ package io.github.erp.context.assets.repository;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import io.github.erp.domain.AssetRevaluation;
+import io.github.erp.context.assets.domain.AssetRevaluation;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;

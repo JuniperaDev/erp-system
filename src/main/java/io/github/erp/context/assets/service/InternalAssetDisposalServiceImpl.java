@@ -17,7 +17,7 @@ package io.github.erp.context.assets.service;
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import io.github.erp.domain.AssetDisposal;
+import io.github.erp.context.assets.domain.AssetDisposal;
 import io.github.erp.domain.events.DomainEventPublisher;
 import io.github.erp.domain.events.asset.AssetDisposedEvent;
 import io.github.erp.internal.repository.InternalAssetDisposalRepository;
@@ -102,8 +102,12 @@ public class InternalAssetDisposalServiceImpl {
         try {
             AssetDisposedEvent event = new AssetDisposedEvent(
                 assetDisposal.getAssetDisposed() != null ? assetDisposal.getAssetDisposed().getId().toString() : null,
+                assetDisposal.getAssetDisposed() != null ? assetDisposal.getAssetDisposed().getAssetNumber() : null,
+                assetDisposal.getAssetDisposed() != null ? assetDisposal.getAssetDisposed().getAssetDetails() : null,
                 assetDisposal.getDisposalDate(),
                 assetDisposal.getNetBookValue(),
+                assetDisposal.getNetBookValue(),
+                assetDisposal.getAssetDisposalReference() != null ? assetDisposal.getAssetDisposalReference().toString() : null,
                 UUID.randomUUID()
             );
             domainEventPublisher.publish(event);

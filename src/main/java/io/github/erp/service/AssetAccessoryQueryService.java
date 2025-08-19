@@ -20,6 +20,11 @@ package io.github.erp.service;
 
 import io.github.erp.domain.*; // for static metamodels
 import io.github.erp.domain.AssetAccessory;
+import io.github.erp.context.assets.domain.AssetCategory;
+import io.github.erp.context.assets.domain.AssetRegistration_;
+import io.github.erp.context.assets.domain.AssetCategory_;
+import io.github.erp.context.assets.domain.AssetDisposal_;
+import io.github.erp.context.assets.domain.AssetRevaluation_;
 import io.github.erp.repository.AssetAccessoryRepository;
 import io.github.erp.repository.search.AssetAccessorySearchRepository;
 import io.github.erp.service.criteria.AssetAccessoryCriteria;

@@ -94,7 +94,7 @@ public class AssetRegistrationResource {
 
     @GetMapping("/asset-registrations")
     public ResponseEntity<List<AssetRegistrationDTO>> getAllAssetRegistrations(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to get a page of AssetRegistrations");
         Page<AssetRegistrationDTO> page = assetRegistrationService.findAll(pageable);
@@ -122,7 +122,7 @@ public class AssetRegistrationResource {
     @GetMapping("/asset-registrations/_search")
     public ResponseEntity<List<AssetRegistrationDTO>> searchAssetRegistrations(
         @RequestParam String query,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        Pageable pageable
     ) {
         log.debug("REST request to search for a page of AssetRegistrations for query {}", query);
         Page<AssetRegistrationDTO> page = assetRegistrationService.search(query, pageable);

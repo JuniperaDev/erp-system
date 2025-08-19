@@ -18,8 +18,9 @@ package io.github.erp.service;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import io.github.erp.domain.*; // for static metamodels
-import io.github.erp.domain.AssetCategory;
+import io.github.erp.domain.*;
+import io.github.erp.context.assets.domain.AssetCategory;
+import io.github.erp.context.assets.domain.AssetCategory_;
 import io.github.erp.repository.AssetCategoryRepository;
 import io.github.erp.repository.search.AssetCategorySearchRepository;
 import io.github.erp.service.criteria.AssetCategoryCriteria;

@@ -20,6 +20,8 @@ package io.github.erp.service;
 
 import io.github.erp.domain.*; // for static metamodels
 import io.github.erp.domain.AssetGeneralAdjustment;
+import io.github.erp.context.assets.domain.AssetRegistration;
+import io.github.erp.context.assets.domain.AssetRegistration_;
 import io.github.erp.repository.AssetGeneralAdjustmentRepository;
 import io.github.erp.repository.search.AssetGeneralAdjustmentSearchRepository;
 import io.github.erp.service.criteria.AssetGeneralAdjustmentCriteria;

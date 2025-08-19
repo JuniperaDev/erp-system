@@ -17,7 +17,7 @@ package io.github.erp.context.assets.service;
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import io.github.erp.domain.AssetRegistration;
+import io.github.erp.context.assets.domain.AssetRegistration;
 import io.github.erp.domain.events.DomainEventPublisher;
 import io.github.erp.domain.events.asset.AssetCreatedEvent;
 import io.github.erp.domain.events.asset.AssetCategoryChangedEvent;
@@ -132,8 +132,11 @@ public class InternalAssetRegistrationServiceImpl {
         try {
             AssetCategoryChangedEvent event = new AssetCategoryChangedEvent(
                 assetRegistration.getId().toString(),
+                assetRegistration.getAssetNumber(),
                 previousCategoryId,
                 assetRegistration.getAssetCategory() != null ? assetRegistration.getAssetCategory().getId() : null,
+                null, // previousCategoryName - would need to fetch from database
+                assetRegistration.getAssetCategory() != null ? assetRegistration.getAssetCategory().getAssetCategoryName() : null,
                 UUID.randomUUID()
             );
             domainEventPublisher.publish(event);

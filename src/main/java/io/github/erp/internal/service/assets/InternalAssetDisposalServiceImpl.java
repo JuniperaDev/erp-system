@@ -22,6 +22,7 @@ import io.github.erp.domain.events.DomainEventPublisher;
 import io.github.erp.domain.events.asset.AssetDisposedEvent;
 import io.github.erp.erp.assets.nbv.buffer.BufferedSinkProcessor;
 import io.github.erp.internal.repository.InternalAssetDisposalRepository;
+import io.github.erp.domain.ApplicationUser;
 import io.github.erp.internal.service.applicationUser.CurrentUserContext;
 import io.github.erp.internal.service.cache.ScheduledCacheRefreshService;
 import io.github.erp.repository.search.AssetDisposalSearchRepository;

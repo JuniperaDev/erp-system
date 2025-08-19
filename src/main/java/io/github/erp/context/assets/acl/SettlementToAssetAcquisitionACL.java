@@ -29,7 +29,6 @@ public class SettlementToAssetAcquisitionACL extends AbstractTranslationACL<Sett
             .currencyCode(source.getSettlementCurrency() != null ? 
                 source.getSettlementCurrency().getIso4217CurrencyCode() : "USD")
             .description(source.getDescription())
-            .paymentNumber(source.getPaymentNumber())
             .build();
     }
 

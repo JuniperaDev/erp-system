@@ -1,5 +1,7 @@
 package io.github.erp.financial.service.mapper;
 
+import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 import java.util.List;
 
 /**

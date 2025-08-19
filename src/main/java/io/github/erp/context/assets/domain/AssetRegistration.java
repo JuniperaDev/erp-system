@@ -1,4 +1,4 @@
-package io.github.erp.domain;
+package io.github.erp.context.assets.domain;
 
 /*-
  * Erp System - Mark X No 10 (Jehoiada Series) Server ver 1.8.2
@@ -18,6 +18,11 @@ package io.github.erp.domain;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.github.erp.domain.AssetCategory;
+import io.github.erp.domain.Dealer;
+import io.github.erp.domain.Placeholder;
+import io.github.erp.domain.ServiceOutlet;
+import io.github.erp.domain.SettlementCurrency;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -104,6 +109,10 @@ public class AssetRegistration implements Serializable {
     @Field(type = FieldType.Date)
     private LocalDate registrationDate;
 
+    @Column(name = "acquiring_transaction_id")
+    @Field(type = FieldType.Long)
+    private Long acquiringTransactionId;
+
     @ManyToMany
     @JoinTable(
         name = "rel_asset_registration__placeholder",
@@ -131,10 +140,6 @@ public class AssetRegistration implements Serializable {
         allowSetters = true
     )
     private ServiceOutlet mainServiceOutlet;
-
-    @Column(name = "acquiring_transaction_id")
-    @Field(type = FieldType.Long)
-    private Long acquiringTransactionId;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -307,6 +312,19 @@ public class AssetRegistration implements Serializable {
         this.registrationDate = registrationDate;
     }
 
+    public Long getAcquiringTransactionId() {
+        return this.acquiringTransactionId;
+    }
+
+    public AssetRegistration acquiringTransactionId(Long acquiringTransactionId) {
+        this.setAcquiringTransactionId(acquiringTransactionId);
+        return this;
+    }
+
+    public void setAcquiringTransactionId(Long acquiringTransactionId) {
+        this.acquiringTransactionId = acquiringTransactionId;
+    }
+
     public Set<Placeholder> getPlaceholders() {
         return this.placeholders;
     }
@@ -379,19 +397,6 @@ public class AssetRegistration implements Serializable {
 
     public AssetRegistration mainServiceOutlet(ServiceOutlet serviceOutlet) {
         this.setMainServiceOutlet(serviceOutlet);
-        return this;
-    }
-
-    public Long getAcquiringTransactionId() {
-        return this.acquiringTransactionId;
-    }
-
-    public void setAcquiringTransactionId(Long acquiringTransactionId) {
-        this.acquiringTransactionId = acquiringTransactionId;
-    }
-
-    public AssetRegistration acquiringTransactionId(Long acquiringTransactionId) {
-        this.setAcquiringTransactionId(acquiringTransactionId);
         return this;
     }
 

@@ -1,4 +1,4 @@
-package io.github.erp.domain;
+package io.github.erp.context.assets.domain;
 
 /*-
  * Erp System - Mark X No 10 (Jehoiada Series) Server ver 1.8.2

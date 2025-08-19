@@ -1,11 +1,11 @@
-id;business_team
-1;Shirt invoice
-2;fuchsia
-3;systems Switchable Salad
-4;bricks-and-clicks hacking
-5;Customizable olive Refined
-6;Extended
-7;model Books
-8;optical Borders Refined
-9;Books Sports
-10;intuitive
+id;business_team;team_members_id
+1;Shirt invoice;1
+2;fuchsia;2
+3;systems Switchable Salad;3
+4;bricks-and-clicks hacking;4
+5;Customizable olive Refined;5
+6;Extended;6
+7;model Books;7
+8;optical Borders Refined;8
+9;Books Sports;9
+10;intuitive;10

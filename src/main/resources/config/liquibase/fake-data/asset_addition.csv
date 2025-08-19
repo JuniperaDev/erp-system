@@ -1,0 +1,11 @@
+id;asset_tag;asset_details;asset_cost;supplier;historical_cost;capitalization_date;asset_category_id;asset_registration_id;dealer_id
+1;ADD-001;Memory Upgrade 32GB;2500.00;Memory Solutions Inc;2500.00;2024-01-16;1;1;1
+2;ADD-002;Extended Warranty;1200.00;Warranty Services Ltd;1200.00;2024-01-16;2;2;2
+3;ADD-003;Software License;3500.00;Software Vendor Corp;3500.00;2024-01-16;3;3;3
+4;ADD-004;GPS Navigation System;1800.00;Navigation Tech;1800.00;2024-01-16;4;4;4
+5;ADD-005;Backup Battery;900.00;Power Systems Inc;900.00;2024-01-16;5;5;5
+6;ADD-006;Safety Equipment;2200.00;Safety First Ltd;2200.00;2024-01-16;6;6;6
+7;ADD-007;Access Control Module;1500.00;Security Systems;1500.00;2024-01-16;7;7;7
+8;ADD-008;Precision Sensors;4200.00;Sensor Technologies;4200.00;2024-01-16;8;8;8
+9;ADD-009;Signal Amplifier;1600.00;Communications Inc;1600.00;2024-01-16;9;9;9
+10;ADD-010;Sterilization Unit;3800.00;Medical Equipment Co;3800.00;2024-01-16;10;10;10

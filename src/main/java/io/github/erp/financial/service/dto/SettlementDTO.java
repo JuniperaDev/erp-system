@@ -26,7 +26,7 @@ public class SettlementDTO implements Serializable {
 
     private String notes;
 
-    private String calculationFile;
+    private byte[] calculationFile;
 
     private String calculationFileContentType;
 
@@ -42,7 +42,7 @@ public class SettlementDTO implements Serializable {
 
     private PaymentCategoryDTO paymentCategory;
 
-    private Set<SettlementDTO> groupSettlements = new HashSet<>();
+    private SettlementGroupDTO settlementGroup;
 
     private DealerDTO biller;
 
@@ -104,11 +104,11 @@ public class SettlementDTO implements Serializable {
         this.notes = notes;
     }
 
-    public String getCalculationFile() {
+    public byte[] getCalculationFile() {
         return calculationFile;
     }
 
-    public void setCalculationFile(String calculationFile) {
+    public void setCalculationFile(byte[] calculationFile) {
         this.calculationFile = calculationFile;
     }
 
@@ -168,12 +168,12 @@ public class SettlementDTO implements Serializable {
         this.paymentCategory = paymentCategory;
     }
 
-    public Set<SettlementDTO> getGroupSettlements() {
-        return groupSettlements;
+    public SettlementGroupDTO getSettlementGroup() {
+        return settlementGroup;
     }
 
-    public void setGroupSettlements(Set<SettlementDTO> groupSettlements) {
-        this.groupSettlements = groupSettlements;
+    public void setSettlementGroup(SettlementGroupDTO settlementGroup) {
+        this.settlementGroup = settlementGroup;
     }
 
     public DealerDTO getBiller() {
@@ -260,7 +260,7 @@ public class SettlementDTO implements Serializable {
             ", paymentFileToken='" + getPaymentFileToken() + "'" +
             ", paymentLabels=" + getPaymentLabels() +
             ", paymentCategory=" + getPaymentCategory() +
-            ", groupSettlements=" + getGroupSettlements() +
+            ", settlementGroup=" + getSettlementGroup() +
             ", biller=" + getBiller() +
             ", paymentInvoices=" + getPaymentInvoices() +
             ", signatories=" + getSignatories() +

@@ -27,10 +27,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Table(name = "asset_report_read_model", indexes = {
-    @Index(name = "idx_asset_report_date", columnList = "reportingDate"),
-    @Index(name = "idx_asset_report_category", columnList = "categoryName"),
-    @Index(name = "idx_asset_report_number", columnList = "assetNumber"),
-    @Index(name = "idx_asset_report_dealer", columnList = "dealerName")
+    @Index(name = "idx_asset_report_date", columnList = "reporting_date"),
+    @Index(name = "idx_asset_report_category", columnList = "category_name"),
+    @Index(name = "idx_asset_report_number", columnList = "asset_number"),
+    @Index(name = "idx_asset_report_dealer", columnList = "dealer_name")
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class AssetReportReadModel implements Serializable {

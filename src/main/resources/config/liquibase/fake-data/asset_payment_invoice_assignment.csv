@@ -1,0 +1,11 @@
+id;invoice_serial;asset_registration_id;payment_invoice_id;assignment_date;assigned_by;assignment_notes
+1;INV-AST-001;1;1;2024-01-16;Accounts Payable;Purchase invoice assignment
+2;INV-AST-002;2;2;2024-01-16;Accounts Payable;Service invoice assignment
+3;INV-AST-003;3;3;2024-01-16;Accounts Payable;Maintenance invoice assignment
+4;INV-AST-004;4;4;2024-01-16;Accounts Payable;Warranty invoice assignment
+5;INV-AST-005;5;5;2024-01-16;Accounts Payable;Installation invoice assignment
+6;INV-AST-006;6;6;2024-01-16;Accounts Payable;Upgrade invoice assignment
+7;INV-AST-007;7;7;2024-01-16;Accounts Payable;Repair invoice assignment
+8;INV-AST-008;8;8;2024-01-16;Accounts Payable;Calibration invoice assignment
+9;INV-AST-009;9;9;2024-01-16;Accounts Payable;Testing invoice assignment
+10;INV-AST-010;10;10;2024-01-16;Accounts Payable;Disposal invoice assignment

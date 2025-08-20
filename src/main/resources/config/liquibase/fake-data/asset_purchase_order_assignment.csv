@@ -1,0 +1,11 @@
+id;purchase_order_serial;asset_registration_id;purchase_order_id;assignment_date;assigned_by;assignment_notes
+1;PO-AST-001;1;1;2024-01-16;Procurement Manager;Initial purchase order
+2;PO-AST-002;2;2;2024-01-16;Procurement Manager;Equipment purchase order
+3;PO-AST-003;3;3;2024-01-16;Procurement Manager;Service purchase order
+4;PO-AST-004;4;4;2024-01-16;Procurement Manager;Maintenance purchase order
+5;PO-AST-005;5;5;2024-01-16;Procurement Manager;Upgrade purchase order
+6;PO-AST-006;6;6;2024-01-16;Procurement Manager;Installation purchase order
+7;PO-AST-007;7;7;2024-01-16;Procurement Manager;Security purchase order
+8;PO-AST-008;8;8;2024-01-16;Procurement Manager;Testing purchase order
+9;PO-AST-009;9;9;2024-01-16;Procurement Manager;Configuration purchase order
+10;PO-AST-010;10;10;2024-01-16;Procurement Manager;Disposal purchase order

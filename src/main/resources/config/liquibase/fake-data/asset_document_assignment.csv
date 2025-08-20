@@ -1,0 +1,11 @@
+id;document_serial;asset_registration_id;business_document_id;assignment_date;assigned_by;assignment_notes
+1;DOC-AST-001;1;1;2024-01-16;Asset Manager;Initial documentation assignment
+2;DOC-AST-002;2;2;2024-01-16;Asset Manager;Purchase documentation
+3;DOC-AST-003;3;3;2024-01-16;Asset Manager;Warranty documentation
+4;DOC-AST-004;4;4;2024-01-16;Asset Manager;Service manual assignment
+5;DOC-AST-005;5;5;2024-01-16;Asset Manager;Compliance documentation
+6;DOC-AST-006;6;6;2024-01-16;Asset Manager;Installation documentation
+7;DOC-AST-007;7;7;2024-01-16;Asset Manager;Maintenance documentation
+8;DOC-AST-008;8;8;2024-01-16;Asset Manager;Safety documentation
+9;DOC-AST-009;9;9;2024-01-16;Asset Manager;Training documentation
+10;DOC-AST-010;10;10;2024-01-16;Asset Manager;Disposal documentation

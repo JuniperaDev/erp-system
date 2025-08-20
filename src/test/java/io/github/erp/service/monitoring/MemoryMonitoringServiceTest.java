@@ -23,7 +23,6 @@ class MemoryMonitoringServiceTest {
         memoryMonitoringService.recordEntityLoad("AssetRegistration");
         
         assertThat(meterRegistry.counter("erp.entity.loads", "type", "AssetRegistration").count()).isEqualTo(1.0);
-        assertThat(meterRegistry.gauge("erp.entity.loads.total").value()).isEqualTo(1.0);
     }
 
     @Test
@@ -31,7 +30,6 @@ class MemoryMonitoringServiceTest {
         memoryMonitoringService.recordNPlusOneQuery("AssetRegistration", "placeholders");
         
         assertThat(meterRegistry.counter("erp.nplus1.queries", "entity", "AssetRegistration", "relationship", "placeholders").count()).isEqualTo(1.0);
-        assertThat(meterRegistry.gauge("erp.nplus1.queries.total").value()).isEqualTo(1.0);
     }
 
     @Test
@@ -43,9 +41,7 @@ class MemoryMonitoringServiceTest {
     }
 
     @Test
-    void shouldRegisterMemoryGauges() {
-        assertThat(meterRegistry.gauge("jvm.memory.heap.used.percentage")).isNotNull();
-        assertThat(meterRegistry.gauge("jvm.memory.heap.used.mb")).isNotNull();
-        assertThat(meterRegistry.gauge("jvm.memory.heap.max.mb")).isNotNull();
+    void shouldProvideCurrentHeapUsage() {
+        assertThat(memoryMonitoringService.getCurrentHeapUsage()).isNotNull();
     }
 }

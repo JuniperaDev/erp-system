@@ -133,8 +133,9 @@ public class DetailedLeaseContract implements Serializable {
     )
     private BusinessDocument leaseContractCalculations;
 
-    @OneToMany(mappedBy = "leaseContract")
+    @OneToMany(mappedBy = "leaseContract", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
     @JsonIgnoreProperties(value = { "leaseContract" }, allowSetters = true)
     private Set<LeasePayment> leasePayments = new HashSet<>();
 

@@ -83,13 +83,14 @@ public class WorkInProgressRegistration implements Serializable {
     @Field(type = FieldType.Boolean)
     private Boolean completed;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "rel_work_in_progress_registration__placeholder",
         joinColumns = @JoinColumn(name = "work_in_progress_registration_id"),
         inverseJoinColumns = @JoinColumn(name = "placeholder_id")
     )
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
     @JsonIgnoreProperties(value = { "containingPlaceholder" }, allowSetters = true)
     private Set<Placeholder> placeholders = new HashSet<>();
 
@@ -123,13 +124,14 @@ public class WorkInProgressRegistration implements Serializable {
     @JsonIgnoreProperties(value = { "dealers", "settlementCurrency", "placeholders", "businessDocuments" }, allowSetters = true)
     private WorkProjectRegister workProjectRegister;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "rel_work_in_progress_registration__business_document",
         joinColumns = @JoinColumn(name = "work_in_progress_registration_id"),
         inverseJoinColumns = @JoinColumn(name = "business_document_id")
     )
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
     @JsonIgnoreProperties(
         value = {
             "createdBy",
@@ -144,13 +146,14 @@ public class WorkInProgressRegistration implements Serializable {
     )
     private Set<BusinessDocument> businessDocuments = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "rel_work_in_progress_registration__asset_accessory",
         joinColumns = @JoinColumn(name = "work_in_progress_registration_id"),
         inverseJoinColumns = @JoinColumn(name = "asset_accessory_id")
     )
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
     @JsonIgnoreProperties(
         value = {
             "assetWarranties",
@@ -172,13 +175,14 @@ public class WorkInProgressRegistration implements Serializable {
     )
     private Set<AssetAccessory> assetAccessories = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "rel_work_in_progress_registration__asset_warranty",
         joinColumns = @JoinColumn(name = "work_in_progress_registration_id"),
         inverseJoinColumns = @JoinColumn(name = "asset_warranty_id")
     )
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
     @JsonIgnoreProperties(value = { "placeholders", "universallyUniqueMappings", "dealer", "warrantyAttachments" }, allowSetters = true)
     private Set<AssetWarranty> assetWarranties = new HashSet<>();
 

@@ -150,7 +150,7 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
             memoryMonitoringService.recordEntityLoad("AssetRegistration");
             return result;
         } finally {
-            memoryMonitoringService.stopEntityLoadTimer(sample, "findAll");
+            memoryMonitoringService.stopEntityLoadTimer(sample, "findAll", "AssetRegistration");
         }
     }
 
@@ -164,7 +164,7 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
             memoryMonitoringService.recordEntityLoad("AssetRegistrationProjection");
             return result;
         } finally {
-            memoryMonitoringService.stopEntityLoadTimer(sample, "findAllAsProjection");
+            memoryMonitoringService.stopEntityLoadTimer(sample, "findAllAsProjection", "AssetRegistration");
         }
     }
 
@@ -183,7 +183,7 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
             memoryMonitoringService.recordEntityLoad("AssetRegistration");
             return result;
         } finally {
-            memoryMonitoringService.stopEntityLoadTimer(sample, "findOne");
+            memoryMonitoringService.stopEntityLoadTimer(sample, "findOne", "AssetRegistration");
         }
     }
 
@@ -197,7 +197,7 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
             memoryMonitoringService.recordEntityLoad("AssetRegistrationLazy");
             return result;
         } finally {
-            memoryMonitoringService.stopEntityLoadTimer(sample, "findOneLazy");
+            memoryMonitoringService.stopEntityLoadTimer(sample, "findOneLazy", "AssetRegistration");
         }
     }
 

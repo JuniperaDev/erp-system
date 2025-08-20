@@ -37,21 +37,21 @@
         </createIndex>
     </changeSet>
 
-    <changeSet id="20250820170538-2" author="devin">
+    <changeSet id="20250820170538-2-fixed" author="devin">
         <!-- Lease Payment Optimization -->
-        <createIndex indexName="idx_lease_payment_contract_period" tableName="lease_payment">
+        <createIndex indexName="idx_lease_payment_contract_date" tableName="lease_payment">
             <column name="lease_contract_id"/>
-            <column name="lease_period_id"/>
+            <column name="payment_date"/>
         </createIndex>
         
         <!-- Lease Amortization Schedule Optimization -->
-        <createIndex indexName="idx_lease_amortization_contract_period" tableName="lease_amortization_schedule">
+        <createIndex indexName="idx_lease_amortization_contract_liability" tableName="lease_amortization_schedule">
             <column name="lease_contract_id"/>
-            <column name="lease_period_id"/>
+            <column name="lease_liability_id"/>
         </createIndex>
         
-        <createIndex indexName="idx_lease_amortization_period_start" tableName="lease_amortization_schedule">
-            <column name="period_start_date"/>
+        <createIndex indexName="idx_lease_amortization_identifier" tableName="lease_amortization_schedule">
+            <column name="identifier"/>
             <column name="lease_contract_id"/>
         </createIndex>
     </changeSet>

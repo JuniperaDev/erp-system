@@ -657,10 +657,10 @@
     <include file="config/liquibase/changelog/cqrs_financial_read_models.xml" relativeToChangelogFile="false"/>
     
     <!-- Strategic Database Indexes - Story D3.2 -->
-    <include file="config/liquibase/changelog/20250820170537_strategic_indexes_phase1_assets.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20250820170538_strategic_indexes_phase2_leases.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20250820170539_strategic_indexes_phase3_financial.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20250820170540_strategic_indexes_monitoring.xml" relativeToChangelogFile="false"/>
+    <include file="changelog/20250820170537_strategic_indexes_phase1_assets.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/20250820172430_strategic_indexes_phase2_leases_fixed.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/20250820170539_strategic_indexes_phase3_financial.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/20250820170540_strategic_indexes_monitoring.xml" relativeToChangelogFile="true"/>
     
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->

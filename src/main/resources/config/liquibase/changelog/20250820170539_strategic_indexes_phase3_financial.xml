@@ -84,7 +84,7 @@
         </createIndex>
     </changeSet>
 
-    <changeSet id="20250820170539-4" author="devin">
+    <changeSet id="20250820170539-4-fixed" author="devin">
         <!-- ROU Depreciation Entry Optimization (for complex lease-financial queries) -->
         <createIndex indexName="idx_rou_depreciation_entry_lease_period" tableName="rou_depreciation_entry">
             <column name="lease_period_id"/>
@@ -108,8 +108,8 @@
             <column name="asset_account_id"/>
         </createIndex>
         
-        <createIndex indexName="idx_rou_model_metadata_lease_contract" tableName="rou_model_metadata">
-            <column name="ifrs16lease_contract_id"/>
+        <createIndex indexName="idx_rou_model_metadata_lease_contract_fixed" tableName="rou_model_metadata">
+            <column name="detailed_lease_contract_id"/>
             <column name="commencement_date"/>
         </createIndex>
     </changeSet>

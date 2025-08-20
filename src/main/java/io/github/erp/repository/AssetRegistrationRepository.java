@@ -19,6 +19,7 @@ package io.github.erp.repository;
  */
 
 import io.github.erp.domain.AssetRegistration;
+import io.github.erp.service.dto.AssetRegistrationListDTO;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;

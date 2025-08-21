@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -94,13 +95,14 @@ public class Settlement implements Serializable {
     @Field(type = FieldType.Text)
     private String remarks;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "rel_settlement__placeholder",
         joinColumns = @JoinColumn(name = "settlement_id"),
         inverseJoinColumns = @JoinColumn(name = "placeholder_id")
     )
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
     @JsonIgnoreProperties(value = { "containingPlaceholder" }, allowSetters = true)
     private Set<Placeholder> placeholders = new HashSet<>();
 
@@ -109,13 +111,14 @@ public class Settlement implements Serializable {
     @JsonIgnoreProperties(value = { "placeholders" }, allowSetters = true)
     private SettlementCurrency settlementCurrency;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "rel_settlement__payment_label",
         joinColumns = @JoinColumn(name = "settlement_id"),
         inverseJoinColumns = @JoinColumn(name = "payment_label_id")
     )
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
     @JsonIgnoreProperties(value = { "containingPaymentLabel", "placeholders" }, allowSetters = true)
     private Set<PaymentLabel> paymentLabels = new HashSet<>();
 
@@ -133,13 +136,14 @@ public class Settlement implements Serializable {
     @JsonIgnoreProperties(value = { "paymentLabels", "dealerGroup", "placeholders" }, allowSetters = true)
     private Dealer biller;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "rel_settlement__payment_invoice",
         joinColumns = @JoinColumn(name = "settlement_id"),
         inverseJoinColumns = @JoinColumn(name = "payment_invoice_id")
     )
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
     @JsonIgnoreProperties(
         value = {
             "purchaseOrders",
@@ -155,23 +159,25 @@ public class Settlement implements Serializable {
     )
     private Set<PaymentInvoice> paymentInvoices = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "rel_settlement__signatories",
         joinColumns = @JoinColumn(name = "settlement_id"),
         inverseJoinColumns = @JoinColumn(name = "signatories_id")
     )
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
     @JsonIgnoreProperties(value = { "paymentLabels", "dealerGroup", "placeholders" }, allowSetters = true)
     private Set<Dealer> signatories = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "rel_settlement__business_document",
         joinColumns = @JoinColumn(name = "settlement_id"),
         inverseJoinColumns = @JoinColumn(name = "business_document_id")
     )
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
     @JsonIgnoreProperties(
         value = {
             "createdBy",

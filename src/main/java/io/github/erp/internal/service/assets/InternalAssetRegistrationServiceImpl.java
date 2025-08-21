@@ -25,8 +25,11 @@ import io.github.erp.internal.repository.InternalAssetRegistrationRepository;
 import io.github.erp.internal.utilities.NextIntegerFiller;
 import io.github.erp.repository.search.AssetRegistrationSearchRepository;
 import io.github.erp.service.dto.AssetRegistrationDTO;
+import io.github.erp.service.dto.AssetRegistrationListDTO;
 import io.github.erp.service.impl.AssetRegistrationServiceImpl;
 import io.github.erp.service.mapper.AssetRegistrationMapper;
+import io.github.erp.service.monitoring.MemoryMonitoringService;
+import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -57,12 +60,15 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
 
     private final DomainEventPublisher domainEventPublisher;
 
-    public InternalAssetRegistrationServiceImpl(InternalAssetRegistrationRepository assetRegistrationRepository, AssetRegistrationMapper assetRegistrationMapper, AssetRegistrationSearchRepository assetRegistrationSearchRepository, InternalAssetRegistrationRepository internalAssetRegistrationRepository, DomainEventPublisher domainEventPublisher) {
+    private final MemoryMonitoringService memoryMonitoringService;
+
+    public InternalAssetRegistrationServiceImpl(InternalAssetRegistrationRepository assetRegistrationRepository, AssetRegistrationMapper assetRegistrationMapper, AssetRegistrationSearchRepository assetRegistrationSearchRepository, InternalAssetRegistrationRepository internalAssetRegistrationRepository, DomainEventPublisher domainEventPublisher, MemoryMonitoringService memoryMonitoringService) {
         this.assetRegistrationRepository = assetRegistrationRepository;
         this.assetRegistrationMapper = assetRegistrationMapper;
         this.assetRegistrationSearchRepository = assetRegistrationSearchRepository;
         this.internalAssetRegistrationRepository = internalAssetRegistrationRepository;
         this.domainEventPublisher = domainEventPublisher;
+        this.memoryMonitoringService = memoryMonitoringService;
     }
 
     @Override
@@ -137,7 +143,29 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
     @Transactional(readOnly = true)
     public Page<AssetRegistrationDTO> findAll(Pageable pageable) {
         log.debug("Request to get all AssetRegistrations");
-        return assetRegistrationRepository.findAll(pageable).map(assetRegistrationMapper::toDto);
+        Timer.Sample sample = memoryMonitoringService.startEntityLoadTimer("AssetRegistration");
+        
+        try {
+            Page<AssetRegistrationDTO> result = assetRegistrationRepository.findAllLazy(pageable).map(assetRegistrationMapper::toDto);
+            memoryMonitoringService.recordEntityLoad("AssetRegistration");
+            return result;
+        } finally {
+            memoryMonitoringService.stopEntityLoadTimer(sample, "findAll", "AssetRegistration");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AssetRegistrationListDTO> findAllAsProjection(Pageable pageable) {
+        log.debug("Request to get all AssetRegistrations as projection");
+        Timer.Sample sample = memoryMonitoringService.startEntityLoadTimer("AssetRegistrationProjection");
+        
+        try {
+            Page<AssetRegistrationListDTO> result = assetRegistrationRepository.findAllAsProjection(pageable);
+            memoryMonitoringService.recordEntityLoad("AssetRegistrationProjection");
+            return result;
+        } finally {
+            memoryMonitoringService.stopEntityLoadTimer(sample, "findAllAsProjection", "AssetRegistration");
+        }
     }
 
     public Page<AssetRegistrationDTO> findAllWithEagerRelationships(Pageable pageable) {
@@ -148,7 +176,29 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
     @Transactional(readOnly = true)
     public Optional<AssetRegistrationDTO> findOne(Long id) {
         log.debug("Request to get AssetRegistration : {}", id);
-        return assetRegistrationRepository.findOneWithEagerRelationships(id).map(assetRegistrationMapper::toDto);
+        Timer.Sample sample = memoryMonitoringService.startEntityLoadTimer("AssetRegistration");
+        
+        try {
+            Optional<AssetRegistrationDTO> result = assetRegistrationRepository.findOneWithEagerRelationships(id).map(assetRegistrationMapper::toDto);
+            memoryMonitoringService.recordEntityLoad("AssetRegistration");
+            return result;
+        } finally {
+            memoryMonitoringService.stopEntityLoadTimer(sample, "findOne", "AssetRegistration");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<AssetRegistrationDTO> findOneLazy(Long id) {
+        log.debug("Request to get AssetRegistration lazily : {}", id);
+        Timer.Sample sample = memoryMonitoringService.startEntityLoadTimer("AssetRegistrationLazy");
+        
+        try {
+            Optional<AssetRegistrationDTO> result = assetRegistrationRepository.findOneLazy(id).map(assetRegistrationMapper::toDto);
+            memoryMonitoringService.recordEntityLoad("AssetRegistrationLazy");
+            return result;
+        } finally {
+            memoryMonitoringService.stopEntityLoadTimer(sample, "findOneLazy", "AssetRegistration");
+        }
     }
 
     @Override

@@ -19,6 +19,7 @@ package io.github.erp.repository;
  */
 
 import io.github.erp.domain.AssetRegistration;
+import io.github.erp.service.dto.AssetRegistrationListDTO;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -47,4 +48,19 @@ public interface AssetRegistrationRepository extends JpaRepository<AssetRegistra
         "select assetRegistration from AssetRegistration assetRegistration left join fetch assetRegistration.acquiringTransaction left join fetch assetRegistration.placeholders where assetRegistration.id =:id"
     )
     Optional<AssetRegistration> findOneWithEagerRelationships(@Param("id") Long id);
+
+    @Query("select ar from AssetRegistration ar")
+    Page<AssetRegistration> findAllLazy(Pageable pageable);
+
+    @Query("select ar from AssetRegistration ar where ar.id = :id")
+    Optional<AssetRegistration> findOneLazy(@Param("id") Long id);
+
+    @Query("select new io.github.erp.service.dto.AssetRegistrationListDTO(" +
+           "ar.id, ar.assetNumber, ar.assetTag, ar.assetDetails, ar.assetCost, ar.capitalizationDate, " +
+           "ac.assetCategoryName, d.dealerName, sc.iso4217CurrencyCode) " +
+           "from AssetRegistration ar " +
+           "left join ar.assetCategory ac " +
+           "left join ar.dealer d " +
+           "left join ar.settlementCurrency sc")
+    Page<AssetRegistrationListDTO> findAllAsProjection(Pageable pageable);
 }

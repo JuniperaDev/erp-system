@@ -50,7 +50,9 @@ public class CaffeineCacheConfiguration {
             "assetCategories",
             "serviceOutlets",
             "depreciationMethods",
-            "referenceData"
+            "referenceData",
+            "usersByLogin",
+            "usersByEmail"
         ));
         return cacheManager;
     }

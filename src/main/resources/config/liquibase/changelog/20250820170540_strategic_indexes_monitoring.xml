@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Strategic Database Indexes - Phase 4: Index Monitoring & Cross-Domain Optimization
+        Story D3.2: Add Strategic Database Indexes #62
+        
+        This changeset adds supporting indexes for cross-domain queries and sets up
+        index monitoring infrastructure for ongoing performance optimization.
+    -->
+    
+    <changeSet id="20250820170540-1" author="devin">
+        <!-- Cross-Domain Service Outlet Optimization -->
+        <createIndex indexName="idx_service_outlet_type_status" tableName="service_outlet">
+            <column name="outlet_type_id"/>
+            <column name="outlet_status_id"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_service_outlet_county_subcounty" tableName="service_outlet">
+            <column name="county_name_id"/>
+            <column name="sub_county_name_id"/>
+        </createIndex>
+        
+        <!-- Dealer Group Optimization -->
+        <createIndex indexName="idx_dealer_dealer_group" tableName="dealer">
+            <column name="dealer_group_id"/>
+        </createIndex>
+        
+        <!-- Asset Category Optimization -->
+        <createIndex indexName="idx_asset_category_depreciation_method" tableName="asset_category">
+            <column name="depreciation_method_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="20250820170540-2" author="devin">
+        <!-- Fiscal Year/Quarter Optimization for Cross-Domain Queries -->
+        <createIndex indexName="idx_fiscal_quarter_fiscal_year" tableName="fiscal_quarter">
+            <column name="fiscal_year_id"/>
+        </createIndex>
+        
+        <!-- Business Document Optimization -->
+        <createIndex indexName="idx_business_document_created_by" tableName="business_document">
+            <column name="created_by_id"/>
+            <column name="creation_date"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_business_document_security_clearance" tableName="business_document">
+            <column name="security_clearance_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="20250820170540-3" author="devin">
+        <!-- Placeholder Optimization (used across many entities) -->
+        <createIndex indexName="idx_placeholder_containing_placeholder" tableName="placeholder">
+            <column name="containing_placeholder_id"/>
+        </createIndex>
+        
+        <!-- Settlement Currency Optimization -->
+        <createIndex indexName="idx_settlement_currency_iso_code" tableName="settlement_currency">
+            <column name="iso_4217_currency_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="20250820170540-4" author="devin">
+        <!-- Create index usage monitoring view for PostgreSQL -->
+        <createView viewName="v_strategic_index_usage_monitoring">
+            <![CDATA[
+            SELECT 
+                schemaname,
+                tablename,
+                indexname,
+                idx_scan as index_scans,
+                idx_tup_read as tuples_read,
+                idx_tup_fetch as tuples_fetched,
+                CASE 
+                    WHEN idx_scan = 0 THEN 'UNUSED'
+                    WHEN idx_scan < 100 THEN 'LOW_USAGE'
+                    WHEN idx_scan < 1000 THEN 'MODERATE_USAGE'
+                    ELSE 'HIGH_USAGE'
+                END as usage_category,
+                ROUND(
+                    CASE 
+                        WHEN idx_tup_read > 0 
+                        THEN (idx_tup_fetch::numeric / idx_tup_read::numeric) * 100 
+                        ELSE 0 
+                    END, 2
+                ) as selectivity_percentage
+            FROM pg_stat_user_indexes 
+            WHERE schemaname = 'public'
+            AND indexname LIKE 'idx_%'
+            ORDER BY idx_scan DESC, indexname
+            ]]>
+        </createView>
+    </changeSet>
+
+    <changeSet id="20250820170540-5" author="devin">
+        <!-- Create performance monitoring view for strategic indexes -->
+        <createView viewName="v_strategic_index_performance_summary">
+            <![CDATA[
+            WITH index_stats AS (
+                SELECT 
+                    indexname,
+                    idx_scan,
+                    idx_tup_read,
+                    idx_tup_fetch,
+                    CASE 
+                        WHEN indexname LIKE 'idx_asset_%' THEN 'ASSET_MANAGEMENT'
+                        WHEN indexname LIKE 'idx_lease_%' OR indexname LIKE 'idx_rou_%' THEN 'LEASE_ACCOUNTING'
+                        WHEN indexname LIKE 'idx_prepayment_%' OR indexname LIKE 'idx_settlement_%' THEN 'FINANCIAL_OPERATIONS'
+                        WHEN indexname LIKE 'idx_fiscal_%' OR indexname LIKE 'idx_depreciation_%' THEN 'CROSS_DOMAIN'
+                        ELSE 'OTHER'
+                    END as domain_category
+                FROM pg_stat_user_indexes 
+                WHERE schemaname = 'public'
+                AND indexname LIKE 'idx_%'
+                AND indexname NOT LIKE 'idx_audit_%'
+                AND indexname NOT LIKE 'idx_entity_%'
+            )
+            SELECT 
+                domain_category,
+                COUNT(*) as total_indexes,
+                SUM(idx_scan) as total_scans,
+                AVG(idx_scan) as avg_scans_per_index,
+                SUM(CASE WHEN idx_scan = 0 THEN 1 ELSE 0 END) as unused_indexes,
+                ROUND(
+                    (SUM(CASE WHEN idx_scan = 0 THEN 1 ELSE 0 END)::numeric / COUNT(*)::numeric) * 100, 2
+                ) as unused_percentage
+            FROM index_stats
+            GROUP BY domain_category
+            ORDER BY total_scans DESC
+            ]]>
+        </createView>
+    </changeSet>
+
+</databaseChangeLog>

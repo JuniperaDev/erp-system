@@ -882,8 +882,8 @@
                     <artifactId>liquibase-maven-plugin</artifactId>
                     <version>${liquibase.version}</version>
                     <configuration>
-                        <changeLogFile>${project.basedir}/src/main/resources/config/liquibase/master.xml</changeLogFile>
-                        <diffChangeLogFile>${project.basedir}/src/main/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog.xml</diffChangeLogFile>
+                        <changeLogFile>config/liquibase/master.xml</changeLogFile>
+                        <diffChangeLogFile>config/liquibase/changelog/${maven.build.timestamp}_changelog.xml</diffChangeLogFile>
                         <driver>org.postgresql.Driver</driver>
                         <url>${env.LOCAL_PG_SERVER}/${erp.system.dev.db}</url>
                         <defaultSchemaName></defaultSchemaName>
@@ -893,6 +893,7 @@
                         <verbose>true</verbose>
                         <logging>debug</logging>
                         <contexts>!test</contexts>
+                        <classpath>src/main/resources</classpath>
                     </configuration>
                     <dependencies>
                         <dependency>

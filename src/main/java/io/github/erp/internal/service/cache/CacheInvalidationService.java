@@ -18,6 +18,8 @@ package io.github.erp.internal.service.cache;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import io.github.erp.domain.events.asset.AssetCreatedEvent;
+import io.github.erp.domain.events.asset.AssetCategoryChangedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -30,15 +32,15 @@ public class CacheInvalidationService {
     private final Logger log = LoggerFactory.getLogger(CacheInvalidationService.class);
 
     @EventListener
-    @CacheEvict(value = "assetRegistrations", allEntries = true, cacheManager = "caffeineCacheManager")
-    public void handleAssetUpdated(Object event) {
-        log.debug("Asset updated event received, clearing asset cache");
+    @CacheEvict(value = {"assetRegistrations", "assetRegistrationIds"}, allEntries = true, cacheManager = "caffeineCacheManager")
+    public void handleAssetCreated(AssetCreatedEvent event) {
+        log.debug("Asset created event received for asset {}, clearing asset cache", event.getAssetRegistrationNumber());
     }
 
     @EventListener
-    @CacheEvict(value = "transactionAccounts", allEntries = true, cacheManager = "caffeineCacheManager")
-    public void handleAccountUpdated(Object event) {
-        log.debug("Account updated event received, clearing transaction account cache");
+    @CacheEvict(value = {"assetRegistrations", "assetRegistrationIds"}, allEntries = true, cacheManager = "caffeineCacheManager")
+    public void handleAssetCategoryChanged(AssetCategoryChangedEvent event) {
+        log.debug("Asset category changed event received for asset {}, clearing asset cache", event.getAssetRegistrationNumber());
     }
 
     @CacheEvict(value = {"assetRegistrations", "assetRegistrationIds", "transactionAccounts", "transactionAccountIds"}, allEntries = true, cacheManager = "caffeineCacheManager")

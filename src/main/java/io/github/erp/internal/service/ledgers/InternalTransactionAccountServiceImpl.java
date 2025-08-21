@@ -25,6 +25,8 @@ import io.github.erp.service.dto.TransactionAccountDTO;
 import io.github.erp.service.mapper.TransactionAccountMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -59,6 +61,7 @@ public class InternalTransactionAccountServiceImpl implements InternalTransactio
     }
 
     @Override
+    @CacheEvict(value = {"transactionAccounts", "transactionAccountIds"}, allEntries = true, cacheManager = "caffeineCacheManager")
     public TransactionAccountDTO save(TransactionAccountDTO transactionAccountDTO) {
         log.debug("Request to save TransactionAccount : {}", transactionAccountDTO);
         TransactionAccount transactionAccount = transactionAccountMapper.toEntity(transactionAccountDTO);
@@ -69,6 +72,7 @@ public class InternalTransactionAccountServiceImpl implements InternalTransactio
     }
 
     @Override
+    @CacheEvict(value = {"transactionAccounts", "transactionAccountIds"}, allEntries = true, cacheManager = "caffeineCacheManager")
     public Optional<TransactionAccountDTO> partialUpdate(TransactionAccountDTO transactionAccountDTO) {
         log.debug("Request to partially update TransactionAccount : {}", transactionAccountDTO);
 
@@ -101,12 +105,14 @@ public class InternalTransactionAccountServiceImpl implements InternalTransactio
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "transactionAccounts", key = "#id", cacheManager = "caffeineCacheManager")
     public Optional<TransactionAccountDTO> findOne(Long id) {
         log.debug("Request to get TransactionAccount : {}", id);
         return transactionAccountRepository.findOneWithEagerRelationships(id).map(transactionAccountMapper::toDto);
     }
 
     @Override
+    @CacheEvict(value = {"transactionAccounts", "transactionAccountIds"}, allEntries = true, cacheManager = "caffeineCacheManager")
     public void delete(Long id) {
         log.debug("Request to delete TransactionAccount : {}", id);
         transactionAccountRepository.deleteById(id);
@@ -122,6 +128,7 @@ public class InternalTransactionAccountServiceImpl implements InternalTransactio
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "transactionAccountIds", cacheManager = "caffeineCacheManager")
     public List<Long> findAllIds() {
 
         return transactionAccountRepository.findAllIds();

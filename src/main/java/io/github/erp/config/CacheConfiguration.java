@@ -60,7 +60,7 @@ public class CacheConfiguration {
         Hazelcast.shutdownAll();
     }
 
-    @Bean
+    @Bean("hazelcastCacheManager")
     public CacheManager cacheManager(HazelcastInstance hazelcastInstance) {
         log.debug("Starting HazelcastCacheManager");
         return new com.hazelcast.spring.cache.HazelcastCacheManager(hazelcastInstance);

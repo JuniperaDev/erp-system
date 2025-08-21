@@ -21,6 +21,9 @@ package io.github.erp.internal.service.cache;
 import io.github.erp.erp.startUp.cache.AbstractStartupCacheUpdateService;
 import io.github.erp.internal.ErpCacheProperties;
 import io.github.erp.internal.service.ledgers.InternalTransactionAccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -34,26 +37,33 @@ public class ScheduledTransactionAccountCacheRefreshServiceImpl extends Abstract
 
     private final InternalTransactionAccountService internalDomainService;
 
+    @Autowired
+    @Qualifier("caffeineCacheManager")
+    private CacheManager caffeineCacheManager;
+
     public ScheduledTransactionAccountCacheRefreshServiceImpl(ErpCacheProperties cacheProperties, InternalTransactionAccountService internalDomainService) {
         super(cacheProperties);
         this.internalDomainService = internalDomainService;
     }
 
     public void refreshCache() {
-        // Fetch all IDs or a subset of IDs
+        if (caffeineCacheManager.getCache("transactionAccounts") != null) {
+            caffeineCacheManager.getCache("transactionAccounts").clear();
+        }
+        if (caffeineCacheManager.getCache("transactionAccountIds") != null) {
+            caffeineCacheManager.getCache("transactionAccountIds").clear();
+        }
+        
+        // Fetch all IDs to warm both caches
         List<Long> ids = internalDomainService.findAllIds();
         for (Long id : ids) {
-            internalDomainService.findOne(id); // This does seem to refresh the cache
+            internalDomainService.findOne(id); // Warms both Hazelcast and Caffeine
         }
     }
 
     @Scheduled(cron = "0 0 19 * * *") // Run every day at 19:00 (7:00 PM)
     public void refreshCacheAt1900Hours() {
-        // Fetch all IDs or a subset of IDs
-        List<Long> ids = internalDomainService.findAllIds();
-        for (Long id : ids) {
-            internalDomainService.findOne(id);
-        }
+        refreshCache();
     }
 
     public void refreshDefinedCacheItems(List<Long> ids) {
@@ -65,6 +75,11 @@ public class ScheduledTransactionAccountCacheRefreshServiceImpl extends Abstract
 
     @CacheEvict(cacheNames = "transactionAccounts", allEntries = true)
     public void clearCache() {
-        // Manually clear the entire cache if needed
+        if (caffeineCacheManager.getCache("transactionAccounts") != null) {
+            caffeineCacheManager.getCache("transactionAccounts").clear();
+        }
+        if (caffeineCacheManager.getCache("transactionAccountIds") != null) {
+            caffeineCacheManager.getCache("transactionAccountIds").clear();
+        }
     }
 }

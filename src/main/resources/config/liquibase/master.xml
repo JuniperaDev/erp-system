@@ -653,4 +653,5 @@
     <include file="config/liquibase/changelog/20250811170202_added_entity_ComplianceAuditEvent.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
+    <include file="config/liquibase/changelog/20250821192100_add_acquiring_transaction_id_to_asset_registration.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

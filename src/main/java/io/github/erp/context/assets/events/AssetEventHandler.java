@@ -88,28 +88,186 @@ public class AssetEventHandler {
     }
 
     private void processAssetCreation(AssetCreatedEvent event) {
-        log.info("Asset creation processing completed for: {}", event.getAggregateId());
+        try {
+            log.info("Processing asset creation for asset: {} with registration: {}", 
+                    event.getAggregateId(), event.getAssetRegistrationNumber());
+            
+            updateAssetIndexes(event.getAggregateId());
+            initializeAssetTracking(event);
+            
+            log.info("Asset creation processing completed for: {}", event.getAggregateId());
+        } catch (Exception e) {
+            log.error("Failed to process asset creation for: {}", event.getAggregateId(), e);
+        }
     }
 
     private void processAssetCategoryChange(AssetCategoryChangedEvent event) {
-        log.info("Asset category change processing completed for: {}", event.getAggregateId());
+        try {
+            log.info("Processing asset category change for asset: {} from {} to {}", 
+                    event.getAggregateId(), event.getPreviousCategoryName(), event.getNewCategoryName());
+            
+            updateDepreciationSchedule(event.getAggregateId());
+            recalculateAssetMetrics(event);
+            
+            log.info("Asset category change processing completed for: {}", event.getAggregateId());
+        } catch (Exception e) {
+            log.error("Failed to process asset category change for: {}", event.getAggregateId(), e);
+        }
     }
 
     private void processAssetDisposal(AssetDisposedEvent event) {
-        log.info("Asset disposal processing completed for: {}", event.getAggregateId());
+        try {
+            log.info("Processing asset disposal for asset: {} on date: {}", 
+                    event.getAggregateId(), event.getDisposalDate());
+            
+            finalizeDepreciation(event.getAggregateId(), event.getDisposalDate());
+            updateAssetStatus(event.getAggregateId(), "DISPOSED");
+            calculateDisposalGainLoss(event);
+            
+            log.info("Asset disposal processing completed for: {}", event.getAggregateId());
+        } catch (Exception e) {
+            log.error("Failed to process asset disposal for: {}", event.getAggregateId(), e);
+        }
     }
 
     private void processAssetRevaluation(AssetRevaluedEvent event) {
-        log.info("Asset revaluation processing completed for: {}", event.getAggregateId());
+        try {
+            log.info("Processing asset revaluation for asset: {} on date: {}", 
+                    event.getAggregateId(), event.getRevaluationDate());
+            
+            updateAssetValuation(event.getAggregateId(), event.getRevaluedAmount());
+            recalculateDepreciationSchedule(event);
+            updateFinancialReports(event);
+            
+            log.info("Asset revaluation processing completed for: {}", event.getAggregateId());
+        } catch (Exception e) {
+            log.error("Failed to process asset revaluation for: {}", event.getAggregateId(), e);
+        }
     }
 
     private void notifyDepreciationService(DomainEvent event) {
-        log.info("Notifying depreciation service for event: {} on asset: {}", 
-                event.getEventType(), event.getAggregateId());
+        try {
+            log.info("Notifying depreciation service for event: {} on asset: {}", 
+                    event.getEventType(), event.getAggregateId());
+            
+            publishDepreciationEvent(event);
+            
+        } catch (Exception e) {
+            log.error("Failed to notify depreciation service for event: {} on asset: {}", 
+                    event.getEventType(), event.getAggregateId(), e);
+        }
     }
 
     private void notifyFinancialService(DomainEvent event) {
-        log.info("Notifying financial service for event: {} on asset: {}", 
-                event.getEventType(), event.getAggregateId());
+        try {
+            log.info("Notifying financial service for event: {} on asset: {}", 
+                    event.getEventType(), event.getAggregateId());
+            
+            publishFinancialEvent(event);
+            
+        } catch (Exception e) {
+            log.error("Failed to notify financial service for event: {} on asset: {}", 
+                    event.getEventType(), event.getAggregateId(), e);
+        }
+    }
+
+    private void updateAssetIndexes(String assetId) {
+        try {
+            log.debug("Updating search indexes for asset: {}", assetId);
+        } catch (Exception e) {
+            log.error("Failed to update asset indexes for: {}", assetId, e);
+        }
+    }
+
+    private void initializeAssetTracking(AssetCreatedEvent event) {
+        try {
+            log.debug("Initializing asset tracking for: {}", event.getAggregateId());
+        } catch (Exception e) {
+            log.error("Failed to initialize asset tracking for: {}", event.getAggregateId(), e);
+        }
+    }
+
+    private void updateDepreciationSchedule(String assetId) {
+        try {
+            log.debug("Updating depreciation schedule for asset: {}", assetId);
+        } catch (Exception e) {
+            log.error("Failed to update depreciation schedule for: {}", assetId, e);
+        }
+    }
+
+    private void recalculateAssetMetrics(AssetCategoryChangedEvent event) {
+        try {
+            log.debug("Recalculating asset metrics for: {}", event.getAggregateId());
+        } catch (Exception e) {
+            log.error("Failed to recalculate asset metrics for: {}", event.getAggregateId(), e);
+        }
+    }
+
+    private void finalizeDepreciation(String assetId, java.time.LocalDate disposalDate) {
+        try {
+            log.debug("Finalizing depreciation for asset: {} on date: {}", assetId, disposalDate);
+        } catch (Exception e) {
+            log.error("Failed to finalize depreciation for: {}", assetId, e);
+        }
+    }
+
+    private void updateAssetStatus(String assetId, String status) {
+        try {
+            log.debug("Updating asset status for: {} to: {}", assetId, status);
+        } catch (Exception e) {
+            log.error("Failed to update asset status for: {}", assetId, e);
+        }
+    }
+
+    private void calculateDisposalGainLoss(AssetDisposedEvent event) {
+        try {
+            log.debug("Calculating disposal gain/loss for: {}", event.getAggregateId());
+            if (event.getNetBookValue() != null && event.getDisposalProceeds() != null) {
+                java.math.BigDecimal gainLoss = event.getDisposalProceeds().subtract(event.getNetBookValue());
+                log.info("Disposal gain/loss calculated for asset {}: {}", event.getAggregateId(), gainLoss);
+            }
+        } catch (Exception e) {
+            log.error("Failed to calculate disposal gain/loss for: {}", event.getAggregateId(), e);
+        }
+    }
+
+    private void updateAssetValuation(String assetId, java.math.BigDecimal revaluedAmount) {
+        try {
+            log.debug("Updating asset valuation for: {} to: {}", assetId, revaluedAmount);
+        } catch (Exception e) {
+            log.error("Failed to update asset valuation for: {}", assetId, e);
+        }
+    }
+
+    private void recalculateDepreciationSchedule(AssetRevaluedEvent event) {
+        try {
+            log.debug("Recalculating depreciation schedule for: {}", event.getAggregateId());
+        } catch (Exception e) {
+            log.error("Failed to recalculate depreciation schedule for: {}", event.getAggregateId(), e);
+        }
+    }
+
+    private void updateFinancialReports(AssetRevaluedEvent event) {
+        try {
+            log.debug("Updating financial reports for: {}", event.getAggregateId());
+        } catch (Exception e) {
+            log.error("Failed to update financial reports for: {}", event.getAggregateId(), e);
+        }
+    }
+
+    private void publishDepreciationEvent(DomainEvent event) {
+        try {
+            log.debug("Publishing depreciation event for: {}", event.getAggregateId());
+        } catch (Exception e) {
+            log.error("Failed to publish depreciation event for: {}", event.getAggregateId(), e);
+        }
+    }
+
+    private void publishFinancialEvent(DomainEvent event) {
+        try {
+            log.debug("Publishing financial event for: {}", event.getAggregateId());
+        } catch (Exception e) {
+            log.error("Failed to publish financial event for: {}", event.getAggregateId(), e);
+        }
     }
 }

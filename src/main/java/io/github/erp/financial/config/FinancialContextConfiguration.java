@@ -9,10 +9,16 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Configuration
 @EnableJpaRepositories(
     basePackages = "io.github.erp.repository",
-    excludeFilters = @ComponentScan.Filter(
-        type = FilterType.REGEX,
-        pattern = ".*\\.search\\..*"
-    )
+    excludeFilters = {
+        @ComponentScan.Filter(
+            type = FilterType.REGEX,
+            pattern = ".*\\.search\\..*"
+        ),
+        @ComponentScan.Filter(
+            type = FilterType.REGEX,
+            pattern = ".*\\.timezone\\..*"
+        )
+    }
 )
 @EntityScan(basePackages = {
     "io.github.erp.financial.domain",

@@ -19,6 +19,7 @@ package io.github.erp.erp.resources;
  */
 import io.github.erp.IntegrationTest;
 import io.github.erp.domain.*;
+import io.github.erp.context.assets.domain.AssetRegistration;
 import io.github.erp.repository.AssetGeneralAdjustmentRepository;
 import io.github.erp.repository.search.AssetGeneralAdjustmentSearchRepository;
 import io.github.erp.service.dto.AssetGeneralAdjustmentDTO;

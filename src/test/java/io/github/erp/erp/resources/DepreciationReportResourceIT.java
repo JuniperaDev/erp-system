@@ -19,6 +19,7 @@ package io.github.erp.erp.resources;
  */
 import io.github.erp.IntegrationTest;
 import io.github.erp.domain.*;
+import io.github.erp.context.assets.domain.AssetCategory;
 import io.github.erp.repository.DepreciationReportRepository;
 import io.github.erp.repository.search.DepreciationReportSearchRepository;
 import io.github.erp.service.dto.DepreciationReportDTO;

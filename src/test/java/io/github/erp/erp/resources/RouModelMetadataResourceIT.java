@@ -19,6 +19,7 @@ package io.github.erp.erp.resources;
  */
 import io.github.erp.IntegrationTest;
 import io.github.erp.domain.*;
+import io.github.erp.context.assets.domain.AssetCategory;
 import io.github.erp.repository.RouModelMetadataRepository;
 import io.github.erp.repository.search.RouModelMetadataSearchRepository;
 import io.github.erp.service.RouModelMetadataService;

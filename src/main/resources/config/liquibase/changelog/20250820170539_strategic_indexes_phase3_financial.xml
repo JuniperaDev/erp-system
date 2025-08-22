@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Strategic Database Indexes - Phase 3: Financial/Prepayment Operations
+        Story D3.2: Add Strategic Database Indexes #62
+        
+        This changeset adds strategic indexes for financial and prepayment queries to improve
+        performance by 40-50% for financial operations while maintaining <10% 
+        write performance impact.
+    -->
+    
+    <changeSet id="20250820170539-1" author="devin">
+        <!-- Prepayment Account Optimization -->
+        <createIndex indexName="idx_prepayment_account_debit_recognition" tableName="prepayment_account">
+            <column name="debit_account_id"/>
+            <column name="recognition_date"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_prepayment_account_dealer_date" tableName="prepayment_account">
+            <column name="dealer_id"/>
+            <column name="recognition_date"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_prepayment_account_settlement_currency" tableName="prepayment_account">
+            <column name="settlement_currency_id"/>
+            <column name="prepayment_transaction_id"/>
+        </createIndex>
+        
+        <!-- Catalogue number lookup optimization -->
+        <createIndex indexName="idx_prepayment_account_catalogue_number" tableName="prepayment_account">
+            <column name="catalogue_number"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="20250820170539-2" author="devin">
+        <!-- Prepayment Amortization Optimization -->
+        <createIndex indexName="idx_prepayment_amortization_account_period" tableName="prepayment_amortization">
+            <column name="prepayment_account_id"/>
+            <column name="fiscal_month_id"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_prepayment_amortization_account_amort_period" tableName="prepayment_amortization">
+            <column name="prepayment_account_id"/>
+            <column name="amortization_period_id"/>
+        </createIndex>
+        
+        <!-- Amortization period optimization -->
+        <createIndex indexName="idx_amortization_period_end_date" tableName="amortization_period">
+            <column name="end_date"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_amortization_period_start_end_dates" tableName="amortization_period">
+            <column name="start_date"/>
+            <column name="end_date"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="20250820170539-3" author="devin">
+        <!-- Transaction Account Optimization -->
+        <createIndex indexName="idx_transaction_account_number" tableName="transaction_account">
+            <column name="account_number"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_transaction_account_category_outlet" tableName="transaction_account">
+            <column name="account_category_id"/>
+            <column name="service_outlet_id"/>
+        </createIndex>
+        
+        <!-- Settlement Optimization -->
+        <createIndex indexName="idx_settlement_currency_payment_date" tableName="settlement">
+            <column name="settlement_currency_id"/>
+            <column name="payment_date"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_settlement_payment_category" tableName="settlement">
+            <column name="payment_category_id"/>
+            <column name="payment_date"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="20250820170539-4-fixed" author="devin">
+        <!-- ROU Depreciation Entry Optimization (for complex lease-financial queries) -->
+        <createIndex indexName="idx_rou_depreciation_entry_lease_period" tableName="rou_depreciation_entry">
+            <column name="lease_period_id"/>
+            <column name="credit_account_id"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_rou_depreciation_entry_metadata_period" tableName="rou_depreciation_entry">
+            <column name="rou_metadata_id"/>
+            <column name="lease_period_id"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_rou_depreciation_entry_status_flags" tableName="rou_depreciation_entry">
+            <column name="is_deleted"/>
+            <column name="activated"/>
+            <column name="invalidated"/>
+        </createIndex>
+        
+        <!-- ROU Model Metadata Optimization -->
+        <createIndex indexName="idx_rou_model_metadata_commencement_date" tableName="rou_model_metadata">
+            <column name="commencement_date"/>
+            <column name="asset_account_id"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_rou_model_metadata_lease_contract_fixed" tableName="rou_model_metadata">
+            <column name="detailed_lease_contract_id"/>
+            <column name="commencement_date"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.UUID;
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -133,8 +134,9 @@ public class DetailedLeaseContract implements Serializable {
     )
     private BusinessDocument leaseContractCalculations;
 
-    @OneToMany(mappedBy = "leaseContract")
+    @OneToMany(mappedBy = "leaseContract", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
     @JsonIgnoreProperties(value = { "leaseContract" }, allowSetters = true)
     private Set<LeasePayment> leasePayments = new HashSet<>();
 

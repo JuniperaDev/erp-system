@@ -1,0 +1,11 @@
+id;procurement_reference;asset_registration_id;procurement_type;procurement_date;procurement_amount;supplier_name;procurement_status
+1;PROC-001;1;Purchase;2024-01-16;125000.50;Tech Solutions Ltd;Completed
+2;PROC-002;2;Lease;2024-01-16;89750.25;Furniture Plus;Completed
+3;PROC-003;3;Purchase;2024-01-16;67890.75;Industrial Supply Co;Completed
+4;PROC-004;4;Finance;2024-01-16;156780.00;Auto Dealers Inc;Completed
+5;PROC-005;5;Purchase;2024-01-16;98456.30;Network Systems;Completed
+6;PROC-006;6;Lease;2024-01-16;234567.80;Heavy Machinery Ltd;Completed
+7;PROC-007;7;Purchase;2024-01-16;78923.45;SecureTech Solutions;Completed
+8;PROC-008;8;Purchase;2024-01-16;145632.90;Lab Supplies Inc;Completed
+9;PROC-009;9;Lease;2024-01-16;187456.60;Telecom Solutions;Completed
+10;PROC-010;10;Purchase;2024-01-16;112345.70;MedTech Suppliers;Completed

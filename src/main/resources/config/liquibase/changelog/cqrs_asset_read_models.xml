@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="create-asset-report-read-model" author="devin">
+        <createTable tableName="asset_report_read_model">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="asset_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="asset_number" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="asset_tag" type="varchar(255)"/>
+            <column name="asset_description" type="varchar(1000)"/>
+            <column name="asset_cost" type="decimal(21,2)"/>
+            <column name="current_nbv" type="decimal(21,2)"/>
+            <column name="category_name" type="varchar(255)"/>
+            <column name="category_id" type="bigint"/>
+            <column name="dealer_name" type="varchar(255)"/>
+            <column name="dealer_id" type="bigint"/>
+            <column name="capitalization_date" type="date"/>
+            <column name="reporting_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_depreciation" type="decimal(21,2)"/>
+            <column name="remaining_useful_life" type="decimal(21,2)"/>
+            <column name="depreciation_method" type="varchar(255)"/>
+            <column name="useful_life_years" type="decimal(21,2)"/>
+            <column name="service_outlet_code" type="varchar(255)"/>
+            <column name="service_outlet_id" type="bigint"/>
+            <column name="last_updated" type="date">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="asset_report_read_model" indexName="idx_asset_report_date">
+            <column name="reporting_date"/>
+        </createIndex>
+        <createIndex tableName="asset_report_read_model" indexName="idx_asset_report_category">
+            <column name="category_name"/>
+        </createIndex>
+        <createIndex tableName="asset_report_read_model" indexName="idx_asset_report_number">
+            <column name="asset_number"/>
+        </createIndex>
+        <createIndex tableName="asset_report_read_model" indexName="idx_asset_report_dealer">
+            <column name="dealer_name"/>
+        </createIndex>
+        <createIndex tableName="asset_report_read_model" indexName="idx_asset_report_asset_id">
+            <column name="asset_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="create-depreciation-report-read-model" author="devin">
+        <createTable tableName="depreciation_report_read_model">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="asset_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="asset_number" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="asset_tag" type="varchar(255)"/>
+            <column name="asset_description" type="varchar(1000)"/>
+            <column name="category_name" type="varchar(255)"/>
+            <column name="category_id" type="bigint"/>
+            <column name="depreciation_date" type="date"/>
+            <column name="depreciation_period" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="depreciation_amount" type="decimal(21,2)"/>
+            <column name="accumulated_depreciation" type="decimal(21,2)"/>
+            <column name="net_book_value" type="decimal(21,2)"/>
+            <column name="depreciation_method" type="varchar(255)"/>
+            <column name="useful_life_years" type="decimal(21,2)"/>
+            <column name="depreciation_rate" type="decimal(21,4)"/>
+            <column name="service_outlet_code" type="varchar(255)"/>
+            <column name="service_outlet_id" type="bigint"/>
+            <column name="dealer_name" type="varchar(255)"/>
+            <column name="dealer_id" type="bigint"/>
+            <column name="fiscal_month_code" type="varchar(255)"/>
+            <column name="fiscal_quarter" type="varchar(255)"/>
+            <column name="fiscal_year" type="integer"/>
+            <column name="last_updated" type="date">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="depreciation_report_read_model" indexName="idx_depreciation_report_period">
+            <column name="depreciation_period"/>
+        </createIndex>
+        <createIndex tableName="depreciation_report_read_model" indexName="idx_depreciation_report_asset">
+            <column name="asset_id"/>
+        </createIndex>
+        <createIndex tableName="depreciation_report_read_model" indexName="idx_depreciation_report_category">
+            <column name="category_name"/>
+        </createIndex>
+        <createIndex tableName="depreciation_report_read_model" indexName="idx_depreciation_report_date">
+            <column name="depreciation_date"/>
+        </createIndex>
+        <createIndex tableName="depreciation_report_read_model" indexName="idx_depreciation_report_fiscal_year">
+            <column name="fiscal_year"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="create-asset-nbv-report-read-model" author="devin">
+        <createTable tableName="asset_nbv_report_read_model">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="asset_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="asset_number" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="asset_tag" type="varchar(255)"/>
+            <column name="asset_description" type="varchar(1000)"/>
+            <column name="category_name" type="varchar(255)"/>
+            <column name="category_id" type="bigint"/>
+            <column name="service_outlet_code" type="varchar(255)"/>
+            <column name="service_outlet_id" type="bigint"/>
+            <column name="dealer_name" type="varchar(255)"/>
+            <column name="dealer_id" type="bigint"/>
+            <column name="acquisition_date" type="date"/>
+            <column name="capitalization_date" type="date"/>
+            <column name="historical_cost" type="decimal(21,2)"/>
+            <column name="net_book_value" type="decimal(21,2)"/>
+            <column name="depreciation_period_start_date" type="date"/>
+            <column name="depreciation_period_end_date" type="date"/>
+            <column name="fiscal_month_code" type="varchar(255)"/>
+            <column name="fiscal_quarter" type="varchar(255)"/>
+            <column name="fiscal_year" type="integer"/>
+            <column name="reporting_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time_of_creation" type="date"/>
+            <column name="last_updated" type="date">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="asset_nbv_report_read_model" indexName="idx_asset_nbv_report_date">
+            <column name="reporting_date"/>
+        </createIndex>
+        <createIndex tableName="asset_nbv_report_read_model" indexName="idx_asset_nbv_report_asset">
+            <column name="asset_id"/>
+        </createIndex>
+        <createIndex tableName="asset_nbv_report_read_model" indexName="idx_asset_nbv_report_category">
+            <column name="category_name"/>
+        </createIndex>
+        <createIndex tableName="asset_nbv_report_read_model" indexName="idx_asset_nbv_report_outlet">
+            <column name="service_outlet_code"/>
+        </createIndex>
+        <createIndex tableName="asset_nbv_report_read_model" indexName="idx_asset_nbv_report_fiscal_year">
+            <column name="fiscal_year"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

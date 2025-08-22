@@ -1,0 +1,11 @@
+id;warranty_serial;asset_registration_id;asset_warranty_id;assignment_date;assigned_by;assignment_notes
+1;WAR-AST-001;1;1;2024-01-16;Asset Manager;Standard warranty assignment
+2;WAR-AST-002;2;2;2024-01-16;Asset Manager;Extended warranty assignment
+3;WAR-AST-003;3;3;2024-01-16;Asset Manager;Service warranty assignment
+4;WAR-AST-004;4;4;2024-01-16;Asset Manager;Parts warranty assignment
+5;WAR-AST-005;5;5;2024-01-16;Asset Manager;Performance warranty assignment
+6;WAR-AST-006;6;6;2024-01-16;Asset Manager;Installation warranty assignment
+7;WAR-AST-007;7;7;2024-01-16;Asset Manager;Security warranty assignment
+8;WAR-AST-008;8;8;2024-01-16;Asset Manager;Calibration warranty assignment
+9;WAR-AST-009;9;9;2024-01-16;Asset Manager;Network warranty assignment
+10;WAR-AST-010;10;10;2024-01-16;Asset Manager;Medical warranty assignment

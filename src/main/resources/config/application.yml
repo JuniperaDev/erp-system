@@ -85,6 +85,7 @@ management:
       logback: true
       process: true
       system: true
+      hibernate: true
     distribution:
       percentiles-histogram:
         all: true
@@ -92,6 +93,9 @@ management:
         all: 0, 0.5, 0.75, 0.95, 0.99, 1.0
     tags:
       application: ${spring.application.name}
+    hibernate:
+      metric:
+        enabled: true
     web:
       server:
         request:
@@ -131,11 +135,14 @@ spring:
       hibernate.cache.use_query_cache: false
       hibernate.generate_statistics: false
       # modify batch size as necessary
-      hibernate.jdbc.batch_size: 25
+      hibernate.jdbc.batch_size: 100
+      hibernate.default_batch_fetch_size: 50
+      hibernate.jdbc.fetch_size: 50
       hibernate.order_inserts: true
       hibernate.order_updates: true
       hibernate.query.fail_on_pagination_over_collection_fetch: true
       hibernate.query.in_clause_parameter_padding: true
+      hibernate.generate_statistics: true
       hibernate.cache.region.factory_class: com.hazelcast.hibernate.HazelcastCacheRegionFactory
       hibernate.cache.use_minimal_puts: true
       hibernate.cache.hazelcast.instance_name: erpSystem

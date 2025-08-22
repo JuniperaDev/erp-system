@@ -1,0 +1,11 @@
+id;event_id;event_type;occurred_on;version;correlation_id;aggregate_id;aggregate_type;domain_name;event_data;processing_status;retry_count
+1;550e8400-e29b-41d4-a716-446655443001;DOMAIN_EVENT;2024-01-16T08:00:00;1;550e8400-e29b-41d4-a716-446655443101;DOM_001;DomainAggregate;AssetManagement;{action:create,entity:asset,id:1};PROCESSED;0
+2;550e8400-e29b-41d4-a716-446655443002;DOMAIN_EVENT;2024-01-16T08:30:00;1;550e8400-e29b-41d4-a716-446655443102;DOM_002;DomainAggregate;LeaseManagement;{action:update,entity:lease,id:2};PROCESSED;0
+3;550e8400-e29b-41d4-a716-446655443003;DOMAIN_EVENT;2024-01-16T09:00:00;1;550e8400-e29b-41d4-a716-446655443103;DOM_003;DomainAggregate;PaymentProcessing;{action:process,entity:payment,id:3};FAILED;2
+4;550e8400-e29b-41d4-a716-446655443004;DOMAIN_EVENT;2024-01-16T09:30:00;1;550e8400-e29b-41d4-a716-446655443104;DOM_004;DomainAggregate;UserManagement;{action:login,entity:user,id:4};PROCESSED;0
+5;550e8400-e29b-41d4-a716-446655443005;DOMAIN_EVENT;2024-01-16T10:00:00;1;550e8400-e29b-41d4-a716-446655443105;DOM_005;DomainAggregate;ReportGeneration;{action:generate,entity:report,id:5};PROCESSING;1
+6;550e8400-e29b-41d4-a716-446655443006;DOMAIN_EVENT;2024-01-16T10:30:00;1;550e8400-e29b-41d4-a716-446655443106;DOM_006;DomainAggregate;AssetManagement;{action:dispose,entity:asset,id:6};PROCESSED;0
+7;550e8400-e29b-41d4-a716-446655443007;DOMAIN_EVENT;2024-01-16T11:00:00;1;550e8400-e29b-41d4-a716-446655443107;DOM_007;DomainAggregate;ComplianceTracking;{action:audit,entity:compliance,id:7};PROCESSED;0
+8;550e8400-e29b-41d4-a716-446655443008;DOMAIN_EVENT;2024-01-16T11:30:00;1;550e8400-e29b-41d4-a716-446655443108;DOM_008;DomainAggregate;InventoryManagement;{action:update,entity:inventory,id:8};PROCESSED;0
+9;550e8400-e29b-41d4-a716-446655443009;DOMAIN_EVENT;2024-01-16T12:00:00;1;550e8400-e29b-41d4-a716-446655443109;DOM_009;DomainAggregate;FinancialReporting;{action:calculate,entity:depreciation,id:9};PROCESSED;0
+10;550e8400-e29b-41d4-a716-446655443010;DOMAIN_EVENT;2024-01-16T12:30:00;1;550e8400-e29b-41d4-a716-446655443110;DOM_010;DomainAggregate;SystemMaintenance;{action:backup,entity:database,id:10};PROCESSED;0

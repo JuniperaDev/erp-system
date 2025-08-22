@@ -18,7 +18,7 @@ package io.github.erp.erp.startUp.index;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import com.google.common.collect.ImmutableList;
-import io.github.erp.domain.AssetRegistration;
+import io.github.erp.context.assets.domain.AssetRegistration;
 import io.github.erp.erp.startUp.index.engine_v1.IndexingServiceChainSingleton;
 import io.github.erp.erp.startUp.index.engine_v2.AbstractStartUpBatchedIndexService;
 import io.github.erp.internal.IndexProperties;

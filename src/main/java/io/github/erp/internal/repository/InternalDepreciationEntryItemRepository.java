@@ -18,6 +18,7 @@ package io.github.erp.internal.repository;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import io.github.erp.domain.*;
+import io.github.erp.context.assets.domain.AssetCategory;
 import io.github.erp.internal.report.service.DepreciationEntryVM;
 import io.github.erp.repository.DepreciationEntryReportItemRepository;
 import io.github.erp.repository.DepreciationEntryRepository;

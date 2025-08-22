@@ -17,12 +17,12 @@ package io.github.erp.internal.service.assets;
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import io.github.erp.domain.ApplicationUser;
-import io.github.erp.domain.AssetDisposal;
+import io.github.erp.context.assets.domain.AssetDisposal;
 import io.github.erp.domain.events.DomainEventPublisher;
 import io.github.erp.domain.events.asset.AssetDisposedEvent;
 import io.github.erp.erp.assets.nbv.buffer.BufferedSinkProcessor;
 import io.github.erp.internal.repository.InternalAssetDisposalRepository;
+import io.github.erp.domain.ApplicationUser;
 import io.github.erp.internal.service.applicationUser.CurrentUserContext;
 import io.github.erp.internal.service.cache.ScheduledCacheRefreshService;
 import io.github.erp.repository.search.AssetDisposalSearchRepository;

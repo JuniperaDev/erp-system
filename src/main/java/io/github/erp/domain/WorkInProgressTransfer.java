@@ -18,6 +18,7 @@ package io.github.erp.domain;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.github.erp.context.assets.domain.AssetCategory;
 import io.github.erp.domain.enumeration.WorkInProgressTransferType;
 import java.io.Serializable;
 import java.math.BigDecimal;

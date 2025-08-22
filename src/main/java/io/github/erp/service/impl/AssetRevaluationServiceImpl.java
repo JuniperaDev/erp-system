@@ -20,7 +20,7 @@ package io.github.erp.service.impl;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
-import io.github.erp.domain.AssetRevaluation;
+import io.github.erp.context.assets.domain.AssetRevaluation;
 import io.github.erp.repository.AssetRevaluationRepository;
 import io.github.erp.repository.search.AssetRevaluationSearchRepository;
 import io.github.erp.service.AssetRevaluationService;

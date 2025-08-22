@@ -18,7 +18,7 @@ package io.github.erp.repository;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import io.github.erp.domain.AssetRegistration;
+import io.github.erp.context.assets.domain.AssetRegistration;
 import io.github.erp.service.dto.AssetRegistrationListDTO;
 import java.util.List;
 import java.util.Optional;

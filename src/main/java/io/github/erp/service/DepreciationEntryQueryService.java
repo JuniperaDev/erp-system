@@ -20,6 +20,10 @@ package io.github.erp.service;
 
 import io.github.erp.domain.*; // for static metamodels
 import io.github.erp.domain.DepreciationEntry;
+import io.github.erp.context.assets.domain.AssetCategory;
+import io.github.erp.context.assets.domain.AssetRegistration;
+import io.github.erp.context.assets.domain.AssetRegistration_;
+import io.github.erp.context.assets.domain.AssetCategory_;
 import io.github.erp.repository.DepreciationEntryRepository;
 import io.github.erp.repository.search.DepreciationEntrySearchRepository;
 import io.github.erp.service.criteria.DepreciationEntryCriteria;

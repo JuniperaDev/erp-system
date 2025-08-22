@@ -20,6 +20,8 @@ package io.github.erp.service;
 
 import io.github.erp.domain.*; // for static metamodels
 import io.github.erp.domain.AssetWriteOff;
+import io.github.erp.context.assets.domain.AssetRegistration;
+import io.github.erp.context.assets.domain.AssetRegistration_;
 import io.github.erp.repository.AssetWriteOffRepository;
 import io.github.erp.repository.search.AssetWriteOffSearchRepository;
 import io.github.erp.service.criteria.AssetWriteOffCriteria;

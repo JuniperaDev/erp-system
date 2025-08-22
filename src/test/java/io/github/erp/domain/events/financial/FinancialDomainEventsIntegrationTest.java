@@ -100,7 +100,7 @@ public class FinancialDomainEventsIntegrationTest {
         invoiceDTO.setInvoiceNumber("INV-001");
         invoiceDTO.setInvoiceAmount(BigDecimal.valueOf(750.00));
         invoiceDTO.setInvoiceDate(LocalDate.now());
-        invoiceDTO.setCurrency(CurrencyTypes.USD);
+        invoiceDTO.setCurrency(CurrencyTypes.USD.toString());
 
         long eventCountBefore = domainEventStore.count();
 
@@ -132,7 +132,7 @@ public class FinancialDomainEventsIntegrationTest {
         invoiceDTO.setInvoiceNumber("AUDIT-INV-001");
         invoiceDTO.setInvoiceAmount(BigDecimal.valueOf(1200.00));
         invoiceDTO.setInvoiceDate(LocalDate.now());
-        invoiceDTO.setCurrency(CurrencyTypes.USD);
+        invoiceDTO.setCurrency(CurrencyTypes.USD.toString());
 
         long eventCountBefore = domainEventStore.count();
 

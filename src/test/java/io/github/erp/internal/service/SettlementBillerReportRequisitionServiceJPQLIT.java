@@ -74,7 +74,11 @@ public class SettlementBillerReportRequisitionServiceJPQLIT {
     @Test
     @Transactional
     public void generateReport() throws Exception {
-        ReportModel<List<SettlementBillerReportDTO>> reportSummaries = reportModel.generateReport(new SettlementBillerReportRequisitionDTO(1494, ZonedDateTime.now(), ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault()) ));
+        SettlementBillerReportRequisitionDTO requisitionDTO = new SettlementBillerReportRequisitionDTO();
+        requisitionDTO.setBillerId(1494);
+        requisitionDTO.setFrom(ZonedDateTime.now());
+        requisitionDTO.setTo(ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault()));
+        ReportModel<List<SettlementBillerReportDTO>> reportSummaries = reportModel.generateReport(requisitionDTO);
 
         Assertions.assertThat(reportSummaries.getReportQuery()).isEqualTo(RESULT_QUERY);
     }

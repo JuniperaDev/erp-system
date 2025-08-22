@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.PaymentRequisitionMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class PaymentRequisitionServiceImpl implements PaymentRequisitionService 
     public PaymentRequisitionServiceImpl(
         PaymentRequisitionRepository paymentRequisitionRepository,
         PaymentRequisitionMapper paymentRequisitionMapper,
-        PaymentRequisitionSearchRepository paymentRequisitionSearchRepository
+        @Autowired(required = false) PaymentRequisitionSearchRepository paymentRequisitionSearchRepository
     ) {
         this.paymentRequisitionRepository = paymentRequisitionRepository;
         this.paymentRequisitionMapper = paymentRequisitionMapper;
@@ -65,7 +66,9 @@ public class PaymentRequisitionServiceImpl implements PaymentRequisitionService 
         PaymentRequisition paymentRequisition = paymentRequisitionMapper.toEntity(paymentRequisitionDTO);
         paymentRequisition = paymentRequisitionRepository.save(paymentRequisition);
         PaymentRequisitionDTO result = paymentRequisitionMapper.toDto(paymentRequisition);
-        paymentRequisitionSearchRepository.save(paymentRequisition);
+        if (paymentRequisitionSearchRepository != null) {
+            paymentRequisitionSearchRepository.save(paymentRequisition);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class PaymentRequisitionServiceImpl implements PaymentRequisitionService 
             })
             .map(paymentRequisitionRepository::save)
             .map(savedPaymentRequisition -> {
-                paymentRequisitionSearchRepository.save(savedPaymentRequisition);
+                if (paymentRequisitionSearchRepository != null) {
+                    paymentRequisitionSearchRepository.save(savedPaymentRequisition);
+                }
 
                 return savedPaymentRequisition;
             })
@@ -111,13 +116,18 @@ public class PaymentRequisitionServiceImpl implements PaymentRequisitionService 
     public void delete(Long id) {
         log.debug("Request to delete PaymentRequisition : {}", id);
         paymentRequisitionRepository.deleteById(id);
-        paymentRequisitionSearchRepository.deleteById(id);
+        if (paymentRequisitionSearchRepository != null) {
+            paymentRequisitionSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<PaymentRequisitionDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of PaymentRequisitions for query {}", query);
-        return paymentRequisitionSearchRepository.search(query, pageable).map(paymentRequisitionMapper::toDto);
+        if (paymentRequisitionSearchRepository != null) {
+            return paymentRequisitionSearchRepository.search(query, pageable).map(paymentRequisitionMapper::toDto);
+        }
+        return paymentRequisitionRepository.findAll(pageable).map(paymentRequisitionMapper::toDto);
     }
 }

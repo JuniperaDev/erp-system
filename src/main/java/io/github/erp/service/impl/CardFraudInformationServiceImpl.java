@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CardFraudInformationMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CardFraudInformationServiceImpl implements CardFraudInformationServ
     public CardFraudInformationServiceImpl(
         CardFraudInformationRepository cardFraudInformationRepository,
         CardFraudInformationMapper cardFraudInformationMapper,
-        CardFraudInformationSearchRepository cardFraudInformationSearchRepository
+        @Autowired(required = false) CardFraudInformationSearchRepository cardFraudInformationSearchRepository
     ) {
         this.cardFraudInformationRepository = cardFraudInformationRepository;
         this.cardFraudInformationMapper = cardFraudInformationMapper;
@@ -65,7 +66,9 @@ public class CardFraudInformationServiceImpl implements CardFraudInformationServ
         CardFraudInformation cardFraudInformation = cardFraudInformationMapper.toEntity(cardFraudInformationDTO);
         cardFraudInformation = cardFraudInformationRepository.save(cardFraudInformation);
         CardFraudInformationDTO result = cardFraudInformationMapper.toDto(cardFraudInformation);
-        cardFraudInformationSearchRepository.save(cardFraudInformation);
+        if (cardFraudInformationSearchRepository != null) {
+            cardFraudInformationSearchRepository.save(cardFraudInformation);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CardFraudInformationServiceImpl implements CardFraudInformationServ
             })
             .map(cardFraudInformationRepository::save)
             .map(savedCardFraudInformation -> {
-                cardFraudInformationSearchRepository.save(savedCardFraudInformation);
+                if (cardFraudInformationSearchRepository != null) {
+                    cardFraudInformationSearchRepository.save(savedCardFraudInformation);
+                }
 
                 return savedCardFraudInformation;
             })
@@ -107,13 +112,18 @@ public class CardFraudInformationServiceImpl implements CardFraudInformationServ
     public void delete(Long id) {
         log.debug("Request to delete CardFraudInformation : {}", id);
         cardFraudInformationRepository.deleteById(id);
-        cardFraudInformationSearchRepository.deleteById(id);
+        if (cardFraudInformationSearchRepository != null) {
+            cardFraudInformationSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CardFraudInformationDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CardFraudInformations for query {}", query);
-        return cardFraudInformationSearchRepository.search(query, pageable).map(cardFraudInformationMapper::toDto);
+        if (cardFraudInformationSearchRepository != null) {
+            return cardFraudInformationSearchRepository.search(query, pageable).map(cardFraudInformationMapper::toDto);
+        }
+        return cardFraudInformationRepository.findAll(pageable).map(cardFraudInformationMapper::toDto);
     }
 }

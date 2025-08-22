@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CrbReportViewBandMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CrbReportViewBandServiceImpl implements CrbReportViewBandService {
     public CrbReportViewBandServiceImpl(
         CrbReportViewBandRepository crbReportViewBandRepository,
         CrbReportViewBandMapper crbReportViewBandMapper,
-        CrbReportViewBandSearchRepository crbReportViewBandSearchRepository
+        @Autowired(required = false) CrbReportViewBandSearchRepository crbReportViewBandSearchRepository
     ) {
         this.crbReportViewBandRepository = crbReportViewBandRepository;
         this.crbReportViewBandMapper = crbReportViewBandMapper;
@@ -65,7 +66,9 @@ public class CrbReportViewBandServiceImpl implements CrbReportViewBandService {
         CrbReportViewBand crbReportViewBand = crbReportViewBandMapper.toEntity(crbReportViewBandDTO);
         crbReportViewBand = crbReportViewBandRepository.save(crbReportViewBand);
         CrbReportViewBandDTO result = crbReportViewBandMapper.toDto(crbReportViewBand);
-        crbReportViewBandSearchRepository.save(crbReportViewBand);
+        if (crbReportViewBandSearchRepository != null) {
+            crbReportViewBandSearchRepository.save(crbReportViewBand);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CrbReportViewBandServiceImpl implements CrbReportViewBandService {
             })
             .map(crbReportViewBandRepository::save)
             .map(savedCrbReportViewBand -> {
-                crbReportViewBandSearchRepository.save(savedCrbReportViewBand);
+                if (crbReportViewBandSearchRepository != null) {
+                    crbReportViewBandSearchRepository.save(savedCrbReportViewBand);
+                }
 
                 return savedCrbReportViewBand;
             })
@@ -107,13 +112,18 @@ public class CrbReportViewBandServiceImpl implements CrbReportViewBandService {
     public void delete(Long id) {
         log.debug("Request to delete CrbReportViewBand : {}", id);
         crbReportViewBandRepository.deleteById(id);
-        crbReportViewBandSearchRepository.deleteById(id);
+        if (crbReportViewBandSearchRepository != null) {
+            crbReportViewBandSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CrbReportViewBandDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CrbReportViewBands for query {}", query);
-        return crbReportViewBandSearchRepository.search(query, pageable).map(crbReportViewBandMapper::toDto);
+        if (crbReportViewBandSearchRepository != null) {
+            return crbReportViewBandSearchRepository.search(query, pageable).map(crbReportViewBandMapper::toDto);
+        }
+        return crbReportViewBandRepository.findAll(pageable).map(crbReportViewBandMapper::toDto);
     }
 }

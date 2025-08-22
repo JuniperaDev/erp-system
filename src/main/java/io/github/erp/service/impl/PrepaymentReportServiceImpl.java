@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.PrepaymentReportMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class PrepaymentReportServiceImpl implements PrepaymentReportService {
     public PrepaymentReportServiceImpl(
         PrepaymentReportRepository prepaymentReportRepository,
         PrepaymentReportMapper prepaymentReportMapper,
-        PrepaymentReportSearchRepository prepaymentReportSearchRepository
+        @Autowired(required = false) PrepaymentReportSearchRepository prepaymentReportSearchRepository
     ) {
         this.prepaymentReportRepository = prepaymentReportRepository;
         this.prepaymentReportMapper = prepaymentReportMapper;
@@ -65,7 +66,9 @@ public class PrepaymentReportServiceImpl implements PrepaymentReportService {
         PrepaymentReport prepaymentReport = prepaymentReportMapper.toEntity(prepaymentReportDTO);
         prepaymentReport = prepaymentReportRepository.save(prepaymentReport);
         PrepaymentReportDTO result = prepaymentReportMapper.toDto(prepaymentReport);
-        prepaymentReportSearchRepository.save(prepaymentReport);
+        if (prepaymentReportSearchRepository != null) {
+            prepaymentReportSearchRepository.save(prepaymentReport);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class PrepaymentReportServiceImpl implements PrepaymentReportService {
             })
             .map(prepaymentReportRepository::save)
             .map(savedPrepaymentReport -> {
-                prepaymentReportSearchRepository.save(savedPrepaymentReport);
+                if (prepaymentReportSearchRepository != null) {
+                    prepaymentReportSearchRepository.save(savedPrepaymentReport);
+                }
 
                 return savedPrepaymentReport;
             })
@@ -107,13 +112,18 @@ public class PrepaymentReportServiceImpl implements PrepaymentReportService {
     public void delete(Long id) {
         log.debug("Request to delete PrepaymentReport : {}", id);
         prepaymentReportRepository.deleteById(id);
-        prepaymentReportSearchRepository.deleteById(id);
+        if (prepaymentReportSearchRepository != null) {
+            prepaymentReportSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<PrepaymentReportDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of PrepaymentReports for query {}", query);
-        return prepaymentReportSearchRepository.search(query, pageable).map(prepaymentReportMapper::toDto);
+        if (prepaymentReportSearchRepository != null) {
+            return prepaymentReportSearchRepository.search(query, pageable).map(prepaymentReportMapper::toDto);
+        }
+        return prepaymentReportRepository.findAll(pageable).map(prepaymentReportMapper::toDto);
     }
 }

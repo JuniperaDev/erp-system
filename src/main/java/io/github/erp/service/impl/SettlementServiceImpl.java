@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -57,7 +58,7 @@ public class SettlementServiceImpl implements SettlementService {
     public SettlementServiceImpl(
         SettlementRepository settlementRepository,
         SettlementMapper settlementMapper,
-        SettlementSearchRepository settlementSearchRepository,
+        @Autowired(required = false) SettlementSearchRepository settlementSearchRepository,
         DomainEventPublisher domainEventPublisher
     ) {
         this.settlementRepository = settlementRepository;
@@ -72,7 +73,9 @@ public class SettlementServiceImpl implements SettlementService {
         Settlement settlement = settlementMapper.toEntity(settlementDTO);
         settlement = settlementRepository.save(settlement);
         SettlementDTO result = settlementMapper.toDto(settlement);
-        settlementSearchRepository.save(settlement);
+        if (settlementSearchRepository != null) {
+            settlementSearchRepository.save(settlement);
+        }
         
         publishSettlementCreatedEvent(settlement);
         
@@ -92,7 +95,9 @@ public class SettlementServiceImpl implements SettlementService {
             })
             .map(settlementRepository::save)
             .map(savedSettlement -> {
-                settlementSearchRepository.save(savedSettlement);
+                if (settlementSearchRepository != null) {
+                    settlementSearchRepository.save(savedSettlement);
+                }
 
                 return savedSettlement;
             })
@@ -121,14 +126,19 @@ public class SettlementServiceImpl implements SettlementService {
     public void delete(Long id) {
         log.debug("Request to delete Settlement : {}", id);
         settlementRepository.deleteById(id);
-        settlementSearchRepository.deleteById(id);
+        if (settlementSearchRepository != null) {
+            settlementSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<SettlementDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of Settlements for query {}", query);
-        return settlementSearchRepository.search(query, pageable).map(settlementMapper::toDto);
+        if (settlementSearchRepository != null) {
+            return settlementSearchRepository.search(query, pageable).map(settlementMapper::toDto);
+        }
+        return settlementRepository.findAll(pageable).map(settlementMapper::toDto);
     }
 
     private void publishSettlementCreatedEvent(Settlement settlement) {

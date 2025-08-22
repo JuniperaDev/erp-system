@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.TALeaseRecognitionRuleMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class TALeaseRecognitionRuleServiceImpl implements TALeaseRecognitionRule
     public TALeaseRecognitionRuleServiceImpl(
         TALeaseRecognitionRuleRepository tALeaseRecognitionRuleRepository,
         TALeaseRecognitionRuleMapper tALeaseRecognitionRuleMapper,
-        TALeaseRecognitionRuleSearchRepository tALeaseRecognitionRuleSearchRepository
+        @Autowired(required = false) TALeaseRecognitionRuleSearchRepository tALeaseRecognitionRuleSearchRepository
     ) {
         this.tALeaseRecognitionRuleRepository = tALeaseRecognitionRuleRepository;
         this.tALeaseRecognitionRuleMapper = tALeaseRecognitionRuleMapper;
@@ -65,7 +66,9 @@ public class TALeaseRecognitionRuleServiceImpl implements TALeaseRecognitionRule
         TALeaseRecognitionRule tALeaseRecognitionRule = tALeaseRecognitionRuleMapper.toEntity(tALeaseRecognitionRuleDTO);
         tALeaseRecognitionRule = tALeaseRecognitionRuleRepository.save(tALeaseRecognitionRule);
         TALeaseRecognitionRuleDTO result = tALeaseRecognitionRuleMapper.toDto(tALeaseRecognitionRule);
-        tALeaseRecognitionRuleSearchRepository.save(tALeaseRecognitionRule);
+        if (tALeaseRecognitionRuleSearchRepository != null) {
+            tALeaseRecognitionRuleSearchRepository.save(tALeaseRecognitionRule);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class TALeaseRecognitionRuleServiceImpl implements TALeaseRecognitionRule
             })
             .map(tALeaseRecognitionRuleRepository::save)
             .map(savedTALeaseRecognitionRule -> {
-                tALeaseRecognitionRuleSearchRepository.save(savedTALeaseRecognitionRule);
+                if (tALeaseRecognitionRuleSearchRepository != null) {
+                    tALeaseRecognitionRuleSearchRepository.save(savedTALeaseRecognitionRule);
+                }
 
                 return savedTALeaseRecognitionRule;
             })
@@ -111,7 +116,9 @@ public class TALeaseRecognitionRuleServiceImpl implements TALeaseRecognitionRule
     public void delete(Long id) {
         log.debug("Request to delete TALeaseRecognitionRule : {}", id);
         tALeaseRecognitionRuleRepository.deleteById(id);
-        tALeaseRecognitionRuleSearchRepository.deleteById(id);
+        if (tALeaseRecognitionRuleSearchRepository != null) {
+            tALeaseRecognitionRuleSearchRepository.deleteById(id);
+        }
     }
 
     @Override

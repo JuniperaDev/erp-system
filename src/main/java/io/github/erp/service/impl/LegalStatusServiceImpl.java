@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.LegalStatusMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class LegalStatusServiceImpl implements LegalStatusService {
     public LegalStatusServiceImpl(
         LegalStatusRepository legalStatusRepository,
         LegalStatusMapper legalStatusMapper,
-        LegalStatusSearchRepository legalStatusSearchRepository
+        @Autowired(required = false) LegalStatusSearchRepository legalStatusSearchRepository
     ) {
         this.legalStatusRepository = legalStatusRepository;
         this.legalStatusMapper = legalStatusMapper;
@@ -65,7 +66,9 @@ public class LegalStatusServiceImpl implements LegalStatusService {
         LegalStatus legalStatus = legalStatusMapper.toEntity(legalStatusDTO);
         legalStatus = legalStatusRepository.save(legalStatus);
         LegalStatusDTO result = legalStatusMapper.toDto(legalStatus);
-        legalStatusSearchRepository.save(legalStatus);
+        if (legalStatusSearchRepository != null) {
+            legalStatusSearchRepository.save(legalStatus);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class LegalStatusServiceImpl implements LegalStatusService {
             })
             .map(legalStatusRepository::save)
             .map(savedLegalStatus -> {
-                legalStatusSearchRepository.save(savedLegalStatus);
+                if (legalStatusSearchRepository != null) {
+                    legalStatusSearchRepository.save(savedLegalStatus);
+                }
 
                 return savedLegalStatus;
             })
@@ -107,13 +112,18 @@ public class LegalStatusServiceImpl implements LegalStatusService {
     public void delete(Long id) {
         log.debug("Request to delete LegalStatus : {}", id);
         legalStatusRepository.deleteById(id);
-        legalStatusSearchRepository.deleteById(id);
+        if (legalStatusSearchRepository != null) {
+            legalStatusSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<LegalStatusDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of LegalStatuses for query {}", query);
-        return legalStatusSearchRepository.search(query, pageable).map(legalStatusMapper::toDto);
+        if (legalStatusSearchRepository != null) {
+            return legalStatusSearchRepository.search(query, pageable).map(legalStatusMapper::toDto);
+        }
+        return legalStatusRepository.findAll(pageable).map(legalStatusMapper::toDto);
     }
 }

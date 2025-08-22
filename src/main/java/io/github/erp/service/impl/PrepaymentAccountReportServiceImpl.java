@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.PrepaymentAccountReportMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class PrepaymentAccountReportServiceImpl implements PrepaymentAccountRepo
     public PrepaymentAccountReportServiceImpl(
         PrepaymentAccountReportRepository prepaymentAccountReportRepository,
         PrepaymentAccountReportMapper prepaymentAccountReportMapper,
-        PrepaymentAccountReportSearchRepository prepaymentAccountReportSearchRepository
+        @Autowired(required = false) PrepaymentAccountReportSearchRepository prepaymentAccountReportSearchRepository
     ) {
         this.prepaymentAccountReportRepository = prepaymentAccountReportRepository;
         this.prepaymentAccountReportMapper = prepaymentAccountReportMapper;
@@ -65,7 +66,9 @@ public class PrepaymentAccountReportServiceImpl implements PrepaymentAccountRepo
         PrepaymentAccountReport prepaymentAccountReport = prepaymentAccountReportMapper.toEntity(prepaymentAccountReportDTO);
         prepaymentAccountReport = prepaymentAccountReportRepository.save(prepaymentAccountReport);
         PrepaymentAccountReportDTO result = prepaymentAccountReportMapper.toDto(prepaymentAccountReport);
-        prepaymentAccountReportSearchRepository.save(prepaymentAccountReport);
+        if (prepaymentAccountReportSearchRepository != null) {
+            prepaymentAccountReportSearchRepository.save(prepaymentAccountReport);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class PrepaymentAccountReportServiceImpl implements PrepaymentAccountRepo
             })
             .map(prepaymentAccountReportRepository::save)
             .map(savedPrepaymentAccountReport -> {
-                prepaymentAccountReportSearchRepository.save(savedPrepaymentAccountReport);
+                if (prepaymentAccountReportSearchRepository != null) {
+                    prepaymentAccountReportSearchRepository.save(savedPrepaymentAccountReport);
+                }
 
                 return savedPrepaymentAccountReport;
             })
@@ -107,13 +112,18 @@ public class PrepaymentAccountReportServiceImpl implements PrepaymentAccountRepo
     public void delete(Long id) {
         log.debug("Request to delete PrepaymentAccountReport : {}", id);
         prepaymentAccountReportRepository.deleteById(id);
-        prepaymentAccountReportSearchRepository.deleteById(id);
+        if (prepaymentAccountReportSearchRepository != null) {
+            prepaymentAccountReportSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<PrepaymentAccountReportDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of PrepaymentAccountReports for query {}", query);
-        return prepaymentAccountReportSearchRepository.search(query, pageable).map(prepaymentAccountReportMapper::toDto);
+        if (prepaymentAccountReportSearchRepository != null) {
+            return prepaymentAccountReportSearchRepository.search(query, pageable).map(prepaymentAccountReportMapper::toDto);
+        }
+        return prepaymentAccountReportRepository.findAll(pageable).map(prepaymentAccountReportMapper::toDto);
     }
 }

@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.UltimateBeneficiaryTypesMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class UltimateBeneficiaryTypesServiceImpl implements UltimateBeneficiaryT
     public UltimateBeneficiaryTypesServiceImpl(
         UltimateBeneficiaryTypesRepository ultimateBeneficiaryTypesRepository,
         UltimateBeneficiaryTypesMapper ultimateBeneficiaryTypesMapper,
-        UltimateBeneficiaryTypesSearchRepository ultimateBeneficiaryTypesSearchRepository
+        @Autowired(required = false) UltimateBeneficiaryTypesSearchRepository ultimateBeneficiaryTypesSearchRepository
     ) {
         this.ultimateBeneficiaryTypesRepository = ultimateBeneficiaryTypesRepository;
         this.ultimateBeneficiaryTypesMapper = ultimateBeneficiaryTypesMapper;
@@ -65,7 +66,9 @@ public class UltimateBeneficiaryTypesServiceImpl implements UltimateBeneficiaryT
         UltimateBeneficiaryTypes ultimateBeneficiaryTypes = ultimateBeneficiaryTypesMapper.toEntity(ultimateBeneficiaryTypesDTO);
         ultimateBeneficiaryTypes = ultimateBeneficiaryTypesRepository.save(ultimateBeneficiaryTypes);
         UltimateBeneficiaryTypesDTO result = ultimateBeneficiaryTypesMapper.toDto(ultimateBeneficiaryTypes);
-        ultimateBeneficiaryTypesSearchRepository.save(ultimateBeneficiaryTypes);
+        if (ultimateBeneficiaryTypesSearchRepository != null) {
+            ultimateBeneficiaryTypesSearchRepository.save(ultimateBeneficiaryTypes);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class UltimateBeneficiaryTypesServiceImpl implements UltimateBeneficiaryT
             })
             .map(ultimateBeneficiaryTypesRepository::save)
             .map(savedUltimateBeneficiaryTypes -> {
-                ultimateBeneficiaryTypesSearchRepository.save(savedUltimateBeneficiaryTypes);
+                if (ultimateBeneficiaryTypesSearchRepository != null) {
+                    ultimateBeneficiaryTypesSearchRepository.save(savedUltimateBeneficiaryTypes);
+                }
 
                 return savedUltimateBeneficiaryTypes;
             })
@@ -107,7 +112,9 @@ public class UltimateBeneficiaryTypesServiceImpl implements UltimateBeneficiaryT
     public void delete(Long id) {
         log.debug("Request to delete UltimateBeneficiaryTypes : {}", id);
         ultimateBeneficiaryTypesRepository.deleteById(id);
-        ultimateBeneficiaryTypesSearchRepository.deleteById(id);
+        if (ultimateBeneficiaryTypesSearchRepository != null) {
+            ultimateBeneficiaryTypesSearchRepository.deleteById(id);
+        }
     }
 
     @Override

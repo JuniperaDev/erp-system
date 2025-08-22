@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.NetBookValueEntryMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class NetBookValueEntryServiceImpl implements NetBookValueEntryService {
     public NetBookValueEntryServiceImpl(
         NetBookValueEntryRepository netBookValueEntryRepository,
         NetBookValueEntryMapper netBookValueEntryMapper,
-        NetBookValueEntrySearchRepository netBookValueEntrySearchRepository
+        @Autowired(required = false) NetBookValueEntrySearchRepository netBookValueEntrySearchRepository
     ) {
         this.netBookValueEntryRepository = netBookValueEntryRepository;
         this.netBookValueEntryMapper = netBookValueEntryMapper;
@@ -65,7 +66,9 @@ public class NetBookValueEntryServiceImpl implements NetBookValueEntryService {
         NetBookValueEntry netBookValueEntry = netBookValueEntryMapper.toEntity(netBookValueEntryDTO);
         netBookValueEntry = netBookValueEntryRepository.save(netBookValueEntry);
         NetBookValueEntryDTO result = netBookValueEntryMapper.toDto(netBookValueEntry);
-        netBookValueEntrySearchRepository.save(netBookValueEntry);
+        if (netBookValueEntrySearchRepository != null) {
+            netBookValueEntrySearchRepository.save(netBookValueEntry);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class NetBookValueEntryServiceImpl implements NetBookValueEntryService {
             })
             .map(netBookValueEntryRepository::save)
             .map(savedNetBookValueEntry -> {
-                netBookValueEntrySearchRepository.save(savedNetBookValueEntry);
+                if (netBookValueEntrySearchRepository != null) {
+                    netBookValueEntrySearchRepository.save(savedNetBookValueEntry);
+                }
 
                 return savedNetBookValueEntry;
             })
@@ -111,13 +116,18 @@ public class NetBookValueEntryServiceImpl implements NetBookValueEntryService {
     public void delete(Long id) {
         log.debug("Request to delete NetBookValueEntry : {}", id);
         netBookValueEntryRepository.deleteById(id);
-        netBookValueEntrySearchRepository.deleteById(id);
+        if (netBookValueEntrySearchRepository != null) {
+            netBookValueEntrySearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<NetBookValueEntryDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of NetBookValueEntries for query {}", query);
-        return netBookValueEntrySearchRepository.search(query, pageable).map(netBookValueEntryMapper::toDto);
+        if (netBookValueEntrySearchRepository != null) {
+            return netBookValueEntrySearchRepository.search(query, pageable).map(netBookValueEntryMapper::toDto);
+        }
+        return netBookValueEntryRepository.findAll(pageable).map(netBookValueEntryMapper::toDto);
     }
 }

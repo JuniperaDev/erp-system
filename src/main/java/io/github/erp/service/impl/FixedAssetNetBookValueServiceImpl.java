@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.FixedAssetNetBookValueMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class FixedAssetNetBookValueServiceImpl implements FixedAssetNetBookValue
     public FixedAssetNetBookValueServiceImpl(
         FixedAssetNetBookValueRepository fixedAssetNetBookValueRepository,
         FixedAssetNetBookValueMapper fixedAssetNetBookValueMapper,
-        FixedAssetNetBookValueSearchRepository fixedAssetNetBookValueSearchRepository
+        @Autowired(required = false) FixedAssetNetBookValueSearchRepository fixedAssetNetBookValueSearchRepository
     ) {
         this.fixedAssetNetBookValueRepository = fixedAssetNetBookValueRepository;
         this.fixedAssetNetBookValueMapper = fixedAssetNetBookValueMapper;
@@ -65,7 +66,9 @@ public class FixedAssetNetBookValueServiceImpl implements FixedAssetNetBookValue
         FixedAssetNetBookValue fixedAssetNetBookValue = fixedAssetNetBookValueMapper.toEntity(fixedAssetNetBookValueDTO);
         fixedAssetNetBookValue = fixedAssetNetBookValueRepository.save(fixedAssetNetBookValue);
         FixedAssetNetBookValueDTO result = fixedAssetNetBookValueMapper.toDto(fixedAssetNetBookValue);
-        fixedAssetNetBookValueSearchRepository.save(fixedAssetNetBookValue);
+        if (fixedAssetNetBookValueSearchRepository != null) {
+            fixedAssetNetBookValueSearchRepository.save(fixedAssetNetBookValue);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class FixedAssetNetBookValueServiceImpl implements FixedAssetNetBookValue
             })
             .map(fixedAssetNetBookValueRepository::save)
             .map(savedFixedAssetNetBookValue -> {
-                fixedAssetNetBookValueSearchRepository.save(savedFixedAssetNetBookValue);
+                if (fixedAssetNetBookValueSearchRepository != null) {
+                    fixedAssetNetBookValueSearchRepository.save(savedFixedAssetNetBookValue);
+                }
 
                 return savedFixedAssetNetBookValue;
             })
@@ -111,13 +116,18 @@ public class FixedAssetNetBookValueServiceImpl implements FixedAssetNetBookValue
     public void delete(Long id) {
         log.debug("Request to delete FixedAssetNetBookValue : {}", id);
         fixedAssetNetBookValueRepository.deleteById(id);
-        fixedAssetNetBookValueSearchRepository.deleteById(id);
+        if (fixedAssetNetBookValueSearchRepository != null) {
+            fixedAssetNetBookValueSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<FixedAssetNetBookValueDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of FixedAssetNetBookValues for query {}", query);
-        return fixedAssetNetBookValueSearchRepository.search(query, pageable).map(fixedAssetNetBookValueMapper::toDto);
+        if (fixedAssetNetBookValueSearchRepository != null) {
+            return fixedAssetNetBookValueSearchRepository.search(query, pageable).map(fixedAssetNetBookValueMapper::toDto);
+        }
+        return fixedAssetNetBookValueRepository.findAll(pageable).map(fixedAssetNetBookValueMapper::toDto);
     }
 }

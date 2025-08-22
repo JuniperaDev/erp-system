@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.WIPTransferListReportMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class WIPTransferListReportServiceImpl implements WIPTransferListReportSe
     public WIPTransferListReportServiceImpl(
         WIPTransferListReportRepository wIPTransferListReportRepository,
         WIPTransferListReportMapper wIPTransferListReportMapper,
-        WIPTransferListReportSearchRepository wIPTransferListReportSearchRepository
+        @Autowired(required = false) WIPTransferListReportSearchRepository wIPTransferListReportSearchRepository
     ) {
         this.wIPTransferListReportRepository = wIPTransferListReportRepository;
         this.wIPTransferListReportMapper = wIPTransferListReportMapper;
@@ -65,7 +66,9 @@ public class WIPTransferListReportServiceImpl implements WIPTransferListReportSe
         WIPTransferListReport wIPTransferListReport = wIPTransferListReportMapper.toEntity(wIPTransferListReportDTO);
         wIPTransferListReport = wIPTransferListReportRepository.save(wIPTransferListReport);
         WIPTransferListReportDTO result = wIPTransferListReportMapper.toDto(wIPTransferListReport);
-        wIPTransferListReportSearchRepository.save(wIPTransferListReport);
+        if (wIPTransferListReportSearchRepository != null) {
+            wIPTransferListReportSearchRepository.save(wIPTransferListReport);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class WIPTransferListReportServiceImpl implements WIPTransferListReportSe
             })
             .map(wIPTransferListReportRepository::save)
             .map(savedWIPTransferListReport -> {
-                wIPTransferListReportSearchRepository.save(savedWIPTransferListReport);
+                if (wIPTransferListReportSearchRepository != null) {
+                    wIPTransferListReportSearchRepository.save(savedWIPTransferListReport);
+                }
 
                 return savedWIPTransferListReport;
             })
@@ -107,13 +112,18 @@ public class WIPTransferListReportServiceImpl implements WIPTransferListReportSe
     public void delete(Long id) {
         log.debug("Request to delete WIPTransferListReport : {}", id);
         wIPTransferListReportRepository.deleteById(id);
-        wIPTransferListReportSearchRepository.deleteById(id);
+        if (wIPTransferListReportSearchRepository != null) {
+            wIPTransferListReportSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<WIPTransferListReportDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of WIPTransferListReports for query {}", query);
-        return wIPTransferListReportSearchRepository.search(query, pageable).map(wIPTransferListReportMapper::toDto);
+        if (wIPTransferListReportSearchRepository != null) {
+            return wIPTransferListReportSearchRepository.search(query, pageable).map(wIPTransferListReportMapper::toDto);
+        }
+        return wIPTransferListReportRepository.findAll(pageable).map(wIPTransferListReportMapper::toDto);
     }
 }

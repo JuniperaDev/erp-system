@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.ProcessStatusMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class ProcessStatusServiceImpl implements ProcessStatusService {
     public ProcessStatusServiceImpl(
         ProcessStatusRepository processStatusRepository,
         ProcessStatusMapper processStatusMapper,
-        ProcessStatusSearchRepository processStatusSearchRepository
+        @Autowired(required = false) ProcessStatusSearchRepository processStatusSearchRepository
     ) {
         this.processStatusRepository = processStatusRepository;
         this.processStatusMapper = processStatusMapper;
@@ -65,7 +66,9 @@ public class ProcessStatusServiceImpl implements ProcessStatusService {
         ProcessStatus processStatus = processStatusMapper.toEntity(processStatusDTO);
         processStatus = processStatusRepository.save(processStatus);
         ProcessStatusDTO result = processStatusMapper.toDto(processStatus);
-        processStatusSearchRepository.save(processStatus);
+        if (processStatusSearchRepository != null) {
+            processStatusSearchRepository.save(processStatus);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class ProcessStatusServiceImpl implements ProcessStatusService {
             })
             .map(processStatusRepository::save)
             .map(savedProcessStatus -> {
-                processStatusSearchRepository.save(savedProcessStatus);
+                if (processStatusSearchRepository != null) {
+                    processStatusSearchRepository.save(savedProcessStatus);
+                }
 
                 return savedProcessStatus;
             })
@@ -111,13 +116,18 @@ public class ProcessStatusServiceImpl implements ProcessStatusService {
     public void delete(Long id) {
         log.debug("Request to delete ProcessStatus : {}", id);
         processStatusRepository.deleteById(id);
-        processStatusSearchRepository.deleteById(id);
+        if (processStatusSearchRepository != null) {
+            processStatusSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ProcessStatusDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of ProcessStatuses for query {}", query);
-        return processStatusSearchRepository.search(query, pageable).map(processStatusMapper::toDto);
+        if (processStatusSearchRepository != null) {
+            return processStatusSearchRepository.search(query, pageable).map(processStatusMapper::toDto);
+        }
+        return processStatusRepository.findAll(pageable).map(processStatusMapper::toDto);
     }
 }

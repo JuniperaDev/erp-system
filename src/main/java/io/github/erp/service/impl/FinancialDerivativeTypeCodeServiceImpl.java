@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.FinancialDerivativeTypeCodeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class FinancialDerivativeTypeCodeServiceImpl implements FinancialDerivati
     public FinancialDerivativeTypeCodeServiceImpl(
         FinancialDerivativeTypeCodeRepository financialDerivativeTypeCodeRepository,
         FinancialDerivativeTypeCodeMapper financialDerivativeTypeCodeMapper,
-        FinancialDerivativeTypeCodeSearchRepository financialDerivativeTypeCodeSearchRepository
+        @Autowired(required = false) FinancialDerivativeTypeCodeSearchRepository financialDerivativeTypeCodeSearchRepository
     ) {
         this.financialDerivativeTypeCodeRepository = financialDerivativeTypeCodeRepository;
         this.financialDerivativeTypeCodeMapper = financialDerivativeTypeCodeMapper;
@@ -67,7 +68,9 @@ public class FinancialDerivativeTypeCodeServiceImpl implements FinancialDerivati
         );
         financialDerivativeTypeCode = financialDerivativeTypeCodeRepository.save(financialDerivativeTypeCode);
         FinancialDerivativeTypeCodeDTO result = financialDerivativeTypeCodeMapper.toDto(financialDerivativeTypeCode);
-        financialDerivativeTypeCodeSearchRepository.save(financialDerivativeTypeCode);
+        if (financialDerivativeTypeCodeSearchRepository != null) {
+            financialDerivativeTypeCodeSearchRepository.save(financialDerivativeTypeCode);
+        }
         return result;
     }
 
@@ -84,7 +87,9 @@ public class FinancialDerivativeTypeCodeServiceImpl implements FinancialDerivati
             })
             .map(financialDerivativeTypeCodeRepository::save)
             .map(savedFinancialDerivativeTypeCode -> {
-                financialDerivativeTypeCodeSearchRepository.save(savedFinancialDerivativeTypeCode);
+                if (financialDerivativeTypeCodeSearchRepository != null) {
+                    financialDerivativeTypeCodeSearchRepository.save(savedFinancialDerivativeTypeCode);
+                }
 
                 return savedFinancialDerivativeTypeCode;
             })
@@ -109,13 +114,18 @@ public class FinancialDerivativeTypeCodeServiceImpl implements FinancialDerivati
     public void delete(Long id) {
         log.debug("Request to delete FinancialDerivativeTypeCode : {}", id);
         financialDerivativeTypeCodeRepository.deleteById(id);
-        financialDerivativeTypeCodeSearchRepository.deleteById(id);
+        if (financialDerivativeTypeCodeSearchRepository != null) {
+            financialDerivativeTypeCodeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<FinancialDerivativeTypeCodeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of FinancialDerivativeTypeCodes for query {}", query);
-        return financialDerivativeTypeCodeSearchRepository.search(query, pageable).map(financialDerivativeTypeCodeMapper::toDto);
+        if (financialDerivativeTypeCodeSearchRepository != null) {
+            return financialDerivativeTypeCodeSearchRepository.search(query, pageable).map(financialDerivativeTypeCodeMapper::toDto);
+        }
+        return financialDerivativeTypeCodeRepository.findAll(pageable).map(financialDerivativeTypeCodeMapper::toDto);
     }
 }

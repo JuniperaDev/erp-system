@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AccountStatusTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AccountStatusTypeServiceImpl implements AccountStatusTypeService {
     public AccountStatusTypeServiceImpl(
         AccountStatusTypeRepository accountStatusTypeRepository,
         AccountStatusTypeMapper accountStatusTypeMapper,
-        AccountStatusTypeSearchRepository accountStatusTypeSearchRepository
+        @Autowired(required = false) AccountStatusTypeSearchRepository accountStatusTypeSearchRepository
     ) {
         this.accountStatusTypeRepository = accountStatusTypeRepository;
         this.accountStatusTypeMapper = accountStatusTypeMapper;
@@ -65,7 +66,9 @@ public class AccountStatusTypeServiceImpl implements AccountStatusTypeService {
         AccountStatusType accountStatusType = accountStatusTypeMapper.toEntity(accountStatusTypeDTO);
         accountStatusType = accountStatusTypeRepository.save(accountStatusType);
         AccountStatusTypeDTO result = accountStatusTypeMapper.toDto(accountStatusType);
-        accountStatusTypeSearchRepository.save(accountStatusType);
+        if (accountStatusTypeSearchRepository != null) {
+            accountStatusTypeSearchRepository.save(accountStatusType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AccountStatusTypeServiceImpl implements AccountStatusTypeService {
             })
             .map(accountStatusTypeRepository::save)
             .map(savedAccountStatusType -> {
-                accountStatusTypeSearchRepository.save(savedAccountStatusType);
+                if (accountStatusTypeSearchRepository != null) {
+                    accountStatusTypeSearchRepository.save(savedAccountStatusType);
+                }
 
                 return savedAccountStatusType;
             })
@@ -107,13 +112,18 @@ public class AccountStatusTypeServiceImpl implements AccountStatusTypeService {
     public void delete(Long id) {
         log.debug("Request to delete AccountStatusType : {}", id);
         accountStatusTypeRepository.deleteById(id);
-        accountStatusTypeSearchRepository.deleteById(id);
+        if (accountStatusTypeSearchRepository != null) {
+            accountStatusTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AccountStatusTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AccountStatusTypes for query {}", query);
-        return accountStatusTypeSearchRepository.search(query, pageable).map(accountStatusTypeMapper::toDto);
+        if (accountStatusTypeSearchRepository != null) {
+            return accountStatusTypeSearchRepository.search(query, pageable).map(accountStatusTypeMapper::toDto);
+        }
+        return accountStatusTypeRepository.findAll(pageable).map(accountStatusTypeMapper::toDto);
     }
 }

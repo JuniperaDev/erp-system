@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.OutletTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class OutletTypeServiceImpl implements OutletTypeService {
     public OutletTypeServiceImpl(
         OutletTypeRepository outletTypeRepository,
         OutletTypeMapper outletTypeMapper,
-        OutletTypeSearchRepository outletTypeSearchRepository
+        @Autowired(required = false) OutletTypeSearchRepository outletTypeSearchRepository
     ) {
         this.outletTypeRepository = outletTypeRepository;
         this.outletTypeMapper = outletTypeMapper;
@@ -65,7 +66,9 @@ public class OutletTypeServiceImpl implements OutletTypeService {
         OutletType outletType = outletTypeMapper.toEntity(outletTypeDTO);
         outletType = outletTypeRepository.save(outletType);
         OutletTypeDTO result = outletTypeMapper.toDto(outletType);
-        outletTypeSearchRepository.save(outletType);
+        if (outletTypeSearchRepository != null) {
+            outletTypeSearchRepository.save(outletType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class OutletTypeServiceImpl implements OutletTypeService {
             })
             .map(outletTypeRepository::save)
             .map(savedOutletType -> {
-                outletTypeSearchRepository.save(savedOutletType);
+                if (outletTypeSearchRepository != null) {
+                    outletTypeSearchRepository.save(savedOutletType);
+                }
 
                 return savedOutletType;
             })
@@ -111,13 +116,18 @@ public class OutletTypeServiceImpl implements OutletTypeService {
     public void delete(Long id) {
         log.debug("Request to delete OutletType : {}", id);
         outletTypeRepository.deleteById(id);
-        outletTypeSearchRepository.deleteById(id);
+        if (outletTypeSearchRepository != null) {
+            outletTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<OutletTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of OutletTypes for query {}", query);
-        return outletTypeSearchRepository.search(query, pageable).map(outletTypeMapper::toDto);
+        if (outletTypeSearchRepository != null) {
+            return outletTypeSearchRepository.search(query, pageable).map(outletTypeMapper::toDto);
+        }
+        return outletTypeRepository.findAll(pageable).map(outletTypeMapper::toDto);
     }
 }

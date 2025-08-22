@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.OutletStatusMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class OutletStatusServiceImpl implements OutletStatusService {
     public OutletStatusServiceImpl(
         OutletStatusRepository outletStatusRepository,
         OutletStatusMapper outletStatusMapper,
-        OutletStatusSearchRepository outletStatusSearchRepository
+        @Autowired(required = false) OutletStatusSearchRepository outletStatusSearchRepository
     ) {
         this.outletStatusRepository = outletStatusRepository;
         this.outletStatusMapper = outletStatusMapper;
@@ -65,7 +66,9 @@ public class OutletStatusServiceImpl implements OutletStatusService {
         OutletStatus outletStatus = outletStatusMapper.toEntity(outletStatusDTO);
         outletStatus = outletStatusRepository.save(outletStatus);
         OutletStatusDTO result = outletStatusMapper.toDto(outletStatus);
-        outletStatusSearchRepository.save(outletStatus);
+        if (outletStatusSearchRepository != null) {
+            outletStatusSearchRepository.save(outletStatus);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class OutletStatusServiceImpl implements OutletStatusService {
             })
             .map(outletStatusRepository::save)
             .map(savedOutletStatus -> {
-                outletStatusSearchRepository.save(savedOutletStatus);
+                if (outletStatusSearchRepository != null) {
+                    outletStatusSearchRepository.save(savedOutletStatus);
+                }
 
                 return savedOutletStatus;
             })
@@ -111,13 +116,18 @@ public class OutletStatusServiceImpl implements OutletStatusService {
     public void delete(Long id) {
         log.debug("Request to delete OutletStatus : {}", id);
         outletStatusRepository.deleteById(id);
-        outletStatusSearchRepository.deleteById(id);
+        if (outletStatusSearchRepository != null) {
+            outletStatusSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<OutletStatusDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of OutletStatuses for query {}", query);
-        return outletStatusSearchRepository.search(query, pageable).map(outletStatusMapper::toDto);
+        if (outletStatusSearchRepository != null) {
+            return outletStatusSearchRepository.search(query, pageable).map(outletStatusMapper::toDto);
+        }
+        return outletStatusRepository.findAll(pageable).map(outletStatusMapper::toDto);
     }
 }

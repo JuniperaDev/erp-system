@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.DepartmentTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class DepartmentTypeServiceImpl implements DepartmentTypeService {
     public DepartmentTypeServiceImpl(
         DepartmentTypeRepository departmentTypeRepository,
         DepartmentTypeMapper departmentTypeMapper,
-        DepartmentTypeSearchRepository departmentTypeSearchRepository
+        @Autowired(required = false) DepartmentTypeSearchRepository departmentTypeSearchRepository
     ) {
         this.departmentTypeRepository = departmentTypeRepository;
         this.departmentTypeMapper = departmentTypeMapper;
@@ -65,7 +66,9 @@ public class DepartmentTypeServiceImpl implements DepartmentTypeService {
         DepartmentType departmentType = departmentTypeMapper.toEntity(departmentTypeDTO);
         departmentType = departmentTypeRepository.save(departmentType);
         DepartmentTypeDTO result = departmentTypeMapper.toDto(departmentType);
-        departmentTypeSearchRepository.save(departmentType);
+        if (departmentTypeSearchRepository != null) {
+            departmentTypeSearchRepository.save(departmentType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class DepartmentTypeServiceImpl implements DepartmentTypeService {
             })
             .map(departmentTypeRepository::save)
             .map(savedDepartmentType -> {
-                departmentTypeSearchRepository.save(savedDepartmentType);
+                if (departmentTypeSearchRepository != null) {
+                    departmentTypeSearchRepository.save(savedDepartmentType);
+                }
 
                 return savedDepartmentType;
             })
@@ -111,13 +116,18 @@ public class DepartmentTypeServiceImpl implements DepartmentTypeService {
     public void delete(Long id) {
         log.debug("Request to delete DepartmentType : {}", id);
         departmentTypeRepository.deleteById(id);
-        departmentTypeSearchRepository.deleteById(id);
+        if (departmentTypeSearchRepository != null) {
+            departmentTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<DepartmentTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of DepartmentTypes for query {}", query);
-        return departmentTypeSearchRepository.search(query, pageable).map(departmentTypeMapper::toDto);
+        if (departmentTypeSearchRepository != null) {
+            return departmentTypeSearchRepository.search(query, pageable).map(departmentTypeMapper::toDto);
+        }
+        return departmentTypeRepository.findAll(pageable).map(departmentTypeMapper::toDto);
     }
 }

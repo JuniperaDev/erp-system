@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.PrepaymentAmortizationMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class PrepaymentAmortizationServiceImpl implements PrepaymentAmortization
     public PrepaymentAmortizationServiceImpl(
         PrepaymentAmortizationRepository prepaymentAmortizationRepository,
         PrepaymentAmortizationMapper prepaymentAmortizationMapper,
-        PrepaymentAmortizationSearchRepository prepaymentAmortizationSearchRepository
+        @Autowired(required = false) PrepaymentAmortizationSearchRepository prepaymentAmortizationSearchRepository
     ) {
         this.prepaymentAmortizationRepository = prepaymentAmortizationRepository;
         this.prepaymentAmortizationMapper = prepaymentAmortizationMapper;
@@ -65,7 +66,9 @@ public class PrepaymentAmortizationServiceImpl implements PrepaymentAmortization
         PrepaymentAmortization prepaymentAmortization = prepaymentAmortizationMapper.toEntity(prepaymentAmortizationDTO);
         prepaymentAmortization = prepaymentAmortizationRepository.save(prepaymentAmortization);
         PrepaymentAmortizationDTO result = prepaymentAmortizationMapper.toDto(prepaymentAmortization);
-        prepaymentAmortizationSearchRepository.save(prepaymentAmortization);
+        if (prepaymentAmortizationSearchRepository != null) {
+            prepaymentAmortizationSearchRepository.save(prepaymentAmortization);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class PrepaymentAmortizationServiceImpl implements PrepaymentAmortization
             })
             .map(prepaymentAmortizationRepository::save)
             .map(savedPrepaymentAmortization -> {
-                prepaymentAmortizationSearchRepository.save(savedPrepaymentAmortization);
+                if (prepaymentAmortizationSearchRepository != null) {
+                    prepaymentAmortizationSearchRepository.save(savedPrepaymentAmortization);
+                }
 
                 return savedPrepaymentAmortization;
             })
@@ -111,13 +116,18 @@ public class PrepaymentAmortizationServiceImpl implements PrepaymentAmortization
     public void delete(Long id) {
         log.debug("Request to delete PrepaymentAmortization : {}", id);
         prepaymentAmortizationRepository.deleteById(id);
-        prepaymentAmortizationSearchRepository.deleteById(id);
+        if (prepaymentAmortizationSearchRepository != null) {
+            prepaymentAmortizationSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<PrepaymentAmortizationDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of PrepaymentAmortizations for query {}", query);
-        return prepaymentAmortizationSearchRepository.search(query, pageable).map(prepaymentAmortizationMapper::toDto);
+        if (prepaymentAmortizationSearchRepository != null) {
+            return prepaymentAmortizationSearchRepository.search(query, pageable).map(prepaymentAmortizationMapper::toDto);
+        }
+        return prepaymentAmortizationRepository.findAll(pageable).map(prepaymentAmortizationMapper::toDto);
     }
 }

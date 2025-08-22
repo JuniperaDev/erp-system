@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CardFraudIncidentCategoryMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CardFraudIncidentCategoryServiceImpl implements CardFraudIncidentCa
     public CardFraudIncidentCategoryServiceImpl(
         CardFraudIncidentCategoryRepository cardFraudIncidentCategoryRepository,
         CardFraudIncidentCategoryMapper cardFraudIncidentCategoryMapper,
-        CardFraudIncidentCategorySearchRepository cardFraudIncidentCategorySearchRepository
+        @Autowired(required = false) CardFraudIncidentCategorySearchRepository cardFraudIncidentCategorySearchRepository
     ) {
         this.cardFraudIncidentCategoryRepository = cardFraudIncidentCategoryRepository;
         this.cardFraudIncidentCategoryMapper = cardFraudIncidentCategoryMapper;
@@ -65,7 +66,9 @@ public class CardFraudIncidentCategoryServiceImpl implements CardFraudIncidentCa
         CardFraudIncidentCategory cardFraudIncidentCategory = cardFraudIncidentCategoryMapper.toEntity(cardFraudIncidentCategoryDTO);
         cardFraudIncidentCategory = cardFraudIncidentCategoryRepository.save(cardFraudIncidentCategory);
         CardFraudIncidentCategoryDTO result = cardFraudIncidentCategoryMapper.toDto(cardFraudIncidentCategory);
-        cardFraudIncidentCategorySearchRepository.save(cardFraudIncidentCategory);
+        if (cardFraudIncidentCategorySearchRepository != null) {
+            cardFraudIncidentCategorySearchRepository.save(cardFraudIncidentCategory);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CardFraudIncidentCategoryServiceImpl implements CardFraudIncidentCa
             })
             .map(cardFraudIncidentCategoryRepository::save)
             .map(savedCardFraudIncidentCategory -> {
-                cardFraudIncidentCategorySearchRepository.save(savedCardFraudIncidentCategory);
+                if (cardFraudIncidentCategorySearchRepository != null) {
+                    cardFraudIncidentCategorySearchRepository.save(savedCardFraudIncidentCategory);
+                }
 
                 return savedCardFraudIncidentCategory;
             })
@@ -107,7 +112,9 @@ public class CardFraudIncidentCategoryServiceImpl implements CardFraudIncidentCa
     public void delete(Long id) {
         log.debug("Request to delete CardFraudIncidentCategory : {}", id);
         cardFraudIncidentCategoryRepository.deleteById(id);
-        cardFraudIncidentCategorySearchRepository.deleteById(id);
+        if (cardFraudIncidentCategorySearchRepository != null) {
+            cardFraudIncidentCategorySearchRepository.deleteById(id);
+        }
     }
 
     @Override

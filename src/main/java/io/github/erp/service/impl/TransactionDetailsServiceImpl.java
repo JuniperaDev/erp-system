@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.TransactionDetailsMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class TransactionDetailsServiceImpl implements TransactionDetailsService 
     public TransactionDetailsServiceImpl(
         TransactionDetailsRepository transactionDetailsRepository,
         TransactionDetailsMapper transactionDetailsMapper,
-        TransactionDetailsSearchRepository transactionDetailsSearchRepository
+        @Autowired(required = false) TransactionDetailsSearchRepository transactionDetailsSearchRepository
     ) {
         this.transactionDetailsRepository = transactionDetailsRepository;
         this.transactionDetailsMapper = transactionDetailsMapper;
@@ -65,7 +66,9 @@ public class TransactionDetailsServiceImpl implements TransactionDetailsService 
         TransactionDetails transactionDetails = transactionDetailsMapper.toEntity(transactionDetailsDTO);
         transactionDetails = transactionDetailsRepository.save(transactionDetails);
         TransactionDetailsDTO result = transactionDetailsMapper.toDto(transactionDetails);
-        transactionDetailsSearchRepository.save(transactionDetails);
+        if (transactionDetailsSearchRepository != null) {
+            transactionDetailsSearchRepository.save(transactionDetails);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class TransactionDetailsServiceImpl implements TransactionDetailsService 
             })
             .map(transactionDetailsRepository::save)
             .map(savedTransactionDetails -> {
-                transactionDetailsSearchRepository.save(savedTransactionDetails);
+                if (transactionDetailsSearchRepository != null) {
+                    transactionDetailsSearchRepository.save(savedTransactionDetails);
+                }
 
                 return savedTransactionDetails;
             })
@@ -111,13 +116,18 @@ public class TransactionDetailsServiceImpl implements TransactionDetailsService 
     public void delete(Long id) {
         log.debug("Request to delete TransactionDetails : {}", id);
         transactionDetailsRepository.deleteById(id);
-        transactionDetailsSearchRepository.deleteById(id);
+        if (transactionDetailsSearchRepository != null) {
+            transactionDetailsSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<TransactionDetailsDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of TransactionDetails for query {}", query);
-        return transactionDetailsSearchRepository.search(query, pageable).map(transactionDetailsMapper::toDto);
+        if (transactionDetailsSearchRepository != null) {
+            return transactionDetailsSearchRepository.search(query, pageable).map(transactionDetailsMapper::toDto);
+        }
+        return transactionDetailsRepository.findAll(pageable).map(transactionDetailsMapper::toDto);
     }
 }

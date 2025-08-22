@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CustomerIDDocumentTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CustomerIDDocumentTypeServiceImpl implements CustomerIDDocumentType
     public CustomerIDDocumentTypeServiceImpl(
         CustomerIDDocumentTypeRepository customerIDDocumentTypeRepository,
         CustomerIDDocumentTypeMapper customerIDDocumentTypeMapper,
-        CustomerIDDocumentTypeSearchRepository customerIDDocumentTypeSearchRepository
+        @Autowired(required = false) CustomerIDDocumentTypeSearchRepository customerIDDocumentTypeSearchRepository
     ) {
         this.customerIDDocumentTypeRepository = customerIDDocumentTypeRepository;
         this.customerIDDocumentTypeMapper = customerIDDocumentTypeMapper;
@@ -65,7 +66,9 @@ public class CustomerIDDocumentTypeServiceImpl implements CustomerIDDocumentType
         CustomerIDDocumentType customerIDDocumentType = customerIDDocumentTypeMapper.toEntity(customerIDDocumentTypeDTO);
         customerIDDocumentType = customerIDDocumentTypeRepository.save(customerIDDocumentType);
         CustomerIDDocumentTypeDTO result = customerIDDocumentTypeMapper.toDto(customerIDDocumentType);
-        customerIDDocumentTypeSearchRepository.save(customerIDDocumentType);
+        if (customerIDDocumentTypeSearchRepository != null) {
+            customerIDDocumentTypeSearchRepository.save(customerIDDocumentType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CustomerIDDocumentTypeServiceImpl implements CustomerIDDocumentType
             })
             .map(customerIDDocumentTypeRepository::save)
             .map(savedCustomerIDDocumentType -> {
-                customerIDDocumentTypeSearchRepository.save(savedCustomerIDDocumentType);
+                if (customerIDDocumentTypeSearchRepository != null) {
+                    customerIDDocumentTypeSearchRepository.save(savedCustomerIDDocumentType);
+                }
 
                 return savedCustomerIDDocumentType;
             })
@@ -111,13 +116,18 @@ public class CustomerIDDocumentTypeServiceImpl implements CustomerIDDocumentType
     public void delete(Long id) {
         log.debug("Request to delete CustomerIDDocumentType : {}", id);
         customerIDDocumentTypeRepository.deleteById(id);
-        customerIDDocumentTypeSearchRepository.deleteById(id);
+        if (customerIDDocumentTypeSearchRepository != null) {
+            customerIDDocumentTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CustomerIDDocumentTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CustomerIDDocumentTypes for query {}", query);
-        return customerIDDocumentTypeSearchRepository.search(query, pageable).map(customerIDDocumentTypeMapper::toDto);
+        if (customerIDDocumentTypeSearchRepository != null) {
+            return customerIDDocumentTypeSearchRepository.search(query, pageable).map(customerIDDocumentTypeMapper::toDto);
+        }
+        return customerIDDocumentTypeRepository.findAll(pageable).map(customerIDDocumentTypeMapper::toDto);
     }
 }

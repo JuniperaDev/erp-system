@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.ServiceOutletMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class ServiceOutletServiceImpl implements ServiceOutletService {
     public ServiceOutletServiceImpl(
         ServiceOutletRepository serviceOutletRepository,
         ServiceOutletMapper serviceOutletMapper,
-        ServiceOutletSearchRepository serviceOutletSearchRepository
+        @Autowired(required = false) ServiceOutletSearchRepository serviceOutletSearchRepository
     ) {
         this.serviceOutletRepository = serviceOutletRepository;
         this.serviceOutletMapper = serviceOutletMapper;
@@ -65,7 +66,9 @@ public class ServiceOutletServiceImpl implements ServiceOutletService {
         ServiceOutlet serviceOutlet = serviceOutletMapper.toEntity(serviceOutletDTO);
         serviceOutlet = serviceOutletRepository.save(serviceOutlet);
         ServiceOutletDTO result = serviceOutletMapper.toDto(serviceOutlet);
-        serviceOutletSearchRepository.save(serviceOutlet);
+        if (serviceOutletSearchRepository != null) {
+            serviceOutletSearchRepository.save(serviceOutlet);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class ServiceOutletServiceImpl implements ServiceOutletService {
             })
             .map(serviceOutletRepository::save)
             .map(savedServiceOutlet -> {
-                serviceOutletSearchRepository.save(savedServiceOutlet);
+                if (serviceOutletSearchRepository != null) {
+                    serviceOutletSearchRepository.save(savedServiceOutlet);
+                }
 
                 return savedServiceOutlet;
             })
@@ -111,13 +116,18 @@ public class ServiceOutletServiceImpl implements ServiceOutletService {
     public void delete(Long id) {
         log.debug("Request to delete ServiceOutlet : {}", id);
         serviceOutletRepository.deleteById(id);
-        serviceOutletSearchRepository.deleteById(id);
+        if (serviceOutletSearchRepository != null) {
+            serviceOutletSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ServiceOutletDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of ServiceOutlets for query {}", query);
-        return serviceOutletSearchRepository.search(query, pageable).map(serviceOutletMapper::toDto);
+        if (serviceOutletSearchRepository != null) {
+            return serviceOutletSearchRepository.search(query, pageable).map(serviceOutletMapper::toDto);
+        }
+        return serviceOutletRepository.findAll(pageable).map(serviceOutletMapper::toDto);
     }
 }

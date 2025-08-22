@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.ChannelTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class ChannelTypeServiceImpl implements ChannelTypeService {
     public ChannelTypeServiceImpl(
         ChannelTypeRepository channelTypeRepository,
         ChannelTypeMapper channelTypeMapper,
-        ChannelTypeSearchRepository channelTypeSearchRepository
+        @Autowired(required = false) ChannelTypeSearchRepository channelTypeSearchRepository
     ) {
         this.channelTypeRepository = channelTypeRepository;
         this.channelTypeMapper = channelTypeMapper;
@@ -65,7 +66,9 @@ public class ChannelTypeServiceImpl implements ChannelTypeService {
         ChannelType channelType = channelTypeMapper.toEntity(channelTypeDTO);
         channelType = channelTypeRepository.save(channelType);
         ChannelTypeDTO result = channelTypeMapper.toDto(channelType);
-        channelTypeSearchRepository.save(channelType);
+        if (channelTypeSearchRepository != null) {
+            channelTypeSearchRepository.save(channelType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class ChannelTypeServiceImpl implements ChannelTypeService {
             })
             .map(channelTypeRepository::save)
             .map(savedChannelType -> {
-                channelTypeSearchRepository.save(savedChannelType);
+                if (channelTypeSearchRepository != null) {
+                    channelTypeSearchRepository.save(savedChannelType);
+                }
 
                 return savedChannelType;
             })
@@ -107,13 +112,18 @@ public class ChannelTypeServiceImpl implements ChannelTypeService {
     public void delete(Long id) {
         log.debug("Request to delete ChannelType : {}", id);
         channelTypeRepository.deleteById(id);
-        channelTypeSearchRepository.deleteById(id);
+        if (channelTypeSearchRepository != null) {
+            channelTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ChannelTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of ChannelTypes for query {}", query);
-        return channelTypeSearchRepository.search(query, pageable).map(channelTypeMapper::toDto);
+        if (channelTypeSearchRepository != null) {
+            return channelTypeSearchRepository.search(query, pageable).map(channelTypeMapper::toDto);
+        }
+        return channelTypeRepository.findAll(pageable).map(channelTypeMapper::toDto);
     }
 }

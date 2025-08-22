@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CurrencyAuthenticityFlagMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CurrencyAuthenticityFlagServiceImpl implements CurrencyAuthenticity
     public CurrencyAuthenticityFlagServiceImpl(
         CurrencyAuthenticityFlagRepository currencyAuthenticityFlagRepository,
         CurrencyAuthenticityFlagMapper currencyAuthenticityFlagMapper,
-        CurrencyAuthenticityFlagSearchRepository currencyAuthenticityFlagSearchRepository
+        @Autowired(required = false) CurrencyAuthenticityFlagSearchRepository currencyAuthenticityFlagSearchRepository
     ) {
         this.currencyAuthenticityFlagRepository = currencyAuthenticityFlagRepository;
         this.currencyAuthenticityFlagMapper = currencyAuthenticityFlagMapper;
@@ -65,7 +66,9 @@ public class CurrencyAuthenticityFlagServiceImpl implements CurrencyAuthenticity
         CurrencyAuthenticityFlag currencyAuthenticityFlag = currencyAuthenticityFlagMapper.toEntity(currencyAuthenticityFlagDTO);
         currencyAuthenticityFlag = currencyAuthenticityFlagRepository.save(currencyAuthenticityFlag);
         CurrencyAuthenticityFlagDTO result = currencyAuthenticityFlagMapper.toDto(currencyAuthenticityFlag);
-        currencyAuthenticityFlagSearchRepository.save(currencyAuthenticityFlag);
+        if (currencyAuthenticityFlagSearchRepository != null) {
+            currencyAuthenticityFlagSearchRepository.save(currencyAuthenticityFlag);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CurrencyAuthenticityFlagServiceImpl implements CurrencyAuthenticity
             })
             .map(currencyAuthenticityFlagRepository::save)
             .map(savedCurrencyAuthenticityFlag -> {
-                currencyAuthenticityFlagSearchRepository.save(savedCurrencyAuthenticityFlag);
+                if (currencyAuthenticityFlagSearchRepository != null) {
+                    currencyAuthenticityFlagSearchRepository.save(savedCurrencyAuthenticityFlag);
+                }
 
                 return savedCurrencyAuthenticityFlag;
             })
@@ -107,13 +112,18 @@ public class CurrencyAuthenticityFlagServiceImpl implements CurrencyAuthenticity
     public void delete(Long id) {
         log.debug("Request to delete CurrencyAuthenticityFlag : {}", id);
         currencyAuthenticityFlagRepository.deleteById(id);
-        currencyAuthenticityFlagSearchRepository.deleteById(id);
+        if (currencyAuthenticityFlagSearchRepository != null) {
+            currencyAuthenticityFlagSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CurrencyAuthenticityFlagDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CurrencyAuthenticityFlags for query {}", query);
-        return currencyAuthenticityFlagSearchRepository.search(query, pageable).map(currencyAuthenticityFlagMapper::toDto);
+        if (currencyAuthenticityFlagSearchRepository != null) {
+            return currencyAuthenticityFlagSearchRepository.search(query, pageable).map(currencyAuthenticityFlagMapper::toDto);
+        }
+        return currencyAuthenticityFlagRepository.findAll(pageable).map(currencyAuthenticityFlagMapper::toDto);
     }
 }

@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.LoanRepaymentFrequencyMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class LoanRepaymentFrequencyServiceImpl implements LoanRepaymentFrequency
     public LoanRepaymentFrequencyServiceImpl(
         LoanRepaymentFrequencyRepository loanRepaymentFrequencyRepository,
         LoanRepaymentFrequencyMapper loanRepaymentFrequencyMapper,
-        LoanRepaymentFrequencySearchRepository loanRepaymentFrequencySearchRepository
+        @Autowired(required = false) LoanRepaymentFrequencySearchRepository loanRepaymentFrequencySearchRepository
     ) {
         this.loanRepaymentFrequencyRepository = loanRepaymentFrequencyRepository;
         this.loanRepaymentFrequencyMapper = loanRepaymentFrequencyMapper;
@@ -65,7 +66,9 @@ public class LoanRepaymentFrequencyServiceImpl implements LoanRepaymentFrequency
         LoanRepaymentFrequency loanRepaymentFrequency = loanRepaymentFrequencyMapper.toEntity(loanRepaymentFrequencyDTO);
         loanRepaymentFrequency = loanRepaymentFrequencyRepository.save(loanRepaymentFrequency);
         LoanRepaymentFrequencyDTO result = loanRepaymentFrequencyMapper.toDto(loanRepaymentFrequency);
-        loanRepaymentFrequencySearchRepository.save(loanRepaymentFrequency);
+        if (loanRepaymentFrequencySearchRepository != null) {
+            loanRepaymentFrequencySearchRepository.save(loanRepaymentFrequency);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class LoanRepaymentFrequencyServiceImpl implements LoanRepaymentFrequency
             })
             .map(loanRepaymentFrequencyRepository::save)
             .map(savedLoanRepaymentFrequency -> {
-                loanRepaymentFrequencySearchRepository.save(savedLoanRepaymentFrequency);
+                if (loanRepaymentFrequencySearchRepository != null) {
+                    loanRepaymentFrequencySearchRepository.save(savedLoanRepaymentFrequency);
+                }
 
                 return savedLoanRepaymentFrequency;
             })
@@ -107,7 +112,9 @@ public class LoanRepaymentFrequencyServiceImpl implements LoanRepaymentFrequency
     public void delete(Long id) {
         log.debug("Request to delete LoanRepaymentFrequency : {}", id);
         loanRepaymentFrequencyRepository.deleteById(id);
-        loanRepaymentFrequencySearchRepository.deleteById(id);
+        if (loanRepaymentFrequencySearchRepository != null) {
+            loanRepaymentFrequencySearchRepository.deleteById(id);
+        }
     }
 
     @Override

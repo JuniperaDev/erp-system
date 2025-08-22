@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.LeaseLiabilityPostingReportItemMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class LeaseLiabilityPostingReportItemServiceImpl implements LeaseLiabilit
     public LeaseLiabilityPostingReportItemServiceImpl(
         LeaseLiabilityPostingReportItemRepository leaseLiabilityPostingReportItemRepository,
         LeaseLiabilityPostingReportItemMapper leaseLiabilityPostingReportItemMapper,
-        LeaseLiabilityPostingReportItemSearchRepository leaseLiabilityPostingReportItemSearchRepository
+        @Autowired(required = false) LeaseLiabilityPostingReportItemSearchRepository leaseLiabilityPostingReportItemSearchRepository
     ) {
         this.leaseLiabilityPostingReportItemRepository = leaseLiabilityPostingReportItemRepository;
         this.leaseLiabilityPostingReportItemMapper = leaseLiabilityPostingReportItemMapper;
@@ -67,7 +68,9 @@ public class LeaseLiabilityPostingReportItemServiceImpl implements LeaseLiabilit
         );
         leaseLiabilityPostingReportItem = leaseLiabilityPostingReportItemRepository.save(leaseLiabilityPostingReportItem);
         LeaseLiabilityPostingReportItemDTO result = leaseLiabilityPostingReportItemMapper.toDto(leaseLiabilityPostingReportItem);
-        leaseLiabilityPostingReportItemSearchRepository.save(leaseLiabilityPostingReportItem);
+        if (leaseLiabilityPostingReportItemSearchRepository != null) {
+            leaseLiabilityPostingReportItemSearchRepository.save(leaseLiabilityPostingReportItem);
+        }
         return result;
     }
 
@@ -89,7 +92,9 @@ public class LeaseLiabilityPostingReportItemServiceImpl implements LeaseLiabilit
             })
             .map(leaseLiabilityPostingReportItemRepository::save)
             .map(savedLeaseLiabilityPostingReportItem -> {
-                leaseLiabilityPostingReportItemSearchRepository.save(savedLeaseLiabilityPostingReportItem);
+                if (leaseLiabilityPostingReportItemSearchRepository != null) {
+                    leaseLiabilityPostingReportItemSearchRepository.save(savedLeaseLiabilityPostingReportItem);
+                }
 
                 return savedLeaseLiabilityPostingReportItem;
             })
@@ -114,7 +119,9 @@ public class LeaseLiabilityPostingReportItemServiceImpl implements LeaseLiabilit
     public void delete(Long id) {
         log.debug("Request to delete LeaseLiabilityPostingReportItem : {}", id);
         leaseLiabilityPostingReportItemRepository.deleteById(id);
-        leaseLiabilityPostingReportItemSearchRepository.deleteById(id);
+        if (leaseLiabilityPostingReportItemSearchRepository != null) {
+            leaseLiabilityPostingReportItemSearchRepository.deleteById(id);
+        }
     }
 
     @Override

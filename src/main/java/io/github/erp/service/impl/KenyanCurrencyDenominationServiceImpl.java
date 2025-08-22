@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.KenyanCurrencyDenominationMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class KenyanCurrencyDenominationServiceImpl implements KenyanCurrencyDeno
     public KenyanCurrencyDenominationServiceImpl(
         KenyanCurrencyDenominationRepository kenyanCurrencyDenominationRepository,
         KenyanCurrencyDenominationMapper kenyanCurrencyDenominationMapper,
-        KenyanCurrencyDenominationSearchRepository kenyanCurrencyDenominationSearchRepository
+        @Autowired(required = false) KenyanCurrencyDenominationSearchRepository kenyanCurrencyDenominationSearchRepository
     ) {
         this.kenyanCurrencyDenominationRepository = kenyanCurrencyDenominationRepository;
         this.kenyanCurrencyDenominationMapper = kenyanCurrencyDenominationMapper;
@@ -65,7 +66,9 @@ public class KenyanCurrencyDenominationServiceImpl implements KenyanCurrencyDeno
         KenyanCurrencyDenomination kenyanCurrencyDenomination = kenyanCurrencyDenominationMapper.toEntity(kenyanCurrencyDenominationDTO);
         kenyanCurrencyDenomination = kenyanCurrencyDenominationRepository.save(kenyanCurrencyDenomination);
         KenyanCurrencyDenominationDTO result = kenyanCurrencyDenominationMapper.toDto(kenyanCurrencyDenomination);
-        kenyanCurrencyDenominationSearchRepository.save(kenyanCurrencyDenomination);
+        if (kenyanCurrencyDenominationSearchRepository != null) {
+            kenyanCurrencyDenominationSearchRepository.save(kenyanCurrencyDenomination);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class KenyanCurrencyDenominationServiceImpl implements KenyanCurrencyDeno
             })
             .map(kenyanCurrencyDenominationRepository::save)
             .map(savedKenyanCurrencyDenomination -> {
-                kenyanCurrencyDenominationSearchRepository.save(savedKenyanCurrencyDenomination);
+                if (kenyanCurrencyDenominationSearchRepository != null) {
+                    kenyanCurrencyDenominationSearchRepository.save(savedKenyanCurrencyDenomination);
+                }
 
                 return savedKenyanCurrencyDenomination;
             })
@@ -107,7 +112,9 @@ public class KenyanCurrencyDenominationServiceImpl implements KenyanCurrencyDeno
     public void delete(Long id) {
         log.debug("Request to delete KenyanCurrencyDenomination : {}", id);
         kenyanCurrencyDenominationRepository.deleteById(id);
-        kenyanCurrencyDenominationSearchRepository.deleteById(id);
+        if (kenyanCurrencyDenominationSearchRepository != null) {
+            kenyanCurrencyDenominationSearchRepository.deleteById(id);
+        }
     }
 
     @Override

@@ -33,6 +33,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -58,7 +59,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceServiceImpl(
         InvoiceRepository invoiceRepository,
         InvoiceMapper invoiceMapper,
-        InvoiceSearchRepository invoiceSearchRepository,
+        @Autowired(required = false) InvoiceSearchRepository invoiceSearchRepository,
         DomainEventPublisher domainEventPublisher
     ) {
         this.invoiceRepository = invoiceRepository;
@@ -73,7 +74,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         Invoice invoice = invoiceMapper.toEntity(invoiceDTO);
         invoice = invoiceRepository.save(invoice);
         InvoiceDTO result = invoiceMapper.toDto(invoice);
-        invoiceSearchRepository.save(invoice);
+        if (invoiceSearchRepository != null) {
+            invoiceSearchRepository.save(invoice);
+        }
         
         publishInvoiceSettledEvent(invoice);
         
@@ -93,7 +96,9 @@ public class InvoiceServiceImpl implements InvoiceService {
             })
             .map(invoiceRepository::save)
             .map(savedInvoice -> {
-                invoiceSearchRepository.save(savedInvoice);
+                if (invoiceSearchRepository != null) {
+                    invoiceSearchRepository.save(savedInvoice);
+                }
 
                 return savedInvoice;
             })
@@ -122,14 +127,19 @@ public class InvoiceServiceImpl implements InvoiceService {
     public void delete(Long id) {
         log.debug("Request to delete Invoice : {}", id);
         invoiceRepository.deleteById(id);
-        invoiceSearchRepository.deleteById(id);
+        if (invoiceSearchRepository != null) {
+            invoiceSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<InvoiceDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of Invoices for query {}", query);
-        return invoiceSearchRepository.search(query, pageable).map(invoiceMapper::toDto);
+        if (invoiceSearchRepository != null) {
+            return invoiceSearchRepository.search(query, pageable).map(invoiceMapper::toDto);
+        }
+        return invoiceRepository.findAll(pageable).map(invoiceMapper::toDto);
     }
 
     private void publishInvoiceSettledEvent(Invoice invoice) {

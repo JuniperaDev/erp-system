@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AccountAttributeMetadataMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AccountAttributeMetadataServiceImpl implements AccountAttributeMeta
     public AccountAttributeMetadataServiceImpl(
         AccountAttributeMetadataRepository accountAttributeMetadataRepository,
         AccountAttributeMetadataMapper accountAttributeMetadataMapper,
-        AccountAttributeMetadataSearchRepository accountAttributeMetadataSearchRepository
+        @Autowired(required = false) AccountAttributeMetadataSearchRepository accountAttributeMetadataSearchRepository
     ) {
         this.accountAttributeMetadataRepository = accountAttributeMetadataRepository;
         this.accountAttributeMetadataMapper = accountAttributeMetadataMapper;
@@ -65,7 +66,9 @@ public class AccountAttributeMetadataServiceImpl implements AccountAttributeMeta
         AccountAttributeMetadata accountAttributeMetadata = accountAttributeMetadataMapper.toEntity(accountAttributeMetadataDTO);
         accountAttributeMetadata = accountAttributeMetadataRepository.save(accountAttributeMetadata);
         AccountAttributeMetadataDTO result = accountAttributeMetadataMapper.toDto(accountAttributeMetadata);
-        accountAttributeMetadataSearchRepository.save(accountAttributeMetadata);
+        if (accountAttributeMetadataSearchRepository != null) {
+            accountAttributeMetadataSearchRepository.save(accountAttributeMetadata);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AccountAttributeMetadataServiceImpl implements AccountAttributeMeta
             })
             .map(accountAttributeMetadataRepository::save)
             .map(savedAccountAttributeMetadata -> {
-                accountAttributeMetadataSearchRepository.save(savedAccountAttributeMetadata);
+                if (accountAttributeMetadataSearchRepository != null) {
+                    accountAttributeMetadataSearchRepository.save(savedAccountAttributeMetadata);
+                }
 
                 return savedAccountAttributeMetadata;
             })
@@ -107,13 +112,18 @@ public class AccountAttributeMetadataServiceImpl implements AccountAttributeMeta
     public void delete(Long id) {
         log.debug("Request to delete AccountAttributeMetadata : {}", id);
         accountAttributeMetadataRepository.deleteById(id);
-        accountAttributeMetadataSearchRepository.deleteById(id);
+        if (accountAttributeMetadataSearchRepository != null) {
+            accountAttributeMetadataSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AccountAttributeMetadataDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AccountAttributeMetadata for query {}", query);
-        return accountAttributeMetadataSearchRepository.search(query, pageable).map(accountAttributeMetadataMapper::toDto);
+        if (accountAttributeMetadataSearchRepository != null) {
+            return accountAttributeMetadataSearchRepository.search(query, pageable).map(accountAttributeMetadataMapper::toDto);
+        }
+        return accountAttributeMetadataRepository.findAll(pageable).map(accountAttributeMetadataMapper::toDto);
     }
 }

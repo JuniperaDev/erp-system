@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.RouDepreciationEntryMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class RouDepreciationEntryServiceImpl implements RouDepreciationEntryServ
     public RouDepreciationEntryServiceImpl(
         RouDepreciationEntryRepository rouDepreciationEntryRepository,
         RouDepreciationEntryMapper rouDepreciationEntryMapper,
-        RouDepreciationEntrySearchRepository rouDepreciationEntrySearchRepository
+        @Autowired(required = false) RouDepreciationEntrySearchRepository rouDepreciationEntrySearchRepository
     ) {
         this.rouDepreciationEntryRepository = rouDepreciationEntryRepository;
         this.rouDepreciationEntryMapper = rouDepreciationEntryMapper;
@@ -65,7 +66,9 @@ public class RouDepreciationEntryServiceImpl implements RouDepreciationEntryServ
         RouDepreciationEntry rouDepreciationEntry = rouDepreciationEntryMapper.toEntity(rouDepreciationEntryDTO);
         rouDepreciationEntry = rouDepreciationEntryRepository.save(rouDepreciationEntry);
         RouDepreciationEntryDTO result = rouDepreciationEntryMapper.toDto(rouDepreciationEntry);
-        rouDepreciationEntrySearchRepository.save(rouDepreciationEntry);
+        if (rouDepreciationEntrySearchRepository != null) {
+            rouDepreciationEntrySearchRepository.save(rouDepreciationEntry);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class RouDepreciationEntryServiceImpl implements RouDepreciationEntryServ
             })
             .map(rouDepreciationEntryRepository::save)
             .map(savedRouDepreciationEntry -> {
-                rouDepreciationEntrySearchRepository.save(savedRouDepreciationEntry);
+                if (rouDepreciationEntrySearchRepository != null) {
+                    rouDepreciationEntrySearchRepository.save(savedRouDepreciationEntry);
+                }
 
                 return savedRouDepreciationEntry;
             })
@@ -107,13 +112,18 @@ public class RouDepreciationEntryServiceImpl implements RouDepreciationEntryServ
     public void delete(Long id) {
         log.debug("Request to delete RouDepreciationEntry : {}", id);
         rouDepreciationEntryRepository.deleteById(id);
-        rouDepreciationEntrySearchRepository.deleteById(id);
+        if (rouDepreciationEntrySearchRepository != null) {
+            rouDepreciationEntrySearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<RouDepreciationEntryDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of RouDepreciationEntries for query {}", query);
-        return rouDepreciationEntrySearchRepository.search(query, pageable).map(rouDepreciationEntryMapper::toDto);
+        if (rouDepreciationEntrySearchRepository != null) {
+            return rouDepreciationEntrySearchRepository.search(query, pageable).map(rouDepreciationEntryMapper::toDto);
+        }
+        return rouDepreciationEntryRepository.findAll(pageable).map(rouDepreciationEntryMapper::toDto);
     }
 }

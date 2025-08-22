@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AnticipatedMaturityPerioodMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AnticipatedMaturityPerioodServiceImpl implements AnticipatedMaturit
     public AnticipatedMaturityPerioodServiceImpl(
         AnticipatedMaturityPerioodRepository anticipatedMaturityPerioodRepository,
         AnticipatedMaturityPerioodMapper anticipatedMaturityPerioodMapper,
-        AnticipatedMaturityPerioodSearchRepository anticipatedMaturityPerioodSearchRepository
+        @Autowired(required = false) AnticipatedMaturityPerioodSearchRepository anticipatedMaturityPerioodSearchRepository
     ) {
         this.anticipatedMaturityPerioodRepository = anticipatedMaturityPerioodRepository;
         this.anticipatedMaturityPerioodMapper = anticipatedMaturityPerioodMapper;
@@ -65,7 +66,9 @@ public class AnticipatedMaturityPerioodServiceImpl implements AnticipatedMaturit
         AnticipatedMaturityPeriood anticipatedMaturityPeriood = anticipatedMaturityPerioodMapper.toEntity(anticipatedMaturityPerioodDTO);
         anticipatedMaturityPeriood = anticipatedMaturityPerioodRepository.save(anticipatedMaturityPeriood);
         AnticipatedMaturityPerioodDTO result = anticipatedMaturityPerioodMapper.toDto(anticipatedMaturityPeriood);
-        anticipatedMaturityPerioodSearchRepository.save(anticipatedMaturityPeriood);
+        if (anticipatedMaturityPerioodSearchRepository != null) {
+            anticipatedMaturityPerioodSearchRepository.save(anticipatedMaturityPeriood);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AnticipatedMaturityPerioodServiceImpl implements AnticipatedMaturit
             })
             .map(anticipatedMaturityPerioodRepository::save)
             .map(savedAnticipatedMaturityPeriood -> {
-                anticipatedMaturityPerioodSearchRepository.save(savedAnticipatedMaturityPeriood);
+                if (anticipatedMaturityPerioodSearchRepository != null) {
+                    anticipatedMaturityPerioodSearchRepository.save(savedAnticipatedMaturityPeriood);
+                }
 
                 return savedAnticipatedMaturityPeriood;
             })
@@ -107,7 +112,9 @@ public class AnticipatedMaturityPerioodServiceImpl implements AnticipatedMaturit
     public void delete(Long id) {
         log.debug("Request to delete AnticipatedMaturityPeriood : {}", id);
         anticipatedMaturityPerioodRepository.deleteById(id);
-        anticipatedMaturityPerioodSearchRepository.deleteById(id);
+        if (anticipatedMaturityPerioodSearchRepository != null) {
+            anticipatedMaturityPerioodSearchRepository.deleteById(id);
+        }
     }
 
     @Override

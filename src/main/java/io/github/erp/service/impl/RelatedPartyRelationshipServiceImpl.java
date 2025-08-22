@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.RelatedPartyRelationshipMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class RelatedPartyRelationshipServiceImpl implements RelatedPartyRelation
     public RelatedPartyRelationshipServiceImpl(
         RelatedPartyRelationshipRepository relatedPartyRelationshipRepository,
         RelatedPartyRelationshipMapper relatedPartyRelationshipMapper,
-        RelatedPartyRelationshipSearchRepository relatedPartyRelationshipSearchRepository
+        @Autowired(required = false) RelatedPartyRelationshipSearchRepository relatedPartyRelationshipSearchRepository
     ) {
         this.relatedPartyRelationshipRepository = relatedPartyRelationshipRepository;
         this.relatedPartyRelationshipMapper = relatedPartyRelationshipMapper;
@@ -65,7 +66,9 @@ public class RelatedPartyRelationshipServiceImpl implements RelatedPartyRelation
         RelatedPartyRelationship relatedPartyRelationship = relatedPartyRelationshipMapper.toEntity(relatedPartyRelationshipDTO);
         relatedPartyRelationship = relatedPartyRelationshipRepository.save(relatedPartyRelationship);
         RelatedPartyRelationshipDTO result = relatedPartyRelationshipMapper.toDto(relatedPartyRelationship);
-        relatedPartyRelationshipSearchRepository.save(relatedPartyRelationship);
+        if (relatedPartyRelationshipSearchRepository != null) {
+            relatedPartyRelationshipSearchRepository.save(relatedPartyRelationship);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class RelatedPartyRelationshipServiceImpl implements RelatedPartyRelation
             })
             .map(relatedPartyRelationshipRepository::save)
             .map(savedRelatedPartyRelationship -> {
-                relatedPartyRelationshipSearchRepository.save(savedRelatedPartyRelationship);
+                if (relatedPartyRelationshipSearchRepository != null) {
+                    relatedPartyRelationshipSearchRepository.save(savedRelatedPartyRelationship);
+                }
 
                 return savedRelatedPartyRelationship;
             })
@@ -107,13 +112,18 @@ public class RelatedPartyRelationshipServiceImpl implements RelatedPartyRelation
     public void delete(Long id) {
         log.debug("Request to delete RelatedPartyRelationship : {}", id);
         relatedPartyRelationshipRepository.deleteById(id);
-        relatedPartyRelationshipSearchRepository.deleteById(id);
+        if (relatedPartyRelationshipSearchRepository != null) {
+            relatedPartyRelationshipSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<RelatedPartyRelationshipDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of RelatedPartyRelationships for query {}", query);
-        return relatedPartyRelationshipSearchRepository.search(query, pageable).map(relatedPartyRelationshipMapper::toDto);
+        if (relatedPartyRelationshipSearchRepository != null) {
+            return relatedPartyRelationshipSearchRepository.search(query, pageable).map(relatedPartyRelationshipMapper::toDto);
+        }
+        return relatedPartyRelationshipRepository.findAll(pageable).map(relatedPartyRelationshipMapper::toDto);
     }
 }

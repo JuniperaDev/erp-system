@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.GdiTransactionDataIndexMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class GdiTransactionDataIndexServiceImpl implements GdiTransactionDataInd
     public GdiTransactionDataIndexServiceImpl(
         GdiTransactionDataIndexRepository gdiTransactionDataIndexRepository,
         GdiTransactionDataIndexMapper gdiTransactionDataIndexMapper,
-        GdiTransactionDataIndexSearchRepository gdiTransactionDataIndexSearchRepository
+        @Autowired(required = false) GdiTransactionDataIndexSearchRepository gdiTransactionDataIndexSearchRepository
     ) {
         this.gdiTransactionDataIndexRepository = gdiTransactionDataIndexRepository;
         this.gdiTransactionDataIndexMapper = gdiTransactionDataIndexMapper;
@@ -65,7 +66,9 @@ public class GdiTransactionDataIndexServiceImpl implements GdiTransactionDataInd
         GdiTransactionDataIndex gdiTransactionDataIndex = gdiTransactionDataIndexMapper.toEntity(gdiTransactionDataIndexDTO);
         gdiTransactionDataIndex = gdiTransactionDataIndexRepository.save(gdiTransactionDataIndex);
         GdiTransactionDataIndexDTO result = gdiTransactionDataIndexMapper.toDto(gdiTransactionDataIndex);
-        gdiTransactionDataIndexSearchRepository.save(gdiTransactionDataIndex);
+        if (gdiTransactionDataIndexSearchRepository != null) {
+            gdiTransactionDataIndexSearchRepository.save(gdiTransactionDataIndex);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class GdiTransactionDataIndexServiceImpl implements GdiTransactionDataInd
             })
             .map(gdiTransactionDataIndexRepository::save)
             .map(savedGdiTransactionDataIndex -> {
-                gdiTransactionDataIndexSearchRepository.save(savedGdiTransactionDataIndex);
+                if (gdiTransactionDataIndexSearchRepository != null) {
+                    gdiTransactionDataIndexSearchRepository.save(savedGdiTransactionDataIndex);
+                }
 
                 return savedGdiTransactionDataIndex;
             })
@@ -111,13 +116,18 @@ public class GdiTransactionDataIndexServiceImpl implements GdiTransactionDataInd
     public void delete(Long id) {
         log.debug("Request to delete GdiTransactionDataIndex : {}", id);
         gdiTransactionDataIndexRepository.deleteById(id);
-        gdiTransactionDataIndexSearchRepository.deleteById(id);
+        if (gdiTransactionDataIndexSearchRepository != null) {
+            gdiTransactionDataIndexSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<GdiTransactionDataIndexDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of GdiTransactionDataIndices for query {}", query);
-        return gdiTransactionDataIndexSearchRepository.search(query, pageable).map(gdiTransactionDataIndexMapper::toDto);
+        if (gdiTransactionDataIndexSearchRepository != null) {
+            return gdiTransactionDataIndexSearchRepository.search(query, pageable).map(gdiTransactionDataIndexMapper::toDto);
+        }
+        return gdiTransactionDataIndexRepository.findAll(pageable).map(gdiTransactionDataIndexMapper::toDto);
     }
 }

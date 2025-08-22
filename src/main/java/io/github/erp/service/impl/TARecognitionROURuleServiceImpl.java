@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.TARecognitionROURuleMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class TARecognitionROURuleServiceImpl implements TARecognitionROURuleServ
     public TARecognitionROURuleServiceImpl(
         TARecognitionROURuleRepository tARecognitionROURuleRepository,
         TARecognitionROURuleMapper tARecognitionROURuleMapper,
-        TARecognitionROURuleSearchRepository tARecognitionROURuleSearchRepository
+        @Autowired(required = false) TARecognitionROURuleSearchRepository tARecognitionROURuleSearchRepository
     ) {
         this.tARecognitionROURuleRepository = tARecognitionROURuleRepository;
         this.tARecognitionROURuleMapper = tARecognitionROURuleMapper;
@@ -65,7 +66,9 @@ public class TARecognitionROURuleServiceImpl implements TARecognitionROURuleServ
         TARecognitionROURule tARecognitionROURule = tARecognitionROURuleMapper.toEntity(tARecognitionROURuleDTO);
         tARecognitionROURule = tARecognitionROURuleRepository.save(tARecognitionROURule);
         TARecognitionROURuleDTO result = tARecognitionROURuleMapper.toDto(tARecognitionROURule);
-        tARecognitionROURuleSearchRepository.save(tARecognitionROURule);
+        if (tARecognitionROURuleSearchRepository != null) {
+            tARecognitionROURuleSearchRepository.save(tARecognitionROURule);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class TARecognitionROURuleServiceImpl implements TARecognitionROURuleServ
             })
             .map(tARecognitionROURuleRepository::save)
             .map(savedTARecognitionROURule -> {
-                tARecognitionROURuleSearchRepository.save(savedTARecognitionROURule);
+                if (tARecognitionROURuleSearchRepository != null) {
+                    tARecognitionROURuleSearchRepository.save(savedTARecognitionROURule);
+                }
 
                 return savedTARecognitionROURule;
             })
@@ -111,13 +116,18 @@ public class TARecognitionROURuleServiceImpl implements TARecognitionROURuleServ
     public void delete(Long id) {
         log.debug("Request to delete TARecognitionROURule : {}", id);
         tARecognitionROURuleRepository.deleteById(id);
-        tARecognitionROURuleSearchRepository.deleteById(id);
+        if (tARecognitionROURuleSearchRepository != null) {
+            tARecognitionROURuleSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<TARecognitionROURuleDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of TARecognitionROURules for query {}", query);
-        return tARecognitionROURuleSearchRepository.search(query, pageable).map(tARecognitionROURuleMapper::toDto);
+        if (tARecognitionROURuleSearchRepository != null) {
+            return tARecognitionROURuleSearchRepository.search(query, pageable).map(tARecognitionROURuleMapper::toDto);
+        }
+        return tARecognitionROURuleRepository.findAll(pageable).map(tARecognitionROURuleMapper::toDto);
     }
 }

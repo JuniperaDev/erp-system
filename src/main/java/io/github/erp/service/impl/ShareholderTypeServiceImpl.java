@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.ShareholderTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class ShareholderTypeServiceImpl implements ShareholderTypeService {
     public ShareholderTypeServiceImpl(
         ShareholderTypeRepository shareholderTypeRepository,
         ShareholderTypeMapper shareholderTypeMapper,
-        ShareholderTypeSearchRepository shareholderTypeSearchRepository
+        @Autowired(required = false) ShareholderTypeSearchRepository shareholderTypeSearchRepository
     ) {
         this.shareholderTypeRepository = shareholderTypeRepository;
         this.shareholderTypeMapper = shareholderTypeMapper;
@@ -65,7 +66,9 @@ public class ShareholderTypeServiceImpl implements ShareholderTypeService {
         ShareholderType shareholderType = shareholderTypeMapper.toEntity(shareholderTypeDTO);
         shareholderType = shareholderTypeRepository.save(shareholderType);
         ShareholderTypeDTO result = shareholderTypeMapper.toDto(shareholderType);
-        shareholderTypeSearchRepository.save(shareholderType);
+        if (shareholderTypeSearchRepository != null) {
+            shareholderTypeSearchRepository.save(shareholderType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class ShareholderTypeServiceImpl implements ShareholderTypeService {
             })
             .map(shareholderTypeRepository::save)
             .map(savedShareholderType -> {
-                shareholderTypeSearchRepository.save(savedShareholderType);
+                if (shareholderTypeSearchRepository != null) {
+                    shareholderTypeSearchRepository.save(savedShareholderType);
+                }
 
                 return savedShareholderType;
             })
@@ -107,13 +112,18 @@ public class ShareholderTypeServiceImpl implements ShareholderTypeService {
     public void delete(Long id) {
         log.debug("Request to delete ShareholderType : {}", id);
         shareholderTypeRepository.deleteById(id);
-        shareholderTypeSearchRepository.deleteById(id);
+        if (shareholderTypeSearchRepository != null) {
+            shareholderTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ShareholderTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of ShareholderTypes for query {}", query);
-        return shareholderTypeSearchRepository.search(query, pageable).map(shareholderTypeMapper::toDto);
+        if (shareholderTypeSearchRepository != null) {
+            return shareholderTypeSearchRepository.search(query, pageable).map(shareholderTypeMapper::toDto);
+        }
+        return shareholderTypeRepository.findAll(pageable).map(shareholderTypeMapper::toDto);
     }
 }

@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.DerivativeUnderlyingAssetMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class DerivativeUnderlyingAssetServiceImpl implements DerivativeUnderlyin
     public DerivativeUnderlyingAssetServiceImpl(
         DerivativeUnderlyingAssetRepository derivativeUnderlyingAssetRepository,
         DerivativeUnderlyingAssetMapper derivativeUnderlyingAssetMapper,
-        DerivativeUnderlyingAssetSearchRepository derivativeUnderlyingAssetSearchRepository
+        @Autowired(required = false) DerivativeUnderlyingAssetSearchRepository derivativeUnderlyingAssetSearchRepository
     ) {
         this.derivativeUnderlyingAssetRepository = derivativeUnderlyingAssetRepository;
         this.derivativeUnderlyingAssetMapper = derivativeUnderlyingAssetMapper;
@@ -65,7 +66,9 @@ public class DerivativeUnderlyingAssetServiceImpl implements DerivativeUnderlyin
         DerivativeUnderlyingAsset derivativeUnderlyingAsset = derivativeUnderlyingAssetMapper.toEntity(derivativeUnderlyingAssetDTO);
         derivativeUnderlyingAsset = derivativeUnderlyingAssetRepository.save(derivativeUnderlyingAsset);
         DerivativeUnderlyingAssetDTO result = derivativeUnderlyingAssetMapper.toDto(derivativeUnderlyingAsset);
-        derivativeUnderlyingAssetSearchRepository.save(derivativeUnderlyingAsset);
+        if (derivativeUnderlyingAssetSearchRepository != null) {
+            derivativeUnderlyingAssetSearchRepository.save(derivativeUnderlyingAsset);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class DerivativeUnderlyingAssetServiceImpl implements DerivativeUnderlyin
             })
             .map(derivativeUnderlyingAssetRepository::save)
             .map(savedDerivativeUnderlyingAsset -> {
-                derivativeUnderlyingAssetSearchRepository.save(savedDerivativeUnderlyingAsset);
+                if (derivativeUnderlyingAssetSearchRepository != null) {
+                    derivativeUnderlyingAssetSearchRepository.save(savedDerivativeUnderlyingAsset);
+                }
 
                 return savedDerivativeUnderlyingAsset;
             })
@@ -107,7 +112,9 @@ public class DerivativeUnderlyingAssetServiceImpl implements DerivativeUnderlyin
     public void delete(Long id) {
         log.debug("Request to delete DerivativeUnderlyingAsset : {}", id);
         derivativeUnderlyingAssetRepository.deleteById(id);
-        derivativeUnderlyingAssetSearchRepository.deleteById(id);
+        if (derivativeUnderlyingAssetSearchRepository != null) {
+            derivativeUnderlyingAssetSearchRepository.deleteById(id);
+        }
     }
 
     @Override

@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.SettlementRequisitionMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class SettlementRequisitionServiceImpl implements SettlementRequisitionSe
     public SettlementRequisitionServiceImpl(
         SettlementRequisitionRepository settlementRequisitionRepository,
         SettlementRequisitionMapper settlementRequisitionMapper,
-        SettlementRequisitionSearchRepository settlementRequisitionSearchRepository
+        @Autowired(required = false) SettlementRequisitionSearchRepository settlementRequisitionSearchRepository
     ) {
         this.settlementRequisitionRepository = settlementRequisitionRepository;
         this.settlementRequisitionMapper = settlementRequisitionMapper;
@@ -65,7 +66,9 @@ public class SettlementRequisitionServiceImpl implements SettlementRequisitionSe
         SettlementRequisition settlementRequisition = settlementRequisitionMapper.toEntity(settlementRequisitionDTO);
         settlementRequisition = settlementRequisitionRepository.save(settlementRequisition);
         SettlementRequisitionDTO result = settlementRequisitionMapper.toDto(settlementRequisition);
-        settlementRequisitionSearchRepository.save(settlementRequisition);
+        if (settlementRequisitionSearchRepository != null) {
+            settlementRequisitionSearchRepository.save(settlementRequisition);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class SettlementRequisitionServiceImpl implements SettlementRequisitionSe
             })
             .map(settlementRequisitionRepository::save)
             .map(savedSettlementRequisition -> {
-                settlementRequisitionSearchRepository.save(savedSettlementRequisition);
+                if (settlementRequisitionSearchRepository != null) {
+                    settlementRequisitionSearchRepository.save(savedSettlementRequisition);
+                }
 
                 return savedSettlementRequisition;
             })
@@ -111,13 +116,18 @@ public class SettlementRequisitionServiceImpl implements SettlementRequisitionSe
     public void delete(Long id) {
         log.debug("Request to delete SettlementRequisition : {}", id);
         settlementRequisitionRepository.deleteById(id);
-        settlementRequisitionSearchRepository.deleteById(id);
+        if (settlementRequisitionSearchRepository != null) {
+            settlementRequisitionSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<SettlementRequisitionDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of SettlementRequisitions for query {}", query);
-        return settlementRequisitionSearchRepository.search(query, pageable).map(settlementRequisitionMapper::toDto);
+        if (settlementRequisitionSearchRepository != null) {
+            return settlementRequisitionSearchRepository.search(query, pageable).map(settlementRequisitionMapper::toDto);
+        }
+        return settlementRequisitionRepository.findAll(pageable).map(settlementRequisitionMapper::toDto);
     }
 }

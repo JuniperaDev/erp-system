@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.RouAssetListReportMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class RouAssetListReportServiceImpl implements RouAssetListReportService 
     public RouAssetListReportServiceImpl(
         RouAssetListReportRepository rouAssetListReportRepository,
         RouAssetListReportMapper rouAssetListReportMapper,
-        RouAssetListReportSearchRepository rouAssetListReportSearchRepository
+        @Autowired(required = false) RouAssetListReportSearchRepository rouAssetListReportSearchRepository
     ) {
         this.rouAssetListReportRepository = rouAssetListReportRepository;
         this.rouAssetListReportMapper = rouAssetListReportMapper;
@@ -65,7 +66,9 @@ public class RouAssetListReportServiceImpl implements RouAssetListReportService 
         RouAssetListReport rouAssetListReport = rouAssetListReportMapper.toEntity(rouAssetListReportDTO);
         rouAssetListReport = rouAssetListReportRepository.save(rouAssetListReport);
         RouAssetListReportDTO result = rouAssetListReportMapper.toDto(rouAssetListReport);
-        rouAssetListReportSearchRepository.save(rouAssetListReport);
+        if (rouAssetListReportSearchRepository != null) {
+            rouAssetListReportSearchRepository.save(rouAssetListReport);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class RouAssetListReportServiceImpl implements RouAssetListReportService 
             })
             .map(rouAssetListReportRepository::save)
             .map(savedRouAssetListReport -> {
-                rouAssetListReportSearchRepository.save(savedRouAssetListReport);
+                if (rouAssetListReportSearchRepository != null) {
+                    rouAssetListReportSearchRepository.save(savedRouAssetListReport);
+                }
 
                 return savedRouAssetListReport;
             })
@@ -107,13 +112,18 @@ public class RouAssetListReportServiceImpl implements RouAssetListReportService 
     public void delete(Long id) {
         log.debug("Request to delete RouAssetListReport : {}", id);
         rouAssetListReportRepository.deleteById(id);
-        rouAssetListReportSearchRepository.deleteById(id);
+        if (rouAssetListReportSearchRepository != null) {
+            rouAssetListReportSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<RouAssetListReportDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of RouAssetListReports for query {}", query);
-        return rouAssetListReportSearchRepository.search(query, pageable).map(rouAssetListReportMapper::toDto);
+        if (rouAssetListReportSearchRepository != null) {
+            return rouAssetListReportSearchRepository.search(query, pageable).map(rouAssetListReportMapper::toDto);
+        }
+        return rouAssetListReportRepository.findAll(pageable).map(rouAssetListReportMapper::toDto);
     }
 }

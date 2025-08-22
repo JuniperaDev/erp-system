@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.JobSheetMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class JobSheetServiceImpl implements JobSheetService {
     public JobSheetServiceImpl(
         JobSheetRepository jobSheetRepository,
         JobSheetMapper jobSheetMapper,
-        JobSheetSearchRepository jobSheetSearchRepository
+        @Autowired(required = false) JobSheetSearchRepository jobSheetSearchRepository
     ) {
         this.jobSheetRepository = jobSheetRepository;
         this.jobSheetMapper = jobSheetMapper;
@@ -65,7 +66,9 @@ public class JobSheetServiceImpl implements JobSheetService {
         JobSheet jobSheet = jobSheetMapper.toEntity(jobSheetDTO);
         jobSheet = jobSheetRepository.save(jobSheet);
         JobSheetDTO result = jobSheetMapper.toDto(jobSheet);
-        jobSheetSearchRepository.save(jobSheet);
+        if (jobSheetSearchRepository != null) {
+            jobSheetSearchRepository.save(jobSheet);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class JobSheetServiceImpl implements JobSheetService {
             })
             .map(jobSheetRepository::save)
             .map(savedJobSheet -> {
-                jobSheetSearchRepository.save(savedJobSheet);
+                if (jobSheetSearchRepository != null) {
+                    jobSheetSearchRepository.save(savedJobSheet);
+                }
 
                 return savedJobSheet;
             })
@@ -111,13 +116,18 @@ public class JobSheetServiceImpl implements JobSheetService {
     public void delete(Long id) {
         log.debug("Request to delete JobSheet : {}", id);
         jobSheetRepository.deleteById(id);
-        jobSheetSearchRepository.deleteById(id);
+        if (jobSheetSearchRepository != null) {
+            jobSheetSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<JobSheetDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of JobSheets for query {}", query);
-        return jobSheetSearchRepository.search(query, pageable).map(jobSheetMapper::toDto);
+        if (jobSheetSearchRepository != null) {
+            return jobSheetSearchRepository.search(query, pageable).map(jobSheetMapper::toDto);
+        }
+        return jobSheetRepository.findAll(pageable).map(jobSheetMapper::toDto);
     }
 }

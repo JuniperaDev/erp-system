@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.DealerMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -49,7 +50,7 @@ public class DealerServiceImpl implements DealerService {
 
     private final DealerSearchRepository dealerSearchRepository;
 
-    public DealerServiceImpl(DealerRepository dealerRepository, DealerMapper dealerMapper, DealerSearchRepository dealerSearchRepository) {
+    public DealerServiceImpl(DealerRepository dealerRepository, DealerMapper dealerMapper, @Autowired(required = false) DealerSearchRepository dealerSearchRepository) {
         this.dealerRepository = dealerRepository;
         this.dealerMapper = dealerMapper;
         this.dealerSearchRepository = dealerSearchRepository;
@@ -61,7 +62,9 @@ public class DealerServiceImpl implements DealerService {
         Dealer dealer = dealerMapper.toEntity(dealerDTO);
         dealer = dealerRepository.save(dealer);
         DealerDTO result = dealerMapper.toDto(dealer);
-        dealerSearchRepository.save(dealer);
+        if (dealerSearchRepository != null) {
+            dealerSearchRepository.save(dealer);
+        }
         return result;
     }
 
@@ -78,7 +81,9 @@ public class DealerServiceImpl implements DealerService {
             })
             .map(dealerRepository::save)
             .map(savedDealer -> {
-                dealerSearchRepository.save(savedDealer);
+                if (dealerSearchRepository != null) {
+                    dealerSearchRepository.save(savedDealer);
+                }
 
                 return savedDealer;
             })
@@ -107,13 +112,18 @@ public class DealerServiceImpl implements DealerService {
     public void delete(Long id) {
         log.debug("Request to delete Dealer : {}", id);
         dealerRepository.deleteById(id);
-        dealerSearchRepository.deleteById(id);
+        if (dealerSearchRepository != null) {
+            dealerSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<DealerDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of Dealers for query {}", query);
-        return dealerSearchRepository.search(query, pageable).map(dealerMapper::toDto);
+        if (dealerSearchRepository != null) {
+            return dealerSearchRepository.search(query, pageable).map(dealerMapper::toDto);
+        }
+        return dealerRepository.findAll(pageable).map(dealerMapper::toDto);
     }
 }

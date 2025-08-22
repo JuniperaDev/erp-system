@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.TaxReferenceMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class TaxReferenceServiceImpl implements TaxReferenceService {
     public TaxReferenceServiceImpl(
         TaxReferenceRepository taxReferenceRepository,
         TaxReferenceMapper taxReferenceMapper,
-        TaxReferenceSearchRepository taxReferenceSearchRepository
+        @Autowired(required = false) TaxReferenceSearchRepository taxReferenceSearchRepository
     ) {
         this.taxReferenceRepository = taxReferenceRepository;
         this.taxReferenceMapper = taxReferenceMapper;
@@ -65,7 +66,9 @@ public class TaxReferenceServiceImpl implements TaxReferenceService {
         TaxReference taxReference = taxReferenceMapper.toEntity(taxReferenceDTO);
         taxReference = taxReferenceRepository.save(taxReference);
         TaxReferenceDTO result = taxReferenceMapper.toDto(taxReference);
-        taxReferenceSearchRepository.save(taxReference);
+        if (taxReferenceSearchRepository != null) {
+            taxReferenceSearchRepository.save(taxReference);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class TaxReferenceServiceImpl implements TaxReferenceService {
             })
             .map(taxReferenceRepository::save)
             .map(savedTaxReference -> {
-                taxReferenceSearchRepository.save(savedTaxReference);
+                if (taxReferenceSearchRepository != null) {
+                    taxReferenceSearchRepository.save(savedTaxReference);
+                }
 
                 return savedTaxReference;
             })
@@ -111,13 +116,18 @@ public class TaxReferenceServiceImpl implements TaxReferenceService {
     public void delete(Long id) {
         log.debug("Request to delete TaxReference : {}", id);
         taxReferenceRepository.deleteById(id);
-        taxReferenceSearchRepository.deleteById(id);
+        if (taxReferenceSearchRepository != null) {
+            taxReferenceSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<TaxReferenceDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of TaxReferences for query {}", query);
-        return taxReferenceSearchRepository.search(query, pageable).map(taxReferenceMapper::toDto);
+        if (taxReferenceSearchRepository != null) {
+            return taxReferenceSearchRepository.search(query, pageable).map(taxReferenceMapper::toDto);
+        }
+        return taxReferenceRepository.findAll(pageable).map(taxReferenceMapper::toDto);
     }
 }

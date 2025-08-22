@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.FraudTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class FraudTypeServiceImpl implements FraudTypeService {
     public FraudTypeServiceImpl(
         FraudTypeRepository fraudTypeRepository,
         FraudTypeMapper fraudTypeMapper,
-        FraudTypeSearchRepository fraudTypeSearchRepository
+        @Autowired(required = false) FraudTypeSearchRepository fraudTypeSearchRepository
     ) {
         this.fraudTypeRepository = fraudTypeRepository;
         this.fraudTypeMapper = fraudTypeMapper;
@@ -65,7 +66,9 @@ public class FraudTypeServiceImpl implements FraudTypeService {
         FraudType fraudType = fraudTypeMapper.toEntity(fraudTypeDTO);
         fraudType = fraudTypeRepository.save(fraudType);
         FraudTypeDTO result = fraudTypeMapper.toDto(fraudType);
-        fraudTypeSearchRepository.save(fraudType);
+        if (fraudTypeSearchRepository != null) {
+            fraudTypeSearchRepository.save(fraudType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class FraudTypeServiceImpl implements FraudTypeService {
             })
             .map(fraudTypeRepository::save)
             .map(savedFraudType -> {
-                fraudTypeSearchRepository.save(savedFraudType);
+                if (fraudTypeSearchRepository != null) {
+                    fraudTypeSearchRepository.save(savedFraudType);
+                }
 
                 return savedFraudType;
             })
@@ -107,13 +112,18 @@ public class FraudTypeServiceImpl implements FraudTypeService {
     public void delete(Long id) {
         log.debug("Request to delete FraudType : {}", id);
         fraudTypeRepository.deleteById(id);
-        fraudTypeSearchRepository.deleteById(id);
+        if (fraudTypeSearchRepository != null) {
+            fraudTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<FraudTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of FraudTypes for query {}", query);
-        return fraudTypeSearchRepository.search(query, pageable).map(fraudTypeMapper::toDto);
+        if (fraudTypeSearchRepository != null) {
+            return fraudTypeSearchRepository.search(query, pageable).map(fraudTypeMapper::toDto);
+        }
+        return fraudTypeRepository.findAll(pageable).map(fraudTypeMapper::toDto);
     }
 }

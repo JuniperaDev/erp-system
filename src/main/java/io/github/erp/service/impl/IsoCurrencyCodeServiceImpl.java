@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.IsoCurrencyCodeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class IsoCurrencyCodeServiceImpl implements IsoCurrencyCodeService {
     public IsoCurrencyCodeServiceImpl(
         IsoCurrencyCodeRepository isoCurrencyCodeRepository,
         IsoCurrencyCodeMapper isoCurrencyCodeMapper,
-        IsoCurrencyCodeSearchRepository isoCurrencyCodeSearchRepository
+        @Autowired(required = false) IsoCurrencyCodeSearchRepository isoCurrencyCodeSearchRepository
     ) {
         this.isoCurrencyCodeRepository = isoCurrencyCodeRepository;
         this.isoCurrencyCodeMapper = isoCurrencyCodeMapper;
@@ -65,7 +66,9 @@ public class IsoCurrencyCodeServiceImpl implements IsoCurrencyCodeService {
         IsoCurrencyCode isoCurrencyCode = isoCurrencyCodeMapper.toEntity(isoCurrencyCodeDTO);
         isoCurrencyCode = isoCurrencyCodeRepository.save(isoCurrencyCode);
         IsoCurrencyCodeDTO result = isoCurrencyCodeMapper.toDto(isoCurrencyCode);
-        isoCurrencyCodeSearchRepository.save(isoCurrencyCode);
+        if (isoCurrencyCodeSearchRepository != null) {
+            isoCurrencyCodeSearchRepository.save(isoCurrencyCode);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class IsoCurrencyCodeServiceImpl implements IsoCurrencyCodeService {
             })
             .map(isoCurrencyCodeRepository::save)
             .map(savedIsoCurrencyCode -> {
-                isoCurrencyCodeSearchRepository.save(savedIsoCurrencyCode);
+                if (isoCurrencyCodeSearchRepository != null) {
+                    isoCurrencyCodeSearchRepository.save(savedIsoCurrencyCode);
+                }
 
                 return savedIsoCurrencyCode;
             })
@@ -107,13 +112,18 @@ public class IsoCurrencyCodeServiceImpl implements IsoCurrencyCodeService {
     public void delete(Long id) {
         log.debug("Request to delete IsoCurrencyCode : {}", id);
         isoCurrencyCodeRepository.deleteById(id);
-        isoCurrencyCodeSearchRepository.deleteById(id);
+        if (isoCurrencyCodeSearchRepository != null) {
+            isoCurrencyCodeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<IsoCurrencyCodeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of IsoCurrencyCodes for query {}", query);
-        return isoCurrencyCodeSearchRepository.search(query, pageable).map(isoCurrencyCodeMapper::toDto);
+        if (isoCurrencyCodeSearchRepository != null) {
+            return isoCurrencyCodeSearchRepository.search(query, pageable).map(isoCurrencyCodeMapper::toDto);
+        }
+        return isoCurrencyCodeRepository.findAll(pageable).map(isoCurrencyCodeMapper::toDto);
     }
 }

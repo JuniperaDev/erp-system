@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AmortizationPostingReportMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AmortizationPostingReportServiceImpl implements AmortizationPosting
     public AmortizationPostingReportServiceImpl(
         AmortizationPostingReportRepository amortizationPostingReportRepository,
         AmortizationPostingReportMapper amortizationPostingReportMapper,
-        AmortizationPostingReportSearchRepository amortizationPostingReportSearchRepository
+        @Autowired(required = false) AmortizationPostingReportSearchRepository amortizationPostingReportSearchRepository
     ) {
         this.amortizationPostingReportRepository = amortizationPostingReportRepository;
         this.amortizationPostingReportMapper = amortizationPostingReportMapper;
@@ -65,7 +66,9 @@ public class AmortizationPostingReportServiceImpl implements AmortizationPosting
         AmortizationPostingReport amortizationPostingReport = amortizationPostingReportMapper.toEntity(amortizationPostingReportDTO);
         amortizationPostingReport = amortizationPostingReportRepository.save(amortizationPostingReport);
         AmortizationPostingReportDTO result = amortizationPostingReportMapper.toDto(amortizationPostingReport);
-        amortizationPostingReportSearchRepository.save(amortizationPostingReport);
+        if (amortizationPostingReportSearchRepository != null) {
+            amortizationPostingReportSearchRepository.save(amortizationPostingReport);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AmortizationPostingReportServiceImpl implements AmortizationPosting
             })
             .map(amortizationPostingReportRepository::save)
             .map(savedAmortizationPostingReport -> {
-                amortizationPostingReportSearchRepository.save(savedAmortizationPostingReport);
+                if (amortizationPostingReportSearchRepository != null) {
+                    amortizationPostingReportSearchRepository.save(savedAmortizationPostingReport);
+                }
 
                 return savedAmortizationPostingReport;
             })
@@ -107,13 +112,18 @@ public class AmortizationPostingReportServiceImpl implements AmortizationPosting
     public void delete(Long id) {
         log.debug("Request to delete AmortizationPostingReport : {}", id);
         amortizationPostingReportRepository.deleteById(id);
-        amortizationPostingReportSearchRepository.deleteById(id);
+        if (amortizationPostingReportSearchRepository != null) {
+            amortizationPostingReportSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AmortizationPostingReportDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AmortizationPostingReports for query {}", query);
-        return amortizationPostingReportSearchRepository.search(query, pageable).map(amortizationPostingReportMapper::toDto);
+        if (amortizationPostingReportSearchRepository != null) {
+            return amortizationPostingReportSearchRepository.search(query, pageable).map(amortizationPostingReportMapper::toDto);
+        }
+        return amortizationPostingReportRepository.findAll(pageable).map(amortizationPostingReportMapper::toDto);
     }
 }

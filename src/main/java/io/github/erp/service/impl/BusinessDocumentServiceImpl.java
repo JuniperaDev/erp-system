@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.BusinessDocumentMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class BusinessDocumentServiceImpl implements BusinessDocumentService {
     public BusinessDocumentServiceImpl(
         BusinessDocumentRepository businessDocumentRepository,
         BusinessDocumentMapper businessDocumentMapper,
-        BusinessDocumentSearchRepository businessDocumentSearchRepository
+        @Autowired(required = false) BusinessDocumentSearchRepository businessDocumentSearchRepository
     ) {
         this.businessDocumentRepository = businessDocumentRepository;
         this.businessDocumentMapper = businessDocumentMapper;
@@ -65,7 +66,9 @@ public class BusinessDocumentServiceImpl implements BusinessDocumentService {
         BusinessDocument businessDocument = businessDocumentMapper.toEntity(businessDocumentDTO);
         businessDocument = businessDocumentRepository.save(businessDocument);
         BusinessDocumentDTO result = businessDocumentMapper.toDto(businessDocument);
-        businessDocumentSearchRepository.save(businessDocument);
+        if (businessDocumentSearchRepository != null) {
+            businessDocumentSearchRepository.save(businessDocument);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class BusinessDocumentServiceImpl implements BusinessDocumentService {
             })
             .map(businessDocumentRepository::save)
             .map(savedBusinessDocument -> {
-                businessDocumentSearchRepository.save(savedBusinessDocument);
+                if (businessDocumentSearchRepository != null) {
+                    businessDocumentSearchRepository.save(savedBusinessDocument);
+                }
 
                 return savedBusinessDocument;
             })
@@ -111,13 +116,18 @@ public class BusinessDocumentServiceImpl implements BusinessDocumentService {
     public void delete(Long id) {
         log.debug("Request to delete BusinessDocument : {}", id);
         businessDocumentRepository.deleteById(id);
-        businessDocumentSearchRepository.deleteById(id);
+        if (businessDocumentSearchRepository != null) {
+            businessDocumentSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<BusinessDocumentDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of BusinessDocuments for query {}", query);
-        return businessDocumentSearchRepository.search(query, pageable).map(businessDocumentMapper::toDto);
+        if (businessDocumentSearchRepository != null) {
+            return businessDocumentSearchRepository.search(query, pageable).map(businessDocumentMapper::toDto);
+        }
+        return businessDocumentRepository.findAll(pageable).map(businessDocumentMapper::toDto);
     }
 }

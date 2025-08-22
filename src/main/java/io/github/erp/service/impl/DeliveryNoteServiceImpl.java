@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.DeliveryNoteMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
     public DeliveryNoteServiceImpl(
         DeliveryNoteRepository deliveryNoteRepository,
         DeliveryNoteMapper deliveryNoteMapper,
-        DeliveryNoteSearchRepository deliveryNoteSearchRepository
+        @Autowired(required = false) DeliveryNoteSearchRepository deliveryNoteSearchRepository
     ) {
         this.deliveryNoteRepository = deliveryNoteRepository;
         this.deliveryNoteMapper = deliveryNoteMapper;
@@ -65,7 +66,9 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
         DeliveryNote deliveryNote = deliveryNoteMapper.toEntity(deliveryNoteDTO);
         deliveryNote = deliveryNoteRepository.save(deliveryNote);
         DeliveryNoteDTO result = deliveryNoteMapper.toDto(deliveryNote);
-        deliveryNoteSearchRepository.save(deliveryNote);
+        if (deliveryNoteSearchRepository != null) {
+            deliveryNoteSearchRepository.save(deliveryNote);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
             })
             .map(deliveryNoteRepository::save)
             .map(savedDeliveryNote -> {
-                deliveryNoteSearchRepository.save(savedDeliveryNote);
+                if (deliveryNoteSearchRepository != null) {
+                    deliveryNoteSearchRepository.save(savedDeliveryNote);
+                }
 
                 return savedDeliveryNote;
             })
@@ -111,13 +116,18 @@ public class DeliveryNoteServiceImpl implements DeliveryNoteService {
     public void delete(Long id) {
         log.debug("Request to delete DeliveryNote : {}", id);
         deliveryNoteRepository.deleteById(id);
-        deliveryNoteSearchRepository.deleteById(id);
+        if (deliveryNoteSearchRepository != null) {
+            deliveryNoteSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<DeliveryNoteDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of DeliveryNotes for query {}", query);
-        return deliveryNoteSearchRepository.search(query, pageable).map(deliveryNoteMapper::toDto);
+        if (deliveryNoteSearchRepository != null) {
+            return deliveryNoteSearchRepository.search(query, pageable).map(deliveryNoteMapper::toDto);
+        }
+        return deliveryNoteRepository.findAll(pageable).map(deliveryNoteMapper::toDto);
     }
 }

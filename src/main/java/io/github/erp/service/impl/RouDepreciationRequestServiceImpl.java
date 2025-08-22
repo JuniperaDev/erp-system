@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.RouDepreciationRequestMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class RouDepreciationRequestServiceImpl implements RouDepreciationRequest
     public RouDepreciationRequestServiceImpl(
         RouDepreciationRequestRepository rouDepreciationRequestRepository,
         RouDepreciationRequestMapper rouDepreciationRequestMapper,
-        RouDepreciationRequestSearchRepository rouDepreciationRequestSearchRepository
+        @Autowired(required = false) RouDepreciationRequestSearchRepository rouDepreciationRequestSearchRepository
     ) {
         this.rouDepreciationRequestRepository = rouDepreciationRequestRepository;
         this.rouDepreciationRequestMapper = rouDepreciationRequestMapper;
@@ -65,7 +66,9 @@ public class RouDepreciationRequestServiceImpl implements RouDepreciationRequest
         RouDepreciationRequest rouDepreciationRequest = rouDepreciationRequestMapper.toEntity(rouDepreciationRequestDTO);
         rouDepreciationRequest = rouDepreciationRequestRepository.save(rouDepreciationRequest);
         RouDepreciationRequestDTO result = rouDepreciationRequestMapper.toDto(rouDepreciationRequest);
-        rouDepreciationRequestSearchRepository.save(rouDepreciationRequest);
+        if (rouDepreciationRequestSearchRepository != null) {
+            rouDepreciationRequestSearchRepository.save(rouDepreciationRequest);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class RouDepreciationRequestServiceImpl implements RouDepreciationRequest
             })
             .map(rouDepreciationRequestRepository::save)
             .map(savedRouDepreciationRequest -> {
-                rouDepreciationRequestSearchRepository.save(savedRouDepreciationRequest);
+                if (rouDepreciationRequestSearchRepository != null) {
+                    rouDepreciationRequestSearchRepository.save(savedRouDepreciationRequest);
+                }
 
                 return savedRouDepreciationRequest;
             })
@@ -107,13 +112,18 @@ public class RouDepreciationRequestServiceImpl implements RouDepreciationRequest
     public void delete(Long id) {
         log.debug("Request to delete RouDepreciationRequest : {}", id);
         rouDepreciationRequestRepository.deleteById(id);
-        rouDepreciationRequestSearchRepository.deleteById(id);
+        if (rouDepreciationRequestSearchRepository != null) {
+            rouDepreciationRequestSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<RouDepreciationRequestDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of RouDepreciationRequests for query {}", query);
-        return rouDepreciationRequestSearchRepository.search(query, pageable).map(rouDepreciationRequestMapper::toDto);
+        if (rouDepreciationRequestSearchRepository != null) {
+            return rouDepreciationRequestSearchRepository.search(query, pageable).map(rouDepreciationRequestMapper::toDto);
+        }
+        return rouDepreciationRequestRepository.findAll(pageable).map(rouDepreciationRequestMapper::toDto);
     }
 }

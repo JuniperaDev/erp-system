@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -57,7 +58,7 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentServiceImpl(
         PaymentRepository paymentRepository,
         PaymentMapper paymentMapper,
-        PaymentSearchRepository paymentSearchRepository,
+        @Autowired(required = false) PaymentSearchRepository paymentSearchRepository,
         DomainEventPublisher domainEventPublisher
     ) {
         this.paymentRepository = paymentRepository;
@@ -72,7 +73,9 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment = paymentMapper.toEntity(paymentDTO);
         payment = paymentRepository.save(payment);
         PaymentDTO result = paymentMapper.toDto(payment);
-        paymentSearchRepository.save(payment);
+        if (paymentSearchRepository != null) {
+            paymentSearchRepository.save(payment);
+        }
         
         publishPaymentProcessedEvent(payment);
         
@@ -92,7 +95,9 @@ public class PaymentServiceImpl implements PaymentService {
             })
             .map(paymentRepository::save)
             .map(savedPayment -> {
-                paymentSearchRepository.save(savedPayment);
+                if (paymentSearchRepository != null) {
+                    paymentSearchRepository.save(savedPayment);
+                }
 
                 return savedPayment;
             })
@@ -121,14 +126,19 @@ public class PaymentServiceImpl implements PaymentService {
     public void delete(Long id) {
         log.debug("Request to delete Payment : {}", id);
         paymentRepository.deleteById(id);
-        paymentSearchRepository.deleteById(id);
+        if (paymentSearchRepository != null) {
+            paymentSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<PaymentDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of Payments for query {}", query);
-        return paymentSearchRepository.search(query, pageable).map(paymentMapper::toDto);
+        if (paymentSearchRepository != null) {
+            return paymentSearchRepository.search(query, pageable).map(paymentMapper::toDto);
+        }
+        return paymentRepository.findAll(pageable).map(paymentMapper::toDto);
     }
 
     private void publishPaymentProcessedEvent(Payment payment) {

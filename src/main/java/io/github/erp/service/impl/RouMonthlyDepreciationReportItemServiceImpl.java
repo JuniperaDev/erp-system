@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.RouMonthlyDepreciationReportItemMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class RouMonthlyDepreciationReportItemServiceImpl implements RouMonthlyDe
     public RouMonthlyDepreciationReportItemServiceImpl(
         RouMonthlyDepreciationReportItemRepository rouMonthlyDepreciationReportItemRepository,
         RouMonthlyDepreciationReportItemMapper rouMonthlyDepreciationReportItemMapper,
-        RouMonthlyDepreciationReportItemSearchRepository rouMonthlyDepreciationReportItemSearchRepository
+        @Autowired(required = false) RouMonthlyDepreciationReportItemSearchRepository rouMonthlyDepreciationReportItemSearchRepository
     ) {
         this.rouMonthlyDepreciationReportItemRepository = rouMonthlyDepreciationReportItemRepository;
         this.rouMonthlyDepreciationReportItemMapper = rouMonthlyDepreciationReportItemMapper;
@@ -67,7 +68,9 @@ public class RouMonthlyDepreciationReportItemServiceImpl implements RouMonthlyDe
         );
         rouMonthlyDepreciationReportItem = rouMonthlyDepreciationReportItemRepository.save(rouMonthlyDepreciationReportItem);
         RouMonthlyDepreciationReportItemDTO result = rouMonthlyDepreciationReportItemMapper.toDto(rouMonthlyDepreciationReportItem);
-        rouMonthlyDepreciationReportItemSearchRepository.save(rouMonthlyDepreciationReportItem);
+        if (rouMonthlyDepreciationReportItemSearchRepository != null) {
+            rouMonthlyDepreciationReportItemSearchRepository.save(rouMonthlyDepreciationReportItem);
+        }
         return result;
     }
 
@@ -89,7 +92,9 @@ public class RouMonthlyDepreciationReportItemServiceImpl implements RouMonthlyDe
             })
             .map(rouMonthlyDepreciationReportItemRepository::save)
             .map(savedRouMonthlyDepreciationReportItem -> {
-                rouMonthlyDepreciationReportItemSearchRepository.save(savedRouMonthlyDepreciationReportItem);
+                if (rouMonthlyDepreciationReportItemSearchRepository != null) {
+                    rouMonthlyDepreciationReportItemSearchRepository.save(savedRouMonthlyDepreciationReportItem);
+                }
 
                 return savedRouMonthlyDepreciationReportItem;
             })
@@ -114,7 +119,9 @@ public class RouMonthlyDepreciationReportItemServiceImpl implements RouMonthlyDe
     public void delete(Long id) {
         log.debug("Request to delete RouMonthlyDepreciationReportItem : {}", id);
         rouMonthlyDepreciationReportItemRepository.deleteById(id);
-        rouMonthlyDepreciationReportItemSearchRepository.deleteById(id);
+        if (rouMonthlyDepreciationReportItemSearchRepository != null) {
+            rouMonthlyDepreciationReportItemSearchRepository.deleteById(id);
+        }
     }
 
     @Override

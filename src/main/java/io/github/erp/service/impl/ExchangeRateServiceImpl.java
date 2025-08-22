@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.ExchangeRateMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     public ExchangeRateServiceImpl(
         ExchangeRateRepository exchangeRateRepository,
         ExchangeRateMapper exchangeRateMapper,
-        ExchangeRateSearchRepository exchangeRateSearchRepository
+        @Autowired(required = false) ExchangeRateSearchRepository exchangeRateSearchRepository
     ) {
         this.exchangeRateRepository = exchangeRateRepository;
         this.exchangeRateMapper = exchangeRateMapper;
@@ -65,7 +66,9 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         ExchangeRate exchangeRate = exchangeRateMapper.toEntity(exchangeRateDTO);
         exchangeRate = exchangeRateRepository.save(exchangeRate);
         ExchangeRateDTO result = exchangeRateMapper.toDto(exchangeRate);
-        exchangeRateSearchRepository.save(exchangeRate);
+        if (exchangeRateSearchRepository != null) {
+            exchangeRateSearchRepository.save(exchangeRate);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
             })
             .map(exchangeRateRepository::save)
             .map(savedExchangeRate -> {
-                exchangeRateSearchRepository.save(savedExchangeRate);
+                if (exchangeRateSearchRepository != null) {
+                    exchangeRateSearchRepository.save(savedExchangeRate);
+                }
 
                 return savedExchangeRate;
             })
@@ -107,13 +112,18 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     public void delete(Long id) {
         log.debug("Request to delete ExchangeRate : {}", id);
         exchangeRateRepository.deleteById(id);
-        exchangeRateSearchRepository.deleteById(id);
+        if (exchangeRateSearchRepository != null) {
+            exchangeRateSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ExchangeRateDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of ExchangeRates for query {}", query);
-        return exchangeRateSearchRepository.search(query, pageable).map(exchangeRateMapper::toDto);
+        if (exchangeRateSearchRepository != null) {
+            return exchangeRateSearchRepository.search(query, pageable).map(exchangeRateMapper::toDto);
+        }
+        return exchangeRateRepository.findAll(pageable).map(exchangeRateMapper::toDto);
     }
 }

@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CardIssuerChargesMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CardIssuerChargesServiceImpl implements CardIssuerChargesService {
     public CardIssuerChargesServiceImpl(
         CardIssuerChargesRepository cardIssuerChargesRepository,
         CardIssuerChargesMapper cardIssuerChargesMapper,
-        CardIssuerChargesSearchRepository cardIssuerChargesSearchRepository
+        @Autowired(required = false) CardIssuerChargesSearchRepository cardIssuerChargesSearchRepository
     ) {
         this.cardIssuerChargesRepository = cardIssuerChargesRepository;
         this.cardIssuerChargesMapper = cardIssuerChargesMapper;
@@ -65,7 +66,9 @@ public class CardIssuerChargesServiceImpl implements CardIssuerChargesService {
         CardIssuerCharges cardIssuerCharges = cardIssuerChargesMapper.toEntity(cardIssuerChargesDTO);
         cardIssuerCharges = cardIssuerChargesRepository.save(cardIssuerCharges);
         CardIssuerChargesDTO result = cardIssuerChargesMapper.toDto(cardIssuerCharges);
-        cardIssuerChargesSearchRepository.save(cardIssuerCharges);
+        if (cardIssuerChargesSearchRepository != null) {
+            cardIssuerChargesSearchRepository.save(cardIssuerCharges);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CardIssuerChargesServiceImpl implements CardIssuerChargesService {
             })
             .map(cardIssuerChargesRepository::save)
             .map(savedCardIssuerCharges -> {
-                cardIssuerChargesSearchRepository.save(savedCardIssuerCharges);
+                if (cardIssuerChargesSearchRepository != null) {
+                    cardIssuerChargesSearchRepository.save(savedCardIssuerCharges);
+                }
 
                 return savedCardIssuerCharges;
             })
@@ -107,13 +112,18 @@ public class CardIssuerChargesServiceImpl implements CardIssuerChargesService {
     public void delete(Long id) {
         log.debug("Request to delete CardIssuerCharges : {}", id);
         cardIssuerChargesRepository.deleteById(id);
-        cardIssuerChargesSearchRepository.deleteById(id);
+        if (cardIssuerChargesSearchRepository != null) {
+            cardIssuerChargesSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CardIssuerChargesDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CardIssuerCharges for query {}", query);
-        return cardIssuerChargesSearchRepository.search(query, pageable).map(cardIssuerChargesMapper::toDto);
+        if (cardIssuerChargesSearchRepository != null) {
+            return cardIssuerChargesSearchRepository.search(query, pageable).map(cardIssuerChargesMapper::toDto);
+        }
+        return cardIssuerChargesRepository.findAll(pageable).map(cardIssuerChargesMapper::toDto);
     }
 }

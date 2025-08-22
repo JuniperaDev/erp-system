@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CrbRecordFileTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CrbRecordFileTypeServiceImpl implements CrbRecordFileTypeService {
     public CrbRecordFileTypeServiceImpl(
         CrbRecordFileTypeRepository crbRecordFileTypeRepository,
         CrbRecordFileTypeMapper crbRecordFileTypeMapper,
-        CrbRecordFileTypeSearchRepository crbRecordFileTypeSearchRepository
+        @Autowired(required = false) CrbRecordFileTypeSearchRepository crbRecordFileTypeSearchRepository
     ) {
         this.crbRecordFileTypeRepository = crbRecordFileTypeRepository;
         this.crbRecordFileTypeMapper = crbRecordFileTypeMapper;
@@ -65,7 +66,9 @@ public class CrbRecordFileTypeServiceImpl implements CrbRecordFileTypeService {
         CrbRecordFileType crbRecordFileType = crbRecordFileTypeMapper.toEntity(crbRecordFileTypeDTO);
         crbRecordFileType = crbRecordFileTypeRepository.save(crbRecordFileType);
         CrbRecordFileTypeDTO result = crbRecordFileTypeMapper.toDto(crbRecordFileType);
-        crbRecordFileTypeSearchRepository.save(crbRecordFileType);
+        if (crbRecordFileTypeSearchRepository != null) {
+            crbRecordFileTypeSearchRepository.save(crbRecordFileType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CrbRecordFileTypeServiceImpl implements CrbRecordFileTypeService {
             })
             .map(crbRecordFileTypeRepository::save)
             .map(savedCrbRecordFileType -> {
-                crbRecordFileTypeSearchRepository.save(savedCrbRecordFileType);
+                if (crbRecordFileTypeSearchRepository != null) {
+                    crbRecordFileTypeSearchRepository.save(savedCrbRecordFileType);
+                }
 
                 return savedCrbRecordFileType;
             })
@@ -107,13 +112,18 @@ public class CrbRecordFileTypeServiceImpl implements CrbRecordFileTypeService {
     public void delete(Long id) {
         log.debug("Request to delete CrbRecordFileType : {}", id);
         crbRecordFileTypeRepository.deleteById(id);
-        crbRecordFileTypeSearchRepository.deleteById(id);
+        if (crbRecordFileTypeSearchRepository != null) {
+            crbRecordFileTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CrbRecordFileTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CrbRecordFileTypes for query {}", query);
-        return crbRecordFileTypeSearchRepository.search(query, pageable).map(crbRecordFileTypeMapper::toDto);
+        if (crbRecordFileTypeSearchRepository != null) {
+            return crbRecordFileTypeSearchRepository.search(query, pageable).map(crbRecordFileTypeMapper::toDto);
+        }
+        return crbRecordFileTypeRepository.findAll(pageable).map(crbRecordFileTypeMapper::toDto);
     }
 }

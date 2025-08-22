@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.ProfessionalQualificationMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class ProfessionalQualificationServiceImpl implements ProfessionalQualifi
     public ProfessionalQualificationServiceImpl(
         ProfessionalQualificationRepository professionalQualificationRepository,
         ProfessionalQualificationMapper professionalQualificationMapper,
-        ProfessionalQualificationSearchRepository professionalQualificationSearchRepository
+        @Autowired(required = false) ProfessionalQualificationSearchRepository professionalQualificationSearchRepository
     ) {
         this.professionalQualificationRepository = professionalQualificationRepository;
         this.professionalQualificationMapper = professionalQualificationMapper;
@@ -65,7 +66,9 @@ public class ProfessionalQualificationServiceImpl implements ProfessionalQualifi
         ProfessionalQualification professionalQualification = professionalQualificationMapper.toEntity(professionalQualificationDTO);
         professionalQualification = professionalQualificationRepository.save(professionalQualification);
         ProfessionalQualificationDTO result = professionalQualificationMapper.toDto(professionalQualification);
-        professionalQualificationSearchRepository.save(professionalQualification);
+        if (professionalQualificationSearchRepository != null) {
+            professionalQualificationSearchRepository.save(professionalQualification);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class ProfessionalQualificationServiceImpl implements ProfessionalQualifi
             })
             .map(professionalQualificationRepository::save)
             .map(savedProfessionalQualification -> {
-                professionalQualificationSearchRepository.save(savedProfessionalQualification);
+                if (professionalQualificationSearchRepository != null) {
+                    professionalQualificationSearchRepository.save(savedProfessionalQualification);
+                }
 
                 return savedProfessionalQualification;
             })
@@ -107,13 +112,18 @@ public class ProfessionalQualificationServiceImpl implements ProfessionalQualifi
     public void delete(Long id) {
         log.debug("Request to delete ProfessionalQualification : {}", id);
         professionalQualificationRepository.deleteById(id);
-        professionalQualificationSearchRepository.deleteById(id);
+        if (professionalQualificationSearchRepository != null) {
+            professionalQualificationSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ProfessionalQualificationDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of ProfessionalQualifications for query {}", query);
-        return professionalQualificationSearchRepository.search(query, pageable).map(professionalQualificationMapper::toDto);
+        if (professionalQualificationSearchRepository != null) {
+            return professionalQualificationSearchRepository.search(query, pageable).map(professionalQualificationMapper::toDto);
+        }
+        return professionalQualificationRepository.findAll(pageable).map(professionalQualificationMapper::toDto);
     }
 }

@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.TransactionAccountLedgerMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class TransactionAccountLedgerServiceImpl implements TransactionAccountLe
     public TransactionAccountLedgerServiceImpl(
         TransactionAccountLedgerRepository transactionAccountLedgerRepository,
         TransactionAccountLedgerMapper transactionAccountLedgerMapper,
-        TransactionAccountLedgerSearchRepository transactionAccountLedgerSearchRepository
+        @Autowired(required = false) TransactionAccountLedgerSearchRepository transactionAccountLedgerSearchRepository
     ) {
         this.transactionAccountLedgerRepository = transactionAccountLedgerRepository;
         this.transactionAccountLedgerMapper = transactionAccountLedgerMapper;
@@ -65,7 +66,9 @@ public class TransactionAccountLedgerServiceImpl implements TransactionAccountLe
         TransactionAccountLedger transactionAccountLedger = transactionAccountLedgerMapper.toEntity(transactionAccountLedgerDTO);
         transactionAccountLedger = transactionAccountLedgerRepository.save(transactionAccountLedger);
         TransactionAccountLedgerDTO result = transactionAccountLedgerMapper.toDto(transactionAccountLedger);
-        transactionAccountLedgerSearchRepository.save(transactionAccountLedger);
+        if (transactionAccountLedgerSearchRepository != null) {
+            transactionAccountLedgerSearchRepository.save(transactionAccountLedger);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class TransactionAccountLedgerServiceImpl implements TransactionAccountLe
             })
             .map(transactionAccountLedgerRepository::save)
             .map(savedTransactionAccountLedger -> {
-                transactionAccountLedgerSearchRepository.save(savedTransactionAccountLedger);
+                if (transactionAccountLedgerSearchRepository != null) {
+                    transactionAccountLedgerSearchRepository.save(savedTransactionAccountLedger);
+                }
 
                 return savedTransactionAccountLedger;
             })
@@ -111,13 +116,18 @@ public class TransactionAccountLedgerServiceImpl implements TransactionAccountLe
     public void delete(Long id) {
         log.debug("Request to delete TransactionAccountLedger : {}", id);
         transactionAccountLedgerRepository.deleteById(id);
-        transactionAccountLedgerSearchRepository.deleteById(id);
+        if (transactionAccountLedgerSearchRepository != null) {
+            transactionAccountLedgerSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<TransactionAccountLedgerDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of TransactionAccountLedgers for query {}", query);
-        return transactionAccountLedgerSearchRepository.search(query, pageable).map(transactionAccountLedgerMapper::toDto);
+        if (transactionAccountLedgerSearchRepository != null) {
+            return transactionAccountLedgerSearchRepository.search(query, pageable).map(transactionAccountLedgerMapper::toDto);
+        }
+        return transactionAccountLedgerRepository.findAll(pageable).map(transactionAccountLedgerMapper::toDto);
     }
 }

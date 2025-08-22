@@ -38,8 +38,10 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = ErpSystemApp.class)
-@ActiveProfiles("test")
+@SpringBootTest(classes = ErpSystemApp.class, properties = {
+    "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration,org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration,org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration"
+})
+@ActiveProfiles("testcontainers")
 @Transactional
 public class FinancialDomainEventsIntegrationTest {
 

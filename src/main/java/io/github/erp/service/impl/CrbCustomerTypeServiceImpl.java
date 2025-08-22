@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CrbCustomerTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CrbCustomerTypeServiceImpl implements CrbCustomerTypeService {
     public CrbCustomerTypeServiceImpl(
         CrbCustomerTypeRepository crbCustomerTypeRepository,
         CrbCustomerTypeMapper crbCustomerTypeMapper,
-        CrbCustomerTypeSearchRepository crbCustomerTypeSearchRepository
+        @Autowired(required = false) CrbCustomerTypeSearchRepository crbCustomerTypeSearchRepository
     ) {
         this.crbCustomerTypeRepository = crbCustomerTypeRepository;
         this.crbCustomerTypeMapper = crbCustomerTypeMapper;
@@ -65,7 +66,9 @@ public class CrbCustomerTypeServiceImpl implements CrbCustomerTypeService {
         CrbCustomerType crbCustomerType = crbCustomerTypeMapper.toEntity(crbCustomerTypeDTO);
         crbCustomerType = crbCustomerTypeRepository.save(crbCustomerType);
         CrbCustomerTypeDTO result = crbCustomerTypeMapper.toDto(crbCustomerType);
-        crbCustomerTypeSearchRepository.save(crbCustomerType);
+        if (crbCustomerTypeSearchRepository != null) {
+            crbCustomerTypeSearchRepository.save(crbCustomerType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CrbCustomerTypeServiceImpl implements CrbCustomerTypeService {
             })
             .map(crbCustomerTypeRepository::save)
             .map(savedCrbCustomerType -> {
-                crbCustomerTypeSearchRepository.save(savedCrbCustomerType);
+                if (crbCustomerTypeSearchRepository != null) {
+                    crbCustomerTypeSearchRepository.save(savedCrbCustomerType);
+                }
 
                 return savedCrbCustomerType;
             })
@@ -107,13 +112,18 @@ public class CrbCustomerTypeServiceImpl implements CrbCustomerTypeService {
     public void delete(Long id) {
         log.debug("Request to delete CrbCustomerType : {}", id);
         crbCustomerTypeRepository.deleteById(id);
-        crbCustomerTypeSearchRepository.deleteById(id);
+        if (crbCustomerTypeSearchRepository != null) {
+            crbCustomerTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CrbCustomerTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CrbCustomerTypes for query {}", query);
-        return crbCustomerTypeSearchRepository.search(query, pageable).map(crbCustomerTypeMapper::toDto);
+        if (crbCustomerTypeSearchRepository != null) {
+            return crbCustomerTypeSearchRepository.search(query, pageable).map(crbCustomerTypeMapper::toDto);
+        }
+        return crbCustomerTypeRepository.findAll(pageable).map(crbCustomerTypeMapper::toDto);
     }
 }

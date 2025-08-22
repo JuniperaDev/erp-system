@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.XlsxReportRequisitionMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class XlsxReportRequisitionServiceImpl implements XlsxReportRequisitionSe
     public XlsxReportRequisitionServiceImpl(
         XlsxReportRequisitionRepository xlsxReportRequisitionRepository,
         XlsxReportRequisitionMapper xlsxReportRequisitionMapper,
-        XlsxReportRequisitionSearchRepository xlsxReportRequisitionSearchRepository
+        @Autowired(required = false) XlsxReportRequisitionSearchRepository xlsxReportRequisitionSearchRepository
     ) {
         this.xlsxReportRequisitionRepository = xlsxReportRequisitionRepository;
         this.xlsxReportRequisitionMapper = xlsxReportRequisitionMapper;
@@ -65,7 +66,9 @@ public class XlsxReportRequisitionServiceImpl implements XlsxReportRequisitionSe
         XlsxReportRequisition xlsxReportRequisition = xlsxReportRequisitionMapper.toEntity(xlsxReportRequisitionDTO);
         xlsxReportRequisition = xlsxReportRequisitionRepository.save(xlsxReportRequisition);
         XlsxReportRequisitionDTO result = xlsxReportRequisitionMapper.toDto(xlsxReportRequisition);
-        xlsxReportRequisitionSearchRepository.save(xlsxReportRequisition);
+        if (xlsxReportRequisitionSearchRepository != null) {
+            xlsxReportRequisitionSearchRepository.save(xlsxReportRequisition);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class XlsxReportRequisitionServiceImpl implements XlsxReportRequisitionSe
             })
             .map(xlsxReportRequisitionRepository::save)
             .map(savedXlsxReportRequisition -> {
-                xlsxReportRequisitionSearchRepository.save(savedXlsxReportRequisition);
+                if (xlsxReportRequisitionSearchRepository != null) {
+                    xlsxReportRequisitionSearchRepository.save(savedXlsxReportRequisition);
+                }
 
                 return savedXlsxReportRequisition;
             })
@@ -111,7 +116,9 @@ public class XlsxReportRequisitionServiceImpl implements XlsxReportRequisitionSe
     public void delete(Long id) {
         log.debug("Request to delete XlsxReportRequisition : {}", id);
         xlsxReportRequisitionRepository.deleteById(id);
-        xlsxReportRequisitionSearchRepository.deleteById(id);
+        if (xlsxReportRequisitionSearchRepository != null) {
+            xlsxReportRequisitionSearchRepository.deleteById(id);
+        }
     }
 
     @Override

@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.LeaseLiabilityByAccountReportMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class LeaseLiabilityByAccountReportServiceImpl implements LeaseLiabilityB
     public LeaseLiabilityByAccountReportServiceImpl(
         LeaseLiabilityByAccountReportRepository leaseLiabilityByAccountReportRepository,
         LeaseLiabilityByAccountReportMapper leaseLiabilityByAccountReportMapper,
-        LeaseLiabilityByAccountReportSearchRepository leaseLiabilityByAccountReportSearchRepository
+        @Autowired(required = false) LeaseLiabilityByAccountReportSearchRepository leaseLiabilityByAccountReportSearchRepository
     ) {
         this.leaseLiabilityByAccountReportRepository = leaseLiabilityByAccountReportRepository;
         this.leaseLiabilityByAccountReportMapper = leaseLiabilityByAccountReportMapper;
@@ -67,7 +68,9 @@ public class LeaseLiabilityByAccountReportServiceImpl implements LeaseLiabilityB
         );
         leaseLiabilityByAccountReport = leaseLiabilityByAccountReportRepository.save(leaseLiabilityByAccountReport);
         LeaseLiabilityByAccountReportDTO result = leaseLiabilityByAccountReportMapper.toDto(leaseLiabilityByAccountReport);
-        leaseLiabilityByAccountReportSearchRepository.save(leaseLiabilityByAccountReport);
+        if (leaseLiabilityByAccountReportSearchRepository != null) {
+            leaseLiabilityByAccountReportSearchRepository.save(leaseLiabilityByAccountReport);
+        }
         return result;
     }
 
@@ -84,7 +87,9 @@ public class LeaseLiabilityByAccountReportServiceImpl implements LeaseLiabilityB
             })
             .map(leaseLiabilityByAccountReportRepository::save)
             .map(savedLeaseLiabilityByAccountReport -> {
-                leaseLiabilityByAccountReportSearchRepository.save(savedLeaseLiabilityByAccountReport);
+                if (leaseLiabilityByAccountReportSearchRepository != null) {
+                    leaseLiabilityByAccountReportSearchRepository.save(savedLeaseLiabilityByAccountReport);
+                }
 
                 return savedLeaseLiabilityByAccountReport;
             })
@@ -109,7 +114,9 @@ public class LeaseLiabilityByAccountReportServiceImpl implements LeaseLiabilityB
     public void delete(Long id) {
         log.debug("Request to delete LeaseLiabilityByAccountReport : {}", id);
         leaseLiabilityByAccountReportRepository.deleteById(id);
-        leaseLiabilityByAccountReportSearchRepository.deleteById(id);
+        if (leaseLiabilityByAccountReportSearchRepository != null) {
+            leaseLiabilityByAccountReportSearchRepository.deleteById(id);
+        }
     }
 
     @Override

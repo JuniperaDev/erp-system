@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.PrepaymentMarshallingMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class PrepaymentMarshallingServiceImpl implements PrepaymentMarshallingSe
     public PrepaymentMarshallingServiceImpl(
         PrepaymentMarshallingRepository prepaymentMarshallingRepository,
         PrepaymentMarshallingMapper prepaymentMarshallingMapper,
-        PrepaymentMarshallingSearchRepository prepaymentMarshallingSearchRepository
+        @Autowired(required = false) PrepaymentMarshallingSearchRepository prepaymentMarshallingSearchRepository
     ) {
         this.prepaymentMarshallingRepository = prepaymentMarshallingRepository;
         this.prepaymentMarshallingMapper = prepaymentMarshallingMapper;
@@ -65,7 +66,9 @@ public class PrepaymentMarshallingServiceImpl implements PrepaymentMarshallingSe
         PrepaymentMarshalling prepaymentMarshalling = prepaymentMarshallingMapper.toEntity(prepaymentMarshallingDTO);
         prepaymentMarshalling = prepaymentMarshallingRepository.save(prepaymentMarshalling);
         PrepaymentMarshallingDTO result = prepaymentMarshallingMapper.toDto(prepaymentMarshalling);
-        prepaymentMarshallingSearchRepository.save(prepaymentMarshalling);
+        if (prepaymentMarshallingSearchRepository != null) {
+            prepaymentMarshallingSearchRepository.save(prepaymentMarshalling);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class PrepaymentMarshallingServiceImpl implements PrepaymentMarshallingSe
             })
             .map(prepaymentMarshallingRepository::save)
             .map(savedPrepaymentMarshalling -> {
-                prepaymentMarshallingSearchRepository.save(savedPrepaymentMarshalling);
+                if (prepaymentMarshallingSearchRepository != null) {
+                    prepaymentMarshallingSearchRepository.save(savedPrepaymentMarshalling);
+                }
 
                 return savedPrepaymentMarshalling;
             })
@@ -111,13 +116,18 @@ public class PrepaymentMarshallingServiceImpl implements PrepaymentMarshallingSe
     public void delete(Long id) {
         log.debug("Request to delete PrepaymentMarshalling : {}", id);
         prepaymentMarshallingRepository.deleteById(id);
-        prepaymentMarshallingSearchRepository.deleteById(id);
+        if (prepaymentMarshallingSearchRepository != null) {
+            prepaymentMarshallingSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<PrepaymentMarshallingDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of PrepaymentMarshallings for query {}", query);
-        return prepaymentMarshallingSearchRepository.search(query, pageable).map(prepaymentMarshallingMapper::toDto);
+        if (prepaymentMarshallingSearchRepository != null) {
+            return prepaymentMarshallingSearchRepository.search(query, pageable).map(prepaymentMarshallingMapper::toDto);
+        }
+        return prepaymentMarshallingRepository.findAll(pageable).map(prepaymentMarshallingMapper::toDto);
     }
 }

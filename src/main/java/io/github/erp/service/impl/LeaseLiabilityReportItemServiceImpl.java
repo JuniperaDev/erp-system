@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.LeaseLiabilityReportItemMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class LeaseLiabilityReportItemServiceImpl implements LeaseLiabilityReport
     public LeaseLiabilityReportItemServiceImpl(
         LeaseLiabilityReportItemRepository leaseLiabilityReportItemRepository,
         LeaseLiabilityReportItemMapper leaseLiabilityReportItemMapper,
-        LeaseLiabilityReportItemSearchRepository leaseLiabilityReportItemSearchRepository
+        @Autowired(required = false) LeaseLiabilityReportItemSearchRepository leaseLiabilityReportItemSearchRepository
     ) {
         this.leaseLiabilityReportItemRepository = leaseLiabilityReportItemRepository;
         this.leaseLiabilityReportItemMapper = leaseLiabilityReportItemMapper;
@@ -65,7 +66,9 @@ public class LeaseLiabilityReportItemServiceImpl implements LeaseLiabilityReport
         LeaseLiabilityReportItem leaseLiabilityReportItem = leaseLiabilityReportItemMapper.toEntity(leaseLiabilityReportItemDTO);
         leaseLiabilityReportItem = leaseLiabilityReportItemRepository.save(leaseLiabilityReportItem);
         LeaseLiabilityReportItemDTO result = leaseLiabilityReportItemMapper.toDto(leaseLiabilityReportItem);
-        leaseLiabilityReportItemSearchRepository.save(leaseLiabilityReportItem);
+        if (leaseLiabilityReportItemSearchRepository != null) {
+            leaseLiabilityReportItemSearchRepository.save(leaseLiabilityReportItem);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class LeaseLiabilityReportItemServiceImpl implements LeaseLiabilityReport
             })
             .map(leaseLiabilityReportItemRepository::save)
             .map(savedLeaseLiabilityReportItem -> {
-                leaseLiabilityReportItemSearchRepository.save(savedLeaseLiabilityReportItem);
+                if (leaseLiabilityReportItemSearchRepository != null) {
+                    leaseLiabilityReportItemSearchRepository.save(savedLeaseLiabilityReportItem);
+                }
 
                 return savedLeaseLiabilityReportItem;
             })
@@ -107,7 +112,9 @@ public class LeaseLiabilityReportItemServiceImpl implements LeaseLiabilityReport
     public void delete(Long id) {
         log.debug("Request to delete LeaseLiabilityReportItem : {}", id);
         leaseLiabilityReportItemRepository.deleteById(id);
-        leaseLiabilityReportItemSearchRepository.deleteById(id);
+        if (leaseLiabilityReportItemSearchRepository != null) {
+            leaseLiabilityReportItemSearchRepository.deleteById(id);
+        }
     }
 
     @Override

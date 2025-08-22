@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.MfbBranchCodeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class MfbBranchCodeServiceImpl implements MfbBranchCodeService {
     public MfbBranchCodeServiceImpl(
         MfbBranchCodeRepository mfbBranchCodeRepository,
         MfbBranchCodeMapper mfbBranchCodeMapper,
-        MfbBranchCodeSearchRepository mfbBranchCodeSearchRepository
+        @Autowired(required = false) MfbBranchCodeSearchRepository mfbBranchCodeSearchRepository
     ) {
         this.mfbBranchCodeRepository = mfbBranchCodeRepository;
         this.mfbBranchCodeMapper = mfbBranchCodeMapper;
@@ -65,7 +66,9 @@ public class MfbBranchCodeServiceImpl implements MfbBranchCodeService {
         MfbBranchCode mfbBranchCode = mfbBranchCodeMapper.toEntity(mfbBranchCodeDTO);
         mfbBranchCode = mfbBranchCodeRepository.save(mfbBranchCode);
         MfbBranchCodeDTO result = mfbBranchCodeMapper.toDto(mfbBranchCode);
-        mfbBranchCodeSearchRepository.save(mfbBranchCode);
+        if (mfbBranchCodeSearchRepository != null) {
+            mfbBranchCodeSearchRepository.save(mfbBranchCode);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class MfbBranchCodeServiceImpl implements MfbBranchCodeService {
             })
             .map(mfbBranchCodeRepository::save)
             .map(savedMfbBranchCode -> {
-                mfbBranchCodeSearchRepository.save(savedMfbBranchCode);
+                if (mfbBranchCodeSearchRepository != null) {
+                    mfbBranchCodeSearchRepository.save(savedMfbBranchCode);
+                }
 
                 return savedMfbBranchCode;
             })
@@ -111,13 +116,18 @@ public class MfbBranchCodeServiceImpl implements MfbBranchCodeService {
     public void delete(Long id) {
         log.debug("Request to delete MfbBranchCode : {}", id);
         mfbBranchCodeRepository.deleteById(id);
-        mfbBranchCodeSearchRepository.deleteById(id);
+        if (mfbBranchCodeSearchRepository != null) {
+            mfbBranchCodeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<MfbBranchCodeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of MfbBranchCodes for query {}", query);
-        return mfbBranchCodeSearchRepository.search(query, pageable).map(mfbBranchCodeMapper::toDto);
+        if (mfbBranchCodeSearchRepository != null) {
+            return mfbBranchCodeSearchRepository.search(query, pageable).map(mfbBranchCodeMapper::toDto);
+        }
+        return mfbBranchCodeRepository.findAll(pageable).map(mfbBranchCodeMapper::toDto);
     }
 }

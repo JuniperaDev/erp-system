@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.PaymentLabelMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class PaymentLabelServiceImpl implements PaymentLabelService {
     public PaymentLabelServiceImpl(
         PaymentLabelRepository paymentLabelRepository,
         PaymentLabelMapper paymentLabelMapper,
-        PaymentLabelSearchRepository paymentLabelSearchRepository
+        @Autowired(required = false) PaymentLabelSearchRepository paymentLabelSearchRepository
     ) {
         this.paymentLabelRepository = paymentLabelRepository;
         this.paymentLabelMapper = paymentLabelMapper;
@@ -65,7 +66,9 @@ public class PaymentLabelServiceImpl implements PaymentLabelService {
         PaymentLabel paymentLabel = paymentLabelMapper.toEntity(paymentLabelDTO);
         paymentLabel = paymentLabelRepository.save(paymentLabel);
         PaymentLabelDTO result = paymentLabelMapper.toDto(paymentLabel);
-        paymentLabelSearchRepository.save(paymentLabel);
+        if (paymentLabelSearchRepository != null) {
+            paymentLabelSearchRepository.save(paymentLabel);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class PaymentLabelServiceImpl implements PaymentLabelService {
             })
             .map(paymentLabelRepository::save)
             .map(savedPaymentLabel -> {
-                paymentLabelSearchRepository.save(savedPaymentLabel);
+                if (paymentLabelSearchRepository != null) {
+                    paymentLabelSearchRepository.save(savedPaymentLabel);
+                }
 
                 return savedPaymentLabel;
             })
@@ -111,13 +116,18 @@ public class PaymentLabelServiceImpl implements PaymentLabelService {
     public void delete(Long id) {
         log.debug("Request to delete PaymentLabel : {}", id);
         paymentLabelRepository.deleteById(id);
-        paymentLabelSearchRepository.deleteById(id);
+        if (paymentLabelSearchRepository != null) {
+            paymentLabelSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<PaymentLabelDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of PaymentLabels for query {}", query);
-        return paymentLabelSearchRepository.search(query, pageable).map(paymentLabelMapper::toDto);
+        if (paymentLabelSearchRepository != null) {
+            return paymentLabelSearchRepository.search(query, pageable).map(paymentLabelMapper::toDto);
+        }
+        return paymentLabelRepository.findAll(pageable).map(paymentLabelMapper::toDto);
     }
 }

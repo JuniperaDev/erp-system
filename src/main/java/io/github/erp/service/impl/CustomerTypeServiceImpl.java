@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CustomerTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CustomerTypeServiceImpl implements CustomerTypeService {
     public CustomerTypeServiceImpl(
         CustomerTypeRepository customerTypeRepository,
         CustomerTypeMapper customerTypeMapper,
-        CustomerTypeSearchRepository customerTypeSearchRepository
+        @Autowired(required = false) CustomerTypeSearchRepository customerTypeSearchRepository
     ) {
         this.customerTypeRepository = customerTypeRepository;
         this.customerTypeMapper = customerTypeMapper;
@@ -65,7 +66,9 @@ public class CustomerTypeServiceImpl implements CustomerTypeService {
         CustomerType customerType = customerTypeMapper.toEntity(customerTypeDTO);
         customerType = customerTypeRepository.save(customerType);
         CustomerTypeDTO result = customerTypeMapper.toDto(customerType);
-        customerTypeSearchRepository.save(customerType);
+        if (customerTypeSearchRepository != null) {
+            customerTypeSearchRepository.save(customerType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CustomerTypeServiceImpl implements CustomerTypeService {
             })
             .map(customerTypeRepository::save)
             .map(savedCustomerType -> {
-                customerTypeSearchRepository.save(savedCustomerType);
+                if (customerTypeSearchRepository != null) {
+                    customerTypeSearchRepository.save(savedCustomerType);
+                }
 
                 return savedCustomerType;
             })
@@ -107,13 +112,18 @@ public class CustomerTypeServiceImpl implements CustomerTypeService {
     public void delete(Long id) {
         log.debug("Request to delete CustomerType : {}", id);
         customerTypeRepository.deleteById(id);
-        customerTypeSearchRepository.deleteById(id);
+        if (customerTypeSearchRepository != null) {
+            customerTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CustomerTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CustomerTypes for query {}", query);
-        return customerTypeSearchRepository.search(query, pageable).map(customerTypeMapper::toDto);
+        if (customerTypeSearchRepository != null) {
+            return customerTypeSearchRepository.search(query, pageable).map(customerTypeMapper::toDto);
+        }
+        return customerTypeRepository.findAll(pageable).map(customerTypeMapper::toDto);
     }
 }

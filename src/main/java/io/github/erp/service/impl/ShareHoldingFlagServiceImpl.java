@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.ShareHoldingFlagMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class ShareHoldingFlagServiceImpl implements ShareHoldingFlagService {
     public ShareHoldingFlagServiceImpl(
         ShareHoldingFlagRepository shareHoldingFlagRepository,
         ShareHoldingFlagMapper shareHoldingFlagMapper,
-        ShareHoldingFlagSearchRepository shareHoldingFlagSearchRepository
+        @Autowired(required = false) ShareHoldingFlagSearchRepository shareHoldingFlagSearchRepository
     ) {
         this.shareHoldingFlagRepository = shareHoldingFlagRepository;
         this.shareHoldingFlagMapper = shareHoldingFlagMapper;
@@ -65,7 +66,9 @@ public class ShareHoldingFlagServiceImpl implements ShareHoldingFlagService {
         ShareHoldingFlag shareHoldingFlag = shareHoldingFlagMapper.toEntity(shareHoldingFlagDTO);
         shareHoldingFlag = shareHoldingFlagRepository.save(shareHoldingFlag);
         ShareHoldingFlagDTO result = shareHoldingFlagMapper.toDto(shareHoldingFlag);
-        shareHoldingFlagSearchRepository.save(shareHoldingFlag);
+        if (shareHoldingFlagSearchRepository != null) {
+            shareHoldingFlagSearchRepository.save(shareHoldingFlag);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class ShareHoldingFlagServiceImpl implements ShareHoldingFlagService {
             })
             .map(shareHoldingFlagRepository::save)
             .map(savedShareHoldingFlag -> {
-                shareHoldingFlagSearchRepository.save(savedShareHoldingFlag);
+                if (shareHoldingFlagSearchRepository != null) {
+                    shareHoldingFlagSearchRepository.save(savedShareHoldingFlag);
+                }
 
                 return savedShareHoldingFlag;
             })
@@ -107,13 +112,18 @@ public class ShareHoldingFlagServiceImpl implements ShareHoldingFlagService {
     public void delete(Long id) {
         log.debug("Request to delete ShareHoldingFlag : {}", id);
         shareHoldingFlagRepository.deleteById(id);
-        shareHoldingFlagSearchRepository.deleteById(id);
+        if (shareHoldingFlagSearchRepository != null) {
+            shareHoldingFlagSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ShareHoldingFlagDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of ShareHoldingFlags for query {}", query);
-        return shareHoldingFlagSearchRepository.search(query, pageable).map(shareHoldingFlagMapper::toDto);
+        if (shareHoldingFlagSearchRepository != null) {
+            return shareHoldingFlagSearchRepository.search(query, pageable).map(shareHoldingFlagMapper::toDto);
+        }
+        return shareHoldingFlagRepository.findAll(pageable).map(shareHoldingFlagMapper::toDto);
     }
 }

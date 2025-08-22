@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AssetRevaluationMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AssetRevaluationServiceImpl implements AssetRevaluationService {
     public AssetRevaluationServiceImpl(
         AssetRevaluationRepository assetRevaluationRepository,
         AssetRevaluationMapper assetRevaluationMapper,
-        AssetRevaluationSearchRepository assetRevaluationSearchRepository
+        @Autowired(required = false) AssetRevaluationSearchRepository assetRevaluationSearchRepository
     ) {
         this.assetRevaluationRepository = assetRevaluationRepository;
         this.assetRevaluationMapper = assetRevaluationMapper;
@@ -65,7 +66,9 @@ public class AssetRevaluationServiceImpl implements AssetRevaluationService {
         AssetRevaluation assetRevaluation = assetRevaluationMapper.toEntity(assetRevaluationDTO);
         assetRevaluation = assetRevaluationRepository.save(assetRevaluation);
         AssetRevaluationDTO result = assetRevaluationMapper.toDto(assetRevaluation);
-        assetRevaluationSearchRepository.save(assetRevaluation);
+        if (assetRevaluationSearchRepository != null) {
+            assetRevaluationSearchRepository.save(assetRevaluation);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AssetRevaluationServiceImpl implements AssetRevaluationService {
             })
             .map(assetRevaluationRepository::save)
             .map(savedAssetRevaluation -> {
-                assetRevaluationSearchRepository.save(savedAssetRevaluation);
+                if (assetRevaluationSearchRepository != null) {
+                    assetRevaluationSearchRepository.save(savedAssetRevaluation);
+                }
 
                 return savedAssetRevaluation;
             })
@@ -111,13 +116,18 @@ public class AssetRevaluationServiceImpl implements AssetRevaluationService {
     public void delete(Long id) {
         log.debug("Request to delete AssetRevaluation : {}", id);
         assetRevaluationRepository.deleteById(id);
-        assetRevaluationSearchRepository.deleteById(id);
+        if (assetRevaluationSearchRepository != null) {
+            assetRevaluationSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AssetRevaluationDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AssetRevaluations for query {}", query);
-        return assetRevaluationSearchRepository.search(query, pageable).map(assetRevaluationMapper::toDto);
+        if (assetRevaluationSearchRepository != null) {
+            return assetRevaluationSearchRepository.search(query, pageable).map(assetRevaluationMapper::toDto);
+        }
+        return assetRevaluationRepository.findAll(pageable).map(assetRevaluationMapper::toDto);
     }
 }

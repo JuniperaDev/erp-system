@@ -1,5 +1,6 @@
 package io.github.erp.financial.service.dto;
 
+import io.github.erp.service.dto.BusinessDocumentDTO;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;

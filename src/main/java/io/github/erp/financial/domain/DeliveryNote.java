@@ -1,6 +1,7 @@
 package io.github.erp.financial.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.github.erp.domain.BusinessDocument;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;

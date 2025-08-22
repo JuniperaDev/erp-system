@@ -24,9 +24,11 @@ import io.github.erp.domain.enumeration.CurrencyTypes;
 import io.github.erp.financial.service.SettlementService;
 import io.github.erp.financial.service.PaymentService;
 import io.github.erp.financial.service.InvoiceService;
-import io.github.erp.financial.service.dto.SettlementDTO;
-import io.github.erp.financial.service.dto.PaymentDTO;
-import io.github.erp.financial.service.dto.InvoiceDTO;
+import io.github.erp.service.dto.SettlementDTO;
+import io.github.erp.service.dto.PaymentDTO;
+import io.github.erp.service.dto.InvoiceDTO;
+import io.github.erp.service.dto.SettlementCurrencyDTO;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,22 +41,25 @@ import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = ErpSystemApp.class, properties = {
-    "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration,org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration,org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration,org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration",
-    "spring.kafka.bootstrap-servers=localhost:9092",
-    "spring.kafka.consumer.auto-offset-reset=earliest",
-    "spring.kafka.consumer.group-id=test-group"
+    "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration,org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration,org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration,org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration,org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration",
+    "spring.cache.type=none",
+    "spring.jpa.hibernate.ddl-auto=create-drop",
+    "domain.events.kafka.enabled=false"
 })
 @ActiveProfiles("test")
 @Transactional
 public class FinancialDomainEventsIntegrationTest {
 
     @Autowired
+    @Qualifier("financialSettlementServiceImpl")
     private SettlementService settlementService;
 
     @Autowired
+    @Qualifier("financialPaymentServiceImpl")
     private PaymentService paymentService;
 
     @Autowired
+    @Qualifier("financialInvoiceServiceImpl")
     private InvoiceService invoiceService;
 
     @Autowired
@@ -67,7 +72,7 @@ public class FinancialDomainEventsIntegrationTest {
         settlementDTO.setPaymentAmount(BigDecimal.valueOf(1000.00));
         settlementDTO.setPaymentDate(LocalDate.now());
         settlementDTO.setDescription("Test settlement");
-        settlementDTO.setSettlementCurrency(CurrencyTypes.USD);
+        settlementDTO.setSettlementCurrency(null);
 
         long eventCountBefore = domainEventStore.count();
 
@@ -127,7 +132,7 @@ public class FinancialDomainEventsIntegrationTest {
         settlementDTO.setPaymentAmount(BigDecimal.valueOf(2000.00));
         settlementDTO.setPaymentDate(LocalDate.now());
         settlementDTO.setDescription("Audit trail test settlement");
-        settlementDTO.setSettlementCurrency(CurrencyTypes.USD);
+        settlementDTO.setSettlementCurrency(null);
 
         PaymentDTO paymentDTO = new PaymentDTO();
         paymentDTO.setPaymentNumber("AUDIT-PAY-001");

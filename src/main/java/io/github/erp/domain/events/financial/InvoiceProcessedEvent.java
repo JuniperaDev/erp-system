@@ -1,69 +1,31 @@
 package io.github.erp.domain.events.financial;
 
-import io.github.erp.domain.events.DomainEvent;
+import io.github.erp.domain.events.AbstractDomainEvent;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.Instant;
 import java.util.UUID;
 
 /**
  * Domain event for invoice processing.
  */
-public class InvoiceProcessedEvent implements DomainEvent {
+public class InvoiceProcessedEvent extends AbstractDomainEvent {
     
-    private final UUID eventId;
     private final String invoiceId;
     private final String invoiceNumber;
     private final BigDecimal invoiceAmount;
     private final LocalDate invoiceDate;
-    private final Instant occurredOn;
-    private final UUID correlationId;
-    private final Integer version;
 
     public InvoiceProcessedEvent(String invoiceId, String invoiceNumber, BigDecimal invoiceAmount, LocalDate invoiceDate) {
-        this.eventId = UUID.randomUUID();
+        super(invoiceId, "Invoice", UUID.randomUUID());
         this.invoiceId = invoiceId;
         this.invoiceNumber = invoiceNumber;
         this.invoiceAmount = invoiceAmount;
         this.invoiceDate = invoiceDate;
-        this.occurredOn = Instant.now();
-        this.correlationId = UUID.randomUUID();
-        this.version = 1;
-    }
-
-    @Override
-    public UUID getEventId() {
-        return eventId;
     }
 
     @Override
     public String getEventType() {
         return "InvoiceProcessed";
-    }
-
-    @Override
-    public Instant getOccurredOn() {
-        return occurredOn;
-    }
-
-    @Override
-    public Integer getVersion() {
-        return version;
-    }
-
-    @Override
-    public UUID getCorrelationId() {
-        return correlationId;
-    }
-
-    @Override
-    public String getAggregateId() {
-        return invoiceId;
-    }
-
-    @Override
-    public String getAggregateType() {
-        return "Invoice";
     }
 
     public String getInvoiceId() {
@@ -89,7 +51,7 @@ public class InvoiceProcessedEvent implements DomainEvent {
             ", invoiceNumber='" + invoiceNumber + '\'' +
             ", invoiceAmount=" + invoiceAmount +
             ", invoiceDate=" + invoiceDate +
-            ", occurredOn=" + occurredOn +
+            ", occurredOn=" + getOccurredOn() +
             '}';
     }
 }

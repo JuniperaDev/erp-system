@@ -46,6 +46,29 @@ public class SettlementToAssetAcquisitionACL extends AbstractTranslationACL<Sett
         }
     }
 
+    public Optional<AssetAcquisitionData> translateSettlementToAssetAcquisition(SettlementDTO settlement) {
+        if (settlement == null) {
+            return Optional.empty();
+        }
+        
+        try {
+            AssetAcquisitionData result = translate(settlement);
+            return Optional.ofNullable(result);
+        } catch (Exception e) {
+            log.error("Failed to translate settlement to asset acquisition: {}", settlement.getId(), e);
+            return Optional.empty();
+        }
+    }
+
+    public Optional<String> generateAssetNumber(SettlementDTO settlement) {
+        if (settlement == null || settlement.getPaymentNumber() == null) {
+            return Optional.empty();
+        }
+        
+        String assetNumber = "AST-PAY-" + settlement.getPaymentNumber();
+        return Optional.of(assetNumber);
+    }
+
     public boolean validateSettlementForAssetAcquisition(SettlementDTO settlement) {
         if (settlement == null) {
             return false;

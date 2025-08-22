@@ -208,7 +208,7 @@ class AssetRegistrationResourceIT {
         } else {
             settlement = TestUtil.findAll(em, Settlement.class).get(0);
         }
-        assetRegistration.setAcquiringTransaction(settlement);
+        assetRegistration.setAcquiringTransactionId(settlement.getId());
         return assetRegistration;
     }
 
@@ -261,7 +261,7 @@ class AssetRegistrationResourceIT {
         } else {
             settlement = TestUtil.findAll(em, Settlement.class).get(0);
         }
-        assetRegistration.setAcquiringTransaction(settlement);
+        assetRegistration.setAcquiringTransactionId(settlement.getId());
         return assetRegistration;
     }
 
@@ -1461,7 +1461,7 @@ class AssetRegistrationResourceIT {
         }
         em.persist(acquiringTransaction);
         em.flush();
-        assetRegistration.setAcquiringTransaction(acquiringTransaction);
+        assetRegistration.setAcquiringTransactionId(acquiringTransaction.getId());
         assetRegistrationRepository.saveAndFlush(assetRegistration);
         Long acquiringTransactionId = acquiringTransaction.getId();
 

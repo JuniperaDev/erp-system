@@ -8,15 +8,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
 @EnableJpaRepositories(
-    basePackages = "io.github.erp.repository",
+    basePackages = "io.github.erp.financial.repository",
     excludeFilters = {
         @ComponentScan.Filter(
             type = FilterType.REGEX,
             pattern = ".*\\.search\\..*"
-        ),
-        @ComponentScan.Filter(
-            type = FilterType.REGEX,
-            pattern = ".*\\.timezone\\..*"
         )
     }
 )
@@ -28,8 +24,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
     "io.github.erp.financial.service",
     "io.github.erp.financial.web.rest",
     "io.github.erp.financial.events",
-    "io.github.erp.service",
-    "io.github.erp.erp"
+    "io.github.erp.financial.config"
 })
 public class FinancialContextConfiguration {
 }

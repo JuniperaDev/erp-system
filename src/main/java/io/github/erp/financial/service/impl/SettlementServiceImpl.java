@@ -3,11 +3,13 @@ package io.github.erp.financial.service.impl;
 import io.github.erp.financial.service.SettlementService;
 import io.github.erp.service.dto.SettlementDTO;
 import io.github.erp.repository.SettlementRepository;
+import io.github.erp.repository.search.SettlementSearchRepository;
 import io.github.erp.service.mapper.SettlementMapper;
 import io.github.erp.domain.events.DomainEventPublisher;
 import io.github.erp.domain.events.financial.SettlementCreatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,15 +25,18 @@ public class SettlementServiceImpl implements SettlementService {
     private final SettlementRepository settlementRepository;
     private final SettlementMapper settlementMapper;
     private final DomainEventPublisher domainEventPublisher;
+    private final SettlementSearchRepository settlementSearchRepository;
 
     public SettlementServiceImpl(
         SettlementRepository settlementRepository,
         SettlementMapper settlementMapper,
-        DomainEventPublisher domainEventPublisher
+        DomainEventPublisher domainEventPublisher,
+        @Autowired(required = false) SettlementSearchRepository settlementSearchRepository
     ) {
         this.settlementRepository = settlementRepository;
         this.settlementMapper = settlementMapper;
         this.domainEventPublisher = domainEventPublisher;
+        this.settlementSearchRepository = settlementSearchRepository;
     }
 
     @Override
@@ -40,6 +45,9 @@ public class SettlementServiceImpl implements SettlementService {
         var settlement = settlementMapper.toEntity(settlementDTO);
         settlement = settlementRepository.save(settlement);
         SettlementDTO result = settlementMapper.toDto(settlement);
+        if (settlementSearchRepository != null) {
+            settlementSearchRepository.save(settlement);
+        }
         
         SettlementCreatedEvent event = new SettlementCreatedEvent(
             settlement.getId().toString(),
@@ -66,6 +74,12 @@ public class SettlementServiceImpl implements SettlementService {
                 return existingSettlement;
             })
             .map(settlementRepository::save)
+            .map(savedSettlement -> {
+                if (settlementSearchRepository != null) {
+                    settlementSearchRepository.save(savedSettlement);
+                }
+                return savedSettlement;
+            })
             .map(settlementMapper::toDto);
     }
 
@@ -93,12 +107,18 @@ public class SettlementServiceImpl implements SettlementService {
     public void delete(Long id) {
         log.debug("Request to delete Settlement : {}", id);
         settlementRepository.deleteById(id);
+        if (settlementSearchRepository != null) {
+            settlementSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<SettlementDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of Settlements for query {}", query);
+        if (settlementSearchRepository != null) {
+            return settlementSearchRepository.search(query, pageable).map(settlementMapper::toDto);
+        }
         return settlementRepository.findAll(pageable).map(settlementMapper::toDto);
     }
 }

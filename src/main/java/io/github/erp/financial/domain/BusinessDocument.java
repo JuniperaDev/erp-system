@@ -26,44 +26,12 @@ public class BusinessDocument implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @JsonIgnoreProperties(
-        value = {
-            "createdBy",
-            "lastModifiedBy",
-            "originatingDepartment",
-            "applicationMappings",
-            "placeholders",
-            "fileChecksumAlgorithm",
-            "securityClearance",
-        },
-        allowSetters = true
-    )
-    private Object createdBy;
-
-    @JsonIgnoreProperties(
-        value = {
-            "createdBy",
-            "lastModifiedBy",
-            "originatingDepartment",
-            "applicationMappings",
-            "placeholders",
-            "fileChecksumAlgorithm",
-            "securityClearance",
-        },
-        allowSetters = true
-    )
-    private Object lastModifiedBy;
-
-    private Object originatingDepartment;
-    private Set<Object> applicationMappings = new HashSet<>();
 
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "containingPlaceholder" }, allowSetters = true)
     private Set<Placeholder> placeholders = new HashSet<>();
 
-    private Object fileChecksumAlgorithm;
-    private Object securityClearance;
 
     public Long getId() {
         return id;
@@ -73,21 +41,6 @@ public class BusinessDocument implements Serializable {
         this.id = id;
     }
 
-    public Object getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(Object createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public Object getLastModifiedBy() {
-        return lastModifiedBy;
-    }
-
-    public void setLastModifiedBy(Object lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
-    }
 
     public Set<Placeholder> getPlaceholders() {
         return placeholders;

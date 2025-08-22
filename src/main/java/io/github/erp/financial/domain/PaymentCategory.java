@@ -31,9 +31,6 @@ public class PaymentCategory implements Serializable {
     @JsonIgnoreProperties(value = { "containingPaymentLabel", "placeholders" }, allowSetters = true)
     private Set<PaymentLabel> paymentLabels = new HashSet<>();
 
-    @ManyToMany
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    private Set<Object> paymentCalculations = new HashSet<>();
 
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -56,13 +53,6 @@ public class PaymentCategory implements Serializable {
         this.paymentLabels = paymentLabels;
     }
 
-    public Set<Object> getPaymentCalculations() {
-        return paymentCalculations;
-    }
-
-    public void setPaymentCalculations(Set<Object> paymentCalculations) {
-        this.paymentCalculations = paymentCalculations;
-    }
 
     public Set<Placeholder> getPlaceholders() {
         return placeholders;

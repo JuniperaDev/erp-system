@@ -21,12 +21,12 @@ package io.github.erp.domain.events.financial;
 import io.github.erp.ErpSystemApp;
 import io.github.erp.domain.events.DomainEventStore;
 import io.github.erp.domain.enumeration.CurrencyTypes;
-import io.github.erp.service.SettlementService;
-import io.github.erp.service.PaymentService;
-import io.github.erp.service.InvoiceService;
-import io.github.erp.service.dto.SettlementDTO;
-import io.github.erp.service.dto.PaymentDTO;
-import io.github.erp.service.dto.InvoiceDTO;
+import io.github.erp.financial.service.SettlementService;
+import io.github.erp.financial.service.PaymentService;
+import io.github.erp.financial.service.InvoiceService;
+import io.github.erp.financial.service.dto.SettlementDTO;
+import io.github.erp.financial.service.dto.PaymentDTO;
+import io.github.erp.financial.service.dto.InvoiceDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -67,6 +67,7 @@ public class FinancialDomainEventsIntegrationTest {
         settlementDTO.setPaymentAmount(BigDecimal.valueOf(1000.00));
         settlementDTO.setPaymentDate(LocalDate.now());
         settlementDTO.setDescription("Test settlement");
+        settlementDTO.setSettlementCurrency(CurrencyTypes.USD);
 
         long eventCountBefore = domainEventStore.count();
 
@@ -87,6 +88,7 @@ public class FinancialDomainEventsIntegrationTest {
         paymentDTO.setInvoicedAmount(BigDecimal.valueOf(500.00));
         paymentDTO.setPaymentDate(LocalDate.now());
         paymentDTO.setDescription("Test payment");
+        paymentDTO.setSettlementCurrency(CurrencyTypes.USD);
 
         long eventCountBefore = domainEventStore.count();
 
@@ -102,7 +104,7 @@ public class FinancialDomainEventsIntegrationTest {
     @Test
     public void shouldPublishInvoiceSettledEventWhenInvoiceIsSaved() {
         InvoiceDTO invoiceDTO = new InvoiceDTO();
-        invoiceDTO.setInvoiceNumber("INV-001");
+        invoiceDTO.setInvoiceNumber("INV-001-" + System.currentTimeMillis());
         invoiceDTO.setInvoiceAmount(BigDecimal.valueOf(750.00));
         invoiceDTO.setInvoiceDate(LocalDate.now());
         invoiceDTO.setCurrency(CurrencyTypes.USD);
@@ -125,6 +127,7 @@ public class FinancialDomainEventsIntegrationTest {
         settlementDTO.setPaymentAmount(BigDecimal.valueOf(2000.00));
         settlementDTO.setPaymentDate(LocalDate.now());
         settlementDTO.setDescription("Audit trail test settlement");
+        settlementDTO.setSettlementCurrency(CurrencyTypes.USD);
 
         PaymentDTO paymentDTO = new PaymentDTO();
         paymentDTO.setPaymentNumber("AUDIT-PAY-001");
@@ -132,9 +135,10 @@ public class FinancialDomainEventsIntegrationTest {
         paymentDTO.setInvoicedAmount(BigDecimal.valueOf(1500.00));
         paymentDTO.setPaymentDate(LocalDate.now());
         paymentDTO.setDescription("Audit trail test payment");
+        paymentDTO.setSettlementCurrency(CurrencyTypes.USD);
 
         InvoiceDTO invoiceDTO = new InvoiceDTO();
-        invoiceDTO.setInvoiceNumber("AUDIT-INV-001");
+        invoiceDTO.setInvoiceNumber("AUDIT-INV-001-" + System.currentTimeMillis());
         invoiceDTO.setInvoiceAmount(BigDecimal.valueOf(1200.00));
         invoiceDTO.setInvoiceDate(LocalDate.now());
         invoiceDTO.setCurrency(CurrencyTypes.USD);

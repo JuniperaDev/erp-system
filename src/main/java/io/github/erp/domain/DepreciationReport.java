@@ -19,6 +19,7 @@ package io.github.erp.domain;
  */
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.github.erp.context.assets.domain.AssetCategory;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.UUID;

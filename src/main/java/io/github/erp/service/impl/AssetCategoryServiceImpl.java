@@ -20,7 +20,7 @@ package io.github.erp.service.impl;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
-import io.github.erp.domain.AssetCategory;
+import io.github.erp.context.assets.domain.AssetCategory;
 import io.github.erp.repository.AssetCategoryRepository;
 import io.github.erp.repository.search.AssetCategorySearchRepository;
 import io.github.erp.service.AssetCategoryService;

@@ -20,7 +20,7 @@ package io.github.erp.service.impl;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
-import io.github.erp.domain.AssetDisposal;
+import io.github.erp.context.assets.domain.AssetDisposal;
 import io.github.erp.repository.AssetDisposalRepository;
 import io.github.erp.repository.search.AssetDisposalSearchRepository;
 import io.github.erp.service.AssetDisposalService;

@@ -1,0 +1,11 @@
+id;job_sheet_serial;asset_registration_id;job_sheet_id;assignment_date;assigned_by;assignment_notes
+1;JS-AST-001;1;1;2024-01-16;Maintenance Supervisor;Initial setup job sheet
+2;JS-AST-002;2;2;2024-01-16;Maintenance Supervisor;Installation job sheet
+3;JS-AST-003;3;3;2024-01-16;Maintenance Supervisor;Calibration job sheet
+4;JS-AST-004;4;4;2024-01-16;Maintenance Supervisor;Inspection job sheet
+5;JS-AST-005;5;5;2024-01-16;Maintenance Supervisor;Repair job sheet
+6;JS-AST-006;6;6;2024-01-16;Maintenance Supervisor;Upgrade job sheet
+7;JS-AST-007;7;7;2024-01-16;Maintenance Supervisor;Security check job sheet
+8;JS-AST-008;8;8;2024-01-16;Maintenance Supervisor;Testing job sheet
+9;JS-AST-009;9;9;2024-01-16;Maintenance Supervisor;Configuration job sheet
+10;JS-AST-010;10;10;2024-01-16;Maintenance Supervisor;Decommission job sheet

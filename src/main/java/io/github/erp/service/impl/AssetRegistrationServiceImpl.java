@@ -20,7 +20,7 @@ package io.github.erp.service.impl;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
-import io.github.erp.domain.AssetRegistration;
+import io.github.erp.context.assets.domain.AssetRegistration;
 import io.github.erp.domain.events.AssetAcquiredEvent;
 import io.github.erp.repository.AssetRegistrationRepository;
 import io.github.erp.repository.search.AssetRegistrationSearchRepository;
@@ -76,11 +76,11 @@ public class AssetRegistrationServiceImpl implements AssetRegistrationService {
             assetRegistrationSearchRepository.save(assetRegistration);
         }
         
-        if (assetRegistration.getAcquiringTransaction() != null) {
+        if (assetRegistration.getAcquiringTransactionId() != null) {
             eventPublisher.publishEvent(new AssetAcquiredEvent(
                 this,
                 assetRegistration.getId(),
-                assetRegistration.getAcquiringTransaction().getId(),
+                assetRegistration.getAcquiringTransactionId(),
                 assetRegistration.getCapitalizationDate()
             ));
         }
@@ -105,11 +105,11 @@ public class AssetRegistrationServiceImpl implements AssetRegistrationService {
                     assetRegistrationSearchRepository.save(savedAssetRegistration);
                 }
 
-                if (savedAssetRegistration.getAcquiringTransaction() != null) {
+                if (savedAssetRegistration.getAcquiringTransactionId() != null) {
                     eventPublisher.publishEvent(new AssetAcquiredEvent(
                         this,
                         savedAssetRegistration.getId(),
-                        savedAssetRegistration.getAcquiringTransaction().getId(),
+                        savedAssetRegistration.getAcquiringTransactionId(),
                         savedAssetRegistration.getCapitalizationDate()
                     ));
                 }

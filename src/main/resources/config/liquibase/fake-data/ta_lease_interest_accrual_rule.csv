@@ -1,0 +1,11 @@
+id;name;identifier;lease_contract_id;lease_period_id;lease_liability_id;interest_rate;rule_active;created_date;last_modified_date
+1;Monthly Interest Accrual Rule;RULE-001;1;1;1;0.045000000000000;true;2024-01-16;2024-01-16
+2;Quarterly Interest Accrual Rule;RULE-002;2;2;2;0.038500000000000;true;2024-01-16;2024-01-16
+3;Semi-Annual Interest Accrual Rule;RULE-003;3;3;3;0.042000000000000;true;2024-01-16;2024-01-16
+4;Annual Interest Accrual Rule;RULE-004;4;4;4;0.050000000000000;true;2024-01-16;2024-01-16
+5;Weekly Interest Accrual Rule;RULE-005;5;5;5;0.040000000000000;false;2024-01-16;2024-01-16
+6;Bi-Monthly Interest Accrual Rule;RULE-006;6;6;6;0.047500000000000;true;2024-01-16;2024-01-16
+7;Daily Interest Accrual Rule;RULE-007;7;7;7;0.035000000000000;false;2024-01-16;2024-01-16
+8;Bi-Weekly Interest Accrual Rule;RULE-008;8;8;8;0.043000000000000;true;2024-01-16;2024-01-16
+9;Custom Interest Accrual Rule;RULE-009;9;9;9;0.048000000000000;true;2024-01-16;2024-01-16
+10;Variable Interest Accrual Rule;RULE-010;10;10;10;0.041500000000000;true;2024-01-16;2024-01-16

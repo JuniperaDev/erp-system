@@ -33,7 +33,10 @@ import tech.jhipster.config.JHipsterConstants;
     basePackages = {
         "io.github.erp.repository",
         "io.github.erp.internal.repository",
-        "io.github.erp.erp.assets.nbv.calculation"
+        "io.github.erp.erp.assets.nbv.calculation",
+        "io.github.erp.cqrs.asset.repositories",
+        "io.github.erp.cqrs.lease.repositories",
+        "io.github.erp.cqrs.financial.repositories"
     },
     excludeFilters = {
         @ComponentScan.Filter(

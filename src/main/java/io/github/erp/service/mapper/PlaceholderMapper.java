@@ -47,4 +47,6 @@ public interface PlaceholderMapper extends EntityMapper<PlaceholderDTO, Placehol
     @Mapping(target = "id", source = "id")
     @Mapping(target = "description", source = "description")
     PlaceholderDTO toDtoDescription(Placeholder placeholder);
+
+    Placeholder toEntity(PlaceholderDTO placeholderDTO);
 }

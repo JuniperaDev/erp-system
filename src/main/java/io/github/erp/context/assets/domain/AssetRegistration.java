@@ -1,4 +1,4 @@
-package io.github.erp.domain;
+package io.github.erp.context.assets.domain;
 
 /*-
  * Erp System - Mark X No 10 (Jehoiada Series) Server ver 1.8.2
@@ -18,6 +18,11 @@ package io.github.erp.domain;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.github.erp.context.assets.domain.AssetCategory;
+import io.github.erp.domain.Dealer;
+import io.github.erp.domain.Placeholder;
+import io.github.erp.domain.ServiceOutlet;
+import io.github.erp.domain.SettlementCurrency;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,6 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -104,13 +110,18 @@ public class AssetRegistration implements Serializable {
     @Field(type = FieldType.Date)
     private LocalDate registrationDate;
 
-    @ManyToMany
+    @Column(name = "acquiring_transaction_id")
+    @Field(type = FieldType.Long)
+    private Long acquiringTransactionId;
+
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "rel_asset_registration__placeholder",
         joinColumns = @JoinColumn(name = "asset_registration_id"),
         inverseJoinColumns = @JoinColumn(name = "placeholder_id")
     )
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
     @JsonIgnoreProperties(value = { "containingPlaceholder" }, allowSetters = true)
     private Set<Placeholder> placeholders = new HashSet<>();
     @ManyToOne(optional = false)
@@ -131,24 +142,6 @@ public class AssetRegistration implements Serializable {
         allowSetters = true
     )
     private ServiceOutlet mainServiceOutlet;
-
-    @ManyToOne(optional = false)
-    @NotNull
-    @JsonIgnoreProperties(
-        value = {
-            "placeholders",
-            "settlementCurrency",
-            "paymentLabels",
-            "paymentCategory",
-            "groupSettlement",
-            "biller",
-            "paymentInvoices",
-            "signatories",
-            "businessDocuments",
-        },
-        allowSetters = true
-    )
-    private Settlement acquiringTransaction;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -321,6 +314,19 @@ public class AssetRegistration implements Serializable {
         this.registrationDate = registrationDate;
     }
 
+    public Long getAcquiringTransactionId() {
+        return this.acquiringTransactionId;
+    }
+
+    public AssetRegistration acquiringTransactionId(Long acquiringTransactionId) {
+        this.setAcquiringTransactionId(acquiringTransactionId);
+        return this;
+    }
+
+    public void setAcquiringTransactionId(Long acquiringTransactionId) {
+        this.acquiringTransactionId = acquiringTransactionId;
+    }
+
     public Set<Placeholder> getPlaceholders() {
         return this.placeholders;
     }
@@ -396,19 +402,6 @@ public class AssetRegistration implements Serializable {
         return this;
     }
 
-    public Settlement getAcquiringTransaction() {
-        return this.acquiringTransaction;
-    }
-
-    public void setAcquiringTransaction(Settlement settlement) {
-        this.acquiringTransaction = settlement;
-    }
-
-    public AssetRegistration acquiringTransaction(Settlement settlement) {
-        this.setAcquiringTransaction(settlement);
-        return this;
-    }
-
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -445,6 +438,7 @@ public class AssetRegistration implements Serializable {
             ", capitalizationDate='" + getCapitalizationDate() + "'" +
             ", historicalCost=" + getHistoricalCost() +
             ", registrationDate='" + getRegistrationDate() + "'" +
+            ", acquiringTransactionId=" + getAcquiringTransactionId() +
             "}";
     }
 }

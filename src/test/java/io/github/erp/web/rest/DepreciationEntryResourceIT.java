@@ -27,8 +27,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import io.github.erp.IntegrationTest;
-import io.github.erp.domain.AssetCategory;
-import io.github.erp.domain.AssetRegistration;
+import io.github.erp.context.assets.domain.AssetCategory;
+import io.github.erp.context.assets.domain.AssetRegistration;
 import io.github.erp.domain.DepreciationBatchSequence;
 import io.github.erp.domain.DepreciationEntry;
 import io.github.erp.domain.DepreciationJob;

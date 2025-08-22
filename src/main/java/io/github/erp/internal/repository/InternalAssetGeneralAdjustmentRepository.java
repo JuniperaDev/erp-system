@@ -18,7 +18,7 @@ package io.github.erp.internal.repository;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import io.github.erp.domain.AssetGeneralAdjustment;
-import io.github.erp.domain.AssetRevaluation;
+import io.github.erp.context.assets.domain.AssetRevaluation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;

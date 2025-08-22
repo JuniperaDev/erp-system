@@ -18,7 +18,7 @@ package io.github.erp.erp.resources;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import io.github.erp.IntegrationTest;
-import io.github.erp.domain.AssetCategory;
+import io.github.erp.context.assets.domain.AssetCategory;
 import io.github.erp.domain.DepreciationMethod;
 import io.github.erp.domain.Placeholder;
 import io.github.erp.repository.AssetCategoryRepository;

@@ -1,0 +1,11 @@
+id;booking_id;lease_title;identifier;description;commencement_date;terminal_date;lease_liability_amount;interest_rate;lease_contract_document_id;lease_contract_amendments_id
+1;IFRS16-001;Office Space Lease;LEASE-001;Main office building lease agreement;2024-01-01;2026-12-31;125000.50;0.045000000000000;1;1
+2;IFRS16-002;Warehouse Rental;LEASE-002;Storage facility rental contract;2024-01-15;2026-12-31;89750.25;0.038500000000000;2;2
+3;IFRS16-003;Equipment Lease;LEASE-003;Manufacturing equipment lease;2024-02-01;2026-12-31;67890.75;0.042000000000000;3;3
+4;IFRS16-004;Vehicle Fleet;LEASE-004;Company vehicle fleet lease;2024-01-10;2026-12-31;156780.00;0.050000000000000;4;4
+5;IFRS16-005;Retail Space;LEASE-005;Retail outlet lease agreement;2024-01-20;2026-12-31;98456.30;0.040000000000000;5;5
+6;IFRS16-006;Manufacturing Facility;LEASE-006;Production facility lease;2024-01-05;2026-12-31;234567.80;0.047500000000000;6;6
+7;IFRS16-007;Storage Unit;LEASE-007;Additional storage space lease;2024-02-15;2026-12-31;78923.45;0.035000000000000;7;7
+8;IFRS16-008;Technology Equipment;LEASE-008;IT equipment lease agreement;2024-01-25;2026-12-31;145632.90;0.043000000000000;8;8
+9;IFRS16-009;Commercial Property;LEASE-009;Commercial building lease;2024-01-12;2026-12-31;187456.60;0.048000000000000;9;9
+10;IFRS16-010;Industrial Equipment;LEASE-010;Heavy industrial equipment lease;2024-02-01;2026-12-31;112345.70;0.041500000000000;10;10

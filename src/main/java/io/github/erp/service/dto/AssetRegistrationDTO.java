@@ -73,7 +73,7 @@ public class AssetRegistrationDTO implements Serializable {
 
     private ServiceOutletDTO mainServiceOutlet;
 
-    private SettlementDTO acquiringTransaction;
+    private Long acquiringTransactionId;
 
     public Long getId() {
         return id;
@@ -219,12 +219,12 @@ public class AssetRegistrationDTO implements Serializable {
         this.mainServiceOutlet = mainServiceOutlet;
     }
 
-    public SettlementDTO getAcquiringTransaction() {
-        return acquiringTransaction;
+    public Long getAcquiringTransactionId() {
+        return acquiringTransactionId;
     }
 
-    public void setAcquiringTransaction(SettlementDTO acquiringTransaction) {
-        this.acquiringTransaction = acquiringTransaction;
+    public void setAcquiringTransactionId(Long acquiringTransactionId) {
+        this.acquiringTransactionId = acquiringTransactionId;
     }
 
     @Override
@@ -269,7 +269,7 @@ public class AssetRegistrationDTO implements Serializable {
             ", dealer=" + getDealer() +
             ", settlementCurrency=" + getSettlementCurrency() +
             ", mainServiceOutlet=" + getMainServiceOutlet() +
-            ", acquiringTransaction=" + getAcquiringTransaction() +
+            ", acquiringTransactionId=" + getAcquiringTransactionId() +
             "}";
     }
 }

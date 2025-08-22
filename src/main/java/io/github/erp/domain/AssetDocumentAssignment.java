@@ -19,6 +19,7 @@ package io.github.erp.domain;
  */
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.github.erp.context.assets.domain.AssetRegistration;
 import java.io.Serializable;
 import java.time.LocalDate;
 import javax.persistence.*;

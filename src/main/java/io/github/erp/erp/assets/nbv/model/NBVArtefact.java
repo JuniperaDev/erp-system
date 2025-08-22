@@ -47,4 +47,96 @@ public class NBVArtefact {
     private LocalDate activePeriodEndDate;
 
     private LocalDate capitalizationDate;
+
+    public BigDecimal getNetBookValueAmount() { return netBookValueAmount; }
+    public void setNetBookValueAmount(BigDecimal netBookValueAmount) { this.netBookValueAmount = netBookValueAmount; }
+    
+    public BigDecimal getPreviousNetBookValueAmount() { return previousNetBookValueAmount; }
+    public void setPreviousNetBookValueAmount(BigDecimal previousNetBookValueAmount) { this.previousNetBookValueAmount = previousNetBookValueAmount; }
+    
+    public Long getElapsedMonths() { return elapsedMonths; }
+    public void setElapsedMonths(Long elapsedMonths) { this.elapsedMonths = elapsedMonths; }
+    
+    public Long getPriorMonths() { return priorMonths; }
+    public void setPriorMonths(Long priorMonths) { this.priorMonths = priorMonths; }
+    
+    public BigDecimal getUsefulLifeYears() { return usefulLifeYears; }
+    public void setUsefulLifeYears(BigDecimal usefulLifeYears) { this.usefulLifeYears = usefulLifeYears; }
+    
+    public LocalDate getActivePeriodStartDate() { return activePeriodStartDate; }
+    public void setActivePeriodStartDate(LocalDate activePeriodStartDate) { this.activePeriodStartDate = activePeriodStartDate; }
+    
+    public LocalDate getActivePeriodEndDate() { return activePeriodEndDate; }
+    public void setActivePeriodEndDate(LocalDate activePeriodEndDate) { this.activePeriodEndDate = activePeriodEndDate; }
+    
+    public LocalDate getCapitalizationDate() { return capitalizationDate; }
+    public void setCapitalizationDate(LocalDate capitalizationDate) { this.capitalizationDate = capitalizationDate; }
+
+    public static NBVArtefactBuilder builder() {
+        return new NBVArtefactBuilder();
+    }
+
+    public static class NBVArtefactBuilder {
+        private BigDecimal netBookValueAmount;
+        private BigDecimal previousNetBookValueAmount;
+        private Long elapsedMonths;
+        private Long priorMonths;
+        private BigDecimal usefulLifeYears;
+        private LocalDate activePeriodStartDate;
+        private LocalDate activePeriodEndDate;
+        private LocalDate capitalizationDate;
+
+        public NBVArtefactBuilder netBookValueAmount(BigDecimal netBookValueAmount) {
+            this.netBookValueAmount = netBookValueAmount;
+            return this;
+        }
+
+        public NBVArtefactBuilder previousNetBookValueAmount(BigDecimal previousNetBookValueAmount) {
+            this.previousNetBookValueAmount = previousNetBookValueAmount;
+            return this;
+        }
+
+        public NBVArtefactBuilder elapsedMonths(Long elapsedMonths) {
+            this.elapsedMonths = elapsedMonths;
+            return this;
+        }
+
+        public NBVArtefactBuilder priorMonths(Long priorMonths) {
+            this.priorMonths = priorMonths;
+            return this;
+        }
+
+        public NBVArtefactBuilder usefulLifeYears(BigDecimal usefulLifeYears) {
+            this.usefulLifeYears = usefulLifeYears;
+            return this;
+        }
+
+        public NBVArtefactBuilder activePeriodStartDate(LocalDate activePeriodStartDate) {
+            this.activePeriodStartDate = activePeriodStartDate;
+            return this;
+        }
+
+        public NBVArtefactBuilder activePeriodEndDate(LocalDate activePeriodEndDate) {
+            this.activePeriodEndDate = activePeriodEndDate;
+            return this;
+        }
+
+        public NBVArtefactBuilder capitalizationDate(LocalDate capitalizationDate) {
+            this.capitalizationDate = capitalizationDate;
+            return this;
+        }
+
+        public NBVArtefact build() {
+            NBVArtefact artefact = new NBVArtefact();
+            artefact.setNetBookValueAmount(netBookValueAmount);
+            artefact.setPreviousNetBookValueAmount(previousNetBookValueAmount);
+            artefact.setElapsedMonths(elapsedMonths);
+            artefact.setPriorMonths(priorMonths);
+            artefact.setUsefulLifeYears(usefulLifeYears);
+            artefact.setActivePeriodStartDate(activePeriodStartDate);
+            artefact.setActivePeriodEndDate(activePeriodEndDate);
+            artefact.setCapitalizationDate(capitalizationDate);
+            return artefact;
+        }
+    }
 }

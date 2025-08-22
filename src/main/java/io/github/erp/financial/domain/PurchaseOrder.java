@@ -2,6 +2,7 @@ package io.github.erp.financial.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.github.erp.domain.BusinessDocument;
+import io.github.erp.domain.Dealer;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;

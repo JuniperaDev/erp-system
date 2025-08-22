@@ -1,6 +1,6 @@
 package io.github.erp.financial.repository;
 
-import io.github.erp.financial.domain.Invoice;
+import io.github.erp.domain.Invoice;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;

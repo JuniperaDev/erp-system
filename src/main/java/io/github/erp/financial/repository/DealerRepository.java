@@ -1,6 +1,6 @@
 package io.github.erp.financial.repository;
 
-import io.github.erp.financial.domain.Dealer;
+import io.github.erp.domain.Dealer;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 

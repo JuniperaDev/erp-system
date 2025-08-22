@@ -3,6 +3,8 @@ package io.github.erp.financial.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.github.erp.domain.BusinessDocument;
 import io.github.erp.domain.BusinessStamp;
+import io.github.erp.domain.Dealer;
+import io.github.erp.domain.Placeholder;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;

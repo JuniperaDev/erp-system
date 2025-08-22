@@ -35,10 +35,16 @@ import tech.jhipster.config.JHipsterConstants;
         "io.github.erp.internal.repository",
         "io.github.erp.erp.assets.nbv.calculation"
     },
-    excludeFilters = @ComponentScan.Filter(
-        type = FilterType.REGEX,
-        pattern = ".*\\.search\\..*"
-    )
+    excludeFilters = {
+        @ComponentScan.Filter(
+            type = FilterType.REGEX,
+            pattern = ".*\\.search\\..*"
+        ),
+        @ComponentScan.Filter(
+            type = FilterType.REGEX,
+            pattern = ".*\\.timezone\\..*"
+        )
+    }
 )
 @EnableJpaAuditing(auditorAwareRef = "springSecurityAuditorAware")
 @EnableTransactionManagement

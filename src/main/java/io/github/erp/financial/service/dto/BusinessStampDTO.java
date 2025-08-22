@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * A DTO for the {@link io.github.erp.financial.domain.BusinessStamp} entity.
+ * A DTO for the {@link io.github.erp.domain.BusinessStamp} entity.
  */
 public class BusinessStampDTO implements Serializable {
 

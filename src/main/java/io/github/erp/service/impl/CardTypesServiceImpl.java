@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CardTypesMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CardTypesServiceImpl implements CardTypesService {
     public CardTypesServiceImpl(
         CardTypesRepository cardTypesRepository,
         CardTypesMapper cardTypesMapper,
-        CardTypesSearchRepository cardTypesSearchRepository
+        @Autowired(required = false) CardTypesSearchRepository cardTypesSearchRepository
     ) {
         this.cardTypesRepository = cardTypesRepository;
         this.cardTypesMapper = cardTypesMapper;
@@ -65,7 +66,9 @@ public class CardTypesServiceImpl implements CardTypesService {
         CardTypes cardTypes = cardTypesMapper.toEntity(cardTypesDTO);
         cardTypes = cardTypesRepository.save(cardTypes);
         CardTypesDTO result = cardTypesMapper.toDto(cardTypes);
-        cardTypesSearchRepository.save(cardTypes);
+        if (cardTypesSearchRepository != null) {
+            cardTypesSearchRepository.save(cardTypes);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CardTypesServiceImpl implements CardTypesService {
             })
             .map(cardTypesRepository::save)
             .map(savedCardTypes -> {
-                cardTypesSearchRepository.save(savedCardTypes);
+                if (cardTypesSearchRepository != null) {
+                    cardTypesSearchRepository.save(savedCardTypes);
+                }
 
                 return savedCardTypes;
             })
@@ -107,13 +112,18 @@ public class CardTypesServiceImpl implements CardTypesService {
     public void delete(Long id) {
         log.debug("Request to delete CardTypes : {}", id);
         cardTypesRepository.deleteById(id);
-        cardTypesSearchRepository.deleteById(id);
+        if (cardTypesSearchRepository != null) {
+            cardTypesSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CardTypesDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CardTypes for query {}", query);
-        return cardTypesSearchRepository.search(query, pageable).map(cardTypesMapper::toDto);
+        if (cardTypesSearchRepository != null) {
+            return cardTypesSearchRepository.search(query, pageable).map(cardTypesMapper::toDto);
+        }
+        return cardTypesRepository.findAll(pageable).map(cardTypesMapper::toDto);
     }
 }

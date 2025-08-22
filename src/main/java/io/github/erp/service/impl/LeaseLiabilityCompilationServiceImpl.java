@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.LeaseLiabilityCompilationMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class LeaseLiabilityCompilationServiceImpl implements LeaseLiabilityCompi
     public LeaseLiabilityCompilationServiceImpl(
         LeaseLiabilityCompilationRepository leaseLiabilityCompilationRepository,
         LeaseLiabilityCompilationMapper leaseLiabilityCompilationMapper,
-        LeaseLiabilityCompilationSearchRepository leaseLiabilityCompilationSearchRepository
+        @Autowired(required = false) LeaseLiabilityCompilationSearchRepository leaseLiabilityCompilationSearchRepository
     ) {
         this.leaseLiabilityCompilationRepository = leaseLiabilityCompilationRepository;
         this.leaseLiabilityCompilationMapper = leaseLiabilityCompilationMapper;
@@ -65,7 +66,9 @@ public class LeaseLiabilityCompilationServiceImpl implements LeaseLiabilityCompi
         LeaseLiabilityCompilation leaseLiabilityCompilation = leaseLiabilityCompilationMapper.toEntity(leaseLiabilityCompilationDTO);
         leaseLiabilityCompilation = leaseLiabilityCompilationRepository.save(leaseLiabilityCompilation);
         LeaseLiabilityCompilationDTO result = leaseLiabilityCompilationMapper.toDto(leaseLiabilityCompilation);
-        leaseLiabilityCompilationSearchRepository.save(leaseLiabilityCompilation);
+        if (leaseLiabilityCompilationSearchRepository != null) {
+            leaseLiabilityCompilationSearchRepository.save(leaseLiabilityCompilation);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class LeaseLiabilityCompilationServiceImpl implements LeaseLiabilityCompi
             })
             .map(leaseLiabilityCompilationRepository::save)
             .map(savedLeaseLiabilityCompilation -> {
-                leaseLiabilityCompilationSearchRepository.save(savedLeaseLiabilityCompilation);
+                if (leaseLiabilityCompilationSearchRepository != null) {
+                    leaseLiabilityCompilationSearchRepository.save(savedLeaseLiabilityCompilation);
+                }
 
                 return savedLeaseLiabilityCompilation;
             })
@@ -107,7 +112,9 @@ public class LeaseLiabilityCompilationServiceImpl implements LeaseLiabilityCompi
     public void delete(Long id) {
         log.debug("Request to delete LeaseLiabilityCompilation : {}", id);
         leaseLiabilityCompilationRepository.deleteById(id);
-        leaseLiabilityCompilationSearchRepository.deleteById(id);
+        if (leaseLiabilityCompilationSearchRepository != null) {
+            leaseLiabilityCompilationSearchRepository.deleteById(id);
+        }
     }
 
     @Override

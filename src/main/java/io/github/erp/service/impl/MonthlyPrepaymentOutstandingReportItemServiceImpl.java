@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.MonthlyPrepaymentOutstandingReportItemMapper
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class MonthlyPrepaymentOutstandingReportItemServiceImpl implements Monthl
     public MonthlyPrepaymentOutstandingReportItemServiceImpl(
         MonthlyPrepaymentOutstandingReportItemRepository monthlyPrepaymentOutstandingReportItemRepository,
         MonthlyPrepaymentOutstandingReportItemMapper monthlyPrepaymentOutstandingReportItemMapper,
-        MonthlyPrepaymentOutstandingReportItemSearchRepository monthlyPrepaymentOutstandingReportItemSearchRepository
+        @Autowired(required = false) MonthlyPrepaymentOutstandingReportItemSearchRepository monthlyPrepaymentOutstandingReportItemSearchRepository
     ) {
         this.monthlyPrepaymentOutstandingReportItemRepository = monthlyPrepaymentOutstandingReportItemRepository;
         this.monthlyPrepaymentOutstandingReportItemMapper = monthlyPrepaymentOutstandingReportItemMapper;
@@ -72,7 +73,9 @@ public class MonthlyPrepaymentOutstandingReportItemServiceImpl implements Monthl
         MonthlyPrepaymentOutstandingReportItemDTO result = monthlyPrepaymentOutstandingReportItemMapper.toDto(
             monthlyPrepaymentOutstandingReportItem
         );
-        monthlyPrepaymentOutstandingReportItemSearchRepository.save(monthlyPrepaymentOutstandingReportItem);
+        if (monthlyPrepaymentOutstandingReportItemSearchRepository != null) {
+            monthlyPrepaymentOutstandingReportItemSearchRepository.save(monthlyPrepaymentOutstandingReportItem);
+        }
         return result;
     }
 
@@ -94,7 +97,9 @@ public class MonthlyPrepaymentOutstandingReportItemServiceImpl implements Monthl
             })
             .map(monthlyPrepaymentOutstandingReportItemRepository::save)
             .map(savedMonthlyPrepaymentOutstandingReportItem -> {
-                monthlyPrepaymentOutstandingReportItemSearchRepository.save(savedMonthlyPrepaymentOutstandingReportItem);
+                if (monthlyPrepaymentOutstandingReportItemSearchRepository != null) {
+                    monthlyPrepaymentOutstandingReportItemSearchRepository.save(savedMonthlyPrepaymentOutstandingReportItem);
+                }
 
                 return savedMonthlyPrepaymentOutstandingReportItem;
             })
@@ -119,7 +124,9 @@ public class MonthlyPrepaymentOutstandingReportItemServiceImpl implements Monthl
     public void delete(Long id) {
         log.debug("Request to delete MonthlyPrepaymentOutstandingReportItem : {}", id);
         monthlyPrepaymentOutstandingReportItemRepository.deleteById(id);
-        monthlyPrepaymentOutstandingReportItemSearchRepository.deleteById(id);
+        if (monthlyPrepaymentOutstandingReportItemSearchRepository != null) {
+            monthlyPrepaymentOutstandingReportItemSearchRepository.deleteById(id);
+        }
     }
 
     @Override

@@ -6,6 +6,8 @@ on:
   pull_request:
     branches:
       - master
+    types: [opened, synchronize, reopened, edited]
+  workflow_dispatch:
 
 jobs:
   pipeline:
@@ -65,3 +67,5 @@ jobs:
 
       - name: Publish image
         run: docker push ghacupha/erp-system:1.8.2
+        
+# Force CI trigger - 2025-08-22 18:05:20

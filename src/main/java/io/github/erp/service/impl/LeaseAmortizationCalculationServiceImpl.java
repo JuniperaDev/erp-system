@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -56,7 +57,7 @@ public class LeaseAmortizationCalculationServiceImpl implements LeaseAmortizatio
     public LeaseAmortizationCalculationServiceImpl(
         LeaseAmortizationCalculationRepository leaseAmortizationCalculationRepository,
         LeaseAmortizationCalculationMapper leaseAmortizationCalculationMapper,
-        LeaseAmortizationCalculationSearchRepository leaseAmortizationCalculationSearchRepository
+        @Autowired(required = false) LeaseAmortizationCalculationSearchRepository leaseAmortizationCalculationSearchRepository
     ) {
         this.leaseAmortizationCalculationRepository = leaseAmortizationCalculationRepository;
         this.leaseAmortizationCalculationMapper = leaseAmortizationCalculationMapper;
@@ -71,7 +72,9 @@ public class LeaseAmortizationCalculationServiceImpl implements LeaseAmortizatio
         );
         leaseAmortizationCalculation = leaseAmortizationCalculationRepository.save(leaseAmortizationCalculation);
         LeaseAmortizationCalculationDTO result = leaseAmortizationCalculationMapper.toDto(leaseAmortizationCalculation);
-        leaseAmortizationCalculationSearchRepository.save(leaseAmortizationCalculation);
+        if (leaseAmortizationCalculationSearchRepository != null) {
+            leaseAmortizationCalculationSearchRepository.save(leaseAmortizationCalculation);
+        }
         return result;
     }
 
@@ -88,7 +91,9 @@ public class LeaseAmortizationCalculationServiceImpl implements LeaseAmortizatio
             })
             .map(leaseAmortizationCalculationRepository::save)
             .map(savedLeaseAmortizationCalculation -> {
-                leaseAmortizationCalculationSearchRepository.save(savedLeaseAmortizationCalculation);
+                if (leaseAmortizationCalculationSearchRepository != null) {
+                    leaseAmortizationCalculationSearchRepository.save(savedLeaseAmortizationCalculation);
+                }
 
                 return savedLeaseAmortizationCalculation;
             })
@@ -127,7 +132,9 @@ public class LeaseAmortizationCalculationServiceImpl implements LeaseAmortizatio
     public void delete(Long id) {
         log.debug("Request to delete LeaseAmortizationCalculation : {}", id);
         leaseAmortizationCalculationRepository.deleteById(id);
-        leaseAmortizationCalculationSearchRepository.deleteById(id);
+        if (leaseAmortizationCalculationSearchRepository != null) {
+            leaseAmortizationCalculationSearchRepository.deleteById(id);
+        }
     }
 
     @Override

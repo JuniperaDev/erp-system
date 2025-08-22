@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.IssuersOfSecuritiesMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class IssuersOfSecuritiesServiceImpl implements IssuersOfSecuritiesServic
     public IssuersOfSecuritiesServiceImpl(
         IssuersOfSecuritiesRepository issuersOfSecuritiesRepository,
         IssuersOfSecuritiesMapper issuersOfSecuritiesMapper,
-        IssuersOfSecuritiesSearchRepository issuersOfSecuritiesSearchRepository
+        @Autowired(required = false) IssuersOfSecuritiesSearchRepository issuersOfSecuritiesSearchRepository
     ) {
         this.issuersOfSecuritiesRepository = issuersOfSecuritiesRepository;
         this.issuersOfSecuritiesMapper = issuersOfSecuritiesMapper;
@@ -65,7 +66,9 @@ public class IssuersOfSecuritiesServiceImpl implements IssuersOfSecuritiesServic
         IssuersOfSecurities issuersOfSecurities = issuersOfSecuritiesMapper.toEntity(issuersOfSecuritiesDTO);
         issuersOfSecurities = issuersOfSecuritiesRepository.save(issuersOfSecurities);
         IssuersOfSecuritiesDTO result = issuersOfSecuritiesMapper.toDto(issuersOfSecurities);
-        issuersOfSecuritiesSearchRepository.save(issuersOfSecurities);
+        if (issuersOfSecuritiesSearchRepository != null) {
+            issuersOfSecuritiesSearchRepository.save(issuersOfSecurities);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class IssuersOfSecuritiesServiceImpl implements IssuersOfSecuritiesServic
             })
             .map(issuersOfSecuritiesRepository::save)
             .map(savedIssuersOfSecurities -> {
-                issuersOfSecuritiesSearchRepository.save(savedIssuersOfSecurities);
+                if (issuersOfSecuritiesSearchRepository != null) {
+                    issuersOfSecuritiesSearchRepository.save(savedIssuersOfSecurities);
+                }
 
                 return savedIssuersOfSecurities;
             })
@@ -107,13 +112,18 @@ public class IssuersOfSecuritiesServiceImpl implements IssuersOfSecuritiesServic
     public void delete(Long id) {
         log.debug("Request to delete IssuersOfSecurities : {}", id);
         issuersOfSecuritiesRepository.deleteById(id);
-        issuersOfSecuritiesSearchRepository.deleteById(id);
+        if (issuersOfSecuritiesSearchRepository != null) {
+            issuersOfSecuritiesSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<IssuersOfSecuritiesDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of IssuersOfSecurities for query {}", query);
-        return issuersOfSecuritiesSearchRepository.search(query, pageable).map(issuersOfSecuritiesMapper::toDto);
+        if (issuersOfSecuritiesSearchRepository != null) {
+            return issuersOfSecuritiesSearchRepository.search(query, pageable).map(issuersOfSecuritiesMapper::toDto);
+        }
+        return issuersOfSecuritiesRepository.findAll(pageable).map(issuersOfSecuritiesMapper::toDto);
     }
 }

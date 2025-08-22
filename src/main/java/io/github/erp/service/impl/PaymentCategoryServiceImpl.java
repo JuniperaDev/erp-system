@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.PaymentCategoryMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class PaymentCategoryServiceImpl implements PaymentCategoryService {
     public PaymentCategoryServiceImpl(
         PaymentCategoryRepository paymentCategoryRepository,
         PaymentCategoryMapper paymentCategoryMapper,
-        PaymentCategorySearchRepository paymentCategorySearchRepository
+        @Autowired(required = false) PaymentCategorySearchRepository paymentCategorySearchRepository
     ) {
         this.paymentCategoryRepository = paymentCategoryRepository;
         this.paymentCategoryMapper = paymentCategoryMapper;
@@ -65,7 +66,9 @@ public class PaymentCategoryServiceImpl implements PaymentCategoryService {
         PaymentCategory paymentCategory = paymentCategoryMapper.toEntity(paymentCategoryDTO);
         paymentCategory = paymentCategoryRepository.save(paymentCategory);
         PaymentCategoryDTO result = paymentCategoryMapper.toDto(paymentCategory);
-        paymentCategorySearchRepository.save(paymentCategory);
+        if (paymentCategorySearchRepository != null) {
+            paymentCategorySearchRepository.save(paymentCategory);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class PaymentCategoryServiceImpl implements PaymentCategoryService {
             })
             .map(paymentCategoryRepository::save)
             .map(savedPaymentCategory -> {
-                paymentCategorySearchRepository.save(savedPaymentCategory);
+                if (paymentCategorySearchRepository != null) {
+                    paymentCategorySearchRepository.save(savedPaymentCategory);
+                }
 
                 return savedPaymentCategory;
             })
@@ -111,13 +116,18 @@ public class PaymentCategoryServiceImpl implements PaymentCategoryService {
     public void delete(Long id) {
         log.debug("Request to delete PaymentCategory : {}", id);
         paymentCategoryRepository.deleteById(id);
-        paymentCategorySearchRepository.deleteById(id);
+        if (paymentCategorySearchRepository != null) {
+            paymentCategorySearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<PaymentCategoryDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of PaymentCategories for query {}", query);
-        return paymentCategorySearchRepository.search(query, pageable).map(paymentCategoryMapper::toDto);
+        if (paymentCategorySearchRepository != null) {
+            return paymentCategorySearchRepository.search(query, pageable).map(paymentCategoryMapper::toDto);
+        }
+        return paymentCategoryRepository.findAll(pageable).map(paymentCategoryMapper::toDto);
     }
 }

@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.FixedAssetAcquisitionMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class FixedAssetAcquisitionServiceImpl implements FixedAssetAcquisitionSe
     public FixedAssetAcquisitionServiceImpl(
         FixedAssetAcquisitionRepository fixedAssetAcquisitionRepository,
         FixedAssetAcquisitionMapper fixedAssetAcquisitionMapper,
-        FixedAssetAcquisitionSearchRepository fixedAssetAcquisitionSearchRepository
+        @Autowired(required = false) FixedAssetAcquisitionSearchRepository fixedAssetAcquisitionSearchRepository
     ) {
         this.fixedAssetAcquisitionRepository = fixedAssetAcquisitionRepository;
         this.fixedAssetAcquisitionMapper = fixedAssetAcquisitionMapper;
@@ -65,7 +66,9 @@ public class FixedAssetAcquisitionServiceImpl implements FixedAssetAcquisitionSe
         FixedAssetAcquisition fixedAssetAcquisition = fixedAssetAcquisitionMapper.toEntity(fixedAssetAcquisitionDTO);
         fixedAssetAcquisition = fixedAssetAcquisitionRepository.save(fixedAssetAcquisition);
         FixedAssetAcquisitionDTO result = fixedAssetAcquisitionMapper.toDto(fixedAssetAcquisition);
-        fixedAssetAcquisitionSearchRepository.save(fixedAssetAcquisition);
+        if (fixedAssetAcquisitionSearchRepository != null) {
+            fixedAssetAcquisitionSearchRepository.save(fixedAssetAcquisition);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class FixedAssetAcquisitionServiceImpl implements FixedAssetAcquisitionSe
             })
             .map(fixedAssetAcquisitionRepository::save)
             .map(savedFixedAssetAcquisition -> {
-                fixedAssetAcquisitionSearchRepository.save(savedFixedAssetAcquisition);
+                if (fixedAssetAcquisitionSearchRepository != null) {
+                    fixedAssetAcquisitionSearchRepository.save(savedFixedAssetAcquisition);
+                }
 
                 return savedFixedAssetAcquisition;
             })
@@ -111,7 +116,9 @@ public class FixedAssetAcquisitionServiceImpl implements FixedAssetAcquisitionSe
     public void delete(Long id) {
         log.debug("Request to delete FixedAssetAcquisition : {}", id);
         fixedAssetAcquisitionRepository.deleteById(id);
-        fixedAssetAcquisitionSearchRepository.deleteById(id);
+        if (fixedAssetAcquisitionSearchRepository != null) {
+            fixedAssetAcquisitionSearchRepository.deleteById(id);
+        }
     }
 
     @Override

@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.TerminalTypesMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class TerminalTypesServiceImpl implements TerminalTypesService {
     public TerminalTypesServiceImpl(
         TerminalTypesRepository terminalTypesRepository,
         TerminalTypesMapper terminalTypesMapper,
-        TerminalTypesSearchRepository terminalTypesSearchRepository
+        @Autowired(required = false) TerminalTypesSearchRepository terminalTypesSearchRepository
     ) {
         this.terminalTypesRepository = terminalTypesRepository;
         this.terminalTypesMapper = terminalTypesMapper;
@@ -65,7 +66,9 @@ public class TerminalTypesServiceImpl implements TerminalTypesService {
         TerminalTypes terminalTypes = terminalTypesMapper.toEntity(terminalTypesDTO);
         terminalTypes = terminalTypesRepository.save(terminalTypes);
         TerminalTypesDTO result = terminalTypesMapper.toDto(terminalTypes);
-        terminalTypesSearchRepository.save(terminalTypes);
+        if (terminalTypesSearchRepository != null) {
+            terminalTypesSearchRepository.save(terminalTypes);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class TerminalTypesServiceImpl implements TerminalTypesService {
             })
             .map(terminalTypesRepository::save)
             .map(savedTerminalTypes -> {
-                terminalTypesSearchRepository.save(savedTerminalTypes);
+                if (terminalTypesSearchRepository != null) {
+                    terminalTypesSearchRepository.save(savedTerminalTypes);
+                }
 
                 return savedTerminalTypes;
             })
@@ -107,13 +112,18 @@ public class TerminalTypesServiceImpl implements TerminalTypesService {
     public void delete(Long id) {
         log.debug("Request to delete TerminalTypes : {}", id);
         terminalTypesRepository.deleteById(id);
-        terminalTypesSearchRepository.deleteById(id);
+        if (terminalTypesSearchRepository != null) {
+            terminalTypesSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<TerminalTypesDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of TerminalTypes for query {}", query);
-        return terminalTypesSearchRepository.search(query, pageable).map(terminalTypesMapper::toDto);
+        if (terminalTypesSearchRepository != null) {
+            return terminalTypesSearchRepository.search(query, pageable).map(terminalTypesMapper::toDto);
+        }
+        return terminalTypesRepository.findAll(pageable).map(terminalTypesMapper::toDto);
     }
 }

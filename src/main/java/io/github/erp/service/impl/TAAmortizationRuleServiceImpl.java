@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.TAAmortizationRuleMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class TAAmortizationRuleServiceImpl implements TAAmortizationRuleService 
     public TAAmortizationRuleServiceImpl(
         TAAmortizationRuleRepository tAAmortizationRuleRepository,
         TAAmortizationRuleMapper tAAmortizationRuleMapper,
-        TAAmortizationRuleSearchRepository tAAmortizationRuleSearchRepository
+        @Autowired(required = false) TAAmortizationRuleSearchRepository tAAmortizationRuleSearchRepository
     ) {
         this.tAAmortizationRuleRepository = tAAmortizationRuleRepository;
         this.tAAmortizationRuleMapper = tAAmortizationRuleMapper;
@@ -65,7 +66,9 @@ public class TAAmortizationRuleServiceImpl implements TAAmortizationRuleService 
         TAAmortizationRule tAAmortizationRule = tAAmortizationRuleMapper.toEntity(tAAmortizationRuleDTO);
         tAAmortizationRule = tAAmortizationRuleRepository.save(tAAmortizationRule);
         TAAmortizationRuleDTO result = tAAmortizationRuleMapper.toDto(tAAmortizationRule);
-        tAAmortizationRuleSearchRepository.save(tAAmortizationRule);
+        if (tAAmortizationRuleSearchRepository != null) {
+            tAAmortizationRuleSearchRepository.save(tAAmortizationRule);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class TAAmortizationRuleServiceImpl implements TAAmortizationRuleService 
             })
             .map(tAAmortizationRuleRepository::save)
             .map(savedTAAmortizationRule -> {
-                tAAmortizationRuleSearchRepository.save(savedTAAmortizationRule);
+                if (tAAmortizationRuleSearchRepository != null) {
+                    tAAmortizationRuleSearchRepository.save(savedTAAmortizationRule);
+                }
 
                 return savedTAAmortizationRule;
             })
@@ -111,13 +116,18 @@ public class TAAmortizationRuleServiceImpl implements TAAmortizationRuleService 
     public void delete(Long id) {
         log.debug("Request to delete TAAmortizationRule : {}", id);
         tAAmortizationRuleRepository.deleteById(id);
-        tAAmortizationRuleSearchRepository.deleteById(id);
+        if (tAAmortizationRuleSearchRepository != null) {
+            tAAmortizationRuleSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<TAAmortizationRuleDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of TAAmortizationRules for query {}", query);
-        return tAAmortizationRuleSearchRepository.search(query, pageable).map(tAAmortizationRuleMapper::toDto);
+        if (tAAmortizationRuleSearchRepository != null) {
+            return tAAmortizationRuleSearchRepository.search(query, pageable).map(tAAmortizationRuleMapper::toDto);
+        }
+        return tAAmortizationRuleRepository.findAll(pageable).map(tAAmortizationRuleMapper::toDto);
     }
 }

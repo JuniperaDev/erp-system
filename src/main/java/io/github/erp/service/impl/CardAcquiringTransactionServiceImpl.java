@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CardAcquiringTransactionMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CardAcquiringTransactionServiceImpl implements CardAcquiringTransac
     public CardAcquiringTransactionServiceImpl(
         CardAcquiringTransactionRepository cardAcquiringTransactionRepository,
         CardAcquiringTransactionMapper cardAcquiringTransactionMapper,
-        CardAcquiringTransactionSearchRepository cardAcquiringTransactionSearchRepository
+        @Autowired(required = false) CardAcquiringTransactionSearchRepository cardAcquiringTransactionSearchRepository
     ) {
         this.cardAcquiringTransactionRepository = cardAcquiringTransactionRepository;
         this.cardAcquiringTransactionMapper = cardAcquiringTransactionMapper;
@@ -65,7 +66,9 @@ public class CardAcquiringTransactionServiceImpl implements CardAcquiringTransac
         CardAcquiringTransaction cardAcquiringTransaction = cardAcquiringTransactionMapper.toEntity(cardAcquiringTransactionDTO);
         cardAcquiringTransaction = cardAcquiringTransactionRepository.save(cardAcquiringTransaction);
         CardAcquiringTransactionDTO result = cardAcquiringTransactionMapper.toDto(cardAcquiringTransaction);
-        cardAcquiringTransactionSearchRepository.save(cardAcquiringTransaction);
+        if (cardAcquiringTransactionSearchRepository != null) {
+            cardAcquiringTransactionSearchRepository.save(cardAcquiringTransaction);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CardAcquiringTransactionServiceImpl implements CardAcquiringTransac
             })
             .map(cardAcquiringTransactionRepository::save)
             .map(savedCardAcquiringTransaction -> {
-                cardAcquiringTransactionSearchRepository.save(savedCardAcquiringTransaction);
+                if (cardAcquiringTransactionSearchRepository != null) {
+                    cardAcquiringTransactionSearchRepository.save(savedCardAcquiringTransaction);
+                }
 
                 return savedCardAcquiringTransaction;
             })
@@ -107,7 +112,9 @@ public class CardAcquiringTransactionServiceImpl implements CardAcquiringTransac
     public void delete(Long id) {
         log.debug("Request to delete CardAcquiringTransaction : {}", id);
         cardAcquiringTransactionRepository.deleteById(id);
-        cardAcquiringTransactionSearchRepository.deleteById(id);
+        if (cardAcquiringTransactionSearchRepository != null) {
+            cardAcquiringTransactionSearchRepository.deleteById(id);
+        }
     }
 
     @Override

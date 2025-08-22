@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.SecurityClassificationTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class SecurityClassificationTypeServiceImpl implements SecurityClassifica
     public SecurityClassificationTypeServiceImpl(
         SecurityClassificationTypeRepository securityClassificationTypeRepository,
         SecurityClassificationTypeMapper securityClassificationTypeMapper,
-        SecurityClassificationTypeSearchRepository securityClassificationTypeSearchRepository
+        @Autowired(required = false) SecurityClassificationTypeSearchRepository securityClassificationTypeSearchRepository
     ) {
         this.securityClassificationTypeRepository = securityClassificationTypeRepository;
         this.securityClassificationTypeMapper = securityClassificationTypeMapper;
@@ -65,7 +66,9 @@ public class SecurityClassificationTypeServiceImpl implements SecurityClassifica
         SecurityClassificationType securityClassificationType = securityClassificationTypeMapper.toEntity(securityClassificationTypeDTO);
         securityClassificationType = securityClassificationTypeRepository.save(securityClassificationType);
         SecurityClassificationTypeDTO result = securityClassificationTypeMapper.toDto(securityClassificationType);
-        securityClassificationTypeSearchRepository.save(securityClassificationType);
+        if (securityClassificationTypeSearchRepository != null) {
+            securityClassificationTypeSearchRepository.save(securityClassificationType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class SecurityClassificationTypeServiceImpl implements SecurityClassifica
             })
             .map(securityClassificationTypeRepository::save)
             .map(savedSecurityClassificationType -> {
-                securityClassificationTypeSearchRepository.save(savedSecurityClassificationType);
+                if (securityClassificationTypeSearchRepository != null) {
+                    securityClassificationTypeSearchRepository.save(savedSecurityClassificationType);
+                }
 
                 return savedSecurityClassificationType;
             })
@@ -107,13 +112,18 @@ public class SecurityClassificationTypeServiceImpl implements SecurityClassifica
     public void delete(Long id) {
         log.debug("Request to delete SecurityClassificationType : {}", id);
         securityClassificationTypeRepository.deleteById(id);
-        securityClassificationTypeSearchRepository.deleteById(id);
+        if (securityClassificationTypeSearchRepository != null) {
+            securityClassificationTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<SecurityClassificationTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of SecurityClassificationTypes for query {}", query);
-        return securityClassificationTypeSearchRepository.search(query, pageable).map(securityClassificationTypeMapper::toDto);
+        if (securityClassificationTypeSearchRepository != null) {
+            return securityClassificationTypeSearchRepository.search(query, pageable).map(securityClassificationTypeMapper::toDto);
+        }
+        return securityClassificationTypeRepository.findAll(pageable).map(securityClassificationTypeMapper::toDto);
     }
 }

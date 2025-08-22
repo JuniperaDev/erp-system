@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.SourceRemittancePurposeTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class SourceRemittancePurposeTypeServiceImpl implements SourceRemittanceP
     public SourceRemittancePurposeTypeServiceImpl(
         SourceRemittancePurposeTypeRepository sourceRemittancePurposeTypeRepository,
         SourceRemittancePurposeTypeMapper sourceRemittancePurposeTypeMapper,
-        SourceRemittancePurposeTypeSearchRepository sourceRemittancePurposeTypeSearchRepository
+        @Autowired(required = false) SourceRemittancePurposeTypeSearchRepository sourceRemittancePurposeTypeSearchRepository
     ) {
         this.sourceRemittancePurposeTypeRepository = sourceRemittancePurposeTypeRepository;
         this.sourceRemittancePurposeTypeMapper = sourceRemittancePurposeTypeMapper;
@@ -67,7 +68,9 @@ public class SourceRemittancePurposeTypeServiceImpl implements SourceRemittanceP
         );
         sourceRemittancePurposeType = sourceRemittancePurposeTypeRepository.save(sourceRemittancePurposeType);
         SourceRemittancePurposeTypeDTO result = sourceRemittancePurposeTypeMapper.toDto(sourceRemittancePurposeType);
-        sourceRemittancePurposeTypeSearchRepository.save(sourceRemittancePurposeType);
+        if (sourceRemittancePurposeTypeSearchRepository != null) {
+            sourceRemittancePurposeTypeSearchRepository.save(sourceRemittancePurposeType);
+        }
         return result;
     }
 
@@ -84,7 +87,9 @@ public class SourceRemittancePurposeTypeServiceImpl implements SourceRemittanceP
             })
             .map(sourceRemittancePurposeTypeRepository::save)
             .map(savedSourceRemittancePurposeType -> {
-                sourceRemittancePurposeTypeSearchRepository.save(savedSourceRemittancePurposeType);
+                if (sourceRemittancePurposeTypeSearchRepository != null) {
+                    sourceRemittancePurposeTypeSearchRepository.save(savedSourceRemittancePurposeType);
+                }
 
                 return savedSourceRemittancePurposeType;
             })
@@ -109,7 +114,9 @@ public class SourceRemittancePurposeTypeServiceImpl implements SourceRemittanceP
     public void delete(Long id) {
         log.debug("Request to delete SourceRemittancePurposeType : {}", id);
         sourceRemittancePurposeTypeRepository.deleteById(id);
-        sourceRemittancePurposeTypeSearchRepository.deleteById(id);
+        if (sourceRemittancePurposeTypeSearchRepository != null) {
+            sourceRemittancePurposeTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override

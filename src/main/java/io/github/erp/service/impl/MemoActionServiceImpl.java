@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.MemoActionMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class MemoActionServiceImpl implements MemoActionService {
     public MemoActionServiceImpl(
         MemoActionRepository memoActionRepository,
         MemoActionMapper memoActionMapper,
-        MemoActionSearchRepository memoActionSearchRepository
+        @Autowired(required = false) MemoActionSearchRepository memoActionSearchRepository
     ) {
         this.memoActionRepository = memoActionRepository;
         this.memoActionMapper = memoActionMapper;
@@ -65,7 +66,9 @@ public class MemoActionServiceImpl implements MemoActionService {
         MemoAction memoAction = memoActionMapper.toEntity(memoActionDTO);
         memoAction = memoActionRepository.save(memoAction);
         MemoActionDTO result = memoActionMapper.toDto(memoAction);
-        memoActionSearchRepository.save(memoAction);
+        if (memoActionSearchRepository != null) {
+            memoActionSearchRepository.save(memoAction);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class MemoActionServiceImpl implements MemoActionService {
             })
             .map(memoActionRepository::save)
             .map(savedMemoAction -> {
-                memoActionSearchRepository.save(savedMemoAction);
+                if (memoActionSearchRepository != null) {
+                    memoActionSearchRepository.save(savedMemoAction);
+                }
 
                 return savedMemoAction;
             })
@@ -107,13 +112,18 @@ public class MemoActionServiceImpl implements MemoActionService {
     public void delete(Long id) {
         log.debug("Request to delete MemoAction : {}", id);
         memoActionRepository.deleteById(id);
-        memoActionSearchRepository.deleteById(id);
+        if (memoActionSearchRepository != null) {
+            memoActionSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<MemoActionDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of MemoActions for query {}", query);
-        return memoActionSearchRepository.search(query, pageable).map(memoActionMapper::toDto);
+        if (memoActionSearchRepository != null) {
+            return memoActionSearchRepository.search(query, pageable).map(memoActionMapper::toDto);
+        }
+        return memoActionRepository.findAll(pageable).map(memoActionMapper::toDto);
     }
 }

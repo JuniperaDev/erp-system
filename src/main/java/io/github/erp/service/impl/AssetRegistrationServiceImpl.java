@@ -30,6 +30,7 @@ import io.github.erp.service.mapper.AssetRegistrationMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,7 +57,7 @@ public class AssetRegistrationServiceImpl implements AssetRegistrationService {
     public AssetRegistrationServiceImpl(
         AssetRegistrationRepository assetRegistrationRepository,
         AssetRegistrationMapper assetRegistrationMapper,
-        AssetRegistrationSearchRepository assetRegistrationSearchRepository,
+        @Autowired(required = false) AssetRegistrationSearchRepository assetRegistrationSearchRepository,
         ApplicationEventPublisher eventPublisher
     ) {
         this.assetRegistrationRepository = assetRegistrationRepository;
@@ -71,7 +72,9 @@ public class AssetRegistrationServiceImpl implements AssetRegistrationService {
         AssetRegistration assetRegistration = assetRegistrationMapper.toEntity(assetRegistrationDTO);
         assetRegistration = assetRegistrationRepository.save(assetRegistration);
         AssetRegistrationDTO result = assetRegistrationMapper.toDto(assetRegistration);
-        assetRegistrationSearchRepository.save(assetRegistration);
+        if (assetRegistrationSearchRepository != null) {
+            assetRegistrationSearchRepository.save(assetRegistration);
+        }
         
         if (assetRegistration.getAcquiringTransactionId() != null) {
             eventPublisher.publishEvent(new AssetAcquiredEvent(
@@ -98,7 +101,9 @@ public class AssetRegistrationServiceImpl implements AssetRegistrationService {
             })
             .map(assetRegistrationRepository::save)
             .map(savedAssetRegistration -> {
-                assetRegistrationSearchRepository.save(savedAssetRegistration);
+                if (assetRegistrationSearchRepository != null) {
+                    assetRegistrationSearchRepository.save(savedAssetRegistration);
+                }
 
                 if (savedAssetRegistration.getAcquiringTransactionId() != null) {
                     eventPublisher.publishEvent(new AssetAcquiredEvent(
@@ -136,13 +141,18 @@ public class AssetRegistrationServiceImpl implements AssetRegistrationService {
     public void delete(Long id) {
         log.debug("Request to delete AssetRegistration : {}", id);
         assetRegistrationRepository.deleteById(id);
-        assetRegistrationSearchRepository.deleteById(id);
+        if (assetRegistrationSearchRepository != null) {
+            assetRegistrationSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AssetRegistrationDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AssetRegistrations for query {}", query);
-        return assetRegistrationSearchRepository.search(query, pageable).map(assetRegistrationMapper::toDto);
+        if (assetRegistrationSearchRepository != null) {
+            return assetRegistrationSearchRepository.search(query, pageable).map(assetRegistrationMapper::toDto);
+        }
+        return assetRegistrationRepository.findAll(pageable).map(assetRegistrationMapper::toDto);
     }
 }

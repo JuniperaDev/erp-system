@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.TALeaseRepaymentRuleMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class TALeaseRepaymentRuleServiceImpl implements TALeaseRepaymentRuleServ
     public TALeaseRepaymentRuleServiceImpl(
         TALeaseRepaymentRuleRepository tALeaseRepaymentRuleRepository,
         TALeaseRepaymentRuleMapper tALeaseRepaymentRuleMapper,
-        TALeaseRepaymentRuleSearchRepository tALeaseRepaymentRuleSearchRepository
+        @Autowired(required = false) TALeaseRepaymentRuleSearchRepository tALeaseRepaymentRuleSearchRepository
     ) {
         this.tALeaseRepaymentRuleRepository = tALeaseRepaymentRuleRepository;
         this.tALeaseRepaymentRuleMapper = tALeaseRepaymentRuleMapper;
@@ -65,7 +66,9 @@ public class TALeaseRepaymentRuleServiceImpl implements TALeaseRepaymentRuleServ
         TALeaseRepaymentRule tALeaseRepaymentRule = tALeaseRepaymentRuleMapper.toEntity(tALeaseRepaymentRuleDTO);
         tALeaseRepaymentRule = tALeaseRepaymentRuleRepository.save(tALeaseRepaymentRule);
         TALeaseRepaymentRuleDTO result = tALeaseRepaymentRuleMapper.toDto(tALeaseRepaymentRule);
-        tALeaseRepaymentRuleSearchRepository.save(tALeaseRepaymentRule);
+        if (tALeaseRepaymentRuleSearchRepository != null) {
+            tALeaseRepaymentRuleSearchRepository.save(tALeaseRepaymentRule);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class TALeaseRepaymentRuleServiceImpl implements TALeaseRepaymentRuleServ
             })
             .map(tALeaseRepaymentRuleRepository::save)
             .map(savedTALeaseRepaymentRule -> {
-                tALeaseRepaymentRuleSearchRepository.save(savedTALeaseRepaymentRule);
+                if (tALeaseRepaymentRuleSearchRepository != null) {
+                    tALeaseRepaymentRuleSearchRepository.save(savedTALeaseRepaymentRule);
+                }
 
                 return savedTALeaseRepaymentRule;
             })
@@ -111,7 +116,9 @@ public class TALeaseRepaymentRuleServiceImpl implements TALeaseRepaymentRuleServ
     public void delete(Long id) {
         log.debug("Request to delete TALeaseRepaymentRule : {}", id);
         tALeaseRepaymentRuleRepository.deleteById(id);
-        tALeaseRepaymentRuleSearchRepository.deleteById(id);
+        if (tALeaseRepaymentRuleSearchRepository != null) {
+            tALeaseRepaymentRuleSearchRepository.deleteById(id);
+        }
     }
 
     @Override

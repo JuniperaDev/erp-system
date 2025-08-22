@@ -19,6 +19,7 @@ package io.github.erp.erp.resources;
  */
 import io.github.erp.IntegrationTest;
 import io.github.erp.domain.*;
+import io.github.erp.context.assets.domain.AssetRevaluation;
 import io.github.erp.repository.AssetRevaluationRepository;
 import io.github.erp.repository.search.AssetRevaluationSearchRepository;
 import io.github.erp.service.AssetRevaluationService;

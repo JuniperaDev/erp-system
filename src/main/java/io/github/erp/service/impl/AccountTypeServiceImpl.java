@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AccountTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AccountTypeServiceImpl implements AccountTypeService {
     public AccountTypeServiceImpl(
         AccountTypeRepository accountTypeRepository,
         AccountTypeMapper accountTypeMapper,
-        AccountTypeSearchRepository accountTypeSearchRepository
+        @Autowired(required = false) AccountTypeSearchRepository accountTypeSearchRepository
     ) {
         this.accountTypeRepository = accountTypeRepository;
         this.accountTypeMapper = accountTypeMapper;
@@ -65,7 +66,9 @@ public class AccountTypeServiceImpl implements AccountTypeService {
         AccountType accountType = accountTypeMapper.toEntity(accountTypeDTO);
         accountType = accountTypeRepository.save(accountType);
         AccountTypeDTO result = accountTypeMapper.toDto(accountType);
-        accountTypeSearchRepository.save(accountType);
+        if (accountTypeSearchRepository != null) {
+            accountTypeSearchRepository.save(accountType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AccountTypeServiceImpl implements AccountTypeService {
             })
             .map(accountTypeRepository::save)
             .map(savedAccountType -> {
-                accountTypeSearchRepository.save(savedAccountType);
+                if (accountTypeSearchRepository != null) {
+                    accountTypeSearchRepository.save(savedAccountType);
+                }
 
                 return savedAccountType;
             })
@@ -107,13 +112,18 @@ public class AccountTypeServiceImpl implements AccountTypeService {
     public void delete(Long id) {
         log.debug("Request to delete AccountType : {}", id);
         accountTypeRepository.deleteById(id);
-        accountTypeSearchRepository.deleteById(id);
+        if (accountTypeSearchRepository != null) {
+            accountTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AccountTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AccountTypes for query {}", query);
-        return accountTypeSearchRepository.search(query, pageable).map(accountTypeMapper::toDto);
+        if (accountTypeSearchRepository != null) {
+            return accountTypeSearchRepository.search(query, pageable).map(accountTypeMapper::toDto);
+        }
+        return accountTypeRepository.findAll(pageable).map(accountTypeMapper::toDto);
     }
 }

@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CreditNoteMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CreditNoteServiceImpl implements CreditNoteService {
     public CreditNoteServiceImpl(
         CreditNoteRepository creditNoteRepository,
         CreditNoteMapper creditNoteMapper,
-        CreditNoteSearchRepository creditNoteSearchRepository
+        @Autowired(required = false) CreditNoteSearchRepository creditNoteSearchRepository
     ) {
         this.creditNoteRepository = creditNoteRepository;
         this.creditNoteMapper = creditNoteMapper;
@@ -65,7 +66,9 @@ public class CreditNoteServiceImpl implements CreditNoteService {
         CreditNote creditNote = creditNoteMapper.toEntity(creditNoteDTO);
         creditNote = creditNoteRepository.save(creditNote);
         CreditNoteDTO result = creditNoteMapper.toDto(creditNote);
-        creditNoteSearchRepository.save(creditNote);
+        if (creditNoteSearchRepository != null) {
+            creditNoteSearchRepository.save(creditNote);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CreditNoteServiceImpl implements CreditNoteService {
             })
             .map(creditNoteRepository::save)
             .map(savedCreditNote -> {
-                creditNoteSearchRepository.save(savedCreditNote);
+                if (creditNoteSearchRepository != null) {
+                    creditNoteSearchRepository.save(savedCreditNote);
+                }
 
                 return savedCreditNote;
             })
@@ -111,13 +116,18 @@ public class CreditNoteServiceImpl implements CreditNoteService {
     public void delete(Long id) {
         log.debug("Request to delete CreditNote : {}", id);
         creditNoteRepository.deleteById(id);
-        creditNoteSearchRepository.deleteById(id);
+        if (creditNoteSearchRepository != null) {
+            creditNoteSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CreditNoteDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CreditNotes for query {}", query);
-        return creditNoteSearchRepository.search(query, pageable).map(creditNoteMapper::toDto);
+        if (creditNoteSearchRepository != null) {
+            return creditNoteSearchRepository.search(query, pageable).map(creditNoteMapper::toDto);
+        }
+        return creditNoteRepository.findAll(pageable).map(creditNoteMapper::toDto);
     }
 }

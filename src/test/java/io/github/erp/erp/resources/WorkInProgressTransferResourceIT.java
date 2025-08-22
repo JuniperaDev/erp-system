@@ -19,6 +19,7 @@ package io.github.erp.erp.resources;
  */
 import io.github.erp.IntegrationTest;
 import io.github.erp.domain.*;
+import io.github.erp.context.assets.domain.AssetCategory;
 import io.github.erp.domain.enumeration.WorkInProgressTransferType;
 import io.github.erp.repository.WorkInProgressTransferRepository;
 import io.github.erp.repository.search.WorkInProgressTransferSearchRepository;

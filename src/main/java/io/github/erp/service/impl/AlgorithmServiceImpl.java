@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AlgorithmMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
     public AlgorithmServiceImpl(
         AlgorithmRepository algorithmRepository,
         AlgorithmMapper algorithmMapper,
-        AlgorithmSearchRepository algorithmSearchRepository
+        @Autowired(required = false) AlgorithmSearchRepository algorithmSearchRepository
     ) {
         this.algorithmRepository = algorithmRepository;
         this.algorithmMapper = algorithmMapper;
@@ -65,7 +66,9 @@ public class AlgorithmServiceImpl implements AlgorithmService {
         Algorithm algorithm = algorithmMapper.toEntity(algorithmDTO);
         algorithm = algorithmRepository.save(algorithm);
         AlgorithmDTO result = algorithmMapper.toDto(algorithm);
-        algorithmSearchRepository.save(algorithm);
+        if (algorithmSearchRepository != null) {
+            algorithmSearchRepository.save(algorithm);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AlgorithmServiceImpl implements AlgorithmService {
             })
             .map(algorithmRepository::save)
             .map(savedAlgorithm -> {
-                algorithmSearchRepository.save(savedAlgorithm);
+                if (algorithmSearchRepository != null) {
+                    algorithmSearchRepository.save(savedAlgorithm);
+                }
 
                 return savedAlgorithm;
             })
@@ -111,13 +116,18 @@ public class AlgorithmServiceImpl implements AlgorithmService {
     public void delete(Long id) {
         log.debug("Request to delete Algorithm : {}", id);
         algorithmRepository.deleteById(id);
-        algorithmSearchRepository.deleteById(id);
+        if (algorithmSearchRepository != null) {
+            algorithmSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AlgorithmDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of Algorithms for query {}", query);
-        return algorithmSearchRepository.search(query, pageable).map(algorithmMapper::toDto);
+        if (algorithmSearchRepository != null) {
+            return algorithmSearchRepository.search(query, pageable).map(algorithmMapper::toDto);
+        }
+        return algorithmRepository.findAll(pageable).map(algorithmMapper::toDto);
     }
 }

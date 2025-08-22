@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CreditCardFacilityMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CreditCardFacilityServiceImpl implements CreditCardFacilityService 
     public CreditCardFacilityServiceImpl(
         CreditCardFacilityRepository creditCardFacilityRepository,
         CreditCardFacilityMapper creditCardFacilityMapper,
-        CreditCardFacilitySearchRepository creditCardFacilitySearchRepository
+        @Autowired(required = false) CreditCardFacilitySearchRepository creditCardFacilitySearchRepository
     ) {
         this.creditCardFacilityRepository = creditCardFacilityRepository;
         this.creditCardFacilityMapper = creditCardFacilityMapper;
@@ -65,7 +66,9 @@ public class CreditCardFacilityServiceImpl implements CreditCardFacilityService 
         CreditCardFacility creditCardFacility = creditCardFacilityMapper.toEntity(creditCardFacilityDTO);
         creditCardFacility = creditCardFacilityRepository.save(creditCardFacility);
         CreditCardFacilityDTO result = creditCardFacilityMapper.toDto(creditCardFacility);
-        creditCardFacilitySearchRepository.save(creditCardFacility);
+        if (creditCardFacilitySearchRepository != null) {
+            creditCardFacilitySearchRepository.save(creditCardFacility);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CreditCardFacilityServiceImpl implements CreditCardFacilityService 
             })
             .map(creditCardFacilityRepository::save)
             .map(savedCreditCardFacility -> {
-                creditCardFacilitySearchRepository.save(savedCreditCardFacility);
+                if (creditCardFacilitySearchRepository != null) {
+                    creditCardFacilitySearchRepository.save(savedCreditCardFacility);
+                }
 
                 return savedCreditCardFacility;
             })
@@ -107,13 +112,18 @@ public class CreditCardFacilityServiceImpl implements CreditCardFacilityService 
     public void delete(Long id) {
         log.debug("Request to delete CreditCardFacility : {}", id);
         creditCardFacilityRepository.deleteById(id);
-        creditCardFacilitySearchRepository.deleteById(id);
+        if (creditCardFacilitySearchRepository != null) {
+            creditCardFacilitySearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CreditCardFacilityDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CreditCardFacilities for query {}", query);
-        return creditCardFacilitySearchRepository.search(query, pageable).map(creditCardFacilityMapper::toDto);
+        if (creditCardFacilitySearchRepository != null) {
+            return creditCardFacilitySearchRepository.search(query, pageable).map(creditCardFacilityMapper::toDto);
+        }
+        return creditCardFacilityRepository.findAll(pageable).map(creditCardFacilityMapper::toDto);
     }
 }

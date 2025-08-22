@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CrbAccountStatusMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CrbAccountStatusServiceImpl implements CrbAccountStatusService {
     public CrbAccountStatusServiceImpl(
         CrbAccountStatusRepository crbAccountStatusRepository,
         CrbAccountStatusMapper crbAccountStatusMapper,
-        CrbAccountStatusSearchRepository crbAccountStatusSearchRepository
+        @Autowired(required = false) CrbAccountStatusSearchRepository crbAccountStatusSearchRepository
     ) {
         this.crbAccountStatusRepository = crbAccountStatusRepository;
         this.crbAccountStatusMapper = crbAccountStatusMapper;
@@ -65,7 +66,9 @@ public class CrbAccountStatusServiceImpl implements CrbAccountStatusService {
         CrbAccountStatus crbAccountStatus = crbAccountStatusMapper.toEntity(crbAccountStatusDTO);
         crbAccountStatus = crbAccountStatusRepository.save(crbAccountStatus);
         CrbAccountStatusDTO result = crbAccountStatusMapper.toDto(crbAccountStatus);
-        crbAccountStatusSearchRepository.save(crbAccountStatus);
+        if (crbAccountStatusSearchRepository != null) {
+            crbAccountStatusSearchRepository.save(crbAccountStatus);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CrbAccountStatusServiceImpl implements CrbAccountStatusService {
             })
             .map(crbAccountStatusRepository::save)
             .map(savedCrbAccountStatus -> {
-                crbAccountStatusSearchRepository.save(savedCrbAccountStatus);
+                if (crbAccountStatusSearchRepository != null) {
+                    crbAccountStatusSearchRepository.save(savedCrbAccountStatus);
+                }
 
                 return savedCrbAccountStatus;
             })
@@ -107,13 +112,18 @@ public class CrbAccountStatusServiceImpl implements CrbAccountStatusService {
     public void delete(Long id) {
         log.debug("Request to delete CrbAccountStatus : {}", id);
         crbAccountStatusRepository.deleteById(id);
-        crbAccountStatusSearchRepository.deleteById(id);
+        if (crbAccountStatusSearchRepository != null) {
+            crbAccountStatusSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CrbAccountStatusDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CrbAccountStatuses for query {}", query);
-        return crbAccountStatusSearchRepository.search(query, pageable).map(crbAccountStatusMapper::toDto);
+        if (crbAccountStatusSearchRepository != null) {
+            return crbAccountStatusSearchRepository.search(query, pageable).map(crbAccountStatusMapper::toDto);
+        }
+        return crbAccountStatusRepository.findAll(pageable).map(crbAccountStatusMapper::toDto);
     }
 }

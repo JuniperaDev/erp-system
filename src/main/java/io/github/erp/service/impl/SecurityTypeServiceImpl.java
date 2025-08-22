@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.SecurityTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class SecurityTypeServiceImpl implements SecurityTypeService {
     public SecurityTypeServiceImpl(
         SecurityTypeRepository securityTypeRepository,
         SecurityTypeMapper securityTypeMapper,
-        SecurityTypeSearchRepository securityTypeSearchRepository
+        @Autowired(required = false) SecurityTypeSearchRepository securityTypeSearchRepository
     ) {
         this.securityTypeRepository = securityTypeRepository;
         this.securityTypeMapper = securityTypeMapper;
@@ -65,7 +66,9 @@ public class SecurityTypeServiceImpl implements SecurityTypeService {
         SecurityType securityType = securityTypeMapper.toEntity(securityTypeDTO);
         securityType = securityTypeRepository.save(securityType);
         SecurityTypeDTO result = securityTypeMapper.toDto(securityType);
-        securityTypeSearchRepository.save(securityType);
+        if (securityTypeSearchRepository != null) {
+            securityTypeSearchRepository.save(securityType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class SecurityTypeServiceImpl implements SecurityTypeService {
             })
             .map(securityTypeRepository::save)
             .map(savedSecurityType -> {
-                securityTypeSearchRepository.save(savedSecurityType);
+                if (securityTypeSearchRepository != null) {
+                    securityTypeSearchRepository.save(savedSecurityType);
+                }
 
                 return savedSecurityType;
             })
@@ -107,13 +112,18 @@ public class SecurityTypeServiceImpl implements SecurityTypeService {
     public void delete(Long id) {
         log.debug("Request to delete SecurityType : {}", id);
         securityTypeRepository.deleteById(id);
-        securityTypeSearchRepository.deleteById(id);
+        if (securityTypeSearchRepository != null) {
+            securityTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<SecurityTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of SecurityTypes for query {}", query);
-        return securityTypeSearchRepository.search(query, pageable).map(securityTypeMapper::toDto);
+        if (securityTypeSearchRepository != null) {
+            return securityTypeSearchRepository.search(query, pageable).map(securityTypeMapper::toDto);
+        }
+        return securityTypeRepository.findAll(pageable).map(securityTypeMapper::toDto);
     }
 }

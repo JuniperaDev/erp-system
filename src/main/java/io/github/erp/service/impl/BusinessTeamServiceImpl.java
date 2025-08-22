@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.BusinessTeamMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class BusinessTeamServiceImpl implements BusinessTeamService {
     public BusinessTeamServiceImpl(
         BusinessTeamRepository businessTeamRepository,
         BusinessTeamMapper businessTeamMapper,
-        BusinessTeamSearchRepository businessTeamSearchRepository
+        @Autowired(required = false) BusinessTeamSearchRepository businessTeamSearchRepository
     ) {
         this.businessTeamRepository = businessTeamRepository;
         this.businessTeamMapper = businessTeamMapper;
@@ -65,7 +66,9 @@ public class BusinessTeamServiceImpl implements BusinessTeamService {
         BusinessTeam businessTeam = businessTeamMapper.toEntity(businessTeamDTO);
         businessTeam = businessTeamRepository.save(businessTeam);
         BusinessTeamDTO result = businessTeamMapper.toDto(businessTeam);
-        businessTeamSearchRepository.save(businessTeam);
+        if (businessTeamSearchRepository != null) {
+            businessTeamSearchRepository.save(businessTeam);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class BusinessTeamServiceImpl implements BusinessTeamService {
             })
             .map(businessTeamRepository::save)
             .map(savedBusinessTeam -> {
-                businessTeamSearchRepository.save(savedBusinessTeam);
+                if (businessTeamSearchRepository != null) {
+                    businessTeamSearchRepository.save(savedBusinessTeam);
+                }
 
                 return savedBusinessTeam;
             })
@@ -107,13 +112,18 @@ public class BusinessTeamServiceImpl implements BusinessTeamService {
     public void delete(Long id) {
         log.debug("Request to delete BusinessTeam : {}", id);
         businessTeamRepository.deleteById(id);
-        businessTeamSearchRepository.deleteById(id);
+        if (businessTeamSearchRepository != null) {
+            businessTeamSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<BusinessTeamDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of BusinessTeams for query {}", query);
-        return businessTeamSearchRepository.search(query, pageable).map(businessTeamMapper::toDto);
+        if (businessTeamSearchRepository != null) {
+            return businessTeamSearchRepository.search(query, pageable).map(businessTeamMapper::toDto);
+        }
+        return businessTeamRepository.findAll(pageable).map(businessTeamMapper::toDto);
     }
 }

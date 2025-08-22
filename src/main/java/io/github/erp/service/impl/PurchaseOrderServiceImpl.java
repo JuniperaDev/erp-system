@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.PurchaseOrderMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     public PurchaseOrderServiceImpl(
         PurchaseOrderRepository purchaseOrderRepository,
         PurchaseOrderMapper purchaseOrderMapper,
-        PurchaseOrderSearchRepository purchaseOrderSearchRepository
+        @Autowired(required = false) PurchaseOrderSearchRepository purchaseOrderSearchRepository
     ) {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.purchaseOrderMapper = purchaseOrderMapper;
@@ -65,7 +66,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         PurchaseOrder purchaseOrder = purchaseOrderMapper.toEntity(purchaseOrderDTO);
         purchaseOrder = purchaseOrderRepository.save(purchaseOrder);
         PurchaseOrderDTO result = purchaseOrderMapper.toDto(purchaseOrder);
-        purchaseOrderSearchRepository.save(purchaseOrder);
+        if (purchaseOrderSearchRepository != null) {
+            purchaseOrderSearchRepository.save(purchaseOrder);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             })
             .map(purchaseOrderRepository::save)
             .map(savedPurchaseOrder -> {
-                purchaseOrderSearchRepository.save(savedPurchaseOrder);
+                if (purchaseOrderSearchRepository != null) {
+                    purchaseOrderSearchRepository.save(savedPurchaseOrder);
+                }
 
                 return savedPurchaseOrder;
             })
@@ -111,13 +116,18 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     public void delete(Long id) {
         log.debug("Request to delete PurchaseOrder : {}", id);
         purchaseOrderRepository.deleteById(id);
-        purchaseOrderSearchRepository.deleteById(id);
+        if (purchaseOrderSearchRepository != null) {
+            purchaseOrderSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<PurchaseOrderDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of PurchaseOrders for query {}", query);
-        return purchaseOrderSearchRepository.search(query, pageable).map(purchaseOrderMapper::toDto);
+        if (purchaseOrderSearchRepository != null) {
+            return purchaseOrderSearchRepository.search(query, pageable).map(purchaseOrderMapper::toDto);
+        }
+        return purchaseOrderRepository.findAll(pageable).map(purchaseOrderMapper::toDto);
     }
 }

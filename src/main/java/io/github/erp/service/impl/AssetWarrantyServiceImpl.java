@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AssetWarrantyMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AssetWarrantyServiceImpl implements AssetWarrantyService {
     public AssetWarrantyServiceImpl(
         AssetWarrantyRepository assetWarrantyRepository,
         AssetWarrantyMapper assetWarrantyMapper,
-        AssetWarrantySearchRepository assetWarrantySearchRepository
+        @Autowired(required = false) AssetWarrantySearchRepository assetWarrantySearchRepository
     ) {
         this.assetWarrantyRepository = assetWarrantyRepository;
         this.assetWarrantyMapper = assetWarrantyMapper;
@@ -65,7 +66,9 @@ public class AssetWarrantyServiceImpl implements AssetWarrantyService {
         AssetWarranty assetWarranty = assetWarrantyMapper.toEntity(assetWarrantyDTO);
         assetWarranty = assetWarrantyRepository.save(assetWarranty);
         AssetWarrantyDTO result = assetWarrantyMapper.toDto(assetWarranty);
-        assetWarrantySearchRepository.save(assetWarranty);
+        if (assetWarrantySearchRepository != null) {
+            assetWarrantySearchRepository.save(assetWarranty);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AssetWarrantyServiceImpl implements AssetWarrantyService {
             })
             .map(assetWarrantyRepository::save)
             .map(savedAssetWarranty -> {
-                assetWarrantySearchRepository.save(savedAssetWarranty);
+                if (assetWarrantySearchRepository != null) {
+                    assetWarrantySearchRepository.save(savedAssetWarranty);
+                }
 
                 return savedAssetWarranty;
             })
@@ -111,13 +116,18 @@ public class AssetWarrantyServiceImpl implements AssetWarrantyService {
     public void delete(Long id) {
         log.debug("Request to delete AssetWarranty : {}", id);
         assetWarrantyRepository.deleteById(id);
-        assetWarrantySearchRepository.deleteById(id);
+        if (assetWarrantySearchRepository != null) {
+            assetWarrantySearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AssetWarrantyDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AssetWarranties for query {}", query);
-        return assetWarrantySearchRepository.search(query, pageable).map(assetWarrantyMapper::toDto);
+        if (assetWarrantySearchRepository != null) {
+            return assetWarrantySearchRepository.search(query, pageable).map(assetWarrantyMapper::toDto);
+        }
+        return assetWarrantyRepository.findAll(pageable).map(assetWarrantyMapper::toDto);
     }
 }

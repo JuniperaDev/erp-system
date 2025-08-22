@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.ContractMetadataMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class ContractMetadataServiceImpl implements ContractMetadataService {
     public ContractMetadataServiceImpl(
         ContractMetadataRepository contractMetadataRepository,
         ContractMetadataMapper contractMetadataMapper,
-        ContractMetadataSearchRepository contractMetadataSearchRepository
+        @Autowired(required = false) ContractMetadataSearchRepository contractMetadataSearchRepository
     ) {
         this.contractMetadataRepository = contractMetadataRepository;
         this.contractMetadataMapper = contractMetadataMapper;
@@ -65,7 +66,9 @@ public class ContractMetadataServiceImpl implements ContractMetadataService {
         ContractMetadata contractMetadata = contractMetadataMapper.toEntity(contractMetadataDTO);
         contractMetadata = contractMetadataRepository.save(contractMetadata);
         ContractMetadataDTO result = contractMetadataMapper.toDto(contractMetadata);
-        contractMetadataSearchRepository.save(contractMetadata);
+        if (contractMetadataSearchRepository != null) {
+            contractMetadataSearchRepository.save(contractMetadata);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class ContractMetadataServiceImpl implements ContractMetadataService {
             })
             .map(contractMetadataRepository::save)
             .map(savedContractMetadata -> {
-                contractMetadataSearchRepository.save(savedContractMetadata);
+                if (contractMetadataSearchRepository != null) {
+                    contractMetadataSearchRepository.save(savedContractMetadata);
+                }
 
                 return savedContractMetadata;
             })
@@ -111,13 +116,18 @@ public class ContractMetadataServiceImpl implements ContractMetadataService {
     public void delete(Long id) {
         log.debug("Request to delete ContractMetadata : {}", id);
         contractMetadataRepository.deleteById(id);
-        contractMetadataSearchRepository.deleteById(id);
+        if (contractMetadataSearchRepository != null) {
+            contractMetadataSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ContractMetadataDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of ContractMetadata for query {}", query);
-        return contractMetadataSearchRepository.search(query, pageable).map(contractMetadataMapper::toDto);
+        if (contractMetadataSearchRepository != null) {
+            return contractMetadataSearchRepository.search(query, pageable).map(contractMetadataMapper::toDto);
+        }
+        return contractMetadataRepository.findAll(pageable).map(contractMetadataMapper::toDto);
     }
 }

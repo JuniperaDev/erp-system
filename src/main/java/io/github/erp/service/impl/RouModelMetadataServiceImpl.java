@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.RouModelMetadataMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class RouModelMetadataServiceImpl implements RouModelMetadataService {
     public RouModelMetadataServiceImpl(
         RouModelMetadataRepository rouModelMetadataRepository,
         RouModelMetadataMapper rouModelMetadataMapper,
-        RouModelMetadataSearchRepository rouModelMetadataSearchRepository
+        @Autowired(required = false) RouModelMetadataSearchRepository rouModelMetadataSearchRepository
     ) {
         this.rouModelMetadataRepository = rouModelMetadataRepository;
         this.rouModelMetadataMapper = rouModelMetadataMapper;
@@ -65,7 +66,9 @@ public class RouModelMetadataServiceImpl implements RouModelMetadataService {
         RouModelMetadata rouModelMetadata = rouModelMetadataMapper.toEntity(rouModelMetadataDTO);
         rouModelMetadata = rouModelMetadataRepository.save(rouModelMetadata);
         RouModelMetadataDTO result = rouModelMetadataMapper.toDto(rouModelMetadata);
-        rouModelMetadataSearchRepository.save(rouModelMetadata);
+        if (rouModelMetadataSearchRepository != null) {
+            rouModelMetadataSearchRepository.save(rouModelMetadata);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class RouModelMetadataServiceImpl implements RouModelMetadataService {
             })
             .map(rouModelMetadataRepository::save)
             .map(savedRouModelMetadata -> {
-                rouModelMetadataSearchRepository.save(savedRouModelMetadata);
+                if (rouModelMetadataSearchRepository != null) {
+                    rouModelMetadataSearchRepository.save(savedRouModelMetadata);
+                }
 
                 return savedRouModelMetadata;
             })
@@ -111,13 +116,18 @@ public class RouModelMetadataServiceImpl implements RouModelMetadataService {
     public void delete(Long id) {
         log.debug("Request to delete RouModelMetadata : {}", id);
         rouModelMetadataRepository.deleteById(id);
-        rouModelMetadataSearchRepository.deleteById(id);
+        if (rouModelMetadataSearchRepository != null) {
+            rouModelMetadataSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<RouModelMetadataDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of RouModelMetadata for query {}", query);
-        return rouModelMetadataSearchRepository.search(query, pageable).map(rouModelMetadataMapper::toDto);
+        if (rouModelMetadataSearchRepository != null) {
+            return rouModelMetadataSearchRepository.search(query, pageable).map(rouModelMetadataMapper::toDto);
+        }
+        return rouModelMetadataRepository.findAll(pageable).map(rouModelMetadataMapper::toDto);
     }
 }

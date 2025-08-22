@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.NatureOfCustomerComplaintsMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class NatureOfCustomerComplaintsServiceImpl implements NatureOfCustomerCo
     public NatureOfCustomerComplaintsServiceImpl(
         NatureOfCustomerComplaintsRepository natureOfCustomerComplaintsRepository,
         NatureOfCustomerComplaintsMapper natureOfCustomerComplaintsMapper,
-        NatureOfCustomerComplaintsSearchRepository natureOfCustomerComplaintsSearchRepository
+        @Autowired(required = false) NatureOfCustomerComplaintsSearchRepository natureOfCustomerComplaintsSearchRepository
     ) {
         this.natureOfCustomerComplaintsRepository = natureOfCustomerComplaintsRepository;
         this.natureOfCustomerComplaintsMapper = natureOfCustomerComplaintsMapper;
@@ -65,7 +66,9 @@ public class NatureOfCustomerComplaintsServiceImpl implements NatureOfCustomerCo
         NatureOfCustomerComplaints natureOfCustomerComplaints = natureOfCustomerComplaintsMapper.toEntity(natureOfCustomerComplaintsDTO);
         natureOfCustomerComplaints = natureOfCustomerComplaintsRepository.save(natureOfCustomerComplaints);
         NatureOfCustomerComplaintsDTO result = natureOfCustomerComplaintsMapper.toDto(natureOfCustomerComplaints);
-        natureOfCustomerComplaintsSearchRepository.save(natureOfCustomerComplaints);
+        if (natureOfCustomerComplaintsSearchRepository != null) {
+            natureOfCustomerComplaintsSearchRepository.save(natureOfCustomerComplaints);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class NatureOfCustomerComplaintsServiceImpl implements NatureOfCustomerCo
             })
             .map(natureOfCustomerComplaintsRepository::save)
             .map(savedNatureOfCustomerComplaints -> {
-                natureOfCustomerComplaintsSearchRepository.save(savedNatureOfCustomerComplaints);
+                if (natureOfCustomerComplaintsSearchRepository != null) {
+                    natureOfCustomerComplaintsSearchRepository.save(savedNatureOfCustomerComplaints);
+                }
 
                 return savedNatureOfCustomerComplaints;
             })
@@ -107,13 +112,18 @@ public class NatureOfCustomerComplaintsServiceImpl implements NatureOfCustomerCo
     public void delete(Long id) {
         log.debug("Request to delete NatureOfCustomerComplaints : {}", id);
         natureOfCustomerComplaintsRepository.deleteById(id);
-        natureOfCustomerComplaintsSearchRepository.deleteById(id);
+        if (natureOfCustomerComplaintsSearchRepository != null) {
+            natureOfCustomerComplaintsSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<NatureOfCustomerComplaintsDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of NatureOfCustomerComplaints for query {}", query);
-        return natureOfCustomerComplaintsSearchRepository.search(query, pageable).map(natureOfCustomerComplaintsMapper::toDto);
+        if (natureOfCustomerComplaintsSearchRepository != null) {
+            return natureOfCustomerComplaintsSearchRepository.search(query, pageable).map(natureOfCustomerComplaintsMapper::toDto);
+        }
+        return natureOfCustomerComplaintsRepository.findAll(pageable).map(natureOfCustomerComplaintsMapper::toDto);
     }
 }

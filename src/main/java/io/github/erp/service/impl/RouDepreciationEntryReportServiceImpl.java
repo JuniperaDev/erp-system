@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.RouDepreciationEntryReportMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class RouDepreciationEntryReportServiceImpl implements RouDepreciationEnt
     public RouDepreciationEntryReportServiceImpl(
         RouDepreciationEntryReportRepository rouDepreciationEntryReportRepository,
         RouDepreciationEntryReportMapper rouDepreciationEntryReportMapper,
-        RouDepreciationEntryReportSearchRepository rouDepreciationEntryReportSearchRepository
+        @Autowired(required = false) RouDepreciationEntryReportSearchRepository rouDepreciationEntryReportSearchRepository
     ) {
         this.rouDepreciationEntryReportRepository = rouDepreciationEntryReportRepository;
         this.rouDepreciationEntryReportMapper = rouDepreciationEntryReportMapper;
@@ -65,7 +66,9 @@ public class RouDepreciationEntryReportServiceImpl implements RouDepreciationEnt
         RouDepreciationEntryReport rouDepreciationEntryReport = rouDepreciationEntryReportMapper.toEntity(rouDepreciationEntryReportDTO);
         rouDepreciationEntryReport = rouDepreciationEntryReportRepository.save(rouDepreciationEntryReport);
         RouDepreciationEntryReportDTO result = rouDepreciationEntryReportMapper.toDto(rouDepreciationEntryReport);
-        rouDepreciationEntryReportSearchRepository.save(rouDepreciationEntryReport);
+        if (rouDepreciationEntryReportSearchRepository != null) {
+            rouDepreciationEntryReportSearchRepository.save(rouDepreciationEntryReport);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class RouDepreciationEntryReportServiceImpl implements RouDepreciationEnt
             })
             .map(rouDepreciationEntryReportRepository::save)
             .map(savedRouDepreciationEntryReport -> {
-                rouDepreciationEntryReportSearchRepository.save(savedRouDepreciationEntryReport);
+                if (rouDepreciationEntryReportSearchRepository != null) {
+                    rouDepreciationEntryReportSearchRepository.save(savedRouDepreciationEntryReport);
+                }
 
                 return savedRouDepreciationEntryReport;
             })
@@ -107,7 +112,9 @@ public class RouDepreciationEntryReportServiceImpl implements RouDepreciationEnt
     public void delete(Long id) {
         log.debug("Request to delete RouDepreciationEntryReport : {}", id);
         rouDepreciationEntryReportRepository.deleteById(id);
-        rouDepreciationEntryReportSearchRepository.deleteById(id);
+        if (rouDepreciationEntryReportSearchRepository != null) {
+            rouDepreciationEntryReportSearchRepository.deleteById(id);
+        }
     }
 
     @Override

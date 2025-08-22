@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CrbCreditFacilityTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CrbCreditFacilityTypeServiceImpl implements CrbCreditFacilityTypeSe
     public CrbCreditFacilityTypeServiceImpl(
         CrbCreditFacilityTypeRepository crbCreditFacilityTypeRepository,
         CrbCreditFacilityTypeMapper crbCreditFacilityTypeMapper,
-        CrbCreditFacilityTypeSearchRepository crbCreditFacilityTypeSearchRepository
+        @Autowired(required = false) CrbCreditFacilityTypeSearchRepository crbCreditFacilityTypeSearchRepository
     ) {
         this.crbCreditFacilityTypeRepository = crbCreditFacilityTypeRepository;
         this.crbCreditFacilityTypeMapper = crbCreditFacilityTypeMapper;
@@ -65,7 +66,9 @@ public class CrbCreditFacilityTypeServiceImpl implements CrbCreditFacilityTypeSe
         CrbCreditFacilityType crbCreditFacilityType = crbCreditFacilityTypeMapper.toEntity(crbCreditFacilityTypeDTO);
         crbCreditFacilityType = crbCreditFacilityTypeRepository.save(crbCreditFacilityType);
         CrbCreditFacilityTypeDTO result = crbCreditFacilityTypeMapper.toDto(crbCreditFacilityType);
-        crbCreditFacilityTypeSearchRepository.save(crbCreditFacilityType);
+        if (crbCreditFacilityTypeSearchRepository != null) {
+            crbCreditFacilityTypeSearchRepository.save(crbCreditFacilityType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CrbCreditFacilityTypeServiceImpl implements CrbCreditFacilityTypeSe
             })
             .map(crbCreditFacilityTypeRepository::save)
             .map(savedCrbCreditFacilityType -> {
-                crbCreditFacilityTypeSearchRepository.save(savedCrbCreditFacilityType);
+                if (crbCreditFacilityTypeSearchRepository != null) {
+                    crbCreditFacilityTypeSearchRepository.save(savedCrbCreditFacilityType);
+                }
 
                 return savedCrbCreditFacilityType;
             })
@@ -107,7 +112,9 @@ public class CrbCreditFacilityTypeServiceImpl implements CrbCreditFacilityTypeSe
     public void delete(Long id) {
         log.debug("Request to delete CrbCreditFacilityType : {}", id);
         crbCreditFacilityTypeRepository.deleteById(id);
-        crbCreditFacilityTypeSearchRepository.deleteById(id);
+        if (crbCreditFacilityTypeSearchRepository != null) {
+            crbCreditFacilityTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override

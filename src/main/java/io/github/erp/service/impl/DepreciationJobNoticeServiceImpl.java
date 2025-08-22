@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.DepreciationJobNoticeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class DepreciationJobNoticeServiceImpl implements DepreciationJobNoticeSe
     public DepreciationJobNoticeServiceImpl(
         DepreciationJobNoticeRepository depreciationJobNoticeRepository,
         DepreciationJobNoticeMapper depreciationJobNoticeMapper,
-        DepreciationJobNoticeSearchRepository depreciationJobNoticeSearchRepository
+        @Autowired(required = false) DepreciationJobNoticeSearchRepository depreciationJobNoticeSearchRepository
     ) {
         this.depreciationJobNoticeRepository = depreciationJobNoticeRepository;
         this.depreciationJobNoticeMapper = depreciationJobNoticeMapper;
@@ -65,7 +66,9 @@ public class DepreciationJobNoticeServiceImpl implements DepreciationJobNoticeSe
         DepreciationJobNotice depreciationJobNotice = depreciationJobNoticeMapper.toEntity(depreciationJobNoticeDTO);
         depreciationJobNotice = depreciationJobNoticeRepository.save(depreciationJobNotice);
         DepreciationJobNoticeDTO result = depreciationJobNoticeMapper.toDto(depreciationJobNotice);
-        depreciationJobNoticeSearchRepository.save(depreciationJobNotice);
+        if (depreciationJobNoticeSearchRepository != null) {
+            depreciationJobNoticeSearchRepository.save(depreciationJobNotice);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class DepreciationJobNoticeServiceImpl implements DepreciationJobNoticeSe
             })
             .map(depreciationJobNoticeRepository::save)
             .map(savedDepreciationJobNotice -> {
-                depreciationJobNoticeSearchRepository.save(savedDepreciationJobNotice);
+                if (depreciationJobNoticeSearchRepository != null) {
+                    depreciationJobNoticeSearchRepository.save(savedDepreciationJobNotice);
+                }
 
                 return savedDepreciationJobNotice;
             })
@@ -111,13 +116,18 @@ public class DepreciationJobNoticeServiceImpl implements DepreciationJobNoticeSe
     public void delete(Long id) {
         log.debug("Request to delete DepreciationJobNotice : {}", id);
         depreciationJobNoticeRepository.deleteById(id);
-        depreciationJobNoticeSearchRepository.deleteById(id);
+        if (depreciationJobNoticeSearchRepository != null) {
+            depreciationJobNoticeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<DepreciationJobNoticeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of DepreciationJobNotices for query {}", query);
-        return depreciationJobNoticeSearchRepository.search(query, pageable).map(depreciationJobNoticeMapper::toDto);
+        if (depreciationJobNoticeSearchRepository != null) {
+            return depreciationJobNoticeSearchRepository.search(query, pageable).map(depreciationJobNoticeMapper::toDto);
+        }
+        return depreciationJobNoticeRepository.findAll(pageable).map(depreciationJobNoticeMapper::toDto);
     }
 }

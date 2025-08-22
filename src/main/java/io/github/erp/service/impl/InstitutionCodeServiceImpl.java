@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.InstitutionCodeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class InstitutionCodeServiceImpl implements InstitutionCodeService {
     public InstitutionCodeServiceImpl(
         InstitutionCodeRepository institutionCodeRepository,
         InstitutionCodeMapper institutionCodeMapper,
-        InstitutionCodeSearchRepository institutionCodeSearchRepository
+        @Autowired(required = false) InstitutionCodeSearchRepository institutionCodeSearchRepository
     ) {
         this.institutionCodeRepository = institutionCodeRepository;
         this.institutionCodeMapper = institutionCodeMapper;
@@ -65,7 +66,9 @@ public class InstitutionCodeServiceImpl implements InstitutionCodeService {
         InstitutionCode institutionCode = institutionCodeMapper.toEntity(institutionCodeDTO);
         institutionCode = institutionCodeRepository.save(institutionCode);
         InstitutionCodeDTO result = institutionCodeMapper.toDto(institutionCode);
-        institutionCodeSearchRepository.save(institutionCode);
+        if (institutionCodeSearchRepository != null) {
+            institutionCodeSearchRepository.save(institutionCode);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class InstitutionCodeServiceImpl implements InstitutionCodeService {
             })
             .map(institutionCodeRepository::save)
             .map(savedInstitutionCode -> {
-                institutionCodeSearchRepository.save(savedInstitutionCode);
+                if (institutionCodeSearchRepository != null) {
+                    institutionCodeSearchRepository.save(savedInstitutionCode);
+                }
 
                 return savedInstitutionCode;
             })
@@ -111,13 +116,18 @@ public class InstitutionCodeServiceImpl implements InstitutionCodeService {
     public void delete(Long id) {
         log.debug("Request to delete InstitutionCode : {}", id);
         institutionCodeRepository.deleteById(id);
-        institutionCodeSearchRepository.deleteById(id);
+        if (institutionCodeSearchRepository != null) {
+            institutionCodeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<InstitutionCodeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of InstitutionCodes for query {}", query);
-        return institutionCodeSearchRepository.search(query, pageable).map(institutionCodeMapper::toDto);
+        if (institutionCodeSearchRepository != null) {
+            return institutionCodeSearchRepository.search(query, pageable).map(institutionCodeMapper::toDto);
+        }
+        return institutionCodeRepository.findAll(pageable).map(institutionCodeMapper::toDto);
     }
 }

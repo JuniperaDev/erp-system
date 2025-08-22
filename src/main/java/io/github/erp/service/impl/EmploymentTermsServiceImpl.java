@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.EmploymentTermsMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class EmploymentTermsServiceImpl implements EmploymentTermsService {
     public EmploymentTermsServiceImpl(
         EmploymentTermsRepository employmentTermsRepository,
         EmploymentTermsMapper employmentTermsMapper,
-        EmploymentTermsSearchRepository employmentTermsSearchRepository
+        @Autowired(required = false) EmploymentTermsSearchRepository employmentTermsSearchRepository
     ) {
         this.employmentTermsRepository = employmentTermsRepository;
         this.employmentTermsMapper = employmentTermsMapper;
@@ -65,7 +66,9 @@ public class EmploymentTermsServiceImpl implements EmploymentTermsService {
         EmploymentTerms employmentTerms = employmentTermsMapper.toEntity(employmentTermsDTO);
         employmentTerms = employmentTermsRepository.save(employmentTerms);
         EmploymentTermsDTO result = employmentTermsMapper.toDto(employmentTerms);
-        employmentTermsSearchRepository.save(employmentTerms);
+        if (employmentTermsSearchRepository != null) {
+            employmentTermsSearchRepository.save(employmentTerms);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class EmploymentTermsServiceImpl implements EmploymentTermsService {
             })
             .map(employmentTermsRepository::save)
             .map(savedEmploymentTerms -> {
-                employmentTermsSearchRepository.save(savedEmploymentTerms);
+                if (employmentTermsSearchRepository != null) {
+                    employmentTermsSearchRepository.save(savedEmploymentTerms);
+                }
 
                 return savedEmploymentTerms;
             })
@@ -107,13 +112,18 @@ public class EmploymentTermsServiceImpl implements EmploymentTermsService {
     public void delete(Long id) {
         log.debug("Request to delete EmploymentTerms : {}", id);
         employmentTermsRepository.deleteById(id);
-        employmentTermsSearchRepository.deleteById(id);
+        if (employmentTermsSearchRepository != null) {
+            employmentTermsSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<EmploymentTermsDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of EmploymentTerms for query {}", query);
-        return employmentTermsSearchRepository.search(query, pageable).map(employmentTermsMapper::toDto);
+        if (employmentTermsSearchRepository != null) {
+            return employmentTermsSearchRepository.search(query, pageable).map(employmentTermsMapper::toDto);
+        }
+        return employmentTermsRepository.findAll(pageable).map(employmentTermsMapper::toDto);
     }
 }

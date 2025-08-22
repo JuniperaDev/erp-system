@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CardClassTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CardClassTypeServiceImpl implements CardClassTypeService {
     public CardClassTypeServiceImpl(
         CardClassTypeRepository cardClassTypeRepository,
         CardClassTypeMapper cardClassTypeMapper,
-        CardClassTypeSearchRepository cardClassTypeSearchRepository
+        @Autowired(required = false) CardClassTypeSearchRepository cardClassTypeSearchRepository
     ) {
         this.cardClassTypeRepository = cardClassTypeRepository;
         this.cardClassTypeMapper = cardClassTypeMapper;
@@ -65,7 +66,9 @@ public class CardClassTypeServiceImpl implements CardClassTypeService {
         CardClassType cardClassType = cardClassTypeMapper.toEntity(cardClassTypeDTO);
         cardClassType = cardClassTypeRepository.save(cardClassType);
         CardClassTypeDTO result = cardClassTypeMapper.toDto(cardClassType);
-        cardClassTypeSearchRepository.save(cardClassType);
+        if (cardClassTypeSearchRepository != null) {
+            cardClassTypeSearchRepository.save(cardClassType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CardClassTypeServiceImpl implements CardClassTypeService {
             })
             .map(cardClassTypeRepository::save)
             .map(savedCardClassType -> {
-                cardClassTypeSearchRepository.save(savedCardClassType);
+                if (cardClassTypeSearchRepository != null) {
+                    cardClassTypeSearchRepository.save(savedCardClassType);
+                }
 
                 return savedCardClassType;
             })
@@ -107,13 +112,18 @@ public class CardClassTypeServiceImpl implements CardClassTypeService {
     public void delete(Long id) {
         log.debug("Request to delete CardClassType : {}", id);
         cardClassTypeRepository.deleteById(id);
-        cardClassTypeSearchRepository.deleteById(id);
+        if (cardClassTypeSearchRepository != null) {
+            cardClassTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CardClassTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CardClassTypes for query {}", query);
-        return cardClassTypeSearchRepository.search(query, pageable).map(cardClassTypeMapper::toDto);
+        if (cardClassTypeSearchRepository != null) {
+            return cardClassTypeSearchRepository.search(query, pageable).map(cardClassTypeMapper::toDto);
+        }
+        return cardClassTypeRepository.findAll(pageable).map(cardClassTypeMapper::toDto);
     }
 }

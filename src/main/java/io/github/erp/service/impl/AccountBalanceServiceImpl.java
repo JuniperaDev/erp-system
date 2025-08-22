@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AccountBalanceMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AccountBalanceServiceImpl implements AccountBalanceService {
     public AccountBalanceServiceImpl(
         AccountBalanceRepository accountBalanceRepository,
         AccountBalanceMapper accountBalanceMapper,
-        AccountBalanceSearchRepository accountBalanceSearchRepository
+        @Autowired(required = false) AccountBalanceSearchRepository accountBalanceSearchRepository
     ) {
         this.accountBalanceRepository = accountBalanceRepository;
         this.accountBalanceMapper = accountBalanceMapper;
@@ -65,7 +66,9 @@ public class AccountBalanceServiceImpl implements AccountBalanceService {
         AccountBalance accountBalance = accountBalanceMapper.toEntity(accountBalanceDTO);
         accountBalance = accountBalanceRepository.save(accountBalance);
         AccountBalanceDTO result = accountBalanceMapper.toDto(accountBalance);
-        accountBalanceSearchRepository.save(accountBalance);
+        if (accountBalanceSearchRepository != null) {
+            accountBalanceSearchRepository.save(accountBalance);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AccountBalanceServiceImpl implements AccountBalanceService {
             })
             .map(accountBalanceRepository::save)
             .map(savedAccountBalance -> {
-                accountBalanceSearchRepository.save(savedAccountBalance);
+                if (accountBalanceSearchRepository != null) {
+                    accountBalanceSearchRepository.save(savedAccountBalance);
+                }
 
                 return savedAccountBalance;
             })
@@ -107,13 +112,18 @@ public class AccountBalanceServiceImpl implements AccountBalanceService {
     public void delete(Long id) {
         log.debug("Request to delete AccountBalance : {}", id);
         accountBalanceRepository.deleteById(id);
-        accountBalanceSearchRepository.deleteById(id);
+        if (accountBalanceSearchRepository != null) {
+            accountBalanceSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AccountBalanceDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AccountBalances for query {}", query);
-        return accountBalanceSearchRepository.search(query, pageable).map(accountBalanceMapper::toDto);
+        if (accountBalanceSearchRepository != null) {
+            return accountBalanceSearchRepository.search(query, pageable).map(accountBalanceMapper::toDto);
+        }
+        return accountBalanceRepository.findAll(pageable).map(accountBalanceMapper::toDto);
     }
 }

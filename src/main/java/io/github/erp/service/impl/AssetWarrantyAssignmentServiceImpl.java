@@ -11,6 +11,7 @@ import io.github.erp.service.mapper.AssetWarrantyAssignmentMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class AssetWarrantyAssignmentServiceImpl implements AssetWarrantyAssignme
     public AssetWarrantyAssignmentServiceImpl(
         AssetWarrantyAssignmentRepository assetWarrantyAssignmentRepository,
         AssetWarrantyAssignmentMapper assetWarrantyAssignmentMapper,
-        AssetWarrantyAssignmentSearchRepository assetWarrantyAssignmentSearchRepository
+        @Autowired(required = false) AssetWarrantyAssignmentSearchRepository assetWarrantyAssignmentSearchRepository
     ) {
         this.assetWarrantyAssignmentRepository = assetWarrantyAssignmentRepository;
         this.assetWarrantyAssignmentMapper = assetWarrantyAssignmentMapper;
@@ -44,7 +45,9 @@ public class AssetWarrantyAssignmentServiceImpl implements AssetWarrantyAssignme
         AssetWarrantyAssignment assetWarrantyAssignment = assetWarrantyAssignmentMapper.toEntity(assetWarrantyAssignmentDTO);
         assetWarrantyAssignment = assetWarrantyAssignmentRepository.save(assetWarrantyAssignment);
         AssetWarrantyAssignmentDTO result = assetWarrantyAssignmentMapper.toDto(assetWarrantyAssignment);
-        assetWarrantyAssignmentSearchRepository.save(assetWarrantyAssignment);
+        if (assetWarrantyAssignmentSearchRepository != null) {
+            assetWarrantyAssignmentSearchRepository.save(assetWarrantyAssignment);
+        }
         return result;
     }
 
@@ -54,7 +57,9 @@ public class AssetWarrantyAssignmentServiceImpl implements AssetWarrantyAssignme
         AssetWarrantyAssignment assetWarrantyAssignment = assetWarrantyAssignmentMapper.toEntity(assetWarrantyAssignmentDTO);
         assetWarrantyAssignment = assetWarrantyAssignmentRepository.save(assetWarrantyAssignment);
         AssetWarrantyAssignmentDTO result = assetWarrantyAssignmentMapper.toDto(assetWarrantyAssignment);
-        assetWarrantyAssignmentSearchRepository.save(assetWarrantyAssignment);
+        if (assetWarrantyAssignmentSearchRepository != null) {
+            assetWarrantyAssignmentSearchRepository.save(assetWarrantyAssignment);
+        }
         return result;
     }
 
@@ -71,7 +76,9 @@ public class AssetWarrantyAssignmentServiceImpl implements AssetWarrantyAssignme
             })
             .map(assetWarrantyAssignmentRepository::save)
             .map(savedAssetWarrantyAssignment -> {
-                assetWarrantyAssignmentSearchRepository.save(savedAssetWarrantyAssignment);
+                if (assetWarrantyAssignmentSearchRepository != null) {
+                    assetWarrantyAssignmentSearchRepository.save(savedAssetWarrantyAssignment);
+                }
 
                 return savedAssetWarrantyAssignment;
             })
@@ -96,13 +103,18 @@ public class AssetWarrantyAssignmentServiceImpl implements AssetWarrantyAssignme
     public void delete(Long id) {
         log.debug("Request to delete AssetWarrantyAssignment : {}", id);
         assetWarrantyAssignmentRepository.deleteById(id);
-        assetWarrantyAssignmentSearchRepository.deleteById(id);
+        if (assetWarrantyAssignmentSearchRepository != null) {
+            assetWarrantyAssignmentSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AssetWarrantyAssignmentDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AssetWarrantyAssignments for query {}", query);
-        return assetWarrantyAssignmentSearchRepository.search(query, pageable).map(assetWarrantyAssignmentMapper::toDto);
+        if (assetWarrantyAssignmentSearchRepository != null) {
+            return assetWarrantyAssignmentSearchRepository.search(query, pageable).map(assetWarrantyAssignmentMapper::toDto);
+        }
+        return assetWarrantyAssignmentRepository.findAll(pageable).map(assetWarrantyAssignmentMapper::toDto);
     }
 }

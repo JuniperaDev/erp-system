@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.WorkInProgressOutstandingReportMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class WorkInProgressOutstandingReportServiceImpl implements WorkInProgres
     public WorkInProgressOutstandingReportServiceImpl(
         WorkInProgressOutstandingReportRepository workInProgressOutstandingReportRepository,
         WorkInProgressOutstandingReportMapper workInProgressOutstandingReportMapper,
-        WorkInProgressOutstandingReportSearchRepository workInProgressOutstandingReportSearchRepository
+        @Autowired(required = false) WorkInProgressOutstandingReportSearchRepository workInProgressOutstandingReportSearchRepository
     ) {
         this.workInProgressOutstandingReportRepository = workInProgressOutstandingReportRepository;
         this.workInProgressOutstandingReportMapper = workInProgressOutstandingReportMapper;
@@ -67,7 +68,9 @@ public class WorkInProgressOutstandingReportServiceImpl implements WorkInProgres
         );
         workInProgressOutstandingReport = workInProgressOutstandingReportRepository.save(workInProgressOutstandingReport);
         WorkInProgressOutstandingReportDTO result = workInProgressOutstandingReportMapper.toDto(workInProgressOutstandingReport);
-        workInProgressOutstandingReportSearchRepository.save(workInProgressOutstandingReport);
+        if (workInProgressOutstandingReportSearchRepository != null) {
+            workInProgressOutstandingReportSearchRepository.save(workInProgressOutstandingReport);
+        }
         return result;
     }
 
@@ -89,7 +92,9 @@ public class WorkInProgressOutstandingReportServiceImpl implements WorkInProgres
             })
             .map(workInProgressOutstandingReportRepository::save)
             .map(savedWorkInProgressOutstandingReport -> {
-                workInProgressOutstandingReportSearchRepository.save(savedWorkInProgressOutstandingReport);
+                if (workInProgressOutstandingReportSearchRepository != null) {
+                    workInProgressOutstandingReportSearchRepository.save(savedWorkInProgressOutstandingReport);
+                }
 
                 return savedWorkInProgressOutstandingReport;
             })
@@ -114,13 +119,18 @@ public class WorkInProgressOutstandingReportServiceImpl implements WorkInProgres
     public void delete(Long id) {
         log.debug("Request to delete WorkInProgressOutstandingReport : {}", id);
         workInProgressOutstandingReportRepository.deleteById(id);
-        workInProgressOutstandingReportSearchRepository.deleteById(id);
+        if (workInProgressOutstandingReportSearchRepository != null) {
+            workInProgressOutstandingReportSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<WorkInProgressOutstandingReportDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of WorkInProgressOutstandingReports for query {}", query);
-        return workInProgressOutstandingReportSearchRepository.search(query, pageable).map(workInProgressOutstandingReportMapper::toDto);
+        if (workInProgressOutstandingReportSearchRepository != null) {
+            return workInProgressOutstandingReportSearchRepository.search(query, pageable).map(workInProgressOutstandingReportMapper::toDto);
+        }
+        return workInProgressOutstandingReportRepository.findAll(pageable).map(workInProgressOutstandingReportMapper::toDto);
     }
 }

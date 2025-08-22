@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.QuestionBaseMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class QuestionBaseServiceImpl implements QuestionBaseService {
     public QuestionBaseServiceImpl(
         QuestionBaseRepository questionBaseRepository,
         QuestionBaseMapper questionBaseMapper,
-        QuestionBaseSearchRepository questionBaseSearchRepository
+        @Autowired(required = false) QuestionBaseSearchRepository questionBaseSearchRepository
     ) {
         this.questionBaseRepository = questionBaseRepository;
         this.questionBaseMapper = questionBaseMapper;
@@ -65,7 +66,9 @@ public class QuestionBaseServiceImpl implements QuestionBaseService {
         QuestionBase questionBase = questionBaseMapper.toEntity(questionBaseDTO);
         questionBase = questionBaseRepository.save(questionBase);
         QuestionBaseDTO result = questionBaseMapper.toDto(questionBase);
-        questionBaseSearchRepository.save(questionBase);
+        if (questionBaseSearchRepository != null) {
+            questionBaseSearchRepository.save(questionBase);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class QuestionBaseServiceImpl implements QuestionBaseService {
             })
             .map(questionBaseRepository::save)
             .map(savedQuestionBase -> {
-                questionBaseSearchRepository.save(savedQuestionBase);
+                if (questionBaseSearchRepository != null) {
+                    questionBaseSearchRepository.save(savedQuestionBase);
+                }
 
                 return savedQuestionBase;
             })
@@ -111,13 +116,18 @@ public class QuestionBaseServiceImpl implements QuestionBaseService {
     public void delete(Long id) {
         log.debug("Request to delete QuestionBase : {}", id);
         questionBaseRepository.deleteById(id);
-        questionBaseSearchRepository.deleteById(id);
+        if (questionBaseSearchRepository != null) {
+            questionBaseSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<QuestionBaseDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of QuestionBases for query {}", query);
-        return questionBaseSearchRepository.search(query, pageable).map(questionBaseMapper::toDto);
+        if (questionBaseSearchRepository != null) {
+            return questionBaseSearchRepository.search(query, pageable).map(questionBaseMapper::toDto);
+        }
+        return questionBaseRepository.findAll(pageable).map(questionBaseMapper::toDto);
     }
 }

@@ -19,6 +19,7 @@ package io.github.erp.erp.resources;
  */
 import io.github.erp.IntegrationTest;
 import io.github.erp.domain.*;
+import io.github.erp.context.assets.domain.AssetDisposal;
 import io.github.erp.repository.AssetDisposalRepository;
 import io.github.erp.repository.search.AssetDisposalSearchRepository;
 import io.github.erp.service.AssetDisposalService;

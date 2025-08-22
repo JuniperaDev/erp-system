@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.WeeklyCounterfeitHoldingMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class WeeklyCounterfeitHoldingServiceImpl implements WeeklyCounterfeitHol
     public WeeklyCounterfeitHoldingServiceImpl(
         WeeklyCounterfeitHoldingRepository weeklyCounterfeitHoldingRepository,
         WeeklyCounterfeitHoldingMapper weeklyCounterfeitHoldingMapper,
-        WeeklyCounterfeitHoldingSearchRepository weeklyCounterfeitHoldingSearchRepository
+        @Autowired(required = false) WeeklyCounterfeitHoldingSearchRepository weeklyCounterfeitHoldingSearchRepository
     ) {
         this.weeklyCounterfeitHoldingRepository = weeklyCounterfeitHoldingRepository;
         this.weeklyCounterfeitHoldingMapper = weeklyCounterfeitHoldingMapper;
@@ -65,7 +66,9 @@ public class WeeklyCounterfeitHoldingServiceImpl implements WeeklyCounterfeitHol
         WeeklyCounterfeitHolding weeklyCounterfeitHolding = weeklyCounterfeitHoldingMapper.toEntity(weeklyCounterfeitHoldingDTO);
         weeklyCounterfeitHolding = weeklyCounterfeitHoldingRepository.save(weeklyCounterfeitHolding);
         WeeklyCounterfeitHoldingDTO result = weeklyCounterfeitHoldingMapper.toDto(weeklyCounterfeitHolding);
-        weeklyCounterfeitHoldingSearchRepository.save(weeklyCounterfeitHolding);
+        if (weeklyCounterfeitHoldingSearchRepository != null) {
+            weeklyCounterfeitHoldingSearchRepository.save(weeklyCounterfeitHolding);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class WeeklyCounterfeitHoldingServiceImpl implements WeeklyCounterfeitHol
             })
             .map(weeklyCounterfeitHoldingRepository::save)
             .map(savedWeeklyCounterfeitHolding -> {
-                weeklyCounterfeitHoldingSearchRepository.save(savedWeeklyCounterfeitHolding);
+                if (weeklyCounterfeitHoldingSearchRepository != null) {
+                    weeklyCounterfeitHoldingSearchRepository.save(savedWeeklyCounterfeitHolding);
+                }
 
                 return savedWeeklyCounterfeitHolding;
             })
@@ -107,7 +112,9 @@ public class WeeklyCounterfeitHoldingServiceImpl implements WeeklyCounterfeitHol
     public void delete(Long id) {
         log.debug("Request to delete WeeklyCounterfeitHolding : {}", id);
         weeklyCounterfeitHoldingRepository.deleteById(id);
-        weeklyCounterfeitHoldingSearchRepository.deleteById(id);
+        if (weeklyCounterfeitHoldingSearchRepository != null) {
+            weeklyCounterfeitHoldingSearchRepository.deleteById(id);
+        }
     }
 
     @Override

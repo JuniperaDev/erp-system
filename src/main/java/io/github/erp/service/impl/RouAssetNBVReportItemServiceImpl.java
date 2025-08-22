@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.RouAssetNBVReportItemMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class RouAssetNBVReportItemServiceImpl implements RouAssetNBVReportItemSe
     public RouAssetNBVReportItemServiceImpl(
         RouAssetNBVReportItemRepository rouAssetNBVReportItemRepository,
         RouAssetNBVReportItemMapper rouAssetNBVReportItemMapper,
-        RouAssetNBVReportItemSearchRepository rouAssetNBVReportItemSearchRepository
+        @Autowired(required = false) RouAssetNBVReportItemSearchRepository rouAssetNBVReportItemSearchRepository
     ) {
         this.rouAssetNBVReportItemRepository = rouAssetNBVReportItemRepository;
         this.rouAssetNBVReportItemMapper = rouAssetNBVReportItemMapper;
@@ -65,7 +66,9 @@ public class RouAssetNBVReportItemServiceImpl implements RouAssetNBVReportItemSe
         RouAssetNBVReportItem rouAssetNBVReportItem = rouAssetNBVReportItemMapper.toEntity(rouAssetNBVReportItemDTO);
         rouAssetNBVReportItem = rouAssetNBVReportItemRepository.save(rouAssetNBVReportItem);
         RouAssetNBVReportItemDTO result = rouAssetNBVReportItemMapper.toDto(rouAssetNBVReportItem);
-        rouAssetNBVReportItemSearchRepository.save(rouAssetNBVReportItem);
+        if (rouAssetNBVReportItemSearchRepository != null) {
+            rouAssetNBVReportItemSearchRepository.save(rouAssetNBVReportItem);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class RouAssetNBVReportItemServiceImpl implements RouAssetNBVReportItemSe
             })
             .map(rouAssetNBVReportItemRepository::save)
             .map(savedRouAssetNBVReportItem -> {
-                rouAssetNBVReportItemSearchRepository.save(savedRouAssetNBVReportItem);
+                if (rouAssetNBVReportItemSearchRepository != null) {
+                    rouAssetNBVReportItemSearchRepository.save(savedRouAssetNBVReportItem);
+                }
 
                 return savedRouAssetNBVReportItem;
             })
@@ -107,7 +112,9 @@ public class RouAssetNBVReportItemServiceImpl implements RouAssetNBVReportItemSe
     public void delete(Long id) {
         log.debug("Request to delete RouAssetNBVReportItem : {}", id);
         rouAssetNBVReportItemRepository.deleteById(id);
-        rouAssetNBVReportItemSearchRepository.deleteById(id);
+        if (rouAssetNBVReportItemSearchRepository != null) {
+            rouAssetNBVReportItemSearchRepository.deleteById(id);
+        }
     }
 
     @Override

@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.SystemModuleMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class SystemModuleServiceImpl implements SystemModuleService {
     public SystemModuleServiceImpl(
         SystemModuleRepository systemModuleRepository,
         SystemModuleMapper systemModuleMapper,
-        SystemModuleSearchRepository systemModuleSearchRepository
+        @Autowired(required = false) SystemModuleSearchRepository systemModuleSearchRepository
     ) {
         this.systemModuleRepository = systemModuleRepository;
         this.systemModuleMapper = systemModuleMapper;
@@ -65,7 +66,9 @@ public class SystemModuleServiceImpl implements SystemModuleService {
         SystemModule systemModule = systemModuleMapper.toEntity(systemModuleDTO);
         systemModule = systemModuleRepository.save(systemModule);
         SystemModuleDTO result = systemModuleMapper.toDto(systemModule);
-        systemModuleSearchRepository.save(systemModule);
+        if (systemModuleSearchRepository != null) {
+            systemModuleSearchRepository.save(systemModule);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class SystemModuleServiceImpl implements SystemModuleService {
             })
             .map(systemModuleRepository::save)
             .map(savedSystemModule -> {
-                systemModuleSearchRepository.save(savedSystemModule);
+                if (systemModuleSearchRepository != null) {
+                    systemModuleSearchRepository.save(savedSystemModule);
+                }
 
                 return savedSystemModule;
             })
@@ -111,13 +116,18 @@ public class SystemModuleServiceImpl implements SystemModuleService {
     public void delete(Long id) {
         log.debug("Request to delete SystemModule : {}", id);
         systemModuleRepository.deleteById(id);
-        systemModuleSearchRepository.deleteById(id);
+        if (systemModuleSearchRepository != null) {
+            systemModuleSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<SystemModuleDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of SystemModules for query {}", query);
-        return systemModuleSearchRepository.search(query, pageable).map(systemModuleMapper::toDto);
+        if (systemModuleSearchRepository != null) {
+            return systemModuleSearchRepository.search(query, pageable).map(systemModuleMapper::toDto);
+        }
+        return systemModuleRepository.findAll(pageable).map(systemModuleMapper::toDto);
     }
 }

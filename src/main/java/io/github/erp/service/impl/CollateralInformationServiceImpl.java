@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CollateralInformationMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CollateralInformationServiceImpl implements CollateralInformationSe
     public CollateralInformationServiceImpl(
         CollateralInformationRepository collateralInformationRepository,
         CollateralInformationMapper collateralInformationMapper,
-        CollateralInformationSearchRepository collateralInformationSearchRepository
+        @Autowired(required = false) CollateralInformationSearchRepository collateralInformationSearchRepository
     ) {
         this.collateralInformationRepository = collateralInformationRepository;
         this.collateralInformationMapper = collateralInformationMapper;
@@ -65,7 +66,9 @@ public class CollateralInformationServiceImpl implements CollateralInformationSe
         CollateralInformation collateralInformation = collateralInformationMapper.toEntity(collateralInformationDTO);
         collateralInformation = collateralInformationRepository.save(collateralInformation);
         CollateralInformationDTO result = collateralInformationMapper.toDto(collateralInformation);
-        collateralInformationSearchRepository.save(collateralInformation);
+        if (collateralInformationSearchRepository != null) {
+            collateralInformationSearchRepository.save(collateralInformation);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CollateralInformationServiceImpl implements CollateralInformationSe
             })
             .map(collateralInformationRepository::save)
             .map(savedCollateralInformation -> {
-                collateralInformationSearchRepository.save(savedCollateralInformation);
+                if (collateralInformationSearchRepository != null) {
+                    collateralInformationSearchRepository.save(savedCollateralInformation);
+                }
 
                 return savedCollateralInformation;
             })
@@ -107,13 +112,18 @@ public class CollateralInformationServiceImpl implements CollateralInformationSe
     public void delete(Long id) {
         log.debug("Request to delete CollateralInformation : {}", id);
         collateralInformationRepository.deleteById(id);
-        collateralInformationSearchRepository.deleteById(id);
+        if (collateralInformationSearchRepository != null) {
+            collateralInformationSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CollateralInformationDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CollateralInformations for query {}", query);
-        return collateralInformationSearchRepository.search(query, pageable).map(collateralInformationMapper::toDto);
+        if (collateralInformationSearchRepository != null) {
+            return collateralInformationSearchRepository.search(query, pageable).map(collateralInformationMapper::toDto);
+        }
+        return collateralInformationRepository.findAll(pageable).map(collateralInformationMapper::toDto);
     }
 }

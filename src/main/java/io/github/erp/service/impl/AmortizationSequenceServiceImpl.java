@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AmortizationSequenceMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AmortizationSequenceServiceImpl implements AmortizationSequenceServ
     public AmortizationSequenceServiceImpl(
         AmortizationSequenceRepository amortizationSequenceRepository,
         AmortizationSequenceMapper amortizationSequenceMapper,
-        AmortizationSequenceSearchRepository amortizationSequenceSearchRepository
+        @Autowired(required = false) AmortizationSequenceSearchRepository amortizationSequenceSearchRepository
     ) {
         this.amortizationSequenceRepository = amortizationSequenceRepository;
         this.amortizationSequenceMapper = amortizationSequenceMapper;
@@ -65,7 +66,9 @@ public class AmortizationSequenceServiceImpl implements AmortizationSequenceServ
         AmortizationSequence amortizationSequence = amortizationSequenceMapper.toEntity(amortizationSequenceDTO);
         amortizationSequence = amortizationSequenceRepository.save(amortizationSequence);
         AmortizationSequenceDTO result = amortizationSequenceMapper.toDto(amortizationSequence);
-        amortizationSequenceSearchRepository.save(amortizationSequence);
+        if (amortizationSequenceSearchRepository != null) {
+            amortizationSequenceSearchRepository.save(amortizationSequence);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AmortizationSequenceServiceImpl implements AmortizationSequenceServ
             })
             .map(amortizationSequenceRepository::save)
             .map(savedAmortizationSequence -> {
-                amortizationSequenceSearchRepository.save(savedAmortizationSequence);
+                if (amortizationSequenceSearchRepository != null) {
+                    amortizationSequenceSearchRepository.save(savedAmortizationSequence);
+                }
 
                 return savedAmortizationSequence;
             })
@@ -111,13 +116,18 @@ public class AmortizationSequenceServiceImpl implements AmortizationSequenceServ
     public void delete(Long id) {
         log.debug("Request to delete AmortizationSequence : {}", id);
         amortizationSequenceRepository.deleteById(id);
-        amortizationSequenceSearchRepository.deleteById(id);
+        if (amortizationSequenceSearchRepository != null) {
+            amortizationSequenceSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AmortizationSequenceDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AmortizationSequences for query {}", query);
-        return amortizationSequenceSearchRepository.search(query, pageable).map(amortizationSequenceMapper::toDto);
+        if (amortizationSequenceSearchRepository != null) {
+            return amortizationSequenceSearchRepository.search(query, pageable).map(amortizationSequenceMapper::toDto);
+        }
+        return amortizationSequenceRepository.findAll(pageable).map(amortizationSequenceMapper::toDto);
     }
 }

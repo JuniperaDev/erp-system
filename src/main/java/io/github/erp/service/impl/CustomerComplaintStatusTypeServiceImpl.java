@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CustomerComplaintStatusTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CustomerComplaintStatusTypeServiceImpl implements CustomerComplaint
     public CustomerComplaintStatusTypeServiceImpl(
         CustomerComplaintStatusTypeRepository customerComplaintStatusTypeRepository,
         CustomerComplaintStatusTypeMapper customerComplaintStatusTypeMapper,
-        CustomerComplaintStatusTypeSearchRepository customerComplaintStatusTypeSearchRepository
+        @Autowired(required = false) CustomerComplaintStatusTypeSearchRepository customerComplaintStatusTypeSearchRepository
     ) {
         this.customerComplaintStatusTypeRepository = customerComplaintStatusTypeRepository;
         this.customerComplaintStatusTypeMapper = customerComplaintStatusTypeMapper;
@@ -67,7 +68,9 @@ public class CustomerComplaintStatusTypeServiceImpl implements CustomerComplaint
         );
         customerComplaintStatusType = customerComplaintStatusTypeRepository.save(customerComplaintStatusType);
         CustomerComplaintStatusTypeDTO result = customerComplaintStatusTypeMapper.toDto(customerComplaintStatusType);
-        customerComplaintStatusTypeSearchRepository.save(customerComplaintStatusType);
+        if (customerComplaintStatusTypeSearchRepository != null) {
+            customerComplaintStatusTypeSearchRepository.save(customerComplaintStatusType);
+        }
         return result;
     }
 
@@ -84,7 +87,9 @@ public class CustomerComplaintStatusTypeServiceImpl implements CustomerComplaint
             })
             .map(customerComplaintStatusTypeRepository::save)
             .map(savedCustomerComplaintStatusType -> {
-                customerComplaintStatusTypeSearchRepository.save(savedCustomerComplaintStatusType);
+                if (customerComplaintStatusTypeSearchRepository != null) {
+                    customerComplaintStatusTypeSearchRepository.save(savedCustomerComplaintStatusType);
+                }
 
                 return savedCustomerComplaintStatusType;
             })
@@ -109,13 +114,18 @@ public class CustomerComplaintStatusTypeServiceImpl implements CustomerComplaint
     public void delete(Long id) {
         log.debug("Request to delete CustomerComplaintStatusType : {}", id);
         customerComplaintStatusTypeRepository.deleteById(id);
-        customerComplaintStatusTypeSearchRepository.deleteById(id);
+        if (customerComplaintStatusTypeSearchRepository != null) {
+            customerComplaintStatusTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CustomerComplaintStatusTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CustomerComplaintStatusTypes for query {}", query);
-        return customerComplaintStatusTypeSearchRepository.search(query, pageable).map(customerComplaintStatusTypeMapper::toDto);
+        if (customerComplaintStatusTypeSearchRepository != null) {
+            return customerComplaintStatusTypeSearchRepository.search(query, pageable).map(customerComplaintStatusTypeMapper::toDto);
+        }
+        return customerComplaintStatusTypeRepository.findAll(pageable).map(customerComplaintStatusTypeMapper::toDto);
     }
 }

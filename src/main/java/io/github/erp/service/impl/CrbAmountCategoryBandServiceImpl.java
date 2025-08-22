@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CrbAmountCategoryBandMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CrbAmountCategoryBandServiceImpl implements CrbAmountCategoryBandSe
     public CrbAmountCategoryBandServiceImpl(
         CrbAmountCategoryBandRepository crbAmountCategoryBandRepository,
         CrbAmountCategoryBandMapper crbAmountCategoryBandMapper,
-        CrbAmountCategoryBandSearchRepository crbAmountCategoryBandSearchRepository
+        @Autowired(required = false) CrbAmountCategoryBandSearchRepository crbAmountCategoryBandSearchRepository
     ) {
         this.crbAmountCategoryBandRepository = crbAmountCategoryBandRepository;
         this.crbAmountCategoryBandMapper = crbAmountCategoryBandMapper;
@@ -65,7 +66,9 @@ public class CrbAmountCategoryBandServiceImpl implements CrbAmountCategoryBandSe
         CrbAmountCategoryBand crbAmountCategoryBand = crbAmountCategoryBandMapper.toEntity(crbAmountCategoryBandDTO);
         crbAmountCategoryBand = crbAmountCategoryBandRepository.save(crbAmountCategoryBand);
         CrbAmountCategoryBandDTO result = crbAmountCategoryBandMapper.toDto(crbAmountCategoryBand);
-        crbAmountCategoryBandSearchRepository.save(crbAmountCategoryBand);
+        if (crbAmountCategoryBandSearchRepository != null) {
+            crbAmountCategoryBandSearchRepository.save(crbAmountCategoryBand);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CrbAmountCategoryBandServiceImpl implements CrbAmountCategoryBandSe
             })
             .map(crbAmountCategoryBandRepository::save)
             .map(savedCrbAmountCategoryBand -> {
-                crbAmountCategoryBandSearchRepository.save(savedCrbAmountCategoryBand);
+                if (crbAmountCategoryBandSearchRepository != null) {
+                    crbAmountCategoryBandSearchRepository.save(savedCrbAmountCategoryBand);
+                }
 
                 return savedCrbAmountCategoryBand;
             })
@@ -107,7 +112,9 @@ public class CrbAmountCategoryBandServiceImpl implements CrbAmountCategoryBandSe
     public void delete(Long id) {
         log.debug("Request to delete CrbAmountCategoryBand : {}", id);
         crbAmountCategoryBandRepository.deleteById(id);
-        crbAmountCategoryBandSearchRepository.deleteById(id);
+        if (crbAmountCategoryBandSearchRepository != null) {
+            crbAmountCategoryBandSearchRepository.deleteById(id);
+        }
     }
 
     @Override

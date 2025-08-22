@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.RouDepreciationPostingReportMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class RouDepreciationPostingReportServiceImpl implements RouDepreciationP
     public RouDepreciationPostingReportServiceImpl(
         RouDepreciationPostingReportRepository rouDepreciationPostingReportRepository,
         RouDepreciationPostingReportMapper rouDepreciationPostingReportMapper,
-        RouDepreciationPostingReportSearchRepository rouDepreciationPostingReportSearchRepository
+        @Autowired(required = false) RouDepreciationPostingReportSearchRepository rouDepreciationPostingReportSearchRepository
     ) {
         this.rouDepreciationPostingReportRepository = rouDepreciationPostingReportRepository;
         this.rouDepreciationPostingReportMapper = rouDepreciationPostingReportMapper;
@@ -67,7 +68,9 @@ public class RouDepreciationPostingReportServiceImpl implements RouDepreciationP
         );
         rouDepreciationPostingReport = rouDepreciationPostingReportRepository.save(rouDepreciationPostingReport);
         RouDepreciationPostingReportDTO result = rouDepreciationPostingReportMapper.toDto(rouDepreciationPostingReport);
-        rouDepreciationPostingReportSearchRepository.save(rouDepreciationPostingReport);
+        if (rouDepreciationPostingReportSearchRepository != null) {
+            rouDepreciationPostingReportSearchRepository.save(rouDepreciationPostingReport);
+        }
         return result;
     }
 
@@ -84,7 +87,9 @@ public class RouDepreciationPostingReportServiceImpl implements RouDepreciationP
             })
             .map(rouDepreciationPostingReportRepository::save)
             .map(savedRouDepreciationPostingReport -> {
-                rouDepreciationPostingReportSearchRepository.save(savedRouDepreciationPostingReport);
+                if (rouDepreciationPostingReportSearchRepository != null) {
+                    rouDepreciationPostingReportSearchRepository.save(savedRouDepreciationPostingReport);
+                }
 
                 return savedRouDepreciationPostingReport;
             })
@@ -109,7 +114,9 @@ public class RouDepreciationPostingReportServiceImpl implements RouDepreciationP
     public void delete(Long id) {
         log.debug("Request to delete RouDepreciationPostingReport : {}", id);
         rouDepreciationPostingReportRepository.deleteById(id);
-        rouDepreciationPostingReportSearchRepository.deleteById(id);
+        if (rouDepreciationPostingReportSearchRepository != null) {
+            rouDepreciationPostingReportSearchRepository.deleteById(id);
+        }
     }
 
     @Override

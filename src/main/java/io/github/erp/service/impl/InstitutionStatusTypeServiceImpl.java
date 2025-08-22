@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.InstitutionStatusTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class InstitutionStatusTypeServiceImpl implements InstitutionStatusTypeSe
     public InstitutionStatusTypeServiceImpl(
         InstitutionStatusTypeRepository institutionStatusTypeRepository,
         InstitutionStatusTypeMapper institutionStatusTypeMapper,
-        InstitutionStatusTypeSearchRepository institutionStatusTypeSearchRepository
+        @Autowired(required = false) InstitutionStatusTypeSearchRepository institutionStatusTypeSearchRepository
     ) {
         this.institutionStatusTypeRepository = institutionStatusTypeRepository;
         this.institutionStatusTypeMapper = institutionStatusTypeMapper;
@@ -65,7 +66,9 @@ public class InstitutionStatusTypeServiceImpl implements InstitutionStatusTypeSe
         InstitutionStatusType institutionStatusType = institutionStatusTypeMapper.toEntity(institutionStatusTypeDTO);
         institutionStatusType = institutionStatusTypeRepository.save(institutionStatusType);
         InstitutionStatusTypeDTO result = institutionStatusTypeMapper.toDto(institutionStatusType);
-        institutionStatusTypeSearchRepository.save(institutionStatusType);
+        if (institutionStatusTypeSearchRepository != null) {
+            institutionStatusTypeSearchRepository.save(institutionStatusType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class InstitutionStatusTypeServiceImpl implements InstitutionStatusTypeSe
             })
             .map(institutionStatusTypeRepository::save)
             .map(savedInstitutionStatusType -> {
-                institutionStatusTypeSearchRepository.save(savedInstitutionStatusType);
+                if (institutionStatusTypeSearchRepository != null) {
+                    institutionStatusTypeSearchRepository.save(savedInstitutionStatusType);
+                }
 
                 return savedInstitutionStatusType;
             })
@@ -107,13 +112,18 @@ public class InstitutionStatusTypeServiceImpl implements InstitutionStatusTypeSe
     public void delete(Long id) {
         log.debug("Request to delete InstitutionStatusType : {}", id);
         institutionStatusTypeRepository.deleteById(id);
-        institutionStatusTypeSearchRepository.deleteById(id);
+        if (institutionStatusTypeSearchRepository != null) {
+            institutionStatusTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<InstitutionStatusTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of InstitutionStatusTypes for query {}", query);
-        return institutionStatusTypeSearchRepository.search(query, pageable).map(institutionStatusTypeMapper::toDto);
+        if (institutionStatusTypeSearchRepository != null) {
+            return institutionStatusTypeSearchRepository.search(query, pageable).map(institutionStatusTypeMapper::toDto);
+        }
+        return institutionStatusTypeRepository.findAll(pageable).map(institutionStatusTypeMapper::toDto);
     }
 }

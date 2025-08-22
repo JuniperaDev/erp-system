@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AcquiringIssuingFlagMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AcquiringIssuingFlagServiceImpl implements AcquiringIssuingFlagServ
     public AcquiringIssuingFlagServiceImpl(
         AcquiringIssuingFlagRepository acquiringIssuingFlagRepository,
         AcquiringIssuingFlagMapper acquiringIssuingFlagMapper,
-        AcquiringIssuingFlagSearchRepository acquiringIssuingFlagSearchRepository
+        @Autowired(required = false) AcquiringIssuingFlagSearchRepository acquiringIssuingFlagSearchRepository
     ) {
         this.acquiringIssuingFlagRepository = acquiringIssuingFlagRepository;
         this.acquiringIssuingFlagMapper = acquiringIssuingFlagMapper;
@@ -65,7 +66,9 @@ public class AcquiringIssuingFlagServiceImpl implements AcquiringIssuingFlagServ
         AcquiringIssuingFlag acquiringIssuingFlag = acquiringIssuingFlagMapper.toEntity(acquiringIssuingFlagDTO);
         acquiringIssuingFlag = acquiringIssuingFlagRepository.save(acquiringIssuingFlag);
         AcquiringIssuingFlagDTO result = acquiringIssuingFlagMapper.toDto(acquiringIssuingFlag);
-        acquiringIssuingFlagSearchRepository.save(acquiringIssuingFlag);
+        if (acquiringIssuingFlagSearchRepository != null) {
+            acquiringIssuingFlagSearchRepository.save(acquiringIssuingFlag);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AcquiringIssuingFlagServiceImpl implements AcquiringIssuingFlagServ
             })
             .map(acquiringIssuingFlagRepository::save)
             .map(savedAcquiringIssuingFlag -> {
-                acquiringIssuingFlagSearchRepository.save(savedAcquiringIssuingFlag);
+                if (acquiringIssuingFlagSearchRepository != null) {
+                    acquiringIssuingFlagSearchRepository.save(savedAcquiringIssuingFlag);
+                }
 
                 return savedAcquiringIssuingFlag;
             })
@@ -107,7 +112,9 @@ public class AcquiringIssuingFlagServiceImpl implements AcquiringIssuingFlagServ
     public void delete(Long id) {
         log.debug("Request to delete AcquiringIssuingFlag : {}", id);
         acquiringIssuingFlagRepository.deleteById(id);
-        acquiringIssuingFlagSearchRepository.deleteById(id);
+        if (acquiringIssuingFlagSearchRepository != null) {
+            acquiringIssuingFlagSearchRepository.deleteById(id);
+        }
     }
 
     @Override

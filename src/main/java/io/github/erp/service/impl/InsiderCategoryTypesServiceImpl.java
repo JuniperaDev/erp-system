@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.InsiderCategoryTypesMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class InsiderCategoryTypesServiceImpl implements InsiderCategoryTypesServ
     public InsiderCategoryTypesServiceImpl(
         InsiderCategoryTypesRepository insiderCategoryTypesRepository,
         InsiderCategoryTypesMapper insiderCategoryTypesMapper,
-        InsiderCategoryTypesSearchRepository insiderCategoryTypesSearchRepository
+        @Autowired(required = false) InsiderCategoryTypesSearchRepository insiderCategoryTypesSearchRepository
     ) {
         this.insiderCategoryTypesRepository = insiderCategoryTypesRepository;
         this.insiderCategoryTypesMapper = insiderCategoryTypesMapper;
@@ -65,7 +66,9 @@ public class InsiderCategoryTypesServiceImpl implements InsiderCategoryTypesServ
         InsiderCategoryTypes insiderCategoryTypes = insiderCategoryTypesMapper.toEntity(insiderCategoryTypesDTO);
         insiderCategoryTypes = insiderCategoryTypesRepository.save(insiderCategoryTypes);
         InsiderCategoryTypesDTO result = insiderCategoryTypesMapper.toDto(insiderCategoryTypes);
-        insiderCategoryTypesSearchRepository.save(insiderCategoryTypes);
+        if (insiderCategoryTypesSearchRepository != null) {
+            insiderCategoryTypesSearchRepository.save(insiderCategoryTypes);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class InsiderCategoryTypesServiceImpl implements InsiderCategoryTypesServ
             })
             .map(insiderCategoryTypesRepository::save)
             .map(savedInsiderCategoryTypes -> {
-                insiderCategoryTypesSearchRepository.save(savedInsiderCategoryTypes);
+                if (insiderCategoryTypesSearchRepository != null) {
+                    insiderCategoryTypesSearchRepository.save(savedInsiderCategoryTypes);
+                }
 
                 return savedInsiderCategoryTypes;
             })
@@ -107,13 +112,18 @@ public class InsiderCategoryTypesServiceImpl implements InsiderCategoryTypesServ
     public void delete(Long id) {
         log.debug("Request to delete InsiderCategoryTypes : {}", id);
         insiderCategoryTypesRepository.deleteById(id);
-        insiderCategoryTypesSearchRepository.deleteById(id);
+        if (insiderCategoryTypesSearchRepository != null) {
+            insiderCategoryTypesSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<InsiderCategoryTypesDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of InsiderCategoryTypes for query {}", query);
-        return insiderCategoryTypesSearchRepository.search(query, pageable).map(insiderCategoryTypesMapper::toDto);
+        if (insiderCategoryTypesSearchRepository != null) {
+            return insiderCategoryTypesSearchRepository.search(query, pageable).map(insiderCategoryTypesMapper::toDto);
+        }
+        return insiderCategoryTypesRepository.findAll(pageable).map(insiderCategoryTypesMapper::toDto);
     }
 }

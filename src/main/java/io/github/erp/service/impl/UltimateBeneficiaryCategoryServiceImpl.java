@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.UltimateBeneficiaryCategoryMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class UltimateBeneficiaryCategoryServiceImpl implements UltimateBeneficia
     public UltimateBeneficiaryCategoryServiceImpl(
         UltimateBeneficiaryCategoryRepository ultimateBeneficiaryCategoryRepository,
         UltimateBeneficiaryCategoryMapper ultimateBeneficiaryCategoryMapper,
-        UltimateBeneficiaryCategorySearchRepository ultimateBeneficiaryCategorySearchRepository
+        @Autowired(required = false) UltimateBeneficiaryCategorySearchRepository ultimateBeneficiaryCategorySearchRepository
     ) {
         this.ultimateBeneficiaryCategoryRepository = ultimateBeneficiaryCategoryRepository;
         this.ultimateBeneficiaryCategoryMapper = ultimateBeneficiaryCategoryMapper;
@@ -67,7 +68,9 @@ public class UltimateBeneficiaryCategoryServiceImpl implements UltimateBeneficia
         );
         ultimateBeneficiaryCategory = ultimateBeneficiaryCategoryRepository.save(ultimateBeneficiaryCategory);
         UltimateBeneficiaryCategoryDTO result = ultimateBeneficiaryCategoryMapper.toDto(ultimateBeneficiaryCategory);
-        ultimateBeneficiaryCategorySearchRepository.save(ultimateBeneficiaryCategory);
+        if (ultimateBeneficiaryCategorySearchRepository != null) {
+            ultimateBeneficiaryCategorySearchRepository.save(ultimateBeneficiaryCategory);
+        }
         return result;
     }
 
@@ -84,7 +87,9 @@ public class UltimateBeneficiaryCategoryServiceImpl implements UltimateBeneficia
             })
             .map(ultimateBeneficiaryCategoryRepository::save)
             .map(savedUltimateBeneficiaryCategory -> {
-                ultimateBeneficiaryCategorySearchRepository.save(savedUltimateBeneficiaryCategory);
+                if (ultimateBeneficiaryCategorySearchRepository != null) {
+                    ultimateBeneficiaryCategorySearchRepository.save(savedUltimateBeneficiaryCategory);
+                }
 
                 return savedUltimateBeneficiaryCategory;
             })
@@ -109,7 +114,9 @@ public class UltimateBeneficiaryCategoryServiceImpl implements UltimateBeneficia
     public void delete(Long id) {
         log.debug("Request to delete UltimateBeneficiaryCategory : {}", id);
         ultimateBeneficiaryCategoryRepository.deleteById(id);
-        ultimateBeneficiaryCategorySearchRepository.deleteById(id);
+        if (ultimateBeneficiaryCategorySearchRepository != null) {
+            ultimateBeneficiaryCategorySearchRepository.deleteById(id);
+        }
     }
 
     @Override

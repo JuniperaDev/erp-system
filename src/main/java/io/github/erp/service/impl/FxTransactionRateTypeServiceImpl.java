@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.FxTransactionRateTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class FxTransactionRateTypeServiceImpl implements FxTransactionRateTypeSe
     public FxTransactionRateTypeServiceImpl(
         FxTransactionRateTypeRepository fxTransactionRateTypeRepository,
         FxTransactionRateTypeMapper fxTransactionRateTypeMapper,
-        FxTransactionRateTypeSearchRepository fxTransactionRateTypeSearchRepository
+        @Autowired(required = false) FxTransactionRateTypeSearchRepository fxTransactionRateTypeSearchRepository
     ) {
         this.fxTransactionRateTypeRepository = fxTransactionRateTypeRepository;
         this.fxTransactionRateTypeMapper = fxTransactionRateTypeMapper;
@@ -65,7 +66,9 @@ public class FxTransactionRateTypeServiceImpl implements FxTransactionRateTypeSe
         FxTransactionRateType fxTransactionRateType = fxTransactionRateTypeMapper.toEntity(fxTransactionRateTypeDTO);
         fxTransactionRateType = fxTransactionRateTypeRepository.save(fxTransactionRateType);
         FxTransactionRateTypeDTO result = fxTransactionRateTypeMapper.toDto(fxTransactionRateType);
-        fxTransactionRateTypeSearchRepository.save(fxTransactionRateType);
+        if (fxTransactionRateTypeSearchRepository != null) {
+            fxTransactionRateTypeSearchRepository.save(fxTransactionRateType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class FxTransactionRateTypeServiceImpl implements FxTransactionRateTypeSe
             })
             .map(fxTransactionRateTypeRepository::save)
             .map(savedFxTransactionRateType -> {
-                fxTransactionRateTypeSearchRepository.save(savedFxTransactionRateType);
+                if (fxTransactionRateTypeSearchRepository != null) {
+                    fxTransactionRateTypeSearchRepository.save(savedFxTransactionRateType);
+                }
 
                 return savedFxTransactionRateType;
             })
@@ -107,13 +112,18 @@ public class FxTransactionRateTypeServiceImpl implements FxTransactionRateTypeSe
     public void delete(Long id) {
         log.debug("Request to delete FxTransactionRateType : {}", id);
         fxTransactionRateTypeRepository.deleteById(id);
-        fxTransactionRateTypeSearchRepository.deleteById(id);
+        if (fxTransactionRateTypeSearchRepository != null) {
+            fxTransactionRateTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<FxTransactionRateTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of FxTransactionRateTypes for query {}", query);
-        return fxTransactionRateTypeSearchRepository.search(query, pageable).map(fxTransactionRateTypeMapper::toDto);
+        if (fxTransactionRateTypeSearchRepository != null) {
+            return fxTransactionRateTypeSearchRepository.search(query, pageable).map(fxTransactionRateTypeMapper::toDto);
+        }
+        return fxTransactionRateTypeRepository.findAll(pageable).map(fxTransactionRateTypeMapper::toDto);
     }
 }

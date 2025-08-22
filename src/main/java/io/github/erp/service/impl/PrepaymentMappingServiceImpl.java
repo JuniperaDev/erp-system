@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.PrepaymentMappingMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class PrepaymentMappingServiceImpl implements PrepaymentMappingService {
     public PrepaymentMappingServiceImpl(
         PrepaymentMappingRepository prepaymentMappingRepository,
         PrepaymentMappingMapper prepaymentMappingMapper,
-        PrepaymentMappingSearchRepository prepaymentMappingSearchRepository
+        @Autowired(required = false) PrepaymentMappingSearchRepository prepaymentMappingSearchRepository
     ) {
         this.prepaymentMappingRepository = prepaymentMappingRepository;
         this.prepaymentMappingMapper = prepaymentMappingMapper;
@@ -65,7 +66,9 @@ public class PrepaymentMappingServiceImpl implements PrepaymentMappingService {
         PrepaymentMapping prepaymentMapping = prepaymentMappingMapper.toEntity(prepaymentMappingDTO);
         prepaymentMapping = prepaymentMappingRepository.save(prepaymentMapping);
         PrepaymentMappingDTO result = prepaymentMappingMapper.toDto(prepaymentMapping);
-        prepaymentMappingSearchRepository.save(prepaymentMapping);
+        if (prepaymentMappingSearchRepository != null) {
+            prepaymentMappingSearchRepository.save(prepaymentMapping);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class PrepaymentMappingServiceImpl implements PrepaymentMappingService {
             })
             .map(prepaymentMappingRepository::save)
             .map(savedPrepaymentMapping -> {
-                prepaymentMappingSearchRepository.save(savedPrepaymentMapping);
+                if (prepaymentMappingSearchRepository != null) {
+                    prepaymentMappingSearchRepository.save(savedPrepaymentMapping);
+                }
 
                 return savedPrepaymentMapping;
             })
@@ -111,13 +116,18 @@ public class PrepaymentMappingServiceImpl implements PrepaymentMappingService {
     public void delete(Long id) {
         log.debug("Request to delete PrepaymentMapping : {}", id);
         prepaymentMappingRepository.deleteById(id);
-        prepaymentMappingSearchRepository.deleteById(id);
+        if (prepaymentMappingSearchRepository != null) {
+            prepaymentMappingSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<PrepaymentMappingDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of PrepaymentMappings for query {}", query);
-        return prepaymentMappingSearchRepository.search(query, pageable).map(prepaymentMappingMapper::toDto);
+        if (prepaymentMappingSearchRepository != null) {
+            return prepaymentMappingSearchRepository.search(query, pageable).map(prepaymentMappingMapper::toDto);
+        }
+        return prepaymentMappingRepository.findAll(pageable).map(prepaymentMappingMapper::toDto);
     }
 }

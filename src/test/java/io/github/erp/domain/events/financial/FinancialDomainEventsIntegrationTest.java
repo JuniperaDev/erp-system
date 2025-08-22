@@ -39,9 +39,12 @@ import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = ErpSystemApp.class, properties = {
-    "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration,org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration,org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration"
+    "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration,org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration,org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration,org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration",
+    "spring.kafka.bootstrap-servers=localhost:9092",
+    "spring.kafka.consumer.auto-offset-reset=earliest",
+    "spring.kafka.consumer.group-id=test-group"
 })
-@ActiveProfiles("testcontainers")
+@ActiveProfiles("test")
 @Transactional
 public class FinancialDomainEventsIntegrationTest {
 

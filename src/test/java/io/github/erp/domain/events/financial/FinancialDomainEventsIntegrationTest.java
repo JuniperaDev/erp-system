@@ -21,10 +21,10 @@ package io.github.erp.domain.events.financial;
 import io.github.erp.ErpSystemApp;
 import io.github.erp.domain.events.DomainEventStore;
 import io.github.erp.domain.enumeration.CurrencyTypes;
-import io.github.erp.financial.service.SettlementService;
+import io.github.erp.service.SettlementService;
 import io.github.erp.service.PaymentService;
 import io.github.erp.service.InvoiceService;
-import io.github.erp.financial.service.dto.SettlementDTO;
+import io.github.erp.service.dto.SettlementDTO;
 import io.github.erp.service.dto.PaymentDTO;
 import io.github.erp.service.dto.InvoiceDTO;
 import org.junit.jupiter.api.Test;
@@ -100,7 +100,7 @@ public class FinancialDomainEventsIntegrationTest {
         invoiceDTO.setInvoiceNumber("INV-001");
         invoiceDTO.setInvoiceAmount(BigDecimal.valueOf(750.00));
         invoiceDTO.setInvoiceDate(LocalDate.now());
-        invoiceDTO.setCurrency(CurrencyTypes.USD.toString());
+        invoiceDTO.setCurrency(CurrencyTypes.USD);
 
         long eventCountBefore = domainEventStore.count();
 
@@ -132,7 +132,7 @@ public class FinancialDomainEventsIntegrationTest {
         invoiceDTO.setInvoiceNumber("AUDIT-INV-001");
         invoiceDTO.setInvoiceAmount(BigDecimal.valueOf(1200.00));
         invoiceDTO.setInvoiceDate(LocalDate.now());
-        invoiceDTO.setCurrency(CurrencyTypes.USD.toString());
+        invoiceDTO.setCurrency(CurrencyTypes.USD);
 
         long eventCountBefore = domainEventStore.count();
 

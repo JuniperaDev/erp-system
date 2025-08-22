@@ -20,6 +20,7 @@ package io.github.erp.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.github.erp.context.assets.domain.AssetDisposal;
 import io.github.erp.web.rest.TestUtil;
 import org.junit.jupiter.api.Test;
 

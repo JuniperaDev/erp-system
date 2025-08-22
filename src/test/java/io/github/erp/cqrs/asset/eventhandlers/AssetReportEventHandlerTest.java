@@ -20,8 +20,8 @@ package io.github.erp.cqrs.asset.eventhandlers;
 
 import io.github.erp.cqrs.asset.readmodel.AssetReportReadModel;
 import io.github.erp.cqrs.asset.repositories.AssetReportReadModelRepository;
-import io.github.erp.domain.AssetCategory;
-import io.github.erp.domain.AssetRegistration;
+import io.github.erp.context.assets.domain.AssetCategory;
+import io.github.erp.context.assets.domain.AssetRegistration;
 import io.github.erp.domain.Dealer;
 import io.github.erp.domain.ServiceOutlet;
 import io.github.erp.domain.events.asset.AssetCreatedEvent;

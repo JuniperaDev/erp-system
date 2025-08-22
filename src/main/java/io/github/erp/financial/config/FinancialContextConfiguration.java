@@ -7,7 +7,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
 @EnableJpaRepositories(basePackages = "io.github.erp.financial.repository")
-@EntityScan(basePackages = "io.github.erp.financial.domain")
+@EntityScan(basePackages = {
+    "io.github.erp.financial.domain",
+    "io.github.erp.domain"
+})
 @ComponentScan(basePackages = {
     "io.github.erp.financial.service",
     "io.github.erp.financial.repository",

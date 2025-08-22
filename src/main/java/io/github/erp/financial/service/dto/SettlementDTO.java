@@ -10,7 +10,7 @@ import java.util.Set;
 import javax.validation.constraints.*;
 
 /**
- * A DTO for the {@link io.github.erp.financial.domain.Settlement} entity.
+ * A DTO for the {@link io.github.erp.domain.Settlement} entity.
  */
 public class SettlementDTO implements Serializable {
 

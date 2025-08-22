@@ -2,6 +2,8 @@ package io.github.erp.financial.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.github.erp.domain.Dealer;
+import io.github.erp.domain.PaymentLabel;
+import io.github.erp.domain.Placeholder;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;

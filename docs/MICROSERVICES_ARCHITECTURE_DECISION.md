@@ -156,7 +156,16 @@ The single JAR approach with Spring profiles has been validated as appropriate f
 - Systematic testing planned for all microservice containers once rebuild completes
 
 #### Docker Testing Results So Far:
-- ❌ **Asset Management Service**: Failed to start - Multiple ConflictingBeanDefinitionExceptions (resolved)
+- ❌ **Asset Management Service**: Failed to start - Multiple ConflictingBeanDefinitionExceptions (3 resolved)
 - ❌ **Previous Issues**: YAML DuplicateKeyException + Logback error (both resolved)
 - 🔄 **All Services**: Testing pending rebuild completion with all Spring bean conflict fixes
-- **Resolution**: Fixed YAML + 2 Spring bean conflicts + added logs directory creation to all Dockerfiles
+- **Resolution**: Fixed YAML + 3 Spring bean conflicts + added logs directory creation to all Dockerfiles
+
+#### Spring Bean Conflicts Identified and Fixed:
+1. **SettlementToAssetAcquisitionACL**: Resolved by adding explicit bean name `@Component("contextSettlementToAssetAcquisitionACL")`
+2. **InternalAssetRegistrationServiceImpl**: Resolved by adding explicit bean names:
+   - `@Service("internalAssetRegistrationServiceImpl")` for internal service
+   - `@Service("contextInternalAssetRegistrationServiceImpl")` for context service
+3. **InternalAssetDisposalServiceImpl**: Resolved by adding explicit bean names:
+   - `@Service("internalAssetDisposalServiceImpl")` for internal service  
+   - `@Service("contextInternalAssetDisposalServiceImpl")` for context service

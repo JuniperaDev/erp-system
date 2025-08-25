@@ -141,5 +141,13 @@ The single JAR approach with Spring profiles has been validated as appropriate f
 
 ### 🔄 Docker Container Testing (In Progress)
 - All 6 Dockerfiles updated to use eclipse-temurin:17-jre (resolved openjdk:17-jre-slim not found issue)
-- Maven build completed successfully, Docker image build in progress
-- Systematic testing planned for all microservice containers once build completes
+- **Issue Identified**: Microservices failed to start due to Logback configuration error - missing `/logs` directory
+- **Fix Applied**: Updated all 6 Dockerfiles to create `/logs` directory with proper ownership
+- Docker images being rebuilt with logging fix (compilation in progress)
+- Systematic testing planned for all microservice containers once rebuild completes
+
+#### Docker Testing Results So Far:
+- ❌ **Asset Management Service**: Failed to start - Logback error "Failed to create parent directories for logFile"
+- 🔄 **Remaining Services**: Testing pending rebuild completion
+- **Root Cause**: Container filesystem missing required logs directory for Spring Boot logging configuration
+- **Resolution**: Added `mkdir -p /logs && chown jhipster:jhipster /app.jar /logs` to all Dockerfiles

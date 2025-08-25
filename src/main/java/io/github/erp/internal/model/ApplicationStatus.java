@@ -32,6 +32,15 @@ public class ApplicationStatus {
 
     private String branch;
 
+    public ApplicationStatus() {}
+
+    public ApplicationStatus(String build, String version, String profile, String branch) {
+        this.build = build;
+        this.version = version;
+        this.profile = profile;
+        this.branch = branch;
+    }
+
     public static ApplicationStatusBuilder builder() {
         return new ApplicationStatusBuilder();
     }

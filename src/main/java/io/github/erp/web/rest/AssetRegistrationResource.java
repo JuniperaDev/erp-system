@@ -51,7 +51,7 @@ import tech.jhipster.web.util.ResponseUtil;
 /**
  * REST controller for managing {@link io.github.erp.domain.AssetRegistration}.
  */
-@RestController
+@RestController("assetRegistrationResource")
 @RequestMapping("/api")
 public class AssetRegistrationResource {
 

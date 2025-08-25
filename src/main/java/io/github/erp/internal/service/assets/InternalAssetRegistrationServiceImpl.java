@@ -32,6 +32,8 @@ import io.github.erp.service.monitoring.MemoryMonitoringService;
 import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -72,6 +74,7 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
     }
 
     @Override
+    @CacheEvict(value = {"assetRegistrations", "assetRegistrationIds"}, allEntries = true, cacheManager = "caffeineCacheManager")
     public AssetRegistrationDTO save(AssetRegistrationDTO assetRegistrationDTO) {
         log.debug("Request to save AssetRegistration : {}", assetRegistrationDTO);
         boolean isNewAsset = assetRegistrationDTO.getId() == null;
@@ -96,6 +99,7 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
     }
 
     @Override
+    @CacheEvict(value = {"assetRegistrations", "assetRegistrationIds"}, allEntries = true, cacheManager = "caffeineCacheManager")
     public Optional<AssetRegistrationDTO> partialUpdate(AssetRegistrationDTO assetRegistrationDTO) {
         log.debug("Request to partially update AssetRegistration : {}", assetRegistrationDTO);
 
@@ -174,6 +178,7 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "assetRegistrations", key = "#id", cacheManager = "caffeineCacheManager")
     public Optional<AssetRegistrationDTO> findOne(Long id) {
         log.debug("Request to get AssetRegistration : {}", id);
         Timer.Sample sample = memoryMonitoringService.startEntityLoadTimer("AssetRegistration");
@@ -202,6 +207,7 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
     }
 
     @Override
+    @CacheEvict(value = {"assetRegistrations", "assetRegistrationIds"}, allEntries = true, cacheManager = "caffeineCacheManager")
     public void delete(Long id) {
         log.debug("Request to delete AssetRegistration : {}", id);
         assetRegistrationRepository.deleteById(id);
@@ -232,6 +238,7 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "assetRegistrationIds", cacheManager = "caffeineCacheManager")
     public List<Long> findAllIds() {
         log.debug("Request to get list of ids");
         return assetRegistrationRepository.findAllIds();

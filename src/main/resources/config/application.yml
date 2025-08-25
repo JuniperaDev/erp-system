@@ -85,6 +85,7 @@ management:
       logback: true
       process: true
       system: true
+      cache: true
       hibernate: true
     distribution:
       percentiles-histogram:
@@ -171,6 +172,20 @@ spring:
         consumer:
           group.id: erp-system-nbv
           auto.offset.reset: earliest
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    timeout: 2000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+  session:
+    store-type: redis
+    redis:
+      flush-mode: on_save
+      namespace: erp:session
   messages:
     basename: i18n/messages
   main:

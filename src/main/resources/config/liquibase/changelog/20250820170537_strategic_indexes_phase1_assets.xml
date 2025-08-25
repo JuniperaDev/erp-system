@@ -38,14 +38,11 @@
             <column name="capitalization_date"/>
         </createIndex>
         
-        <!-- Partial index for active assets only -->
+        <!-- Index for active assets (H2 compatible - no partial index) -->
         <createIndex indexName="idx_asset_registration_active_assets" tableName="asset_registration">
             <column name="asset_category_id"/>
             <column name="capitalization_date"/>
         </createIndex>
-        <modifySql>
-            <append value=" WHERE asset_category_id IS NOT NULL"/>
-        </modifySql>
     </changeSet>
 
     <changeSet id="20250820170537-2" author="devin">

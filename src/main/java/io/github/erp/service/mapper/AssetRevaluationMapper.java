@@ -18,7 +18,7 @@ package io.github.erp.service.mapper;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import io.github.erp.domain.AssetRevaluation;
+import io.github.erp.context.assets.domain.AssetRevaluation;
 import io.github.erp.service.dto.AssetRevaluationDTO;
 import org.mapstruct.*;
 

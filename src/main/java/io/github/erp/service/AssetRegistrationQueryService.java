@@ -18,8 +18,11 @@ package io.github.erp.service;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import io.github.erp.domain.*; // for static metamodels
-import io.github.erp.domain.AssetRegistration;
+import io.github.erp.domain.*;
+import io.github.erp.context.assets.domain.AssetRegistration;
+import io.github.erp.context.assets.domain.AssetCategory;
+import io.github.erp.context.assets.domain.AssetRegistration_;
+import io.github.erp.context.assets.domain.AssetCategory_;
 import io.github.erp.repository.AssetRegistrationRepository;
 import io.github.erp.repository.search.AssetRegistrationSearchRepository;
 import io.github.erp.service.criteria.AssetRegistrationCriteria;
@@ -193,10 +196,7 @@ public class AssetRegistrationQueryService extends QueryService<AssetRegistratio
             if (criteria.getAcquiringTransactionId() != null) {
                 specification =
                     specification.and(
-                        buildSpecification(
-                            criteria.getAcquiringTransactionId(),
-                            root -> root.join(AssetRegistration_.acquiringTransaction, JoinType.LEFT).get(Settlement_.id)
-                        )
+                        buildSpecification(criteria.getAcquiringTransactionId(), AssetRegistration_.acquiringTransactionId)
                     );
             }
         }

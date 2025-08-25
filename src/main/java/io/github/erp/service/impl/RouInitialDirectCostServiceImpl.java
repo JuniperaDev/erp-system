@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.RouInitialDirectCostMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class RouInitialDirectCostServiceImpl implements RouInitialDirectCostServ
     public RouInitialDirectCostServiceImpl(
         RouInitialDirectCostRepository rouInitialDirectCostRepository,
         RouInitialDirectCostMapper rouInitialDirectCostMapper,
-        RouInitialDirectCostSearchRepository rouInitialDirectCostSearchRepository
+        @Autowired(required = false) RouInitialDirectCostSearchRepository rouInitialDirectCostSearchRepository
     ) {
         this.rouInitialDirectCostRepository = rouInitialDirectCostRepository;
         this.rouInitialDirectCostMapper = rouInitialDirectCostMapper;
@@ -65,7 +66,9 @@ public class RouInitialDirectCostServiceImpl implements RouInitialDirectCostServ
         RouInitialDirectCost rouInitialDirectCost = rouInitialDirectCostMapper.toEntity(rouInitialDirectCostDTO);
         rouInitialDirectCost = rouInitialDirectCostRepository.save(rouInitialDirectCost);
         RouInitialDirectCostDTO result = rouInitialDirectCostMapper.toDto(rouInitialDirectCost);
-        rouInitialDirectCostSearchRepository.save(rouInitialDirectCost);
+        if (rouInitialDirectCostSearchRepository != null) {
+            rouInitialDirectCostSearchRepository.save(rouInitialDirectCost);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class RouInitialDirectCostServiceImpl implements RouInitialDirectCostServ
             })
             .map(rouInitialDirectCostRepository::save)
             .map(savedRouInitialDirectCost -> {
-                rouInitialDirectCostSearchRepository.save(savedRouInitialDirectCost);
+                if (rouInitialDirectCostSearchRepository != null) {
+                    rouInitialDirectCostSearchRepository.save(savedRouInitialDirectCost);
+                }
 
                 return savedRouInitialDirectCost;
             })
@@ -111,13 +116,18 @@ public class RouInitialDirectCostServiceImpl implements RouInitialDirectCostServ
     public void delete(Long id) {
         log.debug("Request to delete RouInitialDirectCost : {}", id);
         rouInitialDirectCostRepository.deleteById(id);
-        rouInitialDirectCostSearchRepository.deleteById(id);
+        if (rouInitialDirectCostSearchRepository != null) {
+            rouInitialDirectCostSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<RouInitialDirectCostDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of RouInitialDirectCosts for query {}", query);
-        return rouInitialDirectCostSearchRepository.search(query, pageable).map(rouInitialDirectCostMapper::toDto);
+        if (rouInitialDirectCostSearchRepository != null) {
+            return rouInitialDirectCostSearchRepository.search(query, pageable).map(rouInitialDirectCostMapper::toDto);
+        }
+        return rouInitialDirectCostRepository.findAll(pageable).map(rouInitialDirectCostMapper::toDto);
     }
 }

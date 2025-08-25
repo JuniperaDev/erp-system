@@ -11,6 +11,7 @@ import io.github.erp.service.mapper.AssetJobSheetAssignmentMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class AssetJobSheetAssignmentServiceImpl implements AssetJobSheetAssignme
     public AssetJobSheetAssignmentServiceImpl(
         AssetJobSheetAssignmentRepository assetJobSheetAssignmentRepository,
         AssetJobSheetAssignmentMapper assetJobSheetAssignmentMapper,
-        AssetJobSheetAssignmentSearchRepository assetJobSheetAssignmentSearchRepository
+        @Autowired(required = false) AssetJobSheetAssignmentSearchRepository assetJobSheetAssignmentSearchRepository
     ) {
         this.assetJobSheetAssignmentRepository = assetJobSheetAssignmentRepository;
         this.assetJobSheetAssignmentMapper = assetJobSheetAssignmentMapper;
@@ -44,7 +45,9 @@ public class AssetJobSheetAssignmentServiceImpl implements AssetJobSheetAssignme
         AssetJobSheetAssignment assetJobSheetAssignment = assetJobSheetAssignmentMapper.toEntity(assetJobSheetAssignmentDTO);
         assetJobSheetAssignment = assetJobSheetAssignmentRepository.save(assetJobSheetAssignment);
         AssetJobSheetAssignmentDTO result = assetJobSheetAssignmentMapper.toDto(assetJobSheetAssignment);
-        assetJobSheetAssignmentSearchRepository.save(assetJobSheetAssignment);
+        if (assetJobSheetAssignmentSearchRepository != null) {
+            assetJobSheetAssignmentSearchRepository.save(assetJobSheetAssignment);
+        }
         return result;
     }
 
@@ -54,7 +57,9 @@ public class AssetJobSheetAssignmentServiceImpl implements AssetJobSheetAssignme
         AssetJobSheetAssignment assetJobSheetAssignment = assetJobSheetAssignmentMapper.toEntity(assetJobSheetAssignmentDTO);
         assetJobSheetAssignment = assetJobSheetAssignmentRepository.save(assetJobSheetAssignment);
         AssetJobSheetAssignmentDTO result = assetJobSheetAssignmentMapper.toDto(assetJobSheetAssignment);
-        assetJobSheetAssignmentSearchRepository.save(assetJobSheetAssignment);
+        if (assetJobSheetAssignmentSearchRepository != null) {
+            assetJobSheetAssignmentSearchRepository.save(assetJobSheetAssignment);
+        }
         return result;
     }
 
@@ -71,7 +76,9 @@ public class AssetJobSheetAssignmentServiceImpl implements AssetJobSheetAssignme
             })
             .map(assetJobSheetAssignmentRepository::save)
             .map(savedAssetJobSheetAssignment -> {
-                assetJobSheetAssignmentSearchRepository.save(savedAssetJobSheetAssignment);
+                if (assetJobSheetAssignmentSearchRepository != null) {
+                    assetJobSheetAssignmentSearchRepository.save(savedAssetJobSheetAssignment);
+                }
 
                 return savedAssetJobSheetAssignment;
             })
@@ -96,13 +103,18 @@ public class AssetJobSheetAssignmentServiceImpl implements AssetJobSheetAssignme
     public void delete(Long id) {
         log.debug("Request to delete AssetJobSheetAssignment : {}", id);
         assetJobSheetAssignmentRepository.deleteById(id);
-        assetJobSheetAssignmentSearchRepository.deleteById(id);
+        if (assetJobSheetAssignmentSearchRepository != null) {
+            assetJobSheetAssignmentSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AssetJobSheetAssignmentDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AssetJobSheetAssignments for query {}", query);
-        return assetJobSheetAssignmentSearchRepository.search(query, pageable).map(assetJobSheetAssignmentMapper::toDto);
+        if (assetJobSheetAssignmentSearchRepository != null) {
+            return assetJobSheetAssignmentSearchRepository.search(query, pageable).map(assetJobSheetAssignmentMapper::toDto);
+        }
+        return assetJobSheetAssignmentRepository.findAll(pageable).map(assetJobSheetAssignmentMapper::toDto);
     }
 }

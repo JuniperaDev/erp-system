@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.ReportContentTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class ReportContentTypeServiceImpl implements ReportContentTypeService {
     public ReportContentTypeServiceImpl(
         ReportContentTypeRepository reportContentTypeRepository,
         ReportContentTypeMapper reportContentTypeMapper,
-        ReportContentTypeSearchRepository reportContentTypeSearchRepository
+        @Autowired(required = false) ReportContentTypeSearchRepository reportContentTypeSearchRepository
     ) {
         this.reportContentTypeRepository = reportContentTypeRepository;
         this.reportContentTypeMapper = reportContentTypeMapper;
@@ -65,7 +66,9 @@ public class ReportContentTypeServiceImpl implements ReportContentTypeService {
         ReportContentType reportContentType = reportContentTypeMapper.toEntity(reportContentTypeDTO);
         reportContentType = reportContentTypeRepository.save(reportContentType);
         ReportContentTypeDTO result = reportContentTypeMapper.toDto(reportContentType);
-        reportContentTypeSearchRepository.save(reportContentType);
+        if (reportContentTypeSearchRepository != null) {
+            reportContentTypeSearchRepository.save(reportContentType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class ReportContentTypeServiceImpl implements ReportContentTypeService {
             })
             .map(reportContentTypeRepository::save)
             .map(savedReportContentType -> {
-                reportContentTypeSearchRepository.save(savedReportContentType);
+                if (reportContentTypeSearchRepository != null) {
+                    reportContentTypeSearchRepository.save(savedReportContentType);
+                }
 
                 return savedReportContentType;
             })
@@ -111,13 +116,18 @@ public class ReportContentTypeServiceImpl implements ReportContentTypeService {
     public void delete(Long id) {
         log.debug("Request to delete ReportContentType : {}", id);
         reportContentTypeRepository.deleteById(id);
-        reportContentTypeSearchRepository.deleteById(id);
+        if (reportContentTypeSearchRepository != null) {
+            reportContentTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ReportContentTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of ReportContentTypes for query {}", query);
-        return reportContentTypeSearchRepository.search(query, pageable).map(reportContentTypeMapper::toDto);
+        if (reportContentTypeSearchRepository != null) {
+            return reportContentTypeSearchRepository.search(query, pageable).map(reportContentTypeMapper::toDto);
+        }
+        return reportContentTypeRepository.findAll(pageable).map(reportContentTypeMapper::toDto);
     }
 }

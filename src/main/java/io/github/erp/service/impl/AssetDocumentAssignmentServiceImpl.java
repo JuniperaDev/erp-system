@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AssetDocumentAssignmentMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AssetDocumentAssignmentServiceImpl implements AssetDocumentAssignme
     public AssetDocumentAssignmentServiceImpl(
         AssetDocumentAssignmentRepository assetDocumentAssignmentRepository,
         AssetDocumentAssignmentMapper assetDocumentAssignmentMapper,
-        AssetDocumentAssignmentSearchRepository assetDocumentAssignmentSearchRepository
+        @Autowired(required = false) AssetDocumentAssignmentSearchRepository assetDocumentAssignmentSearchRepository
     ) {
         this.assetDocumentAssignmentRepository = assetDocumentAssignmentRepository;
         this.assetDocumentAssignmentMapper = assetDocumentAssignmentMapper;
@@ -65,7 +66,9 @@ public class AssetDocumentAssignmentServiceImpl implements AssetDocumentAssignme
         AssetDocumentAssignment assetDocumentAssignment = assetDocumentAssignmentMapper.toEntity(assetDocumentAssignmentDTO);
         assetDocumentAssignment = assetDocumentAssignmentRepository.save(assetDocumentAssignment);
         AssetDocumentAssignmentDTO result = assetDocumentAssignmentMapper.toDto(assetDocumentAssignment);
-        assetDocumentAssignmentSearchRepository.save(assetDocumentAssignment);
+        if (assetDocumentAssignmentSearchRepository != null) {
+            assetDocumentAssignmentSearchRepository.save(assetDocumentAssignment);
+        }
         return result;
     }
 
@@ -75,7 +78,9 @@ public class AssetDocumentAssignmentServiceImpl implements AssetDocumentAssignme
         AssetDocumentAssignment assetDocumentAssignment = assetDocumentAssignmentMapper.toEntity(assetDocumentAssignmentDTO);
         assetDocumentAssignment = assetDocumentAssignmentRepository.save(assetDocumentAssignment);
         AssetDocumentAssignmentDTO result = assetDocumentAssignmentMapper.toDto(assetDocumentAssignment);
-        assetDocumentAssignmentSearchRepository.save(assetDocumentAssignment);
+        if (assetDocumentAssignmentSearchRepository != null) {
+            assetDocumentAssignmentSearchRepository.save(assetDocumentAssignment);
+        }
         return result;
     }
 
@@ -92,7 +97,9 @@ public class AssetDocumentAssignmentServiceImpl implements AssetDocumentAssignme
             })
             .map(assetDocumentAssignmentRepository::save)
             .map(savedAssetDocumentAssignment -> {
-                assetDocumentAssignmentSearchRepository.save(savedAssetDocumentAssignment);
+                if (assetDocumentAssignmentSearchRepository != null) {
+                    assetDocumentAssignmentSearchRepository.save(savedAssetDocumentAssignment);
+                }
 
                 return savedAssetDocumentAssignment;
             })
@@ -117,13 +124,18 @@ public class AssetDocumentAssignmentServiceImpl implements AssetDocumentAssignme
     public void delete(Long id) {
         log.debug("Request to delete AssetDocumentAssignment : {}", id);
         assetDocumentAssignmentRepository.deleteById(id);
-        assetDocumentAssignmentSearchRepository.deleteById(id);
+        if (assetDocumentAssignmentSearchRepository != null) {
+            assetDocumentAssignmentSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AssetDocumentAssignmentDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AssetDocumentAssignments for query {}", query);
-        return assetDocumentAssignmentSearchRepository.search(query, pageable).map(assetDocumentAssignmentMapper::toDto);
+        if (assetDocumentAssignmentSearchRepository != null) {
+            return assetDocumentAssignmentSearchRepository.search(query, pageable).map(assetDocumentAssignmentMapper::toDto);
+        }
+        return assetDocumentAssignmentRepository.findAll(pageable).map(assetDocumentAssignmentMapper::toDto);
     }
 }

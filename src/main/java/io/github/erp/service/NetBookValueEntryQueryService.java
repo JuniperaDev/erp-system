@@ -20,6 +20,10 @@ package io.github.erp.service;
 
 import io.github.erp.domain.*; // for static metamodels
 import io.github.erp.domain.NetBookValueEntry;
+import io.github.erp.context.assets.domain.AssetRegistration;
+import io.github.erp.context.assets.domain.AssetCategory;
+import io.github.erp.context.assets.domain.AssetRegistration_;
+import io.github.erp.context.assets.domain.AssetCategory_;
 import io.github.erp.repository.NetBookValueEntryRepository;
 import io.github.erp.repository.search.NetBookValueEntrySearchRepository;
 import io.github.erp.service.criteria.NetBookValueEntryCriteria;

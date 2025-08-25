@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.TransactionAccountMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class TransactionAccountServiceImpl implements TransactionAccountService 
     public TransactionAccountServiceImpl(
         TransactionAccountRepository transactionAccountRepository,
         TransactionAccountMapper transactionAccountMapper,
-        TransactionAccountSearchRepository transactionAccountSearchRepository
+        @Autowired(required = false) TransactionAccountSearchRepository transactionAccountSearchRepository
     ) {
         this.transactionAccountRepository = transactionAccountRepository;
         this.transactionAccountMapper = transactionAccountMapper;
@@ -65,7 +66,9 @@ public class TransactionAccountServiceImpl implements TransactionAccountService 
         TransactionAccount transactionAccount = transactionAccountMapper.toEntity(transactionAccountDTO);
         transactionAccount = transactionAccountRepository.save(transactionAccount);
         TransactionAccountDTO result = transactionAccountMapper.toDto(transactionAccount);
-        transactionAccountSearchRepository.save(transactionAccount);
+        if (transactionAccountSearchRepository != null) {
+            transactionAccountSearchRepository.save(transactionAccount);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class TransactionAccountServiceImpl implements TransactionAccountService 
             })
             .map(transactionAccountRepository::save)
             .map(savedTransactionAccount -> {
-                transactionAccountSearchRepository.save(savedTransactionAccount);
+                if (transactionAccountSearchRepository != null) {
+                    transactionAccountSearchRepository.save(savedTransactionAccount);
+                }
 
                 return savedTransactionAccount;
             })
@@ -111,13 +116,18 @@ public class TransactionAccountServiceImpl implements TransactionAccountService 
     public void delete(Long id) {
         log.debug("Request to delete TransactionAccount : {}", id);
         transactionAccountRepository.deleteById(id);
-        transactionAccountSearchRepository.deleteById(id);
+        if (transactionAccountSearchRepository != null) {
+            transactionAccountSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<TransactionAccountDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of TransactionAccounts for query {}", query);
-        return transactionAccountSearchRepository.search(query, pageable).map(transactionAccountMapper::toDto);
+        if (transactionAccountSearchRepository != null) {
+            return transactionAccountSearchRepository.search(query, pageable).map(transactionAccountMapper::toDto);
+        }
+        return transactionAccountRepository.findAll(pageable).map(transactionAccountMapper::toDto);
     }
 }

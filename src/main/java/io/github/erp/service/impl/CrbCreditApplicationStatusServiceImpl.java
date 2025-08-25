@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CrbCreditApplicationStatusMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CrbCreditApplicationStatusServiceImpl implements CrbCreditApplicati
     public CrbCreditApplicationStatusServiceImpl(
         CrbCreditApplicationStatusRepository crbCreditApplicationStatusRepository,
         CrbCreditApplicationStatusMapper crbCreditApplicationStatusMapper,
-        CrbCreditApplicationStatusSearchRepository crbCreditApplicationStatusSearchRepository
+        @Autowired(required = false) CrbCreditApplicationStatusSearchRepository crbCreditApplicationStatusSearchRepository
     ) {
         this.crbCreditApplicationStatusRepository = crbCreditApplicationStatusRepository;
         this.crbCreditApplicationStatusMapper = crbCreditApplicationStatusMapper;
@@ -65,7 +66,9 @@ public class CrbCreditApplicationStatusServiceImpl implements CrbCreditApplicati
         CrbCreditApplicationStatus crbCreditApplicationStatus = crbCreditApplicationStatusMapper.toEntity(crbCreditApplicationStatusDTO);
         crbCreditApplicationStatus = crbCreditApplicationStatusRepository.save(crbCreditApplicationStatus);
         CrbCreditApplicationStatusDTO result = crbCreditApplicationStatusMapper.toDto(crbCreditApplicationStatus);
-        crbCreditApplicationStatusSearchRepository.save(crbCreditApplicationStatus);
+        if (crbCreditApplicationStatusSearchRepository != null) {
+            crbCreditApplicationStatusSearchRepository.save(crbCreditApplicationStatus);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CrbCreditApplicationStatusServiceImpl implements CrbCreditApplicati
             })
             .map(crbCreditApplicationStatusRepository::save)
             .map(savedCrbCreditApplicationStatus -> {
-                crbCreditApplicationStatusSearchRepository.save(savedCrbCreditApplicationStatus);
+                if (crbCreditApplicationStatusSearchRepository != null) {
+                    crbCreditApplicationStatusSearchRepository.save(savedCrbCreditApplicationStatus);
+                }
 
                 return savedCrbCreditApplicationStatus;
             })
@@ -107,13 +112,18 @@ public class CrbCreditApplicationStatusServiceImpl implements CrbCreditApplicati
     public void delete(Long id) {
         log.debug("Request to delete CrbCreditApplicationStatus : {}", id);
         crbCreditApplicationStatusRepository.deleteById(id);
-        crbCreditApplicationStatusSearchRepository.deleteById(id);
+        if (crbCreditApplicationStatusSearchRepository != null) {
+            crbCreditApplicationStatusSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CrbCreditApplicationStatusDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CrbCreditApplicationStatuses for query {}", query);
-        return crbCreditApplicationStatusSearchRepository.search(query, pageable).map(crbCreditApplicationStatusMapper::toDto);
+        if (crbCreditApplicationStatusSearchRepository != null) {
+            return crbCreditApplicationStatusSearchRepository.search(query, pageable).map(crbCreditApplicationStatusMapper::toDto);
+        }
+        return crbCreditApplicationStatusRepository.findAll(pageable).map(crbCreditApplicationStatusMapper::toDto);
     }
 }

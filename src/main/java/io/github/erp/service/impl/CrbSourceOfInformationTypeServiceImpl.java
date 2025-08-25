@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CrbSourceOfInformationTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CrbSourceOfInformationTypeServiceImpl implements CrbSourceOfInforma
     public CrbSourceOfInformationTypeServiceImpl(
         CrbSourceOfInformationTypeRepository crbSourceOfInformationTypeRepository,
         CrbSourceOfInformationTypeMapper crbSourceOfInformationTypeMapper,
-        CrbSourceOfInformationTypeSearchRepository crbSourceOfInformationTypeSearchRepository
+        @Autowired(required = false) CrbSourceOfInformationTypeSearchRepository crbSourceOfInformationTypeSearchRepository
     ) {
         this.crbSourceOfInformationTypeRepository = crbSourceOfInformationTypeRepository;
         this.crbSourceOfInformationTypeMapper = crbSourceOfInformationTypeMapper;
@@ -65,7 +66,9 @@ public class CrbSourceOfInformationTypeServiceImpl implements CrbSourceOfInforma
         CrbSourceOfInformationType crbSourceOfInformationType = crbSourceOfInformationTypeMapper.toEntity(crbSourceOfInformationTypeDTO);
         crbSourceOfInformationType = crbSourceOfInformationTypeRepository.save(crbSourceOfInformationType);
         CrbSourceOfInformationTypeDTO result = crbSourceOfInformationTypeMapper.toDto(crbSourceOfInformationType);
-        crbSourceOfInformationTypeSearchRepository.save(crbSourceOfInformationType);
+        if (crbSourceOfInformationTypeSearchRepository != null) {
+            crbSourceOfInformationTypeSearchRepository.save(crbSourceOfInformationType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CrbSourceOfInformationTypeServiceImpl implements CrbSourceOfInforma
             })
             .map(crbSourceOfInformationTypeRepository::save)
             .map(savedCrbSourceOfInformationType -> {
-                crbSourceOfInformationTypeSearchRepository.save(savedCrbSourceOfInformationType);
+                if (crbSourceOfInformationTypeSearchRepository != null) {
+                    crbSourceOfInformationTypeSearchRepository.save(savedCrbSourceOfInformationType);
+                }
 
                 return savedCrbSourceOfInformationType;
             })
@@ -107,7 +112,9 @@ public class CrbSourceOfInformationTypeServiceImpl implements CrbSourceOfInforma
     public void delete(Long id) {
         log.debug("Request to delete CrbSourceOfInformationType : {}", id);
         crbSourceOfInformationTypeRepository.deleteById(id);
-        crbSourceOfInformationTypeSearchRepository.deleteById(id);
+        if (crbSourceOfInformationTypeSearchRepository != null) {
+            crbSourceOfInformationTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override

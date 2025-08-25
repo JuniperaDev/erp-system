@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AgriculturalEnterpriseActivityTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AgriculturalEnterpriseActivityTypeServiceImpl implements Agricultur
     public AgriculturalEnterpriseActivityTypeServiceImpl(
         AgriculturalEnterpriseActivityTypeRepository agriculturalEnterpriseActivityTypeRepository,
         AgriculturalEnterpriseActivityTypeMapper agriculturalEnterpriseActivityTypeMapper,
-        AgriculturalEnterpriseActivityTypeSearchRepository agriculturalEnterpriseActivityTypeSearchRepository
+        @Autowired(required = false) AgriculturalEnterpriseActivityTypeSearchRepository agriculturalEnterpriseActivityTypeSearchRepository
     ) {
         this.agriculturalEnterpriseActivityTypeRepository = agriculturalEnterpriseActivityTypeRepository;
         this.agriculturalEnterpriseActivityTypeMapper = agriculturalEnterpriseActivityTypeMapper;
@@ -67,7 +68,9 @@ public class AgriculturalEnterpriseActivityTypeServiceImpl implements Agricultur
         );
         agriculturalEnterpriseActivityType = agriculturalEnterpriseActivityTypeRepository.save(agriculturalEnterpriseActivityType);
         AgriculturalEnterpriseActivityTypeDTO result = agriculturalEnterpriseActivityTypeMapper.toDto(agriculturalEnterpriseActivityType);
-        agriculturalEnterpriseActivityTypeSearchRepository.save(agriculturalEnterpriseActivityType);
+        if (agriculturalEnterpriseActivityTypeSearchRepository != null) {
+            agriculturalEnterpriseActivityTypeSearchRepository.save(agriculturalEnterpriseActivityType);
+        }
         return result;
     }
 
@@ -89,7 +92,9 @@ public class AgriculturalEnterpriseActivityTypeServiceImpl implements Agricultur
             })
             .map(agriculturalEnterpriseActivityTypeRepository::save)
             .map(savedAgriculturalEnterpriseActivityType -> {
-                agriculturalEnterpriseActivityTypeSearchRepository.save(savedAgriculturalEnterpriseActivityType);
+                if (agriculturalEnterpriseActivityTypeSearchRepository != null) {
+                    agriculturalEnterpriseActivityTypeSearchRepository.save(savedAgriculturalEnterpriseActivityType);
+                }
 
                 return savedAgriculturalEnterpriseActivityType;
             })
@@ -114,7 +119,9 @@ public class AgriculturalEnterpriseActivityTypeServiceImpl implements Agricultur
     public void delete(Long id) {
         log.debug("Request to delete AgriculturalEnterpriseActivityType : {}", id);
         agriculturalEnterpriseActivityTypeRepository.deleteById(id);
-        agriculturalEnterpriseActivityTypeSearchRepository.deleteById(id);
+        if (agriculturalEnterpriseActivityTypeSearchRepository != null) {
+            agriculturalEnterpriseActivityTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override

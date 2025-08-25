@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CardUsageInformationMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CardUsageInformationServiceImpl implements CardUsageInformationServ
     public CardUsageInformationServiceImpl(
         CardUsageInformationRepository cardUsageInformationRepository,
         CardUsageInformationMapper cardUsageInformationMapper,
-        CardUsageInformationSearchRepository cardUsageInformationSearchRepository
+        @Autowired(required = false) CardUsageInformationSearchRepository cardUsageInformationSearchRepository
     ) {
         this.cardUsageInformationRepository = cardUsageInformationRepository;
         this.cardUsageInformationMapper = cardUsageInformationMapper;
@@ -65,7 +66,9 @@ public class CardUsageInformationServiceImpl implements CardUsageInformationServ
         CardUsageInformation cardUsageInformation = cardUsageInformationMapper.toEntity(cardUsageInformationDTO);
         cardUsageInformation = cardUsageInformationRepository.save(cardUsageInformation);
         CardUsageInformationDTO result = cardUsageInformationMapper.toDto(cardUsageInformation);
-        cardUsageInformationSearchRepository.save(cardUsageInformation);
+        if (cardUsageInformationSearchRepository != null) {
+            cardUsageInformationSearchRepository.save(cardUsageInformation);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CardUsageInformationServiceImpl implements CardUsageInformationServ
             })
             .map(cardUsageInformationRepository::save)
             .map(savedCardUsageInformation -> {
-                cardUsageInformationSearchRepository.save(savedCardUsageInformation);
+                if (cardUsageInformationSearchRepository != null) {
+                    cardUsageInformationSearchRepository.save(savedCardUsageInformation);
+                }
 
                 return savedCardUsageInformation;
             })
@@ -107,13 +112,18 @@ public class CardUsageInformationServiceImpl implements CardUsageInformationServ
     public void delete(Long id) {
         log.debug("Request to delete CardUsageInformation : {}", id);
         cardUsageInformationRepository.deleteById(id);
-        cardUsageInformationSearchRepository.deleteById(id);
+        if (cardUsageInformationSearchRepository != null) {
+            cardUsageInformationSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CardUsageInformationDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CardUsageInformations for query {}", query);
-        return cardUsageInformationSearchRepository.search(query, pageable).map(cardUsageInformationMapper::toDto);
+        if (cardUsageInformationSearchRepository != null) {
+            return cardUsageInformationSearchRepository.search(query, pageable).map(cardUsageInformationMapper::toDto);
+        }
+        return cardUsageInformationRepository.findAll(pageable).map(cardUsageInformationMapper::toDto);
     }
 }

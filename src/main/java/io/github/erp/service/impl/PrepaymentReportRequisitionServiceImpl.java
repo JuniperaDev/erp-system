@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.PrepaymentReportRequisitionMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class PrepaymentReportRequisitionServiceImpl implements PrepaymentReportR
     public PrepaymentReportRequisitionServiceImpl(
         PrepaymentReportRequisitionRepository prepaymentReportRequisitionRepository,
         PrepaymentReportRequisitionMapper prepaymentReportRequisitionMapper,
-        PrepaymentReportRequisitionSearchRepository prepaymentReportRequisitionSearchRepository
+        @Autowired(required = false) PrepaymentReportRequisitionSearchRepository prepaymentReportRequisitionSearchRepository
     ) {
         this.prepaymentReportRequisitionRepository = prepaymentReportRequisitionRepository;
         this.prepaymentReportRequisitionMapper = prepaymentReportRequisitionMapper;
@@ -67,7 +68,9 @@ public class PrepaymentReportRequisitionServiceImpl implements PrepaymentReportR
         );
         prepaymentReportRequisition = prepaymentReportRequisitionRepository.save(prepaymentReportRequisition);
         PrepaymentReportRequisitionDTO result = prepaymentReportRequisitionMapper.toDto(prepaymentReportRequisition);
-        prepaymentReportRequisitionSearchRepository.save(prepaymentReportRequisition);
+        if (prepaymentReportRequisitionSearchRepository != null) {
+            prepaymentReportRequisitionSearchRepository.save(prepaymentReportRequisition);
+        }
         return result;
     }
 
@@ -84,7 +87,9 @@ public class PrepaymentReportRequisitionServiceImpl implements PrepaymentReportR
             })
             .map(prepaymentReportRequisitionRepository::save)
             .map(savedPrepaymentReportRequisition -> {
-                prepaymentReportRequisitionSearchRepository.save(savedPrepaymentReportRequisition);
+                if (prepaymentReportRequisitionSearchRepository != null) {
+                    prepaymentReportRequisitionSearchRepository.save(savedPrepaymentReportRequisition);
+                }
 
                 return savedPrepaymentReportRequisition;
             })
@@ -109,7 +114,9 @@ public class PrepaymentReportRequisitionServiceImpl implements PrepaymentReportR
     public void delete(Long id) {
         log.debug("Request to delete PrepaymentReportRequisition : {}", id);
         prepaymentReportRequisitionRepository.deleteById(id);
-        prepaymentReportRequisitionSearchRepository.deleteById(id);
+        if (prepaymentReportRequisitionSearchRepository != null) {
+            prepaymentReportRequisitionSearchRepository.deleteById(id);
+        }
     }
 
     @Override

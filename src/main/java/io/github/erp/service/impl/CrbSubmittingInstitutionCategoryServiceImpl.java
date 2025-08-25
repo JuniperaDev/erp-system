@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CrbSubmittingInstitutionCategoryMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CrbSubmittingInstitutionCategoryServiceImpl implements CrbSubmittin
     public CrbSubmittingInstitutionCategoryServiceImpl(
         CrbSubmittingInstitutionCategoryRepository crbSubmittingInstitutionCategoryRepository,
         CrbSubmittingInstitutionCategoryMapper crbSubmittingInstitutionCategoryMapper,
-        CrbSubmittingInstitutionCategorySearchRepository crbSubmittingInstitutionCategorySearchRepository
+        @Autowired(required = false) CrbSubmittingInstitutionCategorySearchRepository crbSubmittingInstitutionCategorySearchRepository
     ) {
         this.crbSubmittingInstitutionCategoryRepository = crbSubmittingInstitutionCategoryRepository;
         this.crbSubmittingInstitutionCategoryMapper = crbSubmittingInstitutionCategoryMapper;
@@ -67,7 +68,9 @@ public class CrbSubmittingInstitutionCategoryServiceImpl implements CrbSubmittin
         );
         crbSubmittingInstitutionCategory = crbSubmittingInstitutionCategoryRepository.save(crbSubmittingInstitutionCategory);
         CrbSubmittingInstitutionCategoryDTO result = crbSubmittingInstitutionCategoryMapper.toDto(crbSubmittingInstitutionCategory);
-        crbSubmittingInstitutionCategorySearchRepository.save(crbSubmittingInstitutionCategory);
+        if (crbSubmittingInstitutionCategorySearchRepository != null) {
+            crbSubmittingInstitutionCategorySearchRepository.save(crbSubmittingInstitutionCategory);
+        }
         return result;
     }
 
@@ -89,7 +92,9 @@ public class CrbSubmittingInstitutionCategoryServiceImpl implements CrbSubmittin
             })
             .map(crbSubmittingInstitutionCategoryRepository::save)
             .map(savedCrbSubmittingInstitutionCategory -> {
-                crbSubmittingInstitutionCategorySearchRepository.save(savedCrbSubmittingInstitutionCategory);
+                if (crbSubmittingInstitutionCategorySearchRepository != null) {
+                    crbSubmittingInstitutionCategorySearchRepository.save(savedCrbSubmittingInstitutionCategory);
+                }
 
                 return savedCrbSubmittingInstitutionCategory;
             })
@@ -114,7 +119,9 @@ public class CrbSubmittingInstitutionCategoryServiceImpl implements CrbSubmittin
     public void delete(Long id) {
         log.debug("Request to delete CrbSubmittingInstitutionCategory : {}", id);
         crbSubmittingInstitutionCategoryRepository.deleteById(id);
-        crbSubmittingInstitutionCategorySearchRepository.deleteById(id);
+        if (crbSubmittingInstitutionCategorySearchRepository != null) {
+            crbSubmittingInstitutionCategorySearchRepository.deleteById(id);
+        }
     }
 
     @Override

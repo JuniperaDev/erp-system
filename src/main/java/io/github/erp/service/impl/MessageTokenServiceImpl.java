@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.MessageTokenMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class MessageTokenServiceImpl implements MessageTokenService {
     public MessageTokenServiceImpl(
         MessageTokenRepository messageTokenRepository,
         MessageTokenMapper messageTokenMapper,
-        MessageTokenSearchRepository messageTokenSearchRepository
+        @Autowired(required = false) MessageTokenSearchRepository messageTokenSearchRepository
     ) {
         this.messageTokenRepository = messageTokenRepository;
         this.messageTokenMapper = messageTokenMapper;
@@ -65,7 +66,9 @@ public class MessageTokenServiceImpl implements MessageTokenService {
         MessageToken messageToken = messageTokenMapper.toEntity(messageTokenDTO);
         messageToken = messageTokenRepository.save(messageToken);
         MessageTokenDTO result = messageTokenMapper.toDto(messageToken);
-        messageTokenSearchRepository.save(messageToken);
+        if (messageTokenSearchRepository != null) {
+            messageTokenSearchRepository.save(messageToken);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class MessageTokenServiceImpl implements MessageTokenService {
             })
             .map(messageTokenRepository::save)
             .map(savedMessageToken -> {
-                messageTokenSearchRepository.save(savedMessageToken);
+                if (messageTokenSearchRepository != null) {
+                    messageTokenSearchRepository.save(savedMessageToken);
+                }
 
                 return savedMessageToken;
             })
@@ -111,13 +116,18 @@ public class MessageTokenServiceImpl implements MessageTokenService {
     public void delete(Long id) {
         log.debug("Request to delete MessageToken : {}", id);
         messageTokenRepository.deleteById(id);
-        messageTokenSearchRepository.deleteById(id);
+        if (messageTokenSearchRepository != null) {
+            messageTokenSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<MessageTokenDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of MessageTokens for query {}", query);
-        return messageTokenSearchRepository.search(query, pageable).map(messageTokenMapper::toDto);
+        if (messageTokenSearchRepository != null) {
+            return messageTokenSearchRepository.search(query, pageable).map(messageTokenMapper::toDto);
+        }
+        return messageTokenRepository.findAll(pageable).map(messageTokenMapper::toDto);
     }
 }

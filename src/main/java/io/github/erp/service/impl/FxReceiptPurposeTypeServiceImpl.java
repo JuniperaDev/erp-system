@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.FxReceiptPurposeTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class FxReceiptPurposeTypeServiceImpl implements FxReceiptPurposeTypeServ
     public FxReceiptPurposeTypeServiceImpl(
         FxReceiptPurposeTypeRepository fxReceiptPurposeTypeRepository,
         FxReceiptPurposeTypeMapper fxReceiptPurposeTypeMapper,
-        FxReceiptPurposeTypeSearchRepository fxReceiptPurposeTypeSearchRepository
+        @Autowired(required = false) FxReceiptPurposeTypeSearchRepository fxReceiptPurposeTypeSearchRepository
     ) {
         this.fxReceiptPurposeTypeRepository = fxReceiptPurposeTypeRepository;
         this.fxReceiptPurposeTypeMapper = fxReceiptPurposeTypeMapper;
@@ -65,7 +66,9 @@ public class FxReceiptPurposeTypeServiceImpl implements FxReceiptPurposeTypeServ
         FxReceiptPurposeType fxReceiptPurposeType = fxReceiptPurposeTypeMapper.toEntity(fxReceiptPurposeTypeDTO);
         fxReceiptPurposeType = fxReceiptPurposeTypeRepository.save(fxReceiptPurposeType);
         FxReceiptPurposeTypeDTO result = fxReceiptPurposeTypeMapper.toDto(fxReceiptPurposeType);
-        fxReceiptPurposeTypeSearchRepository.save(fxReceiptPurposeType);
+        if (fxReceiptPurposeTypeSearchRepository != null) {
+            fxReceiptPurposeTypeSearchRepository.save(fxReceiptPurposeType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class FxReceiptPurposeTypeServiceImpl implements FxReceiptPurposeTypeServ
             })
             .map(fxReceiptPurposeTypeRepository::save)
             .map(savedFxReceiptPurposeType -> {
-                fxReceiptPurposeTypeSearchRepository.save(savedFxReceiptPurposeType);
+                if (fxReceiptPurposeTypeSearchRepository != null) {
+                    fxReceiptPurposeTypeSearchRepository.save(savedFxReceiptPurposeType);
+                }
 
                 return savedFxReceiptPurposeType;
             })
@@ -107,7 +112,9 @@ public class FxReceiptPurposeTypeServiceImpl implements FxReceiptPurposeTypeServ
     public void delete(Long id) {
         log.debug("Request to delete FxReceiptPurposeType : {}", id);
         fxReceiptPurposeTypeRepository.deleteById(id);
-        fxReceiptPurposeTypeSearchRepository.deleteById(id);
+        if (fxReceiptPurposeTypeSearchRepository != null) {
+            fxReceiptPurposeTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override

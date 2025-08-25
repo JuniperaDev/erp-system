@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.ReportRequisitionMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class ReportRequisitionServiceImpl implements ReportRequisitionService {
     public ReportRequisitionServiceImpl(
         ReportRequisitionRepository reportRequisitionRepository,
         ReportRequisitionMapper reportRequisitionMapper,
-        ReportRequisitionSearchRepository reportRequisitionSearchRepository
+        @Autowired(required = false) ReportRequisitionSearchRepository reportRequisitionSearchRepository
     ) {
         this.reportRequisitionRepository = reportRequisitionRepository;
         this.reportRequisitionMapper = reportRequisitionMapper;
@@ -65,7 +66,9 @@ public class ReportRequisitionServiceImpl implements ReportRequisitionService {
         ReportRequisition reportRequisition = reportRequisitionMapper.toEntity(reportRequisitionDTO);
         reportRequisition = reportRequisitionRepository.save(reportRequisition);
         ReportRequisitionDTO result = reportRequisitionMapper.toDto(reportRequisition);
-        reportRequisitionSearchRepository.save(reportRequisition);
+        if (reportRequisitionSearchRepository != null) {
+            reportRequisitionSearchRepository.save(reportRequisition);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class ReportRequisitionServiceImpl implements ReportRequisitionService {
             })
             .map(reportRequisitionRepository::save)
             .map(savedReportRequisition -> {
-                reportRequisitionSearchRepository.save(savedReportRequisition);
+                if (reportRequisitionSearchRepository != null) {
+                    reportRequisitionSearchRepository.save(savedReportRequisition);
+                }
 
                 return savedReportRequisition;
             })
@@ -111,13 +116,18 @@ public class ReportRequisitionServiceImpl implements ReportRequisitionService {
     public void delete(Long id) {
         log.debug("Request to delete ReportRequisition : {}", id);
         reportRequisitionRepository.deleteById(id);
-        reportRequisitionSearchRepository.deleteById(id);
+        if (reportRequisitionSearchRepository != null) {
+            reportRequisitionSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ReportRequisitionDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of ReportRequisitions for query {}", query);
-        return reportRequisitionSearchRepository.search(query, pageable).map(reportRequisitionMapper::toDto);
+        if (reportRequisitionSearchRepository != null) {
+            return reportRequisitionSearchRepository.search(query, pageable).map(reportRequisitionMapper::toDto);
+        }
+        return reportRequisitionRepository.findAll(pageable).map(reportRequisitionMapper::toDto);
     }
 }

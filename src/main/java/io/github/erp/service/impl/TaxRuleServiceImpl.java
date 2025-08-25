@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.TaxRuleMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class TaxRuleServiceImpl implements TaxRuleService {
     public TaxRuleServiceImpl(
         TaxRuleRepository taxRuleRepository,
         TaxRuleMapper taxRuleMapper,
-        TaxRuleSearchRepository taxRuleSearchRepository
+        @Autowired(required = false) TaxRuleSearchRepository taxRuleSearchRepository
     ) {
         this.taxRuleRepository = taxRuleRepository;
         this.taxRuleMapper = taxRuleMapper;
@@ -65,7 +66,9 @@ public class TaxRuleServiceImpl implements TaxRuleService {
         TaxRule taxRule = taxRuleMapper.toEntity(taxRuleDTO);
         taxRule = taxRuleRepository.save(taxRule);
         TaxRuleDTO result = taxRuleMapper.toDto(taxRule);
-        taxRuleSearchRepository.save(taxRule);
+        if (taxRuleSearchRepository != null) {
+            taxRuleSearchRepository.save(taxRule);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class TaxRuleServiceImpl implements TaxRuleService {
             })
             .map(taxRuleRepository::save)
             .map(savedTaxRule -> {
-                taxRuleSearchRepository.save(savedTaxRule);
+                if (taxRuleSearchRepository != null) {
+                    taxRuleSearchRepository.save(savedTaxRule);
+                }
 
                 return savedTaxRule;
             })
@@ -111,13 +116,18 @@ public class TaxRuleServiceImpl implements TaxRuleService {
     public void delete(Long id) {
         log.debug("Request to delete TaxRule : {}", id);
         taxRuleRepository.deleteById(id);
-        taxRuleSearchRepository.deleteById(id);
+        if (taxRuleSearchRepository != null) {
+            taxRuleSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<TaxRuleDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of TaxRules for query {}", query);
-        return taxRuleSearchRepository.search(query, pageable).map(taxRuleMapper::toDto);
+        if (taxRuleSearchRepository != null) {
+            return taxRuleSearchRepository.search(query, pageable).map(taxRuleMapper::toDto);
+        }
+        return taxRuleRepository.findAll(pageable).map(taxRuleMapper::toDto);
     }
 }

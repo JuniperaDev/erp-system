@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.FxTransactionTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class FxTransactionTypeServiceImpl implements FxTransactionTypeService {
     public FxTransactionTypeServiceImpl(
         FxTransactionTypeRepository fxTransactionTypeRepository,
         FxTransactionTypeMapper fxTransactionTypeMapper,
-        FxTransactionTypeSearchRepository fxTransactionTypeSearchRepository
+        @Autowired(required = false) FxTransactionTypeSearchRepository fxTransactionTypeSearchRepository
     ) {
         this.fxTransactionTypeRepository = fxTransactionTypeRepository;
         this.fxTransactionTypeMapper = fxTransactionTypeMapper;
@@ -65,7 +66,9 @@ public class FxTransactionTypeServiceImpl implements FxTransactionTypeService {
         FxTransactionType fxTransactionType = fxTransactionTypeMapper.toEntity(fxTransactionTypeDTO);
         fxTransactionType = fxTransactionTypeRepository.save(fxTransactionType);
         FxTransactionTypeDTO result = fxTransactionTypeMapper.toDto(fxTransactionType);
-        fxTransactionTypeSearchRepository.save(fxTransactionType);
+        if (fxTransactionTypeSearchRepository != null) {
+            fxTransactionTypeSearchRepository.save(fxTransactionType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class FxTransactionTypeServiceImpl implements FxTransactionTypeService {
             })
             .map(fxTransactionTypeRepository::save)
             .map(savedFxTransactionType -> {
-                fxTransactionTypeSearchRepository.save(savedFxTransactionType);
+                if (fxTransactionTypeSearchRepository != null) {
+                    fxTransactionTypeSearchRepository.save(savedFxTransactionType);
+                }
 
                 return savedFxTransactionType;
             })
@@ -107,13 +112,18 @@ public class FxTransactionTypeServiceImpl implements FxTransactionTypeService {
     public void delete(Long id) {
         log.debug("Request to delete FxTransactionType : {}", id);
         fxTransactionTypeRepository.deleteById(id);
-        fxTransactionTypeSearchRepository.deleteById(id);
+        if (fxTransactionTypeSearchRepository != null) {
+            fxTransactionTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<FxTransactionTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of FxTransactionTypes for query {}", query);
-        return fxTransactionTypeSearchRepository.search(query, pageable).map(fxTransactionTypeMapper::toDto);
+        if (fxTransactionTypeSearchRepository != null) {
+            return fxTransactionTypeSearchRepository.search(query, pageable).map(fxTransactionTypeMapper::toDto);
+        }
+        return fxTransactionTypeRepository.findAll(pageable).map(fxTransactionTypeMapper::toDto);
     }
 }

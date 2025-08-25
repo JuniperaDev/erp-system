@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AgentBankingActivityMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AgentBankingActivityServiceImpl implements AgentBankingActivityServ
     public AgentBankingActivityServiceImpl(
         AgentBankingActivityRepository agentBankingActivityRepository,
         AgentBankingActivityMapper agentBankingActivityMapper,
-        AgentBankingActivitySearchRepository agentBankingActivitySearchRepository
+        @Autowired(required = false) AgentBankingActivitySearchRepository agentBankingActivitySearchRepository
     ) {
         this.agentBankingActivityRepository = agentBankingActivityRepository;
         this.agentBankingActivityMapper = agentBankingActivityMapper;
@@ -65,7 +66,9 @@ public class AgentBankingActivityServiceImpl implements AgentBankingActivityServ
         AgentBankingActivity agentBankingActivity = agentBankingActivityMapper.toEntity(agentBankingActivityDTO);
         agentBankingActivity = agentBankingActivityRepository.save(agentBankingActivity);
         AgentBankingActivityDTO result = agentBankingActivityMapper.toDto(agentBankingActivity);
-        agentBankingActivitySearchRepository.save(agentBankingActivity);
+        if (agentBankingActivitySearchRepository != null) {
+            agentBankingActivitySearchRepository.save(agentBankingActivity);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AgentBankingActivityServiceImpl implements AgentBankingActivityServ
             })
             .map(agentBankingActivityRepository::save)
             .map(savedAgentBankingActivity -> {
-                agentBankingActivitySearchRepository.save(savedAgentBankingActivity);
+                if (agentBankingActivitySearchRepository != null) {
+                    agentBankingActivitySearchRepository.save(savedAgentBankingActivity);
+                }
 
                 return savedAgentBankingActivity;
             })
@@ -107,13 +112,18 @@ public class AgentBankingActivityServiceImpl implements AgentBankingActivityServ
     public void delete(Long id) {
         log.debug("Request to delete AgentBankingActivity : {}", id);
         agentBankingActivityRepository.deleteById(id);
-        agentBankingActivitySearchRepository.deleteById(id);
+        if (agentBankingActivitySearchRepository != null) {
+            agentBankingActivitySearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AgentBankingActivityDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AgentBankingActivities for query {}", query);
-        return agentBankingActivitySearchRepository.search(query, pageable).map(agentBankingActivityMapper::toDto);
+        if (agentBankingActivitySearchRepository != null) {
+            return agentBankingActivitySearchRepository.search(query, pageable).map(agentBankingActivityMapper::toDto);
+        }
+        return agentBankingActivityRepository.findAll(pageable).map(agentBankingActivityMapper::toDto);
     }
 }

@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.DepreciationEntryReportItemMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class DepreciationEntryReportItemServiceImpl implements DepreciationEntry
     public DepreciationEntryReportItemServiceImpl(
         DepreciationEntryReportItemRepository depreciationEntryReportItemRepository,
         DepreciationEntryReportItemMapper depreciationEntryReportItemMapper,
-        DepreciationEntryReportItemSearchRepository depreciationEntryReportItemSearchRepository
+        @Autowired(required = false) DepreciationEntryReportItemSearchRepository depreciationEntryReportItemSearchRepository
     ) {
         this.depreciationEntryReportItemRepository = depreciationEntryReportItemRepository;
         this.depreciationEntryReportItemMapper = depreciationEntryReportItemMapper;
@@ -67,7 +68,9 @@ public class DepreciationEntryReportItemServiceImpl implements DepreciationEntry
         );
         depreciationEntryReportItem = depreciationEntryReportItemRepository.save(depreciationEntryReportItem);
         DepreciationEntryReportItemDTO result = depreciationEntryReportItemMapper.toDto(depreciationEntryReportItem);
-        depreciationEntryReportItemSearchRepository.save(depreciationEntryReportItem);
+        if (depreciationEntryReportItemSearchRepository != null) {
+            depreciationEntryReportItemSearchRepository.save(depreciationEntryReportItem);
+        }
         return result;
     }
 
@@ -84,7 +87,9 @@ public class DepreciationEntryReportItemServiceImpl implements DepreciationEntry
             })
             .map(depreciationEntryReportItemRepository::save)
             .map(savedDepreciationEntryReportItem -> {
-                depreciationEntryReportItemSearchRepository.save(savedDepreciationEntryReportItem);
+                if (depreciationEntryReportItemSearchRepository != null) {
+                    depreciationEntryReportItemSearchRepository.save(savedDepreciationEntryReportItem);
+                }
 
                 return savedDepreciationEntryReportItem;
             })
@@ -109,7 +114,9 @@ public class DepreciationEntryReportItemServiceImpl implements DepreciationEntry
     public void delete(Long id) {
         log.debug("Request to delete DepreciationEntryReportItem : {}", id);
         depreciationEntryReportItemRepository.deleteById(id);
-        depreciationEntryReportItemSearchRepository.deleteById(id);
+        if (depreciationEntryReportItemSearchRepository != null) {
+            depreciationEntryReportItemSearchRepository.deleteById(id);
+        }
     }
 
     @Override

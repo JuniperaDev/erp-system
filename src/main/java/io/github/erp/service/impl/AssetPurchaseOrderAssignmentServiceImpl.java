@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AssetPurchaseOrderAssignmentMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AssetPurchaseOrderAssignmentServiceImpl implements AssetPurchaseOrd
     public AssetPurchaseOrderAssignmentServiceImpl(
         AssetPurchaseOrderAssignmentRepository assetPurchaseOrderAssignmentRepository,
         AssetPurchaseOrderAssignmentMapper assetPurchaseOrderAssignmentMapper,
-        AssetPurchaseOrderAssignmentSearchRepository assetPurchaseOrderAssignmentSearchRepository
+        @Autowired(required = false) AssetPurchaseOrderAssignmentSearchRepository assetPurchaseOrderAssignmentSearchRepository
     ) {
         this.assetPurchaseOrderAssignmentRepository = assetPurchaseOrderAssignmentRepository;
         this.assetPurchaseOrderAssignmentMapper = assetPurchaseOrderAssignmentMapper;
@@ -65,7 +66,9 @@ public class AssetPurchaseOrderAssignmentServiceImpl implements AssetPurchaseOrd
         AssetPurchaseOrderAssignment assetPurchaseOrderAssignment = assetPurchaseOrderAssignmentMapper.toEntity(assetPurchaseOrderAssignmentDTO);
         assetPurchaseOrderAssignment = assetPurchaseOrderAssignmentRepository.save(assetPurchaseOrderAssignment);
         AssetPurchaseOrderAssignmentDTO result = assetPurchaseOrderAssignmentMapper.toDto(assetPurchaseOrderAssignment);
-        assetPurchaseOrderAssignmentSearchRepository.save(assetPurchaseOrderAssignment);
+        if (assetPurchaseOrderAssignmentSearchRepository != null) {
+            assetPurchaseOrderAssignmentSearchRepository.save(assetPurchaseOrderAssignment);
+        }
         return result;
     }
 
@@ -75,7 +78,9 @@ public class AssetPurchaseOrderAssignmentServiceImpl implements AssetPurchaseOrd
         AssetPurchaseOrderAssignment assetPurchaseOrderAssignment = assetPurchaseOrderAssignmentMapper.toEntity(assetPurchaseOrderAssignmentDTO);
         assetPurchaseOrderAssignment = assetPurchaseOrderAssignmentRepository.save(assetPurchaseOrderAssignment);
         AssetPurchaseOrderAssignmentDTO result = assetPurchaseOrderAssignmentMapper.toDto(assetPurchaseOrderAssignment);
-        assetPurchaseOrderAssignmentSearchRepository.save(assetPurchaseOrderAssignment);
+        if (assetPurchaseOrderAssignmentSearchRepository != null) {
+            assetPurchaseOrderAssignmentSearchRepository.save(assetPurchaseOrderAssignment);
+        }
         return result;
     }
 
@@ -92,7 +97,9 @@ public class AssetPurchaseOrderAssignmentServiceImpl implements AssetPurchaseOrd
             })
             .map(assetPurchaseOrderAssignmentRepository::save)
             .map(savedAssetPurchaseOrderAssignment -> {
-                assetPurchaseOrderAssignmentSearchRepository.save(savedAssetPurchaseOrderAssignment);
+                if (assetPurchaseOrderAssignmentSearchRepository != null) {
+                    assetPurchaseOrderAssignmentSearchRepository.save(savedAssetPurchaseOrderAssignment);
+                }
 
                 return savedAssetPurchaseOrderAssignment;
             })
@@ -117,13 +124,18 @@ public class AssetPurchaseOrderAssignmentServiceImpl implements AssetPurchaseOrd
     public void delete(Long id) {
         log.debug("Request to delete AssetPurchaseOrderAssignment : {}", id);
         assetPurchaseOrderAssignmentRepository.deleteById(id);
-        assetPurchaseOrderAssignmentSearchRepository.deleteById(id);
+        if (assetPurchaseOrderAssignmentSearchRepository != null) {
+            assetPurchaseOrderAssignmentSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AssetPurchaseOrderAssignmentDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AssetPurchaseOrderAssignments for query {}", query);
-        return assetPurchaseOrderAssignmentSearchRepository.search(query, pageable).map(assetPurchaseOrderAssignmentMapper::toDto);
+        if (assetPurchaseOrderAssignmentSearchRepository != null) {
+            return assetPurchaseOrderAssignmentSearchRepository.search(query, pageable).map(assetPurchaseOrderAssignmentMapper::toDto);
+        }
+        return assetPurchaseOrderAssignmentRepository.findAll(pageable).map(assetPurchaseOrderAssignmentMapper::toDto);
     }
 }

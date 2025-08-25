@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.MerchantTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class MerchantTypeServiceImpl implements MerchantTypeService {
     public MerchantTypeServiceImpl(
         MerchantTypeRepository merchantTypeRepository,
         MerchantTypeMapper merchantTypeMapper,
-        MerchantTypeSearchRepository merchantTypeSearchRepository
+        @Autowired(required = false) MerchantTypeSearchRepository merchantTypeSearchRepository
     ) {
         this.merchantTypeRepository = merchantTypeRepository;
         this.merchantTypeMapper = merchantTypeMapper;
@@ -65,7 +66,9 @@ public class MerchantTypeServiceImpl implements MerchantTypeService {
         MerchantType merchantType = merchantTypeMapper.toEntity(merchantTypeDTO);
         merchantType = merchantTypeRepository.save(merchantType);
         MerchantTypeDTO result = merchantTypeMapper.toDto(merchantType);
-        merchantTypeSearchRepository.save(merchantType);
+        if (merchantTypeSearchRepository != null) {
+            merchantTypeSearchRepository.save(merchantType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class MerchantTypeServiceImpl implements MerchantTypeService {
             })
             .map(merchantTypeRepository::save)
             .map(savedMerchantType -> {
-                merchantTypeSearchRepository.save(savedMerchantType);
+                if (merchantTypeSearchRepository != null) {
+                    merchantTypeSearchRepository.save(savedMerchantType);
+                }
 
                 return savedMerchantType;
             })
@@ -107,13 +112,18 @@ public class MerchantTypeServiceImpl implements MerchantTypeService {
     public void delete(Long id) {
         log.debug("Request to delete MerchantType : {}", id);
         merchantTypeRepository.deleteById(id);
-        merchantTypeSearchRepository.deleteById(id);
+        if (merchantTypeSearchRepository != null) {
+            merchantTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<MerchantTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of MerchantTypes for query {}", query);
-        return merchantTypeSearchRepository.search(query, pageable).map(merchantTypeMapper::toDto);
+        if (merchantTypeSearchRepository != null) {
+            return merchantTypeSearchRepository.search(query, pageable).map(merchantTypeMapper::toDto);
+        }
+        return merchantTypeRepository.findAll(pageable).map(merchantTypeMapper::toDto);
     }
 }

@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AssetPaymentInvoiceAssignmentMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AssetPaymentInvoiceAssignmentServiceImpl implements AssetPaymentInv
     public AssetPaymentInvoiceAssignmentServiceImpl(
         AssetPaymentInvoiceAssignmentRepository assetPaymentInvoiceAssignmentRepository,
         AssetPaymentInvoiceAssignmentMapper assetPaymentInvoiceAssignmentMapper,
-        AssetPaymentInvoiceAssignmentSearchRepository assetPaymentInvoiceAssignmentSearchRepository
+        @Autowired(required = false) AssetPaymentInvoiceAssignmentSearchRepository assetPaymentInvoiceAssignmentSearchRepository
     ) {
         this.assetPaymentInvoiceAssignmentRepository = assetPaymentInvoiceAssignmentRepository;
         this.assetPaymentInvoiceAssignmentMapper = assetPaymentInvoiceAssignmentMapper;
@@ -65,7 +66,9 @@ public class AssetPaymentInvoiceAssignmentServiceImpl implements AssetPaymentInv
         AssetPaymentInvoiceAssignment assetPaymentInvoiceAssignment = assetPaymentInvoiceAssignmentMapper.toEntity(assetPaymentInvoiceAssignmentDTO);
         assetPaymentInvoiceAssignment = assetPaymentInvoiceAssignmentRepository.save(assetPaymentInvoiceAssignment);
         AssetPaymentInvoiceAssignmentDTO result = assetPaymentInvoiceAssignmentMapper.toDto(assetPaymentInvoiceAssignment);
-        assetPaymentInvoiceAssignmentSearchRepository.save(assetPaymentInvoiceAssignment);
+        if (assetPaymentInvoiceAssignmentSearchRepository != null) {
+            assetPaymentInvoiceAssignmentSearchRepository.save(assetPaymentInvoiceAssignment);
+        }
         return result;
     }
 
@@ -75,7 +78,9 @@ public class AssetPaymentInvoiceAssignmentServiceImpl implements AssetPaymentInv
         AssetPaymentInvoiceAssignment assetPaymentInvoiceAssignment = assetPaymentInvoiceAssignmentMapper.toEntity(assetPaymentInvoiceAssignmentDTO);
         assetPaymentInvoiceAssignment = assetPaymentInvoiceAssignmentRepository.save(assetPaymentInvoiceAssignment);
         AssetPaymentInvoiceAssignmentDTO result = assetPaymentInvoiceAssignmentMapper.toDto(assetPaymentInvoiceAssignment);
-        assetPaymentInvoiceAssignmentSearchRepository.save(assetPaymentInvoiceAssignment);
+        if (assetPaymentInvoiceAssignmentSearchRepository != null) {
+            assetPaymentInvoiceAssignmentSearchRepository.save(assetPaymentInvoiceAssignment);
+        }
         return result;
     }
 
@@ -92,7 +97,9 @@ public class AssetPaymentInvoiceAssignmentServiceImpl implements AssetPaymentInv
             })
             .map(assetPaymentInvoiceAssignmentRepository::save)
             .map(savedAssetPaymentInvoiceAssignment -> {
-                assetPaymentInvoiceAssignmentSearchRepository.save(savedAssetPaymentInvoiceAssignment);
+                if (assetPaymentInvoiceAssignmentSearchRepository != null) {
+                    assetPaymentInvoiceAssignmentSearchRepository.save(savedAssetPaymentInvoiceAssignment);
+                }
 
                 return savedAssetPaymentInvoiceAssignment;
             })
@@ -117,13 +124,18 @@ public class AssetPaymentInvoiceAssignmentServiceImpl implements AssetPaymentInv
     public void delete(Long id) {
         log.debug("Request to delete AssetPaymentInvoiceAssignment : {}", id);
         assetPaymentInvoiceAssignmentRepository.deleteById(id);
-        assetPaymentInvoiceAssignmentSearchRepository.deleteById(id);
+        if (assetPaymentInvoiceAssignmentSearchRepository != null) {
+            assetPaymentInvoiceAssignmentSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AssetPaymentInvoiceAssignmentDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AssetPaymentInvoiceAssignments for query {}", query);
-        return assetPaymentInvoiceAssignmentSearchRepository.search(query, pageable).map(assetPaymentInvoiceAssignmentMapper::toDto);
+        if (assetPaymentInvoiceAssignmentSearchRepository != null) {
+            return assetPaymentInvoiceAssignmentSearchRepository.search(query, pageable).map(assetPaymentInvoiceAssignmentMapper::toDto);
+        }
+        return assetPaymentInvoiceAssignmentRepository.findAll(pageable).map(assetPaymentInvoiceAssignmentMapper::toDto);
     }
 }

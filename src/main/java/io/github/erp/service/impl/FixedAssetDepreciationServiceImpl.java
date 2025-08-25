@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.FixedAssetDepreciationMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class FixedAssetDepreciationServiceImpl implements FixedAssetDepreciation
     public FixedAssetDepreciationServiceImpl(
         FixedAssetDepreciationRepository fixedAssetDepreciationRepository,
         FixedAssetDepreciationMapper fixedAssetDepreciationMapper,
-        FixedAssetDepreciationSearchRepository fixedAssetDepreciationSearchRepository
+        @Autowired(required = false) FixedAssetDepreciationSearchRepository fixedAssetDepreciationSearchRepository
     ) {
         this.fixedAssetDepreciationRepository = fixedAssetDepreciationRepository;
         this.fixedAssetDepreciationMapper = fixedAssetDepreciationMapper;
@@ -65,7 +66,9 @@ public class FixedAssetDepreciationServiceImpl implements FixedAssetDepreciation
         FixedAssetDepreciation fixedAssetDepreciation = fixedAssetDepreciationMapper.toEntity(fixedAssetDepreciationDTO);
         fixedAssetDepreciation = fixedAssetDepreciationRepository.save(fixedAssetDepreciation);
         FixedAssetDepreciationDTO result = fixedAssetDepreciationMapper.toDto(fixedAssetDepreciation);
-        fixedAssetDepreciationSearchRepository.save(fixedAssetDepreciation);
+        if (fixedAssetDepreciationSearchRepository != null) {
+            fixedAssetDepreciationSearchRepository.save(fixedAssetDepreciation);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class FixedAssetDepreciationServiceImpl implements FixedAssetDepreciation
             })
             .map(fixedAssetDepreciationRepository::save)
             .map(savedFixedAssetDepreciation -> {
-                fixedAssetDepreciationSearchRepository.save(savedFixedAssetDepreciation);
+                if (fixedAssetDepreciationSearchRepository != null) {
+                    fixedAssetDepreciationSearchRepository.save(savedFixedAssetDepreciation);
+                }
 
                 return savedFixedAssetDepreciation;
             })
@@ -111,13 +116,18 @@ public class FixedAssetDepreciationServiceImpl implements FixedAssetDepreciation
     public void delete(Long id) {
         log.debug("Request to delete FixedAssetDepreciation : {}", id);
         fixedAssetDepreciationRepository.deleteById(id);
-        fixedAssetDepreciationSearchRepository.deleteById(id);
+        if (fixedAssetDepreciationSearchRepository != null) {
+            fixedAssetDepreciationSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<FixedAssetDepreciationDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of FixedAssetDepreciations for query {}", query);
-        return fixedAssetDepreciationSearchRepository.search(query, pageable).map(fixedAssetDepreciationMapper::toDto);
+        if (fixedAssetDepreciationSearchRepository != null) {
+            return fixedAssetDepreciationSearchRepository.search(query, pageable).map(fixedAssetDepreciationMapper::toDto);
+        }
+        return fixedAssetDepreciationRepository.findAll(pageable).map(fixedAssetDepreciationMapper::toDto);
     }
 }

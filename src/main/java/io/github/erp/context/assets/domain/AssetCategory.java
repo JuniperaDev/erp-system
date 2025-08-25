@@ -1,4 +1,4 @@
-package io.github.erp.domain;
+package io.github.erp.context.assets.domain;
 
 /*-
  * Erp System - Mark X No 10 (Jehoiada Series) Server ver 1.8.2
@@ -19,6 +19,8 @@ package io.github.erp.domain;
  */
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.github.erp.domain.DepreciationMethod;
+import io.github.erp.domain.Placeholder;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;

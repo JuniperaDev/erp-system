@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.FxCustomerTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class FxCustomerTypeServiceImpl implements FxCustomerTypeService {
     public FxCustomerTypeServiceImpl(
         FxCustomerTypeRepository fxCustomerTypeRepository,
         FxCustomerTypeMapper fxCustomerTypeMapper,
-        FxCustomerTypeSearchRepository fxCustomerTypeSearchRepository
+        @Autowired(required = false) FxCustomerTypeSearchRepository fxCustomerTypeSearchRepository
     ) {
         this.fxCustomerTypeRepository = fxCustomerTypeRepository;
         this.fxCustomerTypeMapper = fxCustomerTypeMapper;
@@ -65,7 +66,9 @@ public class FxCustomerTypeServiceImpl implements FxCustomerTypeService {
         FxCustomerType fxCustomerType = fxCustomerTypeMapper.toEntity(fxCustomerTypeDTO);
         fxCustomerType = fxCustomerTypeRepository.save(fxCustomerType);
         FxCustomerTypeDTO result = fxCustomerTypeMapper.toDto(fxCustomerType);
-        fxCustomerTypeSearchRepository.save(fxCustomerType);
+        if (fxCustomerTypeSearchRepository != null) {
+            fxCustomerTypeSearchRepository.save(fxCustomerType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class FxCustomerTypeServiceImpl implements FxCustomerTypeService {
             })
             .map(fxCustomerTypeRepository::save)
             .map(savedFxCustomerType -> {
-                fxCustomerTypeSearchRepository.save(savedFxCustomerType);
+                if (fxCustomerTypeSearchRepository != null) {
+                    fxCustomerTypeSearchRepository.save(savedFxCustomerType);
+                }
 
                 return savedFxCustomerType;
             })
@@ -107,13 +112,18 @@ public class FxCustomerTypeServiceImpl implements FxCustomerTypeService {
     public void delete(Long id) {
         log.debug("Request to delete FxCustomerType : {}", id);
         fxCustomerTypeRepository.deleteById(id);
-        fxCustomerTypeSearchRepository.deleteById(id);
+        if (fxCustomerTypeSearchRepository != null) {
+            fxCustomerTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<FxCustomerTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of FxCustomerTypes for query {}", query);
-        return fxCustomerTypeSearchRepository.search(query, pageable).map(fxCustomerTypeMapper::toDto);
+        if (fxCustomerTypeSearchRepository != null) {
+            return fxCustomerTypeSearchRepository.search(query, pageable).map(fxCustomerTypeMapper::toDto);
+        }
+        return fxCustomerTypeRepository.findAll(pageable).map(fxCustomerTypeMapper::toDto);
     }
 }

@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AssetAdditionsReportMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AssetAdditionsReportServiceImpl implements AssetAdditionsReportServ
     public AssetAdditionsReportServiceImpl(
         AssetAdditionsReportRepository assetAdditionsReportRepository,
         AssetAdditionsReportMapper assetAdditionsReportMapper,
-        AssetAdditionsReportSearchRepository assetAdditionsReportSearchRepository
+        @Autowired(required = false) AssetAdditionsReportSearchRepository assetAdditionsReportSearchRepository
     ) {
         this.assetAdditionsReportRepository = assetAdditionsReportRepository;
         this.assetAdditionsReportMapper = assetAdditionsReportMapper;
@@ -65,7 +66,9 @@ public class AssetAdditionsReportServiceImpl implements AssetAdditionsReportServ
         AssetAdditionsReport assetAdditionsReport = assetAdditionsReportMapper.toEntity(assetAdditionsReportDTO);
         assetAdditionsReport = assetAdditionsReportRepository.save(assetAdditionsReport);
         AssetAdditionsReportDTO result = assetAdditionsReportMapper.toDto(assetAdditionsReport);
-        assetAdditionsReportSearchRepository.save(assetAdditionsReport);
+        if (assetAdditionsReportSearchRepository != null) {
+            assetAdditionsReportSearchRepository.save(assetAdditionsReport);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AssetAdditionsReportServiceImpl implements AssetAdditionsReportServ
             })
             .map(assetAdditionsReportRepository::save)
             .map(savedAssetAdditionsReport -> {
-                assetAdditionsReportSearchRepository.save(savedAssetAdditionsReport);
+                if (assetAdditionsReportSearchRepository != null) {
+                    assetAdditionsReportSearchRepository.save(savedAssetAdditionsReport);
+                }
 
                 return savedAssetAdditionsReport;
             })
@@ -107,13 +112,18 @@ public class AssetAdditionsReportServiceImpl implements AssetAdditionsReportServ
     public void delete(Long id) {
         log.debug("Request to delete AssetAdditionsReport : {}", id);
         assetAdditionsReportRepository.deleteById(id);
-        assetAdditionsReportSearchRepository.deleteById(id);
+        if (assetAdditionsReportSearchRepository != null) {
+            assetAdditionsReportSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AssetAdditionsReportDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AssetAdditionsReports for query {}", query);
-        return assetAdditionsReportSearchRepository.search(query, pageable).map(assetAdditionsReportMapper::toDto);
+        if (assetAdditionsReportSearchRepository != null) {
+            return assetAdditionsReportSearchRepository.search(query, pageable).map(assetAdditionsReportMapper::toDto);
+        }
+        return assetAdditionsReportRepository.findAll(pageable).map(assetAdditionsReportMapper::toDto);
     }
 }

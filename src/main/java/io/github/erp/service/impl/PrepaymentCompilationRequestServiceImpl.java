@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.PrepaymentCompilationRequestMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class PrepaymentCompilationRequestServiceImpl implements PrepaymentCompil
     public PrepaymentCompilationRequestServiceImpl(
         PrepaymentCompilationRequestRepository prepaymentCompilationRequestRepository,
         PrepaymentCompilationRequestMapper prepaymentCompilationRequestMapper,
-        PrepaymentCompilationRequestSearchRepository prepaymentCompilationRequestSearchRepository
+        @Autowired(required = false) PrepaymentCompilationRequestSearchRepository prepaymentCompilationRequestSearchRepository
     ) {
         this.prepaymentCompilationRequestRepository = prepaymentCompilationRequestRepository;
         this.prepaymentCompilationRequestMapper = prepaymentCompilationRequestMapper;
@@ -67,7 +68,9 @@ public class PrepaymentCompilationRequestServiceImpl implements PrepaymentCompil
         );
         prepaymentCompilationRequest = prepaymentCompilationRequestRepository.save(prepaymentCompilationRequest);
         PrepaymentCompilationRequestDTO result = prepaymentCompilationRequestMapper.toDto(prepaymentCompilationRequest);
-        prepaymentCompilationRequestSearchRepository.save(prepaymentCompilationRequest);
+        if (prepaymentCompilationRequestSearchRepository != null) {
+            prepaymentCompilationRequestSearchRepository.save(prepaymentCompilationRequest);
+        }
         return result;
     }
 
@@ -84,7 +87,9 @@ public class PrepaymentCompilationRequestServiceImpl implements PrepaymentCompil
             })
             .map(prepaymentCompilationRequestRepository::save)
             .map(savedPrepaymentCompilationRequest -> {
-                prepaymentCompilationRequestSearchRepository.save(savedPrepaymentCompilationRequest);
+                if (prepaymentCompilationRequestSearchRepository != null) {
+                    prepaymentCompilationRequestSearchRepository.save(savedPrepaymentCompilationRequest);
+                }
 
                 return savedPrepaymentCompilationRequest;
             })
@@ -115,13 +120,18 @@ public class PrepaymentCompilationRequestServiceImpl implements PrepaymentCompil
     public void delete(Long id) {
         log.debug("Request to delete PrepaymentCompilationRequest : {}", id);
         prepaymentCompilationRequestRepository.deleteById(id);
-        prepaymentCompilationRequestSearchRepository.deleteById(id);
+        if (prepaymentCompilationRequestSearchRepository != null) {
+            prepaymentCompilationRequestSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<PrepaymentCompilationRequestDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of PrepaymentCompilationRequests for query {}", query);
-        return prepaymentCompilationRequestSearchRepository.search(query, pageable).map(prepaymentCompilationRequestMapper::toDto);
+        if (prepaymentCompilationRequestSearchRepository != null) {
+            return prepaymentCompilationRequestSearchRepository.search(query, pageable).map(prepaymentCompilationRequestMapper::toDto);
+        }
+        return prepaymentCompilationRequestRepository.findAll(pageable).map(prepaymentCompilationRequestMapper::toDto);
     }
 }

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Added the acquiring_transaction_id column to asset_registration table for bounded context separation.
+        This replaces the direct JPA relationship to Settlement with a reference ID for cross-context integration.
+    -->
+    <changeSet id="20250821192100-1" author="devin-ai">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="asset_registration" columnName="acquiring_transaction_id"/>
+            </not>
+        </preConditions>
+        
+        <addColumn tableName="asset_registration">
+            <column name="acquiring_transaction_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        
+        <rollback>
+            <dropColumn tableName="asset_registration" columnName="acquiring_transaction_id"/>
+        </rollback>
+    </changeSet>
+
+    <!--
+        Migrate existing Settlement relationships to acquiring_transaction_id
+    -->
+    <changeSet id="20250821192100-2" author="devin-ai">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__settlement"/>
+            <columnExists tableName="asset_registration" columnName="acquiring_transaction_id"/>
+        </preConditions>
+        
+        <sql>
+            UPDATE asset_registration 
+            SET acquiring_transaction_id = (
+                SELECT settlement_id 
+                FROM rel_asset_registration__settlement 
+                WHERE rel_asset_registration__settlement.asset_registration_id = asset_registration.id 
+                LIMIT 1
+            )
+            WHERE EXISTS (
+                SELECT 1 FROM rel_asset_registration__settlement 
+                WHERE rel_asset_registration__settlement.asset_registration_id = asset_registration.id
+            );
+        </sql>
+        
+        <rollback>
+            <sql>
+                UPDATE asset_registration 
+                SET acquiring_transaction_id = NULL;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <!--
+        Drop old Settlement join table after migration
+    -->
+    <changeSet id="20250821192100-4" author="devin-ai">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rel_asset_registration__settlement"/>
+        </preConditions>
+        
+        <dropTable tableName="rel_asset_registration__settlement"/>
+        
+        <rollback>
+            <createTable tableName="rel_asset_registration__settlement">
+                <column name="settlement_id" type="bigint">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="asset_registration_id" type="bigint">
+                    <constraints nullable="false"/>
+                </column>
+            </createTable>
+            <addPrimaryKey columnNames="asset_registration_id, settlement_id" tableName="rel_asset_registration__settlement"/>
+        </rollback>
+    </changeSet>
+
+    <!--
+        Add index for performance on acquiring_transaction_id lookups
+    -->
+    <changeSet id="20250821192100-3" author="devin-ai">
+        <createIndex indexName="idx_asset_registration_acquiring_transaction_id" tableName="asset_registration">
+            <column name="acquiring_transaction_id"/>
+        </createIndex>
+        
+        <rollback>
+            <dropIndex indexName="idx_asset_registration_acquiring_transaction_id" tableName="asset_registration"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

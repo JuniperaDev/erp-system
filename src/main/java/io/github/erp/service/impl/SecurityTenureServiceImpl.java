@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.SecurityTenureMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class SecurityTenureServiceImpl implements SecurityTenureService {
     public SecurityTenureServiceImpl(
         SecurityTenureRepository securityTenureRepository,
         SecurityTenureMapper securityTenureMapper,
-        SecurityTenureSearchRepository securityTenureSearchRepository
+        @Autowired(required = false) SecurityTenureSearchRepository securityTenureSearchRepository
     ) {
         this.securityTenureRepository = securityTenureRepository;
         this.securityTenureMapper = securityTenureMapper;
@@ -65,7 +66,9 @@ public class SecurityTenureServiceImpl implements SecurityTenureService {
         SecurityTenure securityTenure = securityTenureMapper.toEntity(securityTenureDTO);
         securityTenure = securityTenureRepository.save(securityTenure);
         SecurityTenureDTO result = securityTenureMapper.toDto(securityTenure);
-        securityTenureSearchRepository.save(securityTenure);
+        if (securityTenureSearchRepository != null) {
+            securityTenureSearchRepository.save(securityTenure);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class SecurityTenureServiceImpl implements SecurityTenureService {
             })
             .map(securityTenureRepository::save)
             .map(savedSecurityTenure -> {
-                securityTenureSearchRepository.save(savedSecurityTenure);
+                if (securityTenureSearchRepository != null) {
+                    securityTenureSearchRepository.save(savedSecurityTenure);
+                }
 
                 return savedSecurityTenure;
             })
@@ -107,13 +112,18 @@ public class SecurityTenureServiceImpl implements SecurityTenureService {
     public void delete(Long id) {
         log.debug("Request to delete SecurityTenure : {}", id);
         securityTenureRepository.deleteById(id);
-        securityTenureSearchRepository.deleteById(id);
+        if (securityTenureSearchRepository != null) {
+            securityTenureSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<SecurityTenureDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of SecurityTenures for query {}", query);
-        return securityTenureSearchRepository.search(query, pageable).map(securityTenureMapper::toDto);
+        if (securityTenureSearchRepository != null) {
+            return securityTenureSearchRepository.search(query, pageable).map(securityTenureMapper::toDto);
+        }
+        return securityTenureRepository.findAll(pageable).map(securityTenureMapper::toDto);
     }
 }

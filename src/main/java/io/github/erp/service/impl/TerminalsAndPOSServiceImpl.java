@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.TerminalsAndPOSMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class TerminalsAndPOSServiceImpl implements TerminalsAndPOSService {
     public TerminalsAndPOSServiceImpl(
         TerminalsAndPOSRepository terminalsAndPOSRepository,
         TerminalsAndPOSMapper terminalsAndPOSMapper,
-        TerminalsAndPOSSearchRepository terminalsAndPOSSearchRepository
+        @Autowired(required = false) TerminalsAndPOSSearchRepository terminalsAndPOSSearchRepository
     ) {
         this.terminalsAndPOSRepository = terminalsAndPOSRepository;
         this.terminalsAndPOSMapper = terminalsAndPOSMapper;
@@ -65,7 +66,9 @@ public class TerminalsAndPOSServiceImpl implements TerminalsAndPOSService {
         TerminalsAndPOS terminalsAndPOS = terminalsAndPOSMapper.toEntity(terminalsAndPOSDTO);
         terminalsAndPOS = terminalsAndPOSRepository.save(terminalsAndPOS);
         TerminalsAndPOSDTO result = terminalsAndPOSMapper.toDto(terminalsAndPOS);
-        terminalsAndPOSSearchRepository.save(terminalsAndPOS);
+        if (terminalsAndPOSSearchRepository != null) {
+            terminalsAndPOSSearchRepository.save(terminalsAndPOS);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class TerminalsAndPOSServiceImpl implements TerminalsAndPOSService {
             })
             .map(terminalsAndPOSRepository::save)
             .map(savedTerminalsAndPOS -> {
-                terminalsAndPOSSearchRepository.save(savedTerminalsAndPOS);
+                if (terminalsAndPOSSearchRepository != null) {
+                    terminalsAndPOSSearchRepository.save(savedTerminalsAndPOS);
+                }
 
                 return savedTerminalsAndPOS;
             })
@@ -107,13 +112,18 @@ public class TerminalsAndPOSServiceImpl implements TerminalsAndPOSService {
     public void delete(Long id) {
         log.debug("Request to delete TerminalsAndPOS : {}", id);
         terminalsAndPOSRepository.deleteById(id);
-        terminalsAndPOSSearchRepository.deleteById(id);
+        if (terminalsAndPOSSearchRepository != null) {
+            terminalsAndPOSSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<TerminalsAndPOSDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of TerminalsAndPOS for query {}", query);
-        return terminalsAndPOSSearchRepository.search(query, pageable).map(terminalsAndPOSMapper::toDto);
+        if (terminalsAndPOSSearchRepository != null) {
+            return terminalsAndPOSSearchRepository.search(query, pageable).map(terminalsAndPOSMapper::toDto);
+        }
+        return terminalsAndPOSRepository.findAll(pageable).map(terminalsAndPOSMapper::toDto);
     }
 }

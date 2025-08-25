@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.SubCountyCodeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class SubCountyCodeServiceImpl implements SubCountyCodeService {
     public SubCountyCodeServiceImpl(
         SubCountyCodeRepository subCountyCodeRepository,
         SubCountyCodeMapper subCountyCodeMapper,
-        SubCountyCodeSearchRepository subCountyCodeSearchRepository
+        @Autowired(required = false) SubCountyCodeSearchRepository subCountyCodeSearchRepository
     ) {
         this.subCountyCodeRepository = subCountyCodeRepository;
         this.subCountyCodeMapper = subCountyCodeMapper;
@@ -65,7 +66,9 @@ public class SubCountyCodeServiceImpl implements SubCountyCodeService {
         SubCountyCode subCountyCode = subCountyCodeMapper.toEntity(subCountyCodeDTO);
         subCountyCode = subCountyCodeRepository.save(subCountyCode);
         SubCountyCodeDTO result = subCountyCodeMapper.toDto(subCountyCode);
-        subCountyCodeSearchRepository.save(subCountyCode);
+        if (subCountyCodeSearchRepository != null) {
+            subCountyCodeSearchRepository.save(subCountyCode);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class SubCountyCodeServiceImpl implements SubCountyCodeService {
             })
             .map(subCountyCodeRepository::save)
             .map(savedSubCountyCode -> {
-                subCountyCodeSearchRepository.save(savedSubCountyCode);
+                if (subCountyCodeSearchRepository != null) {
+                    subCountyCodeSearchRepository.save(savedSubCountyCode);
+                }
 
                 return savedSubCountyCode;
             })
@@ -111,13 +116,18 @@ public class SubCountyCodeServiceImpl implements SubCountyCodeService {
     public void delete(Long id) {
         log.debug("Request to delete SubCountyCode : {}", id);
         subCountyCodeRepository.deleteById(id);
-        subCountyCodeSearchRepository.deleteById(id);
+        if (subCountyCodeSearchRepository != null) {
+            subCountyCodeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<SubCountyCodeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of SubCountyCodes for query {}", query);
-        return subCountyCodeSearchRepository.search(query, pageable).map(subCountyCodeMapper::toDto);
+        if (subCountyCodeSearchRepository != null) {
+            return subCountyCodeSearchRepository.search(query, pageable).map(subCountyCodeMapper::toDto);
+        }
+        return subCountyCodeRepository.findAll(pageable).map(subCountyCodeMapper::toDto);
     }
 }

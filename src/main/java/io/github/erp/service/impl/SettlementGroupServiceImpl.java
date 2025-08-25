@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.SettlementGroupMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class SettlementGroupServiceImpl implements SettlementGroupService {
     public SettlementGroupServiceImpl(
         SettlementGroupRepository settlementGroupRepository,
         SettlementGroupMapper settlementGroupMapper,
-        SettlementGroupSearchRepository settlementGroupSearchRepository
+        @Autowired(required = false) SettlementGroupSearchRepository settlementGroupSearchRepository
     ) {
         this.settlementGroupRepository = settlementGroupRepository;
         this.settlementGroupMapper = settlementGroupMapper;
@@ -66,7 +67,9 @@ public class SettlementGroupServiceImpl implements SettlementGroupService {
         SettlementGroup settlementGroup = settlementGroupMapper.toEntity(settlementGroupDTO);
         settlementGroup = settlementGroupRepository.save(settlementGroup);
         SettlementGroupDTO result = settlementGroupMapper.toDto(settlementGroup);
-        settlementGroupSearchRepository.save(settlementGroup);
+        if (settlementGroupSearchRepository != null) {
+            settlementGroupSearchRepository.save(settlementGroup);
+        }
         return result;
     }
 
@@ -77,7 +80,9 @@ public class SettlementGroupServiceImpl implements SettlementGroupService {
         SettlementGroup settlementGroup = settlementGroupMapper.toEntity(settlementGroupDTO);
         settlementGroup = settlementGroupRepository.save(settlementGroup);
         SettlementGroupDTO result = settlementGroupMapper.toDto(settlementGroup);
-        settlementGroupSearchRepository.save(settlementGroup);
+        if (settlementGroupSearchRepository != null) {
+            settlementGroupSearchRepository.save(settlementGroup);
+        }
         return result;
     }
 
@@ -97,7 +102,9 @@ public class SettlementGroupServiceImpl implements SettlementGroupService {
             })
             .map(settlementGroupRepository::save)
             .map(savedSettlementGroup -> {
-                settlementGroupSearchRepository.save(savedSettlementGroup);
+                if (settlementGroupSearchRepository != null) {
+                    settlementGroupSearchRepository.save(savedSettlementGroup);
+                }
                 return savedSettlementGroup;
             })
             .map(settlementGroupMapper::toDto);
@@ -125,14 +132,19 @@ public class SettlementGroupServiceImpl implements SettlementGroupService {
     public void delete(Long id) {
         log.debug("Request to delete SettlementGroup : {}", id);
         settlementGroupRepository.deleteById(id);
-        settlementGroupSearchRepository.deleteById(id);
+        if (settlementGroupSearchRepository != null) {
+            settlementGroupSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<SettlementGroupDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of SettlementGroups for query {}", query);
-        return settlementGroupSearchRepository.search(query, pageable).map(settlementGroupMapper::toDto);
+        if (settlementGroupSearchRepository != null) {
+            return settlementGroupSearchRepository.search(query, pageable).map(settlementGroupMapper::toDto);
+        }
+        return settlementGroupRepository.findAll(pageable).map(settlementGroupMapper::toDto);
     }
 
     private void validateCircularReference(SettlementGroupDTO settlementGroupDTO) {

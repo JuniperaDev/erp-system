@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.PdfReportRequisitionMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class PdfReportRequisitionServiceImpl implements PdfReportRequisitionServ
     public PdfReportRequisitionServiceImpl(
         PdfReportRequisitionRepository pdfReportRequisitionRepository,
         PdfReportRequisitionMapper pdfReportRequisitionMapper,
-        PdfReportRequisitionSearchRepository pdfReportRequisitionSearchRepository
+        @Autowired(required = false) PdfReportRequisitionSearchRepository pdfReportRequisitionSearchRepository
     ) {
         this.pdfReportRequisitionRepository = pdfReportRequisitionRepository;
         this.pdfReportRequisitionMapper = pdfReportRequisitionMapper;
@@ -65,7 +66,9 @@ public class PdfReportRequisitionServiceImpl implements PdfReportRequisitionServ
         PdfReportRequisition pdfReportRequisition = pdfReportRequisitionMapper.toEntity(pdfReportRequisitionDTO);
         pdfReportRequisition = pdfReportRequisitionRepository.save(pdfReportRequisition);
         PdfReportRequisitionDTO result = pdfReportRequisitionMapper.toDto(pdfReportRequisition);
-        pdfReportRequisitionSearchRepository.save(pdfReportRequisition);
+        if (pdfReportRequisitionSearchRepository != null) {
+            pdfReportRequisitionSearchRepository.save(pdfReportRequisition);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class PdfReportRequisitionServiceImpl implements PdfReportRequisitionServ
             })
             .map(pdfReportRequisitionRepository::save)
             .map(savedPdfReportRequisition -> {
-                pdfReportRequisitionSearchRepository.save(savedPdfReportRequisition);
+                if (pdfReportRequisitionSearchRepository != null) {
+                    pdfReportRequisitionSearchRepository.save(savedPdfReportRequisition);
+                }
 
                 return savedPdfReportRequisition;
             })
@@ -111,13 +116,18 @@ public class PdfReportRequisitionServiceImpl implements PdfReportRequisitionServ
     public void delete(Long id) {
         log.debug("Request to delete PdfReportRequisition : {}", id);
         pdfReportRequisitionRepository.deleteById(id);
-        pdfReportRequisitionSearchRepository.deleteById(id);
+        if (pdfReportRequisitionSearchRepository != null) {
+            pdfReportRequisitionSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<PdfReportRequisitionDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of PdfReportRequisitions for query {}", query);
-        return pdfReportRequisitionSearchRepository.search(query, pageable).map(pdfReportRequisitionMapper::toDto);
+        if (pdfReportRequisitionSearchRepository != null) {
+            return pdfReportRequisitionSearchRepository.search(query, pageable).map(pdfReportRequisitionMapper::toDto);
+        }
+        return pdfReportRequisitionRepository.findAll(pageable).map(pdfReportRequisitionMapper::toDto);
     }
 }

@@ -17,8 +17,8 @@ package io.github.erp.internal.repository;
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import io.github.erp.domain.AssetDisposal;
-import io.github.erp.domain.AssetRevaluation;
+import io.github.erp.context.assets.domain.AssetDisposal;
+import io.github.erp.context.assets.domain.AssetRevaluation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

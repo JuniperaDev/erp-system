@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.DerivativeSubTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class DerivativeSubTypeServiceImpl implements DerivativeSubTypeService {
     public DerivativeSubTypeServiceImpl(
         DerivativeSubTypeRepository derivativeSubTypeRepository,
         DerivativeSubTypeMapper derivativeSubTypeMapper,
-        DerivativeSubTypeSearchRepository derivativeSubTypeSearchRepository
+        @Autowired(required = false) DerivativeSubTypeSearchRepository derivativeSubTypeSearchRepository
     ) {
         this.derivativeSubTypeRepository = derivativeSubTypeRepository;
         this.derivativeSubTypeMapper = derivativeSubTypeMapper;
@@ -65,7 +66,9 @@ public class DerivativeSubTypeServiceImpl implements DerivativeSubTypeService {
         DerivativeSubType derivativeSubType = derivativeSubTypeMapper.toEntity(derivativeSubTypeDTO);
         derivativeSubType = derivativeSubTypeRepository.save(derivativeSubType);
         DerivativeSubTypeDTO result = derivativeSubTypeMapper.toDto(derivativeSubType);
-        derivativeSubTypeSearchRepository.save(derivativeSubType);
+        if (derivativeSubTypeSearchRepository != null) {
+            derivativeSubTypeSearchRepository.save(derivativeSubType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class DerivativeSubTypeServiceImpl implements DerivativeSubTypeService {
             })
             .map(derivativeSubTypeRepository::save)
             .map(savedDerivativeSubType -> {
-                derivativeSubTypeSearchRepository.save(savedDerivativeSubType);
+                if (derivativeSubTypeSearchRepository != null) {
+                    derivativeSubTypeSearchRepository.save(savedDerivativeSubType);
+                }
 
                 return savedDerivativeSubType;
             })
@@ -107,13 +112,18 @@ public class DerivativeSubTypeServiceImpl implements DerivativeSubTypeService {
     public void delete(Long id) {
         log.debug("Request to delete DerivativeSubType : {}", id);
         derivativeSubTypeRepository.deleteById(id);
-        derivativeSubTypeSearchRepository.deleteById(id);
+        if (derivativeSubTypeSearchRepository != null) {
+            derivativeSubTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<DerivativeSubTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of DerivativeSubTypes for query {}", query);
-        return derivativeSubTypeSearchRepository.search(query, pageable).map(derivativeSubTypeMapper::toDto);
+        if (derivativeSubTypeSearchRepository != null) {
+            return derivativeSubTypeSearchRepository.search(query, pageable).map(derivativeSubTypeMapper::toDto);
+        }
+        return derivativeSubTypeRepository.findAll(pageable).map(derivativeSubTypeMapper::toDto);
     }
 }

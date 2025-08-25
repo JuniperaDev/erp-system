@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.RouAccountBalanceReportMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class RouAccountBalanceReportServiceImpl implements RouAccountBalanceRepo
     public RouAccountBalanceReportServiceImpl(
         RouAccountBalanceReportRepository rouAccountBalanceReportRepository,
         RouAccountBalanceReportMapper rouAccountBalanceReportMapper,
-        RouAccountBalanceReportSearchRepository rouAccountBalanceReportSearchRepository
+        @Autowired(required = false) RouAccountBalanceReportSearchRepository rouAccountBalanceReportSearchRepository
     ) {
         this.rouAccountBalanceReportRepository = rouAccountBalanceReportRepository;
         this.rouAccountBalanceReportMapper = rouAccountBalanceReportMapper;
@@ -65,7 +66,9 @@ public class RouAccountBalanceReportServiceImpl implements RouAccountBalanceRepo
         RouAccountBalanceReport rouAccountBalanceReport = rouAccountBalanceReportMapper.toEntity(rouAccountBalanceReportDTO);
         rouAccountBalanceReport = rouAccountBalanceReportRepository.save(rouAccountBalanceReport);
         RouAccountBalanceReportDTO result = rouAccountBalanceReportMapper.toDto(rouAccountBalanceReport);
-        rouAccountBalanceReportSearchRepository.save(rouAccountBalanceReport);
+        if (rouAccountBalanceReportSearchRepository != null) {
+            rouAccountBalanceReportSearchRepository.save(rouAccountBalanceReport);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class RouAccountBalanceReportServiceImpl implements RouAccountBalanceRepo
             })
             .map(rouAccountBalanceReportRepository::save)
             .map(savedRouAccountBalanceReport -> {
-                rouAccountBalanceReportSearchRepository.save(savedRouAccountBalanceReport);
+                if (rouAccountBalanceReportSearchRepository != null) {
+                    rouAccountBalanceReportSearchRepository.save(savedRouAccountBalanceReport);
+                }
 
                 return savedRouAccountBalanceReport;
             })
@@ -107,13 +112,18 @@ public class RouAccountBalanceReportServiceImpl implements RouAccountBalanceRepo
     public void delete(Long id) {
         log.debug("Request to delete RouAccountBalanceReport : {}", id);
         rouAccountBalanceReportRepository.deleteById(id);
-        rouAccountBalanceReportSearchRepository.deleteById(id);
+        if (rouAccountBalanceReportSearchRepository != null) {
+            rouAccountBalanceReportSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<RouAccountBalanceReportDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of RouAccountBalanceReports for query {}", query);
-        return rouAccountBalanceReportSearchRepository.search(query, pageable).map(rouAccountBalanceReportMapper::toDto);
+        if (rouAccountBalanceReportSearchRepository != null) {
+            return rouAccountBalanceReportSearchRepository.search(query, pageable).map(rouAccountBalanceReportMapper::toDto);
+        }
+        return rouAccountBalanceReportRepository.findAll(pageable).map(rouAccountBalanceReportMapper::toDto);
     }
 }

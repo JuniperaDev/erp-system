@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.InternalMemoMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class InternalMemoServiceImpl implements InternalMemoService {
     public InternalMemoServiceImpl(
         InternalMemoRepository internalMemoRepository,
         InternalMemoMapper internalMemoMapper,
-        InternalMemoSearchRepository internalMemoSearchRepository
+        @Autowired(required = false) InternalMemoSearchRepository internalMemoSearchRepository
     ) {
         this.internalMemoRepository = internalMemoRepository;
         this.internalMemoMapper = internalMemoMapper;
@@ -65,7 +66,9 @@ public class InternalMemoServiceImpl implements InternalMemoService {
         InternalMemo internalMemo = internalMemoMapper.toEntity(internalMemoDTO);
         internalMemo = internalMemoRepository.save(internalMemo);
         InternalMemoDTO result = internalMemoMapper.toDto(internalMemo);
-        internalMemoSearchRepository.save(internalMemo);
+        if (internalMemoSearchRepository != null) {
+            internalMemoSearchRepository.save(internalMemo);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class InternalMemoServiceImpl implements InternalMemoService {
             })
             .map(internalMemoRepository::save)
             .map(savedInternalMemo -> {
-                internalMemoSearchRepository.save(savedInternalMemo);
+                if (internalMemoSearchRepository != null) {
+                    internalMemoSearchRepository.save(savedInternalMemo);
+                }
 
                 return savedInternalMemo;
             })
@@ -111,13 +116,18 @@ public class InternalMemoServiceImpl implements InternalMemoService {
     public void delete(Long id) {
         log.debug("Request to delete InternalMemo : {}", id);
         internalMemoRepository.deleteById(id);
-        internalMemoSearchRepository.deleteById(id);
+        if (internalMemoSearchRepository != null) {
+            internalMemoSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<InternalMemoDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of InternalMemos for query {}", query);
-        return internalMemoSearchRepository.search(query, pageable).map(internalMemoMapper::toDto);
+        if (internalMemoSearchRepository != null) {
+            return internalMemoSearchRepository.search(query, pageable).map(internalMemoMapper::toDto);
+        }
+        return internalMemoRepository.findAll(pageable).map(internalMemoMapper::toDto);
     }
 }

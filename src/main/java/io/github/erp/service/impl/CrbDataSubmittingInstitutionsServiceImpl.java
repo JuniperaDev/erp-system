@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CrbDataSubmittingInstitutionsMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CrbDataSubmittingInstitutionsServiceImpl implements CrbDataSubmitti
     public CrbDataSubmittingInstitutionsServiceImpl(
         CrbDataSubmittingInstitutionsRepository crbDataSubmittingInstitutionsRepository,
         CrbDataSubmittingInstitutionsMapper crbDataSubmittingInstitutionsMapper,
-        CrbDataSubmittingInstitutionsSearchRepository crbDataSubmittingInstitutionsSearchRepository
+        @Autowired(required = false) CrbDataSubmittingInstitutionsSearchRepository crbDataSubmittingInstitutionsSearchRepository
     ) {
         this.crbDataSubmittingInstitutionsRepository = crbDataSubmittingInstitutionsRepository;
         this.crbDataSubmittingInstitutionsMapper = crbDataSubmittingInstitutionsMapper;
@@ -67,7 +68,9 @@ public class CrbDataSubmittingInstitutionsServiceImpl implements CrbDataSubmitti
         );
         crbDataSubmittingInstitutions = crbDataSubmittingInstitutionsRepository.save(crbDataSubmittingInstitutions);
         CrbDataSubmittingInstitutionsDTO result = crbDataSubmittingInstitutionsMapper.toDto(crbDataSubmittingInstitutions);
-        crbDataSubmittingInstitutionsSearchRepository.save(crbDataSubmittingInstitutions);
+        if (crbDataSubmittingInstitutionsSearchRepository != null) {
+            crbDataSubmittingInstitutionsSearchRepository.save(crbDataSubmittingInstitutions);
+        }
         return result;
     }
 
@@ -84,7 +87,9 @@ public class CrbDataSubmittingInstitutionsServiceImpl implements CrbDataSubmitti
             })
             .map(crbDataSubmittingInstitutionsRepository::save)
             .map(savedCrbDataSubmittingInstitutions -> {
-                crbDataSubmittingInstitutionsSearchRepository.save(savedCrbDataSubmittingInstitutions);
+                if (crbDataSubmittingInstitutionsSearchRepository != null) {
+                    crbDataSubmittingInstitutionsSearchRepository.save(savedCrbDataSubmittingInstitutions);
+                }
 
                 return savedCrbDataSubmittingInstitutions;
             })
@@ -109,7 +114,9 @@ public class CrbDataSubmittingInstitutionsServiceImpl implements CrbDataSubmitti
     public void delete(Long id) {
         log.debug("Request to delete CrbDataSubmittingInstitutions : {}", id);
         crbDataSubmittingInstitutionsRepository.deleteById(id);
-        crbDataSubmittingInstitutionsSearchRepository.deleteById(id);
+        if (crbDataSubmittingInstitutionsSearchRepository != null) {
+            crbDataSubmittingInstitutionsSearchRepository.deleteById(id);
+        }
     }
 
     @Override

@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CrbProductServiceFeeTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CrbProductServiceFeeTypeServiceImpl implements CrbProductServiceFee
     public CrbProductServiceFeeTypeServiceImpl(
         CrbProductServiceFeeTypeRepository crbProductServiceFeeTypeRepository,
         CrbProductServiceFeeTypeMapper crbProductServiceFeeTypeMapper,
-        CrbProductServiceFeeTypeSearchRepository crbProductServiceFeeTypeSearchRepository
+        @Autowired(required = false) CrbProductServiceFeeTypeSearchRepository crbProductServiceFeeTypeSearchRepository
     ) {
         this.crbProductServiceFeeTypeRepository = crbProductServiceFeeTypeRepository;
         this.crbProductServiceFeeTypeMapper = crbProductServiceFeeTypeMapper;
@@ -65,7 +66,9 @@ public class CrbProductServiceFeeTypeServiceImpl implements CrbProductServiceFee
         CrbProductServiceFeeType crbProductServiceFeeType = crbProductServiceFeeTypeMapper.toEntity(crbProductServiceFeeTypeDTO);
         crbProductServiceFeeType = crbProductServiceFeeTypeRepository.save(crbProductServiceFeeType);
         CrbProductServiceFeeTypeDTO result = crbProductServiceFeeTypeMapper.toDto(crbProductServiceFeeType);
-        crbProductServiceFeeTypeSearchRepository.save(crbProductServiceFeeType);
+        if (crbProductServiceFeeTypeSearchRepository != null) {
+            crbProductServiceFeeTypeSearchRepository.save(crbProductServiceFeeType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CrbProductServiceFeeTypeServiceImpl implements CrbProductServiceFee
             })
             .map(crbProductServiceFeeTypeRepository::save)
             .map(savedCrbProductServiceFeeType -> {
-                crbProductServiceFeeTypeSearchRepository.save(savedCrbProductServiceFeeType);
+                if (crbProductServiceFeeTypeSearchRepository != null) {
+                    crbProductServiceFeeTypeSearchRepository.save(savedCrbProductServiceFeeType);
+                }
 
                 return savedCrbProductServiceFeeType;
             })
@@ -107,13 +112,18 @@ public class CrbProductServiceFeeTypeServiceImpl implements CrbProductServiceFee
     public void delete(Long id) {
         log.debug("Request to delete CrbProductServiceFeeType : {}", id);
         crbProductServiceFeeTypeRepository.deleteById(id);
-        crbProductServiceFeeTypeSearchRepository.deleteById(id);
+        if (crbProductServiceFeeTypeSearchRepository != null) {
+            crbProductServiceFeeTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CrbProductServiceFeeTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CrbProductServiceFeeTypes for query {}", query);
-        return crbProductServiceFeeTypeSearchRepository.search(query, pageable).map(crbProductServiceFeeTypeMapper::toDto);
+        if (crbProductServiceFeeTypeSearchRepository != null) {
+            return crbProductServiceFeeTypeSearchRepository.search(query, pageable).map(crbProductServiceFeeTypeMapper::toDto);
+        }
+        return crbProductServiceFeeTypeRepository.findAll(pageable).map(crbProductServiceFeeTypeMapper::toDto);
     }
 }

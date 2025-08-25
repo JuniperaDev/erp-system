@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.WorkInProgressTransferMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class WorkInProgressTransferServiceImpl implements WorkInProgressTransfer
     public WorkInProgressTransferServiceImpl(
         WorkInProgressTransferRepository workInProgressTransferRepository,
         WorkInProgressTransferMapper workInProgressTransferMapper,
-        WorkInProgressTransferSearchRepository workInProgressTransferSearchRepository
+        @Autowired(required = false) WorkInProgressTransferSearchRepository workInProgressTransferSearchRepository
     ) {
         this.workInProgressTransferRepository = workInProgressTransferRepository;
         this.workInProgressTransferMapper = workInProgressTransferMapper;
@@ -65,7 +66,9 @@ public class WorkInProgressTransferServiceImpl implements WorkInProgressTransfer
         WorkInProgressTransfer workInProgressTransfer = workInProgressTransferMapper.toEntity(workInProgressTransferDTO);
         workInProgressTransfer = workInProgressTransferRepository.save(workInProgressTransfer);
         WorkInProgressTransferDTO result = workInProgressTransferMapper.toDto(workInProgressTransfer);
-        workInProgressTransferSearchRepository.save(workInProgressTransfer);
+        if (workInProgressTransferSearchRepository != null) {
+            workInProgressTransferSearchRepository.save(workInProgressTransfer);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class WorkInProgressTransferServiceImpl implements WorkInProgressTransfer
             })
             .map(workInProgressTransferRepository::save)
             .map(savedWorkInProgressTransfer -> {
-                workInProgressTransferSearchRepository.save(savedWorkInProgressTransfer);
+                if (workInProgressTransferSearchRepository != null) {
+                    workInProgressTransferSearchRepository.save(savedWorkInProgressTransfer);
+                }
 
                 return savedWorkInProgressTransfer;
             })
@@ -111,13 +116,18 @@ public class WorkInProgressTransferServiceImpl implements WorkInProgressTransfer
     public void delete(Long id) {
         log.debug("Request to delete WorkInProgressTransfer : {}", id);
         workInProgressTransferRepository.deleteById(id);
-        workInProgressTransferSearchRepository.deleteById(id);
+        if (workInProgressTransferSearchRepository != null) {
+            workInProgressTransferSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<WorkInProgressTransferDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of WorkInProgressTransfers for query {}", query);
-        return workInProgressTransferSearchRepository.search(query, pageable).map(workInProgressTransferMapper::toDto);
+        if (workInProgressTransferSearchRepository != null) {
+            return workInProgressTransferSearchRepository.search(query, pageable).map(workInProgressTransferMapper::toDto);
+        }
+        return workInProgressTransferRepository.findAll(pageable).map(workInProgressTransferMapper::toDto);
     }
 }

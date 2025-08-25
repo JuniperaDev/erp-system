@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AcademicQualificationMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AcademicQualificationServiceImpl implements AcademicQualificationSe
     public AcademicQualificationServiceImpl(
         AcademicQualificationRepository academicQualificationRepository,
         AcademicQualificationMapper academicQualificationMapper,
-        AcademicQualificationSearchRepository academicQualificationSearchRepository
+        @Autowired(required = false) AcademicQualificationSearchRepository academicQualificationSearchRepository
     ) {
         this.academicQualificationRepository = academicQualificationRepository;
         this.academicQualificationMapper = academicQualificationMapper;
@@ -65,7 +66,9 @@ public class AcademicQualificationServiceImpl implements AcademicQualificationSe
         AcademicQualification academicQualification = academicQualificationMapper.toEntity(academicQualificationDTO);
         academicQualification = academicQualificationRepository.save(academicQualification);
         AcademicQualificationDTO result = academicQualificationMapper.toDto(academicQualification);
-        academicQualificationSearchRepository.save(academicQualification);
+        if (academicQualificationSearchRepository != null) {
+            academicQualificationSearchRepository.save(academicQualification);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AcademicQualificationServiceImpl implements AcademicQualificationSe
             })
             .map(academicQualificationRepository::save)
             .map(savedAcademicQualification -> {
-                academicQualificationSearchRepository.save(savedAcademicQualification);
+                if (academicQualificationSearchRepository != null) {
+                    academicQualificationSearchRepository.save(savedAcademicQualification);
+                }
 
                 return savedAcademicQualification;
             })
@@ -107,13 +112,18 @@ public class AcademicQualificationServiceImpl implements AcademicQualificationSe
     public void delete(Long id) {
         log.debug("Request to delete AcademicQualification : {}", id);
         academicQualificationRepository.deleteById(id);
-        academicQualificationSearchRepository.deleteById(id);
+        if (academicQualificationSearchRepository != null) {
+            academicQualificationSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AcademicQualificationDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AcademicQualifications for query {}", query);
-        return academicQualificationSearchRepository.search(query, pageable).map(academicQualificationMapper::toDto);
+        if (academicQualificationSearchRepository != null) {
+            return academicQualificationSearchRepository.search(query, pageable).map(academicQualificationMapper::toDto);
+        }
+        return academicQualificationRepository.findAll(pageable).map(academicQualificationMapper::toDto);
     }
 }

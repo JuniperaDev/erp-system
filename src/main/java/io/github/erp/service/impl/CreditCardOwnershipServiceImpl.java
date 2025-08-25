@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CreditCardOwnershipMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CreditCardOwnershipServiceImpl implements CreditCardOwnershipServic
     public CreditCardOwnershipServiceImpl(
         CreditCardOwnershipRepository creditCardOwnershipRepository,
         CreditCardOwnershipMapper creditCardOwnershipMapper,
-        CreditCardOwnershipSearchRepository creditCardOwnershipSearchRepository
+        @Autowired(required = false) CreditCardOwnershipSearchRepository creditCardOwnershipSearchRepository
     ) {
         this.creditCardOwnershipRepository = creditCardOwnershipRepository;
         this.creditCardOwnershipMapper = creditCardOwnershipMapper;
@@ -65,7 +66,9 @@ public class CreditCardOwnershipServiceImpl implements CreditCardOwnershipServic
         CreditCardOwnership creditCardOwnership = creditCardOwnershipMapper.toEntity(creditCardOwnershipDTO);
         creditCardOwnership = creditCardOwnershipRepository.save(creditCardOwnership);
         CreditCardOwnershipDTO result = creditCardOwnershipMapper.toDto(creditCardOwnership);
-        creditCardOwnershipSearchRepository.save(creditCardOwnership);
+        if (creditCardOwnershipSearchRepository != null) {
+            creditCardOwnershipSearchRepository.save(creditCardOwnership);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CreditCardOwnershipServiceImpl implements CreditCardOwnershipServic
             })
             .map(creditCardOwnershipRepository::save)
             .map(savedCreditCardOwnership -> {
-                creditCardOwnershipSearchRepository.save(savedCreditCardOwnership);
+                if (creditCardOwnershipSearchRepository != null) {
+                    creditCardOwnershipSearchRepository.save(savedCreditCardOwnership);
+                }
 
                 return savedCreditCardOwnership;
             })
@@ -107,13 +112,18 @@ public class CreditCardOwnershipServiceImpl implements CreditCardOwnershipServic
     public void delete(Long id) {
         log.debug("Request to delete CreditCardOwnership : {}", id);
         creditCardOwnershipRepository.deleteById(id);
-        creditCardOwnershipSearchRepository.deleteById(id);
+        if (creditCardOwnershipSearchRepository != null) {
+            creditCardOwnershipSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CreditCardOwnershipDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CreditCardOwnerships for query {}", query);
-        return creditCardOwnershipSearchRepository.search(query, pageable).map(creditCardOwnershipMapper::toDto);
+        if (creditCardOwnershipSearchRepository != null) {
+            return creditCardOwnershipSearchRepository.search(query, pageable).map(creditCardOwnershipMapper::toDto);
+        }
+        return creditCardOwnershipRepository.findAll(pageable).map(creditCardOwnershipMapper::toDto);
     }
 }

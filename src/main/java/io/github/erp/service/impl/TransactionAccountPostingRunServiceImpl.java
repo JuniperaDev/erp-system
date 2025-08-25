@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.TransactionAccountPostingRunMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class TransactionAccountPostingRunServiceImpl implements TransactionAccou
     public TransactionAccountPostingRunServiceImpl(
         TransactionAccountPostingRunRepository transactionAccountPostingRunRepository,
         TransactionAccountPostingRunMapper transactionAccountPostingRunMapper,
-        TransactionAccountPostingRunSearchRepository transactionAccountPostingRunSearchRepository
+        @Autowired(required = false) TransactionAccountPostingRunSearchRepository transactionAccountPostingRunSearchRepository
     ) {
         this.transactionAccountPostingRunRepository = transactionAccountPostingRunRepository;
         this.transactionAccountPostingRunMapper = transactionAccountPostingRunMapper;
@@ -67,7 +68,9 @@ public class TransactionAccountPostingRunServiceImpl implements TransactionAccou
         );
         transactionAccountPostingRun = transactionAccountPostingRunRepository.save(transactionAccountPostingRun);
         TransactionAccountPostingRunDTO result = transactionAccountPostingRunMapper.toDto(transactionAccountPostingRun);
-        transactionAccountPostingRunSearchRepository.save(transactionAccountPostingRun);
+        if (transactionAccountPostingRunSearchRepository != null) {
+            transactionAccountPostingRunSearchRepository.save(transactionAccountPostingRun);
+        }
         return result;
     }
 
@@ -84,7 +87,9 @@ public class TransactionAccountPostingRunServiceImpl implements TransactionAccou
             })
             .map(transactionAccountPostingRunRepository::save)
             .map(savedTransactionAccountPostingRun -> {
-                transactionAccountPostingRunSearchRepository.save(savedTransactionAccountPostingRun);
+                if (transactionAccountPostingRunSearchRepository != null) {
+                    transactionAccountPostingRunSearchRepository.save(savedTransactionAccountPostingRun);
+                }
 
                 return savedTransactionAccountPostingRun;
             })
@@ -115,13 +120,18 @@ public class TransactionAccountPostingRunServiceImpl implements TransactionAccou
     public void delete(Long id) {
         log.debug("Request to delete TransactionAccountPostingRun : {}", id);
         transactionAccountPostingRunRepository.deleteById(id);
-        transactionAccountPostingRunSearchRepository.deleteById(id);
+        if (transactionAccountPostingRunSearchRepository != null) {
+            transactionAccountPostingRunSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<TransactionAccountPostingRunDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of TransactionAccountPostingRuns for query {}", query);
-        return transactionAccountPostingRunSearchRepository.search(query, pageable).map(transactionAccountPostingRunMapper::toDto);
+        if (transactionAccountPostingRunSearchRepository != null) {
+            return transactionAccountPostingRunSearchRepository.search(query, pageable).map(transactionAccountPostingRunMapper::toDto);
+        }
+        return transactionAccountPostingRunRepository.findAll(pageable).map(transactionAccountPostingRunMapper::toDto);
     }
 }

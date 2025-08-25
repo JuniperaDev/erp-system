@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CardChargesMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CardChargesServiceImpl implements CardChargesService {
     public CardChargesServiceImpl(
         CardChargesRepository cardChargesRepository,
         CardChargesMapper cardChargesMapper,
-        CardChargesSearchRepository cardChargesSearchRepository
+        @Autowired(required = false) CardChargesSearchRepository cardChargesSearchRepository
     ) {
         this.cardChargesRepository = cardChargesRepository;
         this.cardChargesMapper = cardChargesMapper;
@@ -65,7 +66,9 @@ public class CardChargesServiceImpl implements CardChargesService {
         CardCharges cardCharges = cardChargesMapper.toEntity(cardChargesDTO);
         cardCharges = cardChargesRepository.save(cardCharges);
         CardChargesDTO result = cardChargesMapper.toDto(cardCharges);
-        cardChargesSearchRepository.save(cardCharges);
+        if (cardChargesSearchRepository != null) {
+            cardChargesSearchRepository.save(cardCharges);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CardChargesServiceImpl implements CardChargesService {
             })
             .map(cardChargesRepository::save)
             .map(savedCardCharges -> {
-                cardChargesSearchRepository.save(savedCardCharges);
+                if (cardChargesSearchRepository != null) {
+                    cardChargesSearchRepository.save(savedCardCharges);
+                }
 
                 return savedCardCharges;
             })
@@ -107,13 +112,18 @@ public class CardChargesServiceImpl implements CardChargesService {
     public void delete(Long id) {
         log.debug("Request to delete CardCharges : {}", id);
         cardChargesRepository.deleteById(id);
-        cardChargesSearchRepository.deleteById(id);
+        if (cardChargesSearchRepository != null) {
+            cardChargesSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CardChargesDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CardCharges for query {}", query);
-        return cardChargesSearchRepository.search(query, pageable).map(cardChargesMapper::toDto);
+        if (cardChargesSearchRepository != null) {
+            return cardChargesSearchRepository.search(query, pageable).map(cardChargesMapper::toDto);
+        }
+        return cardChargesRepository.findAll(pageable).map(cardChargesMapper::toDto);
     }
 }

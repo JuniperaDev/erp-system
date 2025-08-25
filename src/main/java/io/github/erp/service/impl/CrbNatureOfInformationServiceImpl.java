@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CrbNatureOfInformationMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CrbNatureOfInformationServiceImpl implements CrbNatureOfInformation
     public CrbNatureOfInformationServiceImpl(
         CrbNatureOfInformationRepository crbNatureOfInformationRepository,
         CrbNatureOfInformationMapper crbNatureOfInformationMapper,
-        CrbNatureOfInformationSearchRepository crbNatureOfInformationSearchRepository
+        @Autowired(required = false) CrbNatureOfInformationSearchRepository crbNatureOfInformationSearchRepository
     ) {
         this.crbNatureOfInformationRepository = crbNatureOfInformationRepository;
         this.crbNatureOfInformationMapper = crbNatureOfInformationMapper;
@@ -65,7 +66,9 @@ public class CrbNatureOfInformationServiceImpl implements CrbNatureOfInformation
         CrbNatureOfInformation crbNatureOfInformation = crbNatureOfInformationMapper.toEntity(crbNatureOfInformationDTO);
         crbNatureOfInformation = crbNatureOfInformationRepository.save(crbNatureOfInformation);
         CrbNatureOfInformationDTO result = crbNatureOfInformationMapper.toDto(crbNatureOfInformation);
-        crbNatureOfInformationSearchRepository.save(crbNatureOfInformation);
+        if (crbNatureOfInformationSearchRepository != null) {
+            crbNatureOfInformationSearchRepository.save(crbNatureOfInformation);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CrbNatureOfInformationServiceImpl implements CrbNatureOfInformation
             })
             .map(crbNatureOfInformationRepository::save)
             .map(savedCrbNatureOfInformation -> {
-                crbNatureOfInformationSearchRepository.save(savedCrbNatureOfInformation);
+                if (crbNatureOfInformationSearchRepository != null) {
+                    crbNatureOfInformationSearchRepository.save(savedCrbNatureOfInformation);
+                }
 
                 return savedCrbNatureOfInformation;
             })
@@ -107,7 +112,9 @@ public class CrbNatureOfInformationServiceImpl implements CrbNatureOfInformation
     public void delete(Long id) {
         log.debug("Request to delete CrbNatureOfInformation : {}", id);
         crbNatureOfInformationRepository.deleteById(id);
-        crbNatureOfInformationSearchRepository.deleteById(id);
+        if (crbNatureOfInformationSearchRepository != null) {
+            crbNatureOfInformationSearchRepository.deleteById(id);
+        }
     }
 
     @Override

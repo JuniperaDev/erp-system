@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.DepreciationPeriodMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class DepreciationPeriodServiceImpl implements DepreciationPeriodService 
     public DepreciationPeriodServiceImpl(
         DepreciationPeriodRepository depreciationPeriodRepository,
         DepreciationPeriodMapper depreciationPeriodMapper,
-        DepreciationPeriodSearchRepository depreciationPeriodSearchRepository
+        @Autowired(required = false) DepreciationPeriodSearchRepository depreciationPeriodSearchRepository
     ) {
         this.depreciationPeriodRepository = depreciationPeriodRepository;
         this.depreciationPeriodMapper = depreciationPeriodMapper;
@@ -65,7 +66,9 @@ public class DepreciationPeriodServiceImpl implements DepreciationPeriodService 
         DepreciationPeriod depreciationPeriod = depreciationPeriodMapper.toEntity(depreciationPeriodDTO);
         depreciationPeriod = depreciationPeriodRepository.save(depreciationPeriod);
         DepreciationPeriodDTO result = depreciationPeriodMapper.toDto(depreciationPeriod);
-        depreciationPeriodSearchRepository.save(depreciationPeriod);
+        if (depreciationPeriodSearchRepository != null) {
+            depreciationPeriodSearchRepository.save(depreciationPeriod);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class DepreciationPeriodServiceImpl implements DepreciationPeriodService 
             })
             .map(depreciationPeriodRepository::save)
             .map(savedDepreciationPeriod -> {
-                depreciationPeriodSearchRepository.save(savedDepreciationPeriod);
+                if (depreciationPeriodSearchRepository != null) {
+                    depreciationPeriodSearchRepository.save(savedDepreciationPeriod);
+                }
 
                 return savedDepreciationPeriod;
             })
@@ -107,13 +112,18 @@ public class DepreciationPeriodServiceImpl implements DepreciationPeriodService 
     public void delete(Long id) {
         log.debug("Request to delete DepreciationPeriod : {}", id);
         depreciationPeriodRepository.deleteById(id);
-        depreciationPeriodSearchRepository.deleteById(id);
+        if (depreciationPeriodSearchRepository != null) {
+            depreciationPeriodSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<DepreciationPeriodDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of DepreciationPeriods for query {}", query);
-        return depreciationPeriodSearchRepository.search(query, pageable).map(depreciationPeriodMapper::toDto);
+        if (depreciationPeriodSearchRepository != null) {
+            return depreciationPeriodSearchRepository.search(query, pageable).map(depreciationPeriodMapper::toDto);
+        }
+        return depreciationPeriodRepository.findAll(pageable).map(depreciationPeriodMapper::toDto);
     }
 }

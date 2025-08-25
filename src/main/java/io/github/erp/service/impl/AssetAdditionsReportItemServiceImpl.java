@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AssetAdditionsReportItemMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AssetAdditionsReportItemServiceImpl implements AssetAdditionsReport
     public AssetAdditionsReportItemServiceImpl(
         AssetAdditionsReportItemRepository assetAdditionsReportItemRepository,
         AssetAdditionsReportItemMapper assetAdditionsReportItemMapper,
-        AssetAdditionsReportItemSearchRepository assetAdditionsReportItemSearchRepository
+        @Autowired(required = false) AssetAdditionsReportItemSearchRepository assetAdditionsReportItemSearchRepository
     ) {
         this.assetAdditionsReportItemRepository = assetAdditionsReportItemRepository;
         this.assetAdditionsReportItemMapper = assetAdditionsReportItemMapper;
@@ -65,7 +66,9 @@ public class AssetAdditionsReportItemServiceImpl implements AssetAdditionsReport
         AssetAdditionsReportItem assetAdditionsReportItem = assetAdditionsReportItemMapper.toEntity(assetAdditionsReportItemDTO);
         assetAdditionsReportItem = assetAdditionsReportItemRepository.save(assetAdditionsReportItem);
         AssetAdditionsReportItemDTO result = assetAdditionsReportItemMapper.toDto(assetAdditionsReportItem);
-        assetAdditionsReportItemSearchRepository.save(assetAdditionsReportItem);
+        if (assetAdditionsReportItemSearchRepository != null) {
+            assetAdditionsReportItemSearchRepository.save(assetAdditionsReportItem);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AssetAdditionsReportItemServiceImpl implements AssetAdditionsReport
             })
             .map(assetAdditionsReportItemRepository::save)
             .map(savedAssetAdditionsReportItem -> {
-                assetAdditionsReportItemSearchRepository.save(savedAssetAdditionsReportItem);
+                if (assetAdditionsReportItemSearchRepository != null) {
+                    assetAdditionsReportItemSearchRepository.save(savedAssetAdditionsReportItem);
+                }
 
                 return savedAssetAdditionsReportItem;
             })
@@ -107,13 +112,18 @@ public class AssetAdditionsReportItemServiceImpl implements AssetAdditionsReport
     public void delete(Long id) {
         log.debug("Request to delete AssetAdditionsReportItem : {}", id);
         assetAdditionsReportItemRepository.deleteById(id);
-        assetAdditionsReportItemSearchRepository.deleteById(id);
+        if (assetAdditionsReportItemSearchRepository != null) {
+            assetAdditionsReportItemSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AssetAdditionsReportItemDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AssetAdditionsReportItems for query {}", query);
-        return assetAdditionsReportItemSearchRepository.search(query, pageable).map(assetAdditionsReportItemMapper::toDto);
+        if (assetAdditionsReportItemSearchRepository != null) {
+            return assetAdditionsReportItemSearchRepository.search(query, pageable).map(assetAdditionsReportItemMapper::toDto);
+        }
+        return assetAdditionsReportItemRepository.findAll(pageable).map(assetAdditionsReportItemMapper::toDto);
     }
 }

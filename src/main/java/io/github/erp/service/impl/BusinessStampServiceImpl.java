@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.BusinessStampMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class BusinessStampServiceImpl implements BusinessStampService {
     public BusinessStampServiceImpl(
         BusinessStampRepository businessStampRepository,
         BusinessStampMapper businessStampMapper,
-        BusinessStampSearchRepository businessStampSearchRepository
+        @Autowired(required = false) BusinessStampSearchRepository businessStampSearchRepository
     ) {
         this.businessStampRepository = businessStampRepository;
         this.businessStampMapper = businessStampMapper;
@@ -65,7 +66,9 @@ public class BusinessStampServiceImpl implements BusinessStampService {
         BusinessStamp businessStamp = businessStampMapper.toEntity(businessStampDTO);
         businessStamp = businessStampRepository.save(businessStamp);
         BusinessStampDTO result = businessStampMapper.toDto(businessStamp);
-        businessStampSearchRepository.save(businessStamp);
+        if (businessStampSearchRepository != null) {
+            businessStampSearchRepository.save(businessStamp);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class BusinessStampServiceImpl implements BusinessStampService {
             })
             .map(businessStampRepository::save)
             .map(savedBusinessStamp -> {
-                businessStampSearchRepository.save(savedBusinessStamp);
+                if (businessStampSearchRepository != null) {
+                    businessStampSearchRepository.save(savedBusinessStamp);
+                }
 
                 return savedBusinessStamp;
             })
@@ -111,13 +116,18 @@ public class BusinessStampServiceImpl implements BusinessStampService {
     public void delete(Long id) {
         log.debug("Request to delete BusinessStamp : {}", id);
         businessStampRepository.deleteById(id);
-        businessStampSearchRepository.deleteById(id);
+        if (businessStampSearchRepository != null) {
+            businessStampSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<BusinessStampDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of BusinessStamps for query {}", query);
-        return businessStampSearchRepository.search(query, pageable).map(businessStampMapper::toDto);
+        if (businessStampSearchRepository != null) {
+            return businessStampSearchRepository.search(query, pageable).map(businessStampMapper::toDto);
+        }
+        return businessStampRepository.findAll(pageable).map(businessStampMapper::toDto);
     }
 }

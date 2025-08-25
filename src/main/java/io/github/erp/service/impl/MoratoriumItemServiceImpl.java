@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.MoratoriumItemMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class MoratoriumItemServiceImpl implements MoratoriumItemService {
     public MoratoriumItemServiceImpl(
         MoratoriumItemRepository moratoriumItemRepository,
         MoratoriumItemMapper moratoriumItemMapper,
-        MoratoriumItemSearchRepository moratoriumItemSearchRepository
+        @Autowired(required = false) MoratoriumItemSearchRepository moratoriumItemSearchRepository
     ) {
         this.moratoriumItemRepository = moratoriumItemRepository;
         this.moratoriumItemMapper = moratoriumItemMapper;
@@ -65,7 +66,9 @@ public class MoratoriumItemServiceImpl implements MoratoriumItemService {
         MoratoriumItem moratoriumItem = moratoriumItemMapper.toEntity(moratoriumItemDTO);
         moratoriumItem = moratoriumItemRepository.save(moratoriumItem);
         MoratoriumItemDTO result = moratoriumItemMapper.toDto(moratoriumItem);
-        moratoriumItemSearchRepository.save(moratoriumItem);
+        if (moratoriumItemSearchRepository != null) {
+            moratoriumItemSearchRepository.save(moratoriumItem);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class MoratoriumItemServiceImpl implements MoratoriumItemService {
             })
             .map(moratoriumItemRepository::save)
             .map(savedMoratoriumItem -> {
-                moratoriumItemSearchRepository.save(savedMoratoriumItem);
+                if (moratoriumItemSearchRepository != null) {
+                    moratoriumItemSearchRepository.save(savedMoratoriumItem);
+                }
 
                 return savedMoratoriumItem;
             })
@@ -107,13 +112,18 @@ public class MoratoriumItemServiceImpl implements MoratoriumItemService {
     public void delete(Long id) {
         log.debug("Request to delete MoratoriumItem : {}", id);
         moratoriumItemRepository.deleteById(id);
-        moratoriumItemSearchRepository.deleteById(id);
+        if (moratoriumItemSearchRepository != null) {
+            moratoriumItemSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<MoratoriumItemDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of MoratoriumItems for query {}", query);
-        return moratoriumItemSearchRepository.search(query, pageable).map(moratoriumItemMapper::toDto);
+        if (moratoriumItemSearchRepository != null) {
+            return moratoriumItemSearchRepository.search(query, pageable).map(moratoriumItemMapper::toDto);
+        }
+        return moratoriumItemRepository.findAll(pageable).map(moratoriumItemMapper::toDto);
     }
 }

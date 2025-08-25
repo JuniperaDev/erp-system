@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CardPerformanceFlagMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CardPerformanceFlagServiceImpl implements CardPerformanceFlagServic
     public CardPerformanceFlagServiceImpl(
         CardPerformanceFlagRepository cardPerformanceFlagRepository,
         CardPerformanceFlagMapper cardPerformanceFlagMapper,
-        CardPerformanceFlagSearchRepository cardPerformanceFlagSearchRepository
+        @Autowired(required = false) CardPerformanceFlagSearchRepository cardPerformanceFlagSearchRepository
     ) {
         this.cardPerformanceFlagRepository = cardPerformanceFlagRepository;
         this.cardPerformanceFlagMapper = cardPerformanceFlagMapper;
@@ -65,7 +66,9 @@ public class CardPerformanceFlagServiceImpl implements CardPerformanceFlagServic
         CardPerformanceFlag cardPerformanceFlag = cardPerformanceFlagMapper.toEntity(cardPerformanceFlagDTO);
         cardPerformanceFlag = cardPerformanceFlagRepository.save(cardPerformanceFlag);
         CardPerformanceFlagDTO result = cardPerformanceFlagMapper.toDto(cardPerformanceFlag);
-        cardPerformanceFlagSearchRepository.save(cardPerformanceFlag);
+        if (cardPerformanceFlagSearchRepository != null) {
+            cardPerformanceFlagSearchRepository.save(cardPerformanceFlag);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CardPerformanceFlagServiceImpl implements CardPerformanceFlagServic
             })
             .map(cardPerformanceFlagRepository::save)
             .map(savedCardPerformanceFlag -> {
-                cardPerformanceFlagSearchRepository.save(savedCardPerformanceFlag);
+                if (cardPerformanceFlagSearchRepository != null) {
+                    cardPerformanceFlagSearchRepository.save(savedCardPerformanceFlag);
+                }
 
                 return savedCardPerformanceFlag;
             })
@@ -107,13 +112,18 @@ public class CardPerformanceFlagServiceImpl implements CardPerformanceFlagServic
     public void delete(Long id) {
         log.debug("Request to delete CardPerformanceFlag : {}", id);
         cardPerformanceFlagRepository.deleteById(id);
-        cardPerformanceFlagSearchRepository.deleteById(id);
+        if (cardPerformanceFlagSearchRepository != null) {
+            cardPerformanceFlagSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CardPerformanceFlagDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CardPerformanceFlags for query {}", query);
-        return cardPerformanceFlagSearchRepository.search(query, pageable).map(cardPerformanceFlagMapper::toDto);
+        if (cardPerformanceFlagSearchRepository != null) {
+            return cardPerformanceFlagSearchRepository.search(query, pageable).map(cardPerformanceFlagMapper::toDto);
+        }
+        return cardPerformanceFlagRepository.findAll(pageable).map(cardPerformanceFlagMapper::toDto);
     }
 }

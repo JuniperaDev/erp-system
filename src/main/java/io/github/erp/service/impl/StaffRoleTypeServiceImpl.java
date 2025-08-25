@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.StaffRoleTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class StaffRoleTypeServiceImpl implements StaffRoleTypeService {
     public StaffRoleTypeServiceImpl(
         StaffRoleTypeRepository staffRoleTypeRepository,
         StaffRoleTypeMapper staffRoleTypeMapper,
-        StaffRoleTypeSearchRepository staffRoleTypeSearchRepository
+        @Autowired(required = false) StaffRoleTypeSearchRepository staffRoleTypeSearchRepository
     ) {
         this.staffRoleTypeRepository = staffRoleTypeRepository;
         this.staffRoleTypeMapper = staffRoleTypeMapper;
@@ -65,7 +66,9 @@ public class StaffRoleTypeServiceImpl implements StaffRoleTypeService {
         StaffRoleType staffRoleType = staffRoleTypeMapper.toEntity(staffRoleTypeDTO);
         staffRoleType = staffRoleTypeRepository.save(staffRoleType);
         StaffRoleTypeDTO result = staffRoleTypeMapper.toDto(staffRoleType);
-        staffRoleTypeSearchRepository.save(staffRoleType);
+        if (staffRoleTypeSearchRepository != null) {
+            staffRoleTypeSearchRepository.save(staffRoleType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class StaffRoleTypeServiceImpl implements StaffRoleTypeService {
             })
             .map(staffRoleTypeRepository::save)
             .map(savedStaffRoleType -> {
-                staffRoleTypeSearchRepository.save(savedStaffRoleType);
+                if (staffRoleTypeSearchRepository != null) {
+                    staffRoleTypeSearchRepository.save(savedStaffRoleType);
+                }
 
                 return savedStaffRoleType;
             })
@@ -107,13 +112,18 @@ public class StaffRoleTypeServiceImpl implements StaffRoleTypeService {
     public void delete(Long id) {
         log.debug("Request to delete StaffRoleType : {}", id);
         staffRoleTypeRepository.deleteById(id);
-        staffRoleTypeSearchRepository.deleteById(id);
+        if (staffRoleTypeSearchRepository != null) {
+            staffRoleTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<StaffRoleTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of StaffRoleTypes for query {}", query);
-        return staffRoleTypeSearchRepository.search(query, pageable).map(staffRoleTypeMapper::toDto);
+        if (staffRoleTypeSearchRepository != null) {
+            return staffRoleTypeSearchRepository.search(query, pageable).map(staffRoleTypeMapper::toDto);
+        }
+        return staffRoleTypeRepository.findAll(pageable).map(staffRoleTypeMapper::toDto);
     }
 }

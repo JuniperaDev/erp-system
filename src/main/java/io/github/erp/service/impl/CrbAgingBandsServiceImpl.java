@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CrbAgingBandsMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CrbAgingBandsServiceImpl implements CrbAgingBandsService {
     public CrbAgingBandsServiceImpl(
         CrbAgingBandsRepository crbAgingBandsRepository,
         CrbAgingBandsMapper crbAgingBandsMapper,
-        CrbAgingBandsSearchRepository crbAgingBandsSearchRepository
+        @Autowired(required = false) CrbAgingBandsSearchRepository crbAgingBandsSearchRepository
     ) {
         this.crbAgingBandsRepository = crbAgingBandsRepository;
         this.crbAgingBandsMapper = crbAgingBandsMapper;
@@ -65,7 +66,9 @@ public class CrbAgingBandsServiceImpl implements CrbAgingBandsService {
         CrbAgingBands crbAgingBands = crbAgingBandsMapper.toEntity(crbAgingBandsDTO);
         crbAgingBands = crbAgingBandsRepository.save(crbAgingBands);
         CrbAgingBandsDTO result = crbAgingBandsMapper.toDto(crbAgingBands);
-        crbAgingBandsSearchRepository.save(crbAgingBands);
+        if (crbAgingBandsSearchRepository != null) {
+            crbAgingBandsSearchRepository.save(crbAgingBands);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CrbAgingBandsServiceImpl implements CrbAgingBandsService {
             })
             .map(crbAgingBandsRepository::save)
             .map(savedCrbAgingBands -> {
-                crbAgingBandsSearchRepository.save(savedCrbAgingBands);
+                if (crbAgingBandsSearchRepository != null) {
+                    crbAgingBandsSearchRepository.save(savedCrbAgingBands);
+                }
 
                 return savedCrbAgingBands;
             })
@@ -107,13 +112,18 @@ public class CrbAgingBandsServiceImpl implements CrbAgingBandsService {
     public void delete(Long id) {
         log.debug("Request to delete CrbAgingBands : {}", id);
         crbAgingBandsRepository.deleteById(id);
-        crbAgingBandsSearchRepository.deleteById(id);
+        if (crbAgingBandsSearchRepository != null) {
+            crbAgingBandsSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CrbAgingBandsDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CrbAgingBands for query {}", query);
-        return crbAgingBandsSearchRepository.search(query, pageable).map(crbAgingBandsMapper::toDto);
+        if (crbAgingBandsSearchRepository != null) {
+            return crbAgingBandsSearchRepository.search(query, pageable).map(crbAgingBandsMapper::toDto);
+        }
+        return crbAgingBandsRepository.findAll(pageable).map(crbAgingBandsMapper::toDto);
     }
 }

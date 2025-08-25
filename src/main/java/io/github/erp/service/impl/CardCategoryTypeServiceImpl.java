@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CardCategoryTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CardCategoryTypeServiceImpl implements CardCategoryTypeService {
     public CardCategoryTypeServiceImpl(
         CardCategoryTypeRepository cardCategoryTypeRepository,
         CardCategoryTypeMapper cardCategoryTypeMapper,
-        CardCategoryTypeSearchRepository cardCategoryTypeSearchRepository
+        @Autowired(required = false) CardCategoryTypeSearchRepository cardCategoryTypeSearchRepository
     ) {
         this.cardCategoryTypeRepository = cardCategoryTypeRepository;
         this.cardCategoryTypeMapper = cardCategoryTypeMapper;
@@ -65,7 +66,9 @@ public class CardCategoryTypeServiceImpl implements CardCategoryTypeService {
         CardCategoryType cardCategoryType = cardCategoryTypeMapper.toEntity(cardCategoryTypeDTO);
         cardCategoryType = cardCategoryTypeRepository.save(cardCategoryType);
         CardCategoryTypeDTO result = cardCategoryTypeMapper.toDto(cardCategoryType);
-        cardCategoryTypeSearchRepository.save(cardCategoryType);
+        if (cardCategoryTypeSearchRepository != null) {
+            cardCategoryTypeSearchRepository.save(cardCategoryType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CardCategoryTypeServiceImpl implements CardCategoryTypeService {
             })
             .map(cardCategoryTypeRepository::save)
             .map(savedCardCategoryType -> {
-                cardCategoryTypeSearchRepository.save(savedCardCategoryType);
+                if (cardCategoryTypeSearchRepository != null) {
+                    cardCategoryTypeSearchRepository.save(savedCardCategoryType);
+                }
 
                 return savedCardCategoryType;
             })
@@ -107,13 +112,18 @@ public class CardCategoryTypeServiceImpl implements CardCategoryTypeService {
     public void delete(Long id) {
         log.debug("Request to delete CardCategoryType : {}", id);
         cardCategoryTypeRepository.deleteById(id);
-        cardCategoryTypeSearchRepository.deleteById(id);
+        if (cardCategoryTypeSearchRepository != null) {
+            cardCategoryTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CardCategoryTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CardCategoryTypes for query {}", query);
-        return cardCategoryTypeSearchRepository.search(query, pageable).map(cardCategoryTypeMapper::toDto);
+        if (cardCategoryTypeSearchRepository != null) {
+            return cardCategoryTypeSearchRepository.search(query, pageable).map(cardCategoryTypeMapper::toDto);
+        }
+        return cardCategoryTypeRepository.findAll(pageable).map(cardCategoryTypeMapper::toDto);
     }
 }

@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AssetGeneralAdjustmentMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AssetGeneralAdjustmentServiceImpl implements AssetGeneralAdjustment
     public AssetGeneralAdjustmentServiceImpl(
         AssetGeneralAdjustmentRepository assetGeneralAdjustmentRepository,
         AssetGeneralAdjustmentMapper assetGeneralAdjustmentMapper,
-        AssetGeneralAdjustmentSearchRepository assetGeneralAdjustmentSearchRepository
+        @Autowired(required = false) AssetGeneralAdjustmentSearchRepository assetGeneralAdjustmentSearchRepository
     ) {
         this.assetGeneralAdjustmentRepository = assetGeneralAdjustmentRepository;
         this.assetGeneralAdjustmentMapper = assetGeneralAdjustmentMapper;
@@ -65,7 +66,9 @@ public class AssetGeneralAdjustmentServiceImpl implements AssetGeneralAdjustment
         AssetGeneralAdjustment assetGeneralAdjustment = assetGeneralAdjustmentMapper.toEntity(assetGeneralAdjustmentDTO);
         assetGeneralAdjustment = assetGeneralAdjustmentRepository.save(assetGeneralAdjustment);
         AssetGeneralAdjustmentDTO result = assetGeneralAdjustmentMapper.toDto(assetGeneralAdjustment);
-        assetGeneralAdjustmentSearchRepository.save(assetGeneralAdjustment);
+        if (assetGeneralAdjustmentSearchRepository != null) {
+            assetGeneralAdjustmentSearchRepository.save(assetGeneralAdjustment);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AssetGeneralAdjustmentServiceImpl implements AssetGeneralAdjustment
             })
             .map(assetGeneralAdjustmentRepository::save)
             .map(savedAssetGeneralAdjustment -> {
-                assetGeneralAdjustmentSearchRepository.save(savedAssetGeneralAdjustment);
+                if (assetGeneralAdjustmentSearchRepository != null) {
+                    assetGeneralAdjustmentSearchRepository.save(savedAssetGeneralAdjustment);
+                }
 
                 return savedAssetGeneralAdjustment;
             })
@@ -107,7 +112,9 @@ public class AssetGeneralAdjustmentServiceImpl implements AssetGeneralAdjustment
     public void delete(Long id) {
         log.debug("Request to delete AssetGeneralAdjustment : {}", id);
         assetGeneralAdjustmentRepository.deleteById(id);
-        assetGeneralAdjustmentSearchRepository.deleteById(id);
+        if (assetGeneralAdjustmentSearchRepository != null) {
+            assetGeneralAdjustmentSearchRepository.deleteById(id);
+        }
     }
 
     @Override

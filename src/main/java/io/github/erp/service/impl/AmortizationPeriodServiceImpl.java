@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AmortizationPeriodMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AmortizationPeriodServiceImpl implements AmortizationPeriodService 
     public AmortizationPeriodServiceImpl(
         AmortizationPeriodRepository amortizationPeriodRepository,
         AmortizationPeriodMapper amortizationPeriodMapper,
-        AmortizationPeriodSearchRepository amortizationPeriodSearchRepository
+        @Autowired(required = false) AmortizationPeriodSearchRepository amortizationPeriodSearchRepository
     ) {
         this.amortizationPeriodRepository = amortizationPeriodRepository;
         this.amortizationPeriodMapper = amortizationPeriodMapper;
@@ -65,7 +66,9 @@ public class AmortizationPeriodServiceImpl implements AmortizationPeriodService 
         AmortizationPeriod amortizationPeriod = amortizationPeriodMapper.toEntity(amortizationPeriodDTO);
         amortizationPeriod = amortizationPeriodRepository.save(amortizationPeriod);
         AmortizationPeriodDTO result = amortizationPeriodMapper.toDto(amortizationPeriod);
-        amortizationPeriodSearchRepository.save(amortizationPeriod);
+        if (amortizationPeriodSearchRepository != null) {
+            amortizationPeriodSearchRepository.save(amortizationPeriod);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AmortizationPeriodServiceImpl implements AmortizationPeriodService 
             })
             .map(amortizationPeriodRepository::save)
             .map(savedAmortizationPeriod -> {
-                amortizationPeriodSearchRepository.save(savedAmortizationPeriod);
+                if (amortizationPeriodSearchRepository != null) {
+                    amortizationPeriodSearchRepository.save(savedAmortizationPeriod);
+                }
 
                 return savedAmortizationPeriod;
             })
@@ -107,13 +112,18 @@ public class AmortizationPeriodServiceImpl implements AmortizationPeriodService 
     public void delete(Long id) {
         log.debug("Request to delete AmortizationPeriod : {}", id);
         amortizationPeriodRepository.deleteById(id);
-        amortizationPeriodSearchRepository.deleteById(id);
+        if (amortizationPeriodSearchRepository != null) {
+            amortizationPeriodSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AmortizationPeriodDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AmortizationPeriods for query {}", query);
-        return amortizationPeriodSearchRepository.search(query, pageable).map(amortizationPeriodMapper::toDto);
+        if (amortizationPeriodSearchRepository != null) {
+            return amortizationPeriodSearchRepository.search(query, pageable).map(amortizationPeriodMapper::toDto);
+        }
+        return amortizationPeriodRepository.findAll(pageable).map(amortizationPeriodMapper::toDto);
     }
 }

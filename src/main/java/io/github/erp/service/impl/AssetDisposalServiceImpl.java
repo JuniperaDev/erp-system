@@ -20,7 +20,7 @@ package io.github.erp.service.impl;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
-import io.github.erp.domain.AssetDisposal;
+import io.github.erp.context.assets.domain.AssetDisposal;
 import io.github.erp.repository.AssetDisposalRepository;
 import io.github.erp.repository.search.AssetDisposalSearchRepository;
 import io.github.erp.service.AssetDisposalService;
@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AssetDisposalMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AssetDisposalServiceImpl implements AssetDisposalService {
     public AssetDisposalServiceImpl(
         AssetDisposalRepository assetDisposalRepository,
         AssetDisposalMapper assetDisposalMapper,
-        AssetDisposalSearchRepository assetDisposalSearchRepository
+        @Autowired(required = false) AssetDisposalSearchRepository assetDisposalSearchRepository
     ) {
         this.assetDisposalRepository = assetDisposalRepository;
         this.assetDisposalMapper = assetDisposalMapper;
@@ -65,7 +66,9 @@ public class AssetDisposalServiceImpl implements AssetDisposalService {
         AssetDisposal assetDisposal = assetDisposalMapper.toEntity(assetDisposalDTO);
         assetDisposal = assetDisposalRepository.save(assetDisposal);
         AssetDisposalDTO result = assetDisposalMapper.toDto(assetDisposal);
-        assetDisposalSearchRepository.save(assetDisposal);
+        if (assetDisposalSearchRepository != null) {
+            assetDisposalSearchRepository.save(assetDisposal);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AssetDisposalServiceImpl implements AssetDisposalService {
             })
             .map(assetDisposalRepository::save)
             .map(savedAssetDisposal -> {
-                assetDisposalSearchRepository.save(savedAssetDisposal);
+                if (assetDisposalSearchRepository != null) {
+                    assetDisposalSearchRepository.save(savedAssetDisposal);
+                }
 
                 return savedAssetDisposal;
             })
@@ -111,13 +116,18 @@ public class AssetDisposalServiceImpl implements AssetDisposalService {
     public void delete(Long id) {
         log.debug("Request to delete AssetDisposal : {}", id);
         assetDisposalRepository.deleteById(id);
-        assetDisposalSearchRepository.deleteById(id);
+        if (assetDisposalSearchRepository != null) {
+            assetDisposalSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AssetDisposalDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AssetDisposals for query {}", query);
-        return assetDisposalSearchRepository.search(query, pageable).map(assetDisposalMapper::toDto);
+        if (assetDisposalSearchRepository != null) {
+            return assetDisposalSearchRepository.search(query, pageable).map(assetDisposalMapper::toDto);
+        }
+        return assetDisposalRepository.findAll(pageable).map(assetDisposalMapper::toDto);
     }
 }

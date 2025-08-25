@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.FraudCategoryFlagMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class FraudCategoryFlagServiceImpl implements FraudCategoryFlagService {
     public FraudCategoryFlagServiceImpl(
         FraudCategoryFlagRepository fraudCategoryFlagRepository,
         FraudCategoryFlagMapper fraudCategoryFlagMapper,
-        FraudCategoryFlagSearchRepository fraudCategoryFlagSearchRepository
+        @Autowired(required = false) FraudCategoryFlagSearchRepository fraudCategoryFlagSearchRepository
     ) {
         this.fraudCategoryFlagRepository = fraudCategoryFlagRepository;
         this.fraudCategoryFlagMapper = fraudCategoryFlagMapper;
@@ -65,7 +66,9 @@ public class FraudCategoryFlagServiceImpl implements FraudCategoryFlagService {
         FraudCategoryFlag fraudCategoryFlag = fraudCategoryFlagMapper.toEntity(fraudCategoryFlagDTO);
         fraudCategoryFlag = fraudCategoryFlagRepository.save(fraudCategoryFlag);
         FraudCategoryFlagDTO result = fraudCategoryFlagMapper.toDto(fraudCategoryFlag);
-        fraudCategoryFlagSearchRepository.save(fraudCategoryFlag);
+        if (fraudCategoryFlagSearchRepository != null) {
+            fraudCategoryFlagSearchRepository.save(fraudCategoryFlag);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class FraudCategoryFlagServiceImpl implements FraudCategoryFlagService {
             })
             .map(fraudCategoryFlagRepository::save)
             .map(savedFraudCategoryFlag -> {
-                fraudCategoryFlagSearchRepository.save(savedFraudCategoryFlag);
+                if (fraudCategoryFlagSearchRepository != null) {
+                    fraudCategoryFlagSearchRepository.save(savedFraudCategoryFlag);
+                }
 
                 return savedFraudCategoryFlag;
             })
@@ -107,13 +112,18 @@ public class FraudCategoryFlagServiceImpl implements FraudCategoryFlagService {
     public void delete(Long id) {
         log.debug("Request to delete FraudCategoryFlag : {}", id);
         fraudCategoryFlagRepository.deleteById(id);
-        fraudCategoryFlagSearchRepository.deleteById(id);
+        if (fraudCategoryFlagSearchRepository != null) {
+            fraudCategoryFlagSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<FraudCategoryFlagDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of FraudCategoryFlags for query {}", query);
-        return fraudCategoryFlagSearchRepository.search(query, pageable).map(fraudCategoryFlagMapper::toDto);
+        if (fraudCategoryFlagSearchRepository != null) {
+            return fraudCategoryFlagSearchRepository.search(query, pageable).map(fraudCategoryFlagMapper::toDto);
+        }
+        return fraudCategoryFlagRepository.findAll(pageable).map(fraudCategoryFlagMapper::toDto);
     }
 }

@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.LeaseRepaymentPeriodMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class LeaseRepaymentPeriodServiceImpl implements LeaseRepaymentPeriodServ
     public LeaseRepaymentPeriodServiceImpl(
         LeaseRepaymentPeriodRepository leaseRepaymentPeriodRepository,
         LeaseRepaymentPeriodMapper leaseRepaymentPeriodMapper,
-        LeaseRepaymentPeriodSearchRepository leaseRepaymentPeriodSearchRepository
+        @Autowired(required = false) LeaseRepaymentPeriodSearchRepository leaseRepaymentPeriodSearchRepository
     ) {
         this.leaseRepaymentPeriodRepository = leaseRepaymentPeriodRepository;
         this.leaseRepaymentPeriodMapper = leaseRepaymentPeriodMapper;
@@ -65,7 +66,9 @@ public class LeaseRepaymentPeriodServiceImpl implements LeaseRepaymentPeriodServ
         LeaseRepaymentPeriod leaseRepaymentPeriod = leaseRepaymentPeriodMapper.toEntity(leaseRepaymentPeriodDTO);
         leaseRepaymentPeriod = leaseRepaymentPeriodRepository.save(leaseRepaymentPeriod);
         LeaseRepaymentPeriodDTO result = leaseRepaymentPeriodMapper.toDto(leaseRepaymentPeriod);
-        leaseRepaymentPeriodSearchRepository.save(leaseRepaymentPeriod);
+        if (leaseRepaymentPeriodSearchRepository != null) {
+            leaseRepaymentPeriodSearchRepository.save(leaseRepaymentPeriod);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class LeaseRepaymentPeriodServiceImpl implements LeaseRepaymentPeriodServ
             })
             .map(leaseRepaymentPeriodRepository::save)
             .map(savedLeaseRepaymentPeriod -> {
-                leaseRepaymentPeriodSearchRepository.save(savedLeaseRepaymentPeriod);
+                if (leaseRepaymentPeriodSearchRepository != null) {
+                    leaseRepaymentPeriodSearchRepository.save(savedLeaseRepaymentPeriod);
+                }
 
                 return savedLeaseRepaymentPeriod;
             })
@@ -107,7 +112,9 @@ public class LeaseRepaymentPeriodServiceImpl implements LeaseRepaymentPeriodServ
     public void delete(Long id) {
         log.debug("Request to delete LeaseRepaymentPeriod : {}", id);
         leaseRepaymentPeriodRepository.deleteById(id);
-        leaseRepaymentPeriodSearchRepository.deleteById(id);
+        if (leaseRepaymentPeriodSearchRepository != null) {
+            leaseRepaymentPeriodSearchRepository.deleteById(id);
+        }
     }
 
     @Override

@@ -18,7 +18,7 @@ package io.github.erp.cqrs.asset.writemodel;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import io.github.erp.domain.AssetRegistration;
+import io.github.erp.context.assets.domain.AssetRegistration;
 import io.github.erp.domain.events.asset.AssetCreatedEvent;
 import io.github.erp.domain.events.asset.AssetCategoryChangedEvent;
 import io.github.erp.domain.events.asset.AssetDisposedEvent;

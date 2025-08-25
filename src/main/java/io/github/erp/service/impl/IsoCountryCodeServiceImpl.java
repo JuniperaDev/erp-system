@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.IsoCountryCodeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class IsoCountryCodeServiceImpl implements IsoCountryCodeService {
     public IsoCountryCodeServiceImpl(
         IsoCountryCodeRepository isoCountryCodeRepository,
         IsoCountryCodeMapper isoCountryCodeMapper,
-        IsoCountryCodeSearchRepository isoCountryCodeSearchRepository
+        @Autowired(required = false) IsoCountryCodeSearchRepository isoCountryCodeSearchRepository
     ) {
         this.isoCountryCodeRepository = isoCountryCodeRepository;
         this.isoCountryCodeMapper = isoCountryCodeMapper;
@@ -65,7 +66,9 @@ public class IsoCountryCodeServiceImpl implements IsoCountryCodeService {
         IsoCountryCode isoCountryCode = isoCountryCodeMapper.toEntity(isoCountryCodeDTO);
         isoCountryCode = isoCountryCodeRepository.save(isoCountryCode);
         IsoCountryCodeDTO result = isoCountryCodeMapper.toDto(isoCountryCode);
-        isoCountryCodeSearchRepository.save(isoCountryCode);
+        if (isoCountryCodeSearchRepository != null) {
+            isoCountryCodeSearchRepository.save(isoCountryCode);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class IsoCountryCodeServiceImpl implements IsoCountryCodeService {
             })
             .map(isoCountryCodeRepository::save)
             .map(savedIsoCountryCode -> {
-                isoCountryCodeSearchRepository.save(savedIsoCountryCode);
+                if (isoCountryCodeSearchRepository != null) {
+                    isoCountryCodeSearchRepository.save(savedIsoCountryCode);
+                }
 
                 return savedIsoCountryCode;
             })
@@ -107,13 +112,18 @@ public class IsoCountryCodeServiceImpl implements IsoCountryCodeService {
     public void delete(Long id) {
         log.debug("Request to delete IsoCountryCode : {}", id);
         isoCountryCodeRepository.deleteById(id);
-        isoCountryCodeSearchRepository.deleteById(id);
+        if (isoCountryCodeSearchRepository != null) {
+            isoCountryCodeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<IsoCountryCodeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of IsoCountryCodes for query {}", query);
-        return isoCountryCodeSearchRepository.search(query, pageable).map(isoCountryCodeMapper::toDto);
+        if (isoCountryCodeSearchRepository != null) {
+            return isoCountryCodeSearchRepository.search(query, pageable).map(isoCountryCodeMapper::toDto);
+        }
+        return isoCountryCodeRepository.findAll(pageable).map(isoCountryCodeMapper::toDto);
     }
 }

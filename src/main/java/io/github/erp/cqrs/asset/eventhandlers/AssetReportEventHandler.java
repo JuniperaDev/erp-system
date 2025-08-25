@@ -21,7 +21,7 @@ package io.github.erp.cqrs.asset.eventhandlers;
 import io.github.erp.cqrs.asset.readmodel.AssetReportReadModel;
 import io.github.erp.cqrs.asset.readmodel.AssetNBVReportReadModel;
 import io.github.erp.cqrs.asset.repositories.AssetReportReadModelRepository;
-import io.github.erp.domain.AssetRegistration;
+import io.github.erp.context.assets.domain.AssetRegistration;
 import io.github.erp.domain.events.DomainEvent;
 import io.github.erp.domain.events.DomainEventHandler;
 import io.github.erp.domain.events.DomainEventHandlerMethodAnnotation;

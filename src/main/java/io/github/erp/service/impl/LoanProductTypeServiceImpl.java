@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.LoanProductTypeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class LoanProductTypeServiceImpl implements LoanProductTypeService {
     public LoanProductTypeServiceImpl(
         LoanProductTypeRepository loanProductTypeRepository,
         LoanProductTypeMapper loanProductTypeMapper,
-        LoanProductTypeSearchRepository loanProductTypeSearchRepository
+        @Autowired(required = false) LoanProductTypeSearchRepository loanProductTypeSearchRepository
     ) {
         this.loanProductTypeRepository = loanProductTypeRepository;
         this.loanProductTypeMapper = loanProductTypeMapper;
@@ -65,7 +66,9 @@ public class LoanProductTypeServiceImpl implements LoanProductTypeService {
         LoanProductType loanProductType = loanProductTypeMapper.toEntity(loanProductTypeDTO);
         loanProductType = loanProductTypeRepository.save(loanProductType);
         LoanProductTypeDTO result = loanProductTypeMapper.toDto(loanProductType);
-        loanProductTypeSearchRepository.save(loanProductType);
+        if (loanProductTypeSearchRepository != null) {
+            loanProductTypeSearchRepository.save(loanProductType);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class LoanProductTypeServiceImpl implements LoanProductTypeService {
             })
             .map(loanProductTypeRepository::save)
             .map(savedLoanProductType -> {
-                loanProductTypeSearchRepository.save(savedLoanProductType);
+                if (loanProductTypeSearchRepository != null) {
+                    loanProductTypeSearchRepository.save(savedLoanProductType);
+                }
 
                 return savedLoanProductType;
             })
@@ -107,13 +112,18 @@ public class LoanProductTypeServiceImpl implements LoanProductTypeService {
     public void delete(Long id) {
         log.debug("Request to delete LoanProductType : {}", id);
         loanProductTypeRepository.deleteById(id);
-        loanProductTypeSearchRepository.deleteById(id);
+        if (loanProductTypeSearchRepository != null) {
+            loanProductTypeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<LoanProductTypeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of LoanProductTypes for query {}", query);
-        return loanProductTypeSearchRepository.search(query, pageable).map(loanProductTypeMapper::toDto);
+        if (loanProductTypeSearchRepository != null) {
+            return loanProductTypeSearchRepository.search(query, pageable).map(loanProductTypeMapper::toDto);
+        }
+        return loanProductTypeRepository.findAll(pageable).map(loanProductTypeMapper::toDto);
     }
 }

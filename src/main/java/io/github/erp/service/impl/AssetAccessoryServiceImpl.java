@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.AssetAccessoryMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AssetAccessoryServiceImpl implements AssetAccessoryService {
     public AssetAccessoryServiceImpl(
         AssetAccessoryRepository assetAccessoryRepository,
         AssetAccessoryMapper assetAccessoryMapper,
-        AssetAccessorySearchRepository assetAccessorySearchRepository
+        @Autowired(required = false) AssetAccessorySearchRepository assetAccessorySearchRepository
     ) {
         this.assetAccessoryRepository = assetAccessoryRepository;
         this.assetAccessoryMapper = assetAccessoryMapper;
@@ -65,7 +66,9 @@ public class AssetAccessoryServiceImpl implements AssetAccessoryService {
         AssetAccessory assetAccessory = assetAccessoryMapper.toEntity(assetAccessoryDTO);
         assetAccessory = assetAccessoryRepository.save(assetAccessory);
         AssetAccessoryDTO result = assetAccessoryMapper.toDto(assetAccessory);
-        assetAccessorySearchRepository.save(assetAccessory);
+        if (assetAccessorySearchRepository != null) {
+            assetAccessorySearchRepository.save(assetAccessory);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class AssetAccessoryServiceImpl implements AssetAccessoryService {
             })
             .map(assetAccessoryRepository::save)
             .map(savedAssetAccessory -> {
-                assetAccessorySearchRepository.save(savedAssetAccessory);
+                if (assetAccessorySearchRepository != null) {
+                    assetAccessorySearchRepository.save(savedAssetAccessory);
+                }
 
                 return savedAssetAccessory;
             })
@@ -111,13 +116,18 @@ public class AssetAccessoryServiceImpl implements AssetAccessoryService {
     public void delete(Long id) {
         log.debug("Request to delete AssetAccessory : {}", id);
         assetAccessoryRepository.deleteById(id);
-        assetAccessorySearchRepository.deleteById(id);
+        if (assetAccessorySearchRepository != null) {
+            assetAccessorySearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AssetAccessoryDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AssetAccessories for query {}", query);
-        return assetAccessorySearchRepository.search(query, pageable).map(assetAccessoryMapper::toDto);
+        if (assetAccessorySearchRepository != null) {
+            return assetAccessorySearchRepository.search(query, pageable).map(assetAccessoryMapper::toDto);
+        }
+        return assetAccessoryRepository.findAll(pageable).map(assetAccessoryMapper::toDto);
     }
 }

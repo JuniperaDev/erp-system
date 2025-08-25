@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.IsicEconomicActivityMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class IsicEconomicActivityServiceImpl implements IsicEconomicActivityServ
     public IsicEconomicActivityServiceImpl(
         IsicEconomicActivityRepository isicEconomicActivityRepository,
         IsicEconomicActivityMapper isicEconomicActivityMapper,
-        IsicEconomicActivitySearchRepository isicEconomicActivitySearchRepository
+        @Autowired(required = false) IsicEconomicActivitySearchRepository isicEconomicActivitySearchRepository
     ) {
         this.isicEconomicActivityRepository = isicEconomicActivityRepository;
         this.isicEconomicActivityMapper = isicEconomicActivityMapper;
@@ -65,7 +66,9 @@ public class IsicEconomicActivityServiceImpl implements IsicEconomicActivityServ
         IsicEconomicActivity isicEconomicActivity = isicEconomicActivityMapper.toEntity(isicEconomicActivityDTO);
         isicEconomicActivity = isicEconomicActivityRepository.save(isicEconomicActivity);
         IsicEconomicActivityDTO result = isicEconomicActivityMapper.toDto(isicEconomicActivity);
-        isicEconomicActivitySearchRepository.save(isicEconomicActivity);
+        if (isicEconomicActivitySearchRepository != null) {
+            isicEconomicActivitySearchRepository.save(isicEconomicActivity);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class IsicEconomicActivityServiceImpl implements IsicEconomicActivityServ
             })
             .map(isicEconomicActivityRepository::save)
             .map(savedIsicEconomicActivity -> {
-                isicEconomicActivitySearchRepository.save(savedIsicEconomicActivity);
+                if (isicEconomicActivitySearchRepository != null) {
+                    isicEconomicActivitySearchRepository.save(savedIsicEconomicActivity);
+                }
 
                 return savedIsicEconomicActivity;
             })
@@ -107,13 +112,18 @@ public class IsicEconomicActivityServiceImpl implements IsicEconomicActivityServ
     public void delete(Long id) {
         log.debug("Request to delete IsicEconomicActivity : {}", id);
         isicEconomicActivityRepository.deleteById(id);
-        isicEconomicActivitySearchRepository.deleteById(id);
+        if (isicEconomicActivitySearchRepository != null) {
+            isicEconomicActivitySearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<IsicEconomicActivityDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of IsicEconomicActivities for query {}", query);
-        return isicEconomicActivitySearchRepository.search(query, pageable).map(isicEconomicActivityMapper::toDto);
+        if (isicEconomicActivitySearchRepository != null) {
+            return isicEconomicActivitySearchRepository.search(query, pageable).map(isicEconomicActivityMapper::toDto);
+        }
+        return isicEconomicActivityRepository.findAll(pageable).map(isicEconomicActivityMapper::toDto);
     }
 }

@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import io.github.erp.IntegrationTest;
 import io.github.erp.domain.AssetAccessory;
-import io.github.erp.domain.AssetCategory;
+import io.github.erp.context.assets.domain.AssetCategory;
 import io.github.erp.domain.AssetWarranty;
 import io.github.erp.domain.BusinessDocument;
 import io.github.erp.domain.Dealer;

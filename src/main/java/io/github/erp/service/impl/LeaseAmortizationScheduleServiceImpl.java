@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.LeaseAmortizationScheduleMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class LeaseAmortizationScheduleServiceImpl implements LeaseAmortizationSc
     public LeaseAmortizationScheduleServiceImpl(
         LeaseAmortizationScheduleRepository leaseAmortizationScheduleRepository,
         LeaseAmortizationScheduleMapper leaseAmortizationScheduleMapper,
-        LeaseAmortizationScheduleSearchRepository leaseAmortizationScheduleSearchRepository
+        @Autowired(required = false) LeaseAmortizationScheduleSearchRepository leaseAmortizationScheduleSearchRepository
     ) {
         this.leaseAmortizationScheduleRepository = leaseAmortizationScheduleRepository;
         this.leaseAmortizationScheduleMapper = leaseAmortizationScheduleMapper;
@@ -65,7 +66,9 @@ public class LeaseAmortizationScheduleServiceImpl implements LeaseAmortizationSc
         LeaseAmortizationSchedule leaseAmortizationSchedule = leaseAmortizationScheduleMapper.toEntity(leaseAmortizationScheduleDTO);
         leaseAmortizationSchedule = leaseAmortizationScheduleRepository.save(leaseAmortizationSchedule);
         LeaseAmortizationScheduleDTO result = leaseAmortizationScheduleMapper.toDto(leaseAmortizationSchedule);
-        leaseAmortizationScheduleSearchRepository.save(leaseAmortizationSchedule);
+        if (leaseAmortizationScheduleSearchRepository != null) {
+            leaseAmortizationScheduleSearchRepository.save(leaseAmortizationSchedule);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class LeaseAmortizationScheduleServiceImpl implements LeaseAmortizationSc
             })
             .map(leaseAmortizationScheduleRepository::save)
             .map(savedLeaseAmortizationSchedule -> {
-                leaseAmortizationScheduleSearchRepository.save(savedLeaseAmortizationSchedule);
+                if (leaseAmortizationScheduleSearchRepository != null) {
+                    leaseAmortizationScheduleSearchRepository.save(savedLeaseAmortizationSchedule);
+                }
 
                 return savedLeaseAmortizationSchedule;
             })
@@ -107,7 +112,9 @@ public class LeaseAmortizationScheduleServiceImpl implements LeaseAmortizationSc
     public void delete(Long id) {
         log.debug("Request to delete LeaseAmortizationSchedule : {}", id);
         leaseAmortizationScheduleRepository.deleteById(id);
-        leaseAmortizationScheduleSearchRepository.deleteById(id);
+        if (leaseAmortizationScheduleSearchRepository != null) {
+            leaseAmortizationScheduleSearchRepository.deleteById(id);
+        }
     }
 
     @Override

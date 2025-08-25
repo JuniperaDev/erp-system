@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.FiscalMonthMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class FiscalMonthServiceImpl implements FiscalMonthService {
     public FiscalMonthServiceImpl(
         FiscalMonthRepository fiscalMonthRepository,
         FiscalMonthMapper fiscalMonthMapper,
-        FiscalMonthSearchRepository fiscalMonthSearchRepository
+        @Autowired(required = false) FiscalMonthSearchRepository fiscalMonthSearchRepository
     ) {
         this.fiscalMonthRepository = fiscalMonthRepository;
         this.fiscalMonthMapper = fiscalMonthMapper;
@@ -65,7 +66,9 @@ public class FiscalMonthServiceImpl implements FiscalMonthService {
         FiscalMonth fiscalMonth = fiscalMonthMapper.toEntity(fiscalMonthDTO);
         fiscalMonth = fiscalMonthRepository.save(fiscalMonth);
         FiscalMonthDTO result = fiscalMonthMapper.toDto(fiscalMonth);
-        fiscalMonthSearchRepository.save(fiscalMonth);
+        if (fiscalMonthSearchRepository != null) {
+            fiscalMonthSearchRepository.save(fiscalMonth);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class FiscalMonthServiceImpl implements FiscalMonthService {
             })
             .map(fiscalMonthRepository::save)
             .map(savedFiscalMonth -> {
-                fiscalMonthSearchRepository.save(savedFiscalMonth);
+                if (fiscalMonthSearchRepository != null) {
+                    fiscalMonthSearchRepository.save(savedFiscalMonth);
+                }
 
                 return savedFiscalMonth;
             })
@@ -111,13 +116,18 @@ public class FiscalMonthServiceImpl implements FiscalMonthService {
     public void delete(Long id) {
         log.debug("Request to delete FiscalMonth : {}", id);
         fiscalMonthRepository.deleteById(id);
-        fiscalMonthSearchRepository.deleteById(id);
+        if (fiscalMonthSearchRepository != null) {
+            fiscalMonthSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<FiscalMonthDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of FiscalMonths for query {}", query);
-        return fiscalMonthSearchRepository.search(query, pageable).map(fiscalMonthMapper::toDto);
+        if (fiscalMonthSearchRepository != null) {
+            return fiscalMonthSearchRepository.search(query, pageable).map(fiscalMonthMapper::toDto);
+        }
+        return fiscalMonthRepository.findAll(pageable).map(fiscalMonthMapper::toDto);
     }
 }

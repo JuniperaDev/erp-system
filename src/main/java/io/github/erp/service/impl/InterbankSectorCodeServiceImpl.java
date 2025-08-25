@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.InterbankSectorCodeMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class InterbankSectorCodeServiceImpl implements InterbankSectorCodeServic
     public InterbankSectorCodeServiceImpl(
         InterbankSectorCodeRepository interbankSectorCodeRepository,
         InterbankSectorCodeMapper interbankSectorCodeMapper,
-        InterbankSectorCodeSearchRepository interbankSectorCodeSearchRepository
+        @Autowired(required = false) InterbankSectorCodeSearchRepository interbankSectorCodeSearchRepository
     ) {
         this.interbankSectorCodeRepository = interbankSectorCodeRepository;
         this.interbankSectorCodeMapper = interbankSectorCodeMapper;
@@ -65,7 +66,9 @@ public class InterbankSectorCodeServiceImpl implements InterbankSectorCodeServic
         InterbankSectorCode interbankSectorCode = interbankSectorCodeMapper.toEntity(interbankSectorCodeDTO);
         interbankSectorCode = interbankSectorCodeRepository.save(interbankSectorCode);
         InterbankSectorCodeDTO result = interbankSectorCodeMapper.toDto(interbankSectorCode);
-        interbankSectorCodeSearchRepository.save(interbankSectorCode);
+        if (interbankSectorCodeSearchRepository != null) {
+            interbankSectorCodeSearchRepository.save(interbankSectorCode);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class InterbankSectorCodeServiceImpl implements InterbankSectorCodeServic
             })
             .map(interbankSectorCodeRepository::save)
             .map(savedInterbankSectorCode -> {
-                interbankSectorCodeSearchRepository.save(savedInterbankSectorCode);
+                if (interbankSectorCodeSearchRepository != null) {
+                    interbankSectorCodeSearchRepository.save(savedInterbankSectorCode);
+                }
 
                 return savedInterbankSectorCode;
             })
@@ -107,13 +112,18 @@ public class InterbankSectorCodeServiceImpl implements InterbankSectorCodeServic
     public void delete(Long id) {
         log.debug("Request to delete InterbankSectorCode : {}", id);
         interbankSectorCodeRepository.deleteById(id);
-        interbankSectorCodeSearchRepository.deleteById(id);
+        if (interbankSectorCodeSearchRepository != null) {
+            interbankSectorCodeSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<InterbankSectorCodeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of InterbankSectorCodes for query {}", query);
-        return interbankSectorCodeSearchRepository.search(query, pageable).map(interbankSectorCodeMapper::toDto);
+        if (interbankSectorCodeSearchRepository != null) {
+            return interbankSectorCodeSearchRepository.search(query, pageable).map(interbankSectorCodeMapper::toDto);
+        }
+        return interbankSectorCodeRepository.findAll(pageable).map(interbankSectorCodeMapper::toDto);
     }
 }

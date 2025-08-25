@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.CrbReportRequestReasonsMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CrbReportRequestReasonsServiceImpl implements CrbReportRequestReaso
     public CrbReportRequestReasonsServiceImpl(
         CrbReportRequestReasonsRepository crbReportRequestReasonsRepository,
         CrbReportRequestReasonsMapper crbReportRequestReasonsMapper,
-        CrbReportRequestReasonsSearchRepository crbReportRequestReasonsSearchRepository
+        @Autowired(required = false) CrbReportRequestReasonsSearchRepository crbReportRequestReasonsSearchRepository
     ) {
         this.crbReportRequestReasonsRepository = crbReportRequestReasonsRepository;
         this.crbReportRequestReasonsMapper = crbReportRequestReasonsMapper;
@@ -65,7 +66,9 @@ public class CrbReportRequestReasonsServiceImpl implements CrbReportRequestReaso
         CrbReportRequestReasons crbReportRequestReasons = crbReportRequestReasonsMapper.toEntity(crbReportRequestReasonsDTO);
         crbReportRequestReasons = crbReportRequestReasonsRepository.save(crbReportRequestReasons);
         CrbReportRequestReasonsDTO result = crbReportRequestReasonsMapper.toDto(crbReportRequestReasons);
-        crbReportRequestReasonsSearchRepository.save(crbReportRequestReasons);
+        if (crbReportRequestReasonsSearchRepository != null) {
+            crbReportRequestReasonsSearchRepository.save(crbReportRequestReasons);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class CrbReportRequestReasonsServiceImpl implements CrbReportRequestReaso
             })
             .map(crbReportRequestReasonsRepository::save)
             .map(savedCrbReportRequestReasons -> {
-                crbReportRequestReasonsSearchRepository.save(savedCrbReportRequestReasons);
+                if (crbReportRequestReasonsSearchRepository != null) {
+                    crbReportRequestReasonsSearchRepository.save(savedCrbReportRequestReasons);
+                }
 
                 return savedCrbReportRequestReasons;
             })
@@ -107,13 +112,18 @@ public class CrbReportRequestReasonsServiceImpl implements CrbReportRequestReaso
     public void delete(Long id) {
         log.debug("Request to delete CrbReportRequestReasons : {}", id);
         crbReportRequestReasonsRepository.deleteById(id);
-        crbReportRequestReasonsSearchRepository.deleteById(id);
+        if (crbReportRequestReasonsSearchRepository != null) {
+            crbReportRequestReasonsSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CrbReportRequestReasonsDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of CrbReportRequestReasons for query {}", query);
-        return crbReportRequestReasonsSearchRepository.search(query, pageable).map(crbReportRequestReasonsMapper::toDto);
+        if (crbReportRequestReasonsSearchRepository != null) {
+            return crbReportRequestReasonsSearchRepository.search(query, pageable).map(crbReportRequestReasonsMapper::toDto);
+        }
+        return crbReportRequestReasonsRepository.findAll(pageable).map(crbReportRequestReasonsMapper::toDto);
     }
 }

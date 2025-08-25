@@ -29,6 +29,7 @@ import io.github.erp.service.mapper.BusinessSegmentTypesMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class BusinessSegmentTypesServiceImpl implements BusinessSegmentTypesServ
     public BusinessSegmentTypesServiceImpl(
         BusinessSegmentTypesRepository businessSegmentTypesRepository,
         BusinessSegmentTypesMapper businessSegmentTypesMapper,
-        BusinessSegmentTypesSearchRepository businessSegmentTypesSearchRepository
+        @Autowired(required = false) BusinessSegmentTypesSearchRepository businessSegmentTypesSearchRepository
     ) {
         this.businessSegmentTypesRepository = businessSegmentTypesRepository;
         this.businessSegmentTypesMapper = businessSegmentTypesMapper;
@@ -65,7 +66,9 @@ public class BusinessSegmentTypesServiceImpl implements BusinessSegmentTypesServ
         BusinessSegmentTypes businessSegmentTypes = businessSegmentTypesMapper.toEntity(businessSegmentTypesDTO);
         businessSegmentTypes = businessSegmentTypesRepository.save(businessSegmentTypes);
         BusinessSegmentTypesDTO result = businessSegmentTypesMapper.toDto(businessSegmentTypes);
-        businessSegmentTypesSearchRepository.save(businessSegmentTypes);
+        if (businessSegmentTypesSearchRepository != null) {
+            businessSegmentTypesSearchRepository.save(businessSegmentTypes);
+        }
         return result;
     }
 
@@ -82,7 +85,9 @@ public class BusinessSegmentTypesServiceImpl implements BusinessSegmentTypesServ
             })
             .map(businessSegmentTypesRepository::save)
             .map(savedBusinessSegmentTypes -> {
-                businessSegmentTypesSearchRepository.save(savedBusinessSegmentTypes);
+                if (businessSegmentTypesSearchRepository != null) {
+                    businessSegmentTypesSearchRepository.save(savedBusinessSegmentTypes);
+                }
 
                 return savedBusinessSegmentTypes;
             })
@@ -107,13 +112,18 @@ public class BusinessSegmentTypesServiceImpl implements BusinessSegmentTypesServ
     public void delete(Long id) {
         log.debug("Request to delete BusinessSegmentTypes : {}", id);
         businessSegmentTypesRepository.deleteById(id);
-        businessSegmentTypesSearchRepository.deleteById(id);
+        if (businessSegmentTypesSearchRepository != null) {
+            businessSegmentTypesSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<BusinessSegmentTypesDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of BusinessSegmentTypes for query {}", query);
-        return businessSegmentTypesSearchRepository.search(query, pageable).map(businessSegmentTypesMapper::toDto);
+        if (businessSegmentTypesSearchRepository != null) {
+            return businessSegmentTypesSearchRepository.search(query, pageable).map(businessSegmentTypesMapper::toDto);
+        }
+        return businessSegmentTypesRepository.findAll(pageable).map(businessSegmentTypesMapper::toDto);
     }
 }

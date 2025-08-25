@@ -28,8 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import io.github.erp.IntegrationTest;
 import io.github.erp.domain.ApplicationUser;
-import io.github.erp.domain.AssetRegistration;
-import io.github.erp.domain.AssetRevaluation;
+import io.github.erp.context.assets.domain.AssetRegistration;
+import io.github.erp.context.assets.domain.AssetRevaluation;
 import io.github.erp.domain.Dealer;
 import io.github.erp.domain.DepreciationPeriod;
 import io.github.erp.domain.Placeholder;

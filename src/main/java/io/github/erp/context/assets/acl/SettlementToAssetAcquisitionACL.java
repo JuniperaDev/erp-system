@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.validation.Validator;
 import java.util.Optional;
 
-@Component
+@Component("contextSettlementToAssetAcquisitionACL")
 public class SettlementToAssetAcquisitionACL extends AbstractTranslationACL<SettlementDTO, AssetAcquisitionData> {
 
     private static final Logger log = LoggerFactory.getLogger(SettlementToAssetAcquisitionACL.class);

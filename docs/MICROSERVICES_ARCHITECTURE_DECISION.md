@@ -143,16 +143,20 @@ The single JAR approach with Spring profiles has been validated as appropriate f
 - All 6 Dockerfiles updated to use eclipse-temurin:17-jre (resolved openjdk:17-jre-slim not found issue)
 - **Critical Issues Identified and Fixed**:
   1. **YAML Configuration Error**: Duplicate `hibernate.generate_statistics` key in application.yml (resolved)
-  2. **Spring Bean Conflict**: ConflictingBeanDefinitionException for `settlementToAssetAcquisitionACL` (resolved)
+  2. **Spring Bean Conflict #1**: ConflictingBeanDefinitionException for `settlementToAssetAcquisitionACL` (resolved)
+  3. **Spring Bean Conflict #2**: ConflictingBeanDefinitionException for `internalAssetRegistrationServiceImpl` (resolved)
 - **Fixes Applied**:
   - Removed duplicate YAML key, kept `hibernate.generate_statistics: true`
-  - Added explicit bean name `@Component("contextSettlementToAssetAcquisitionACL")` to resolve conflict
+  - Added explicit bean name `@Component("contextSettlementToAssetAcquisitionACL")` to resolve ACL conflict
+  - Added explicit bean names for service implementations:
+    - `@Service("internalAssetRegistrationServiceImpl")` for internal service
+    - `@Service("contextInternalAssetRegistrationServiceImpl")` for context service
   - Updated all 6 Dockerfiles to create `/logs` directory with proper ownership
 - Docker images being rebuilt with all fixes (compilation in progress)
 - Systematic testing planned for all microservice containers once rebuild completes
 
 #### Docker Testing Results So Far:
-- ❌ **Asset Management Service**: Failed to start - ConflictingBeanDefinitionException (resolved)
+- ❌ **Asset Management Service**: Failed to start - Multiple ConflictingBeanDefinitionExceptions (resolved)
 - ❌ **Previous Issues**: YAML DuplicateKeyException + Logback error (both resolved)
-- 🔄 **All Services**: Testing pending rebuild completion with Spring bean conflict fix
-- **Resolution**: Fixed YAML + Spring bean conflict + added logs directory creation to all Dockerfiles
+- 🔄 **All Services**: Testing pending rebuild completion with all Spring bean conflict fixes
+- **Resolution**: Fixed YAML + 2 Spring bean conflicts + added logs directory creation to all Dockerfiles

@@ -34,11 +34,11 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @ExtendWith(MockitoExtension.class)
 class AssetEventHandlerTest {
 
-    private AssetEventHandler assetEventHandler;
+    private LegacyAssetEventHandler assetEventHandler;
 
     @BeforeEach
     void setUp() {
-        assetEventHandler = new AssetEventHandler();
+        assetEventHandler = new LegacyAssetEventHandler();
     }
 
     @Test

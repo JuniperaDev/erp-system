@@ -34,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
-@Service
+@Service("contextInternalAssetDisposalServiceImpl")
 @Transactional
 public class InternalAssetDisposalServiceImpl {
 

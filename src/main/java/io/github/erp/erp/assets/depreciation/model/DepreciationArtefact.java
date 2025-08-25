@@ -48,4 +48,106 @@ public class DepreciationArtefact {
     private LocalDate depreciationPeriodEndDate;
 
     private LocalDate capitalizationDate;
+
+    public static DepreciationArtefactBuilder builder() {
+        return new DepreciationArtefactBuilder();
+    }
+
+    public static class DepreciationArtefactBuilder {
+        private BigDecimal depreciationAmount;
+        private Long elapsedMonths;
+        private Long priorMonths;
+        private BigDecimal usefulLifeYears;
+        private BigDecimal nbvBeforeDepreciation;
+        private BigDecimal nbv;
+        private LocalDate depreciationPeriodStartDate;
+        private LocalDate depreciationPeriodEndDate;
+        private LocalDate capitalizationDate;
+
+        public DepreciationArtefactBuilder depreciationAmount(BigDecimal depreciationAmount) {
+            this.depreciationAmount = depreciationAmount;
+            return this;
+        }
+
+        public DepreciationArtefactBuilder elapsedMonths(Long elapsedMonths) {
+            this.elapsedMonths = elapsedMonths;
+            return this;
+        }
+
+        public DepreciationArtefactBuilder priorMonths(Long priorMonths) {
+            this.priorMonths = priorMonths;
+            return this;
+        }
+
+        public DepreciationArtefactBuilder usefulLifeYears(BigDecimal usefulLifeYears) {
+            this.usefulLifeYears = usefulLifeYears;
+            return this;
+        }
+
+        public DepreciationArtefactBuilder nbvBeforeDepreciation(BigDecimal nbvBeforeDepreciation) {
+            this.nbvBeforeDepreciation = nbvBeforeDepreciation;
+            return this;
+        }
+
+        public DepreciationArtefactBuilder nbv(BigDecimal nbv) {
+            this.nbv = nbv;
+            return this;
+        }
+
+        public DepreciationArtefactBuilder depreciationPeriodStartDate(LocalDate depreciationPeriodStartDate) {
+            this.depreciationPeriodStartDate = depreciationPeriodStartDate;
+            return this;
+        }
+
+        public DepreciationArtefactBuilder depreciationPeriodEndDate(LocalDate depreciationPeriodEndDate) {
+            this.depreciationPeriodEndDate = depreciationPeriodEndDate;
+            return this;
+        }
+
+        public DepreciationArtefactBuilder capitalizationDate(LocalDate capitalizationDate) {
+            this.capitalizationDate = capitalizationDate;
+            return this;
+        }
+
+        public DepreciationArtefact build() {
+            DepreciationArtefact artefact = new DepreciationArtefact();
+            artefact.setDepreciationAmount(depreciationAmount);
+            artefact.setElapsedMonths(elapsedMonths);
+            artefact.setPriorMonths(priorMonths);
+            artefact.setUsefulLifeYears(usefulLifeYears);
+            artefact.setNbvBeforeDepreciation(nbvBeforeDepreciation);
+            artefact.setNbv(nbv);
+            artefact.setDepreciationPeriodStartDate(depreciationPeriodStartDate);
+            artefact.setDepreciationPeriodEndDate(depreciationPeriodEndDate);
+            artefact.setCapitalizationDate(capitalizationDate);
+            return artefact;
+        }
+    }
+
+    public BigDecimal getDepreciationAmount() { return depreciationAmount; }
+    public void setDepreciationAmount(BigDecimal depreciationAmount) { this.depreciationAmount = depreciationAmount; }
+    
+    public Long getElapsedMonths() { return elapsedMonths; }
+    public void setElapsedMonths(Long elapsedMonths) { this.elapsedMonths = elapsedMonths; }
+    
+    public Long getPriorMonths() { return priorMonths; }
+    public void setPriorMonths(Long priorMonths) { this.priorMonths = priorMonths; }
+    
+    public BigDecimal getUsefulLifeYears() { return usefulLifeYears; }
+    public void setUsefulLifeYears(BigDecimal usefulLifeYears) { this.usefulLifeYears = usefulLifeYears; }
+    
+    public BigDecimal getNbvBeforeDepreciation() { return nbvBeforeDepreciation; }
+    public void setNbvBeforeDepreciation(BigDecimal nbvBeforeDepreciation) { this.nbvBeforeDepreciation = nbvBeforeDepreciation; }
+    
+    public BigDecimal getNbv() { return nbv; }
+    public void setNbv(BigDecimal nbv) { this.nbv = nbv; }
+    
+    public LocalDate getDepreciationPeriodStartDate() { return depreciationPeriodStartDate; }
+    public void setDepreciationPeriodStartDate(LocalDate depreciationPeriodStartDate) { this.depreciationPeriodStartDate = depreciationPeriodStartDate; }
+    
+    public LocalDate getDepreciationPeriodEndDate() { return depreciationPeriodEndDate; }
+    public void setDepreciationPeriodEndDate(LocalDate depreciationPeriodEndDate) { this.depreciationPeriodEndDate = depreciationPeriodEndDate; }
+    
+    public LocalDate getCapitalizationDate() { return capitalizationDate; }
+    public void setCapitalizationDate(LocalDate capitalizationDate) { this.capitalizationDate = capitalizationDate; }
 }

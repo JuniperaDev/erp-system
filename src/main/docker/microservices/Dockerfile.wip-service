@@ -1,0 +1,16 @@
+FROM eclipse-temurin:17-jre
+
+ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
+    JHIPSTER_SLEEP=0 \
+    JAVA_OPTS=""
+
+RUN adduser --disabled-password --gecos '' jhipster
+
+ADD target/erp-system-*.jar /app.jar
+
+RUN mkdir -p /logs && chown jhipster:jhipster /app.jar /logs
+USER jhipster
+
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=wip-service -jar /app.jar" ]
+
+EXPOSE 8086

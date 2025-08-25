@@ -20,6 +20,7 @@ package io.github.erp.erp.resources;
 import io.github.erp.IntegrationTest;
 import io.github.erp.domain.*;
 import io.github.erp.context.assets.domain.AssetRegistration;
+import io.github.erp.context.assets.domain.AssetCategory;
 import io.github.erp.erp.resources.assets.AssetRegistrationResourceProd;
 import io.github.erp.repository.AssetRegistrationRepository;
 import io.github.erp.repository.search.AssetRegistrationSearchRepository;
@@ -191,7 +192,7 @@ public class AssetRegistrationResourceIT {
         } else {
             settlement = TestUtil.findAll(em, Settlement.class).get(0);
         }
-        assetRegistration.setAcquiringTransaction(settlement);
+        assetRegistration.setAcquiringTransactionId(settlement.getId());
         return assetRegistration;
     }
 
@@ -244,7 +245,7 @@ public class AssetRegistrationResourceIT {
         } else {
             settlement = TestUtil.findAll(em, Settlement.class).get(0);
         }
-        assetRegistration.setAcquiringTransaction(settlement);
+        assetRegistration.setAcquiringTransactionId(settlement.getId());
         return assetRegistration;
     }
 
@@ -1449,7 +1450,7 @@ public class AssetRegistrationResourceIT {
         }
         em.persist(acquiringTransaction);
         em.flush();
-        assetRegistration.setAcquiringTransaction(acquiringTransaction);
+        assetRegistration.setAcquiringTransactionId(acquiringTransaction.getId());
         assetRegistrationRepository.saveAndFlush(assetRegistration);
         Long acquiringTransactionId = acquiringTransaction.getId();
 

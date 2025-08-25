@@ -25,15 +25,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @DomainEventHandler
-public class AssetEventHandler {
+public class LegacyAssetEventHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(AssetEventHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(LegacyAssetEventHandler.class);
 
-    @DomainEventHandlerMethodAnnotation(eventType = "AssetCreatedEvent", order = 1)
+    @DomainEventHandlerMethodAnnotation(eventType = "AssetCreatedEvent", order = 2)
     public void handleAssetCreated(DomainEvent event) {
         if (event instanceof AssetCreatedEvent) {
             AssetCreatedEvent assetEvent = (AssetCreatedEvent) event;
-            log.info("Processing asset created event for asset: {} with registration: {}", 
+            log.info("Legacy processing asset created event for asset: {} with registration: {}", 
                     assetEvent.getAggregateId(), assetEvent.getAssetRegistrationNumber());
             
             processAssetCreation(assetEvent);
@@ -42,11 +42,11 @@ public class AssetEventHandler {
         }
     }
 
-    @DomainEventHandlerMethodAnnotation(eventType = "AssetCategoryChangedEvent", order = 1)
+    @DomainEventHandlerMethodAnnotation(eventType = "AssetCategoryChangedEvent", order = 2)
     public void handleAssetCategoryChanged(DomainEvent event) {
         if (event instanceof AssetCategoryChangedEvent) {
             AssetCategoryChangedEvent categoryEvent = (AssetCategoryChangedEvent) event;
-            log.info("Processing asset category changed event for asset: {} from category {} to {}", 
+            log.info("Legacy processing asset category changed event for asset: {} from category {} to {}", 
                     categoryEvent.getAggregateId(), categoryEvent.getPreviousCategoryName(), 
                     categoryEvent.getNewCategoryName());
             
@@ -55,11 +55,11 @@ public class AssetEventHandler {
         }
     }
 
-    @DomainEventHandlerMethodAnnotation(eventType = "AssetDisposedEvent", order = 1)
+    @DomainEventHandlerMethodAnnotation(eventType = "AssetDisposedEvent", order = 2)
     public void handleAssetDisposed(DomainEvent event) {
         if (event instanceof AssetDisposedEvent) {
             AssetDisposedEvent disposalEvent = (AssetDisposedEvent) event;
-            log.info("Processing asset disposed event for asset: {} on date: {}", 
+            log.info("Legacy processing asset disposed event for asset: {} on date: {}", 
                     disposalEvent.getAggregateId(), disposalEvent.getDisposalDate());
             
             processAssetDisposal(disposalEvent);
@@ -68,11 +68,11 @@ public class AssetEventHandler {
         }
     }
 
-    @DomainEventHandlerMethodAnnotation(eventType = "AssetRevaluedEvent", order = 1)
+    @DomainEventHandlerMethodAnnotation(eventType = "AssetRevaluedEvent", order = 2)
     public void handleAssetRevalued(DomainEvent event) {
         if (event instanceof AssetRevaluedEvent) {
             AssetRevaluedEvent revaluationEvent = (AssetRevaluedEvent) event;
-            log.info("Processing asset revalued event for asset: {} on date: {}", 
+            log.info("Legacy processing asset revalued event for asset: {} on date: {}", 
                     revaluationEvent.getAggregateId(), revaluationEvent.getRevaluationDate());
             
             processAssetRevaluation(revaluationEvent);
@@ -82,28 +82,28 @@ public class AssetEventHandler {
     }
 
     private void processAssetCreation(AssetCreatedEvent event) {
-        log.info("Asset creation processing completed for: {}", event.getAggregateId());
+        log.info("Legacy asset creation processing completed for: {}", event.getAggregateId());
     }
 
     private void processAssetCategoryChange(AssetCategoryChangedEvent event) {
-        log.info("Asset category change processing completed for: {}", event.getAggregateId());
+        log.info("Legacy asset category change processing completed for: {}", event.getAggregateId());
     }
 
     private void processAssetDisposal(AssetDisposedEvent event) {
-        log.info("Asset disposal processing completed for: {}", event.getAggregateId());
+        log.info("Legacy asset disposal processing completed for: {}", event.getAggregateId());
     }
 
     private void processAssetRevaluation(AssetRevaluedEvent event) {
-        log.info("Asset revaluation processing completed for: {}", event.getAggregateId());
+        log.info("Legacy asset revaluation processing completed for: {}", event.getAggregateId());
     }
 
     private void notifyDepreciationService(DomainEvent event) {
-        log.info("Notifying depreciation service for event: {} on asset: {}", 
+        log.info("Legacy notifying depreciation service for event: {} on asset: {}", 
                 event.getEventType(), event.getAggregateId());
     }
 
     private void notifyFinancialService(DomainEvent event) {
-        log.info("Notifying financial service for event: {} on asset: {}", 
+        log.info("Legacy notifying financial service for event: {} on asset: {}", 
                 event.getEventType(), event.getAggregateId());
     }
 }

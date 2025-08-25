@@ -31,4 +31,60 @@ public class ApplicationStatus {
     private String profile;
 
     private String branch;
+
+    public ApplicationStatus() {}
+
+    public ApplicationStatus(String build, String version, String profile, String branch) {
+        this.build = build;
+        this.version = version;
+        this.profile = profile;
+        this.branch = branch;
+    }
+
+    public static ApplicationStatusBuilder builder() {
+        return new ApplicationStatusBuilder();
+    }
+
+    public static class ApplicationStatusBuilder {
+        private String build;
+        private String version;
+        private String profile;
+        private String branch;
+
+        public ApplicationStatusBuilder build(String build) {
+            this.build = build;
+            return this;
+        }
+
+        public ApplicationStatusBuilder version(String version) {
+            this.version = version;
+            return this;
+        }
+
+        public ApplicationStatusBuilder profile(String profile) {
+            this.profile = profile;
+            return this;
+        }
+
+        public ApplicationStatusBuilder branch(String branch) {
+            this.branch = branch;
+            return this;
+        }
+
+        public ApplicationStatus build() {
+            return new ApplicationStatus(build, version, profile, branch);
+        }
+    }
+
+    public String getBuild() { return build; }
+    public void setBuild(String build) { this.build = build; }
+    
+    public String getVersion() { return version; }
+    public void setVersion(String version) { this.version = version; }
+    
+    public String getProfile() { return profile; }
+    public void setProfile(String profile) { this.profile = profile; }
+    
+    public String getBranch() { return branch; }
+    public void setBranch(String branch) { this.branch = branch; }
 }

@@ -46,7 +46,7 @@ import java.util.UUID;
 /**
  * Service Implementation for managing {@link AssetDisposal}.
  */
-@Service
+@Service("internalAssetDisposalServiceImpl")
 @Transactional
 public class InternalAssetDisposalServiceImpl implements InternalAssetDisposalService {
 

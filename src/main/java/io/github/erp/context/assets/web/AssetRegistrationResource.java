@@ -41,7 +41,7 @@ import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
-@RestController
+@RestController("contextAssetRegistrationResource")
 @RequestMapping("/api/v2/asset-management")
 public class AssetRegistrationResource {
 

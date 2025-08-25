@@ -141,13 +141,15 @@ The single JAR approach with Spring profiles has been validated as appropriate f
 
 ### 🔄 Docker Container Testing (In Progress)
 - All 6 Dockerfiles updated to use eclipse-temurin:17-jre (resolved openjdk:17-jre-slim not found issue)
-- **Issue Identified**: Microservices failed to start due to Logback configuration error - missing `/logs` directory
-- **Fix Applied**: Updated all 6 Dockerfiles to create `/logs` directory with proper ownership
-- Docker images being rebuilt with logging fix (compilation in progress)
+- **Critical Issue Identified**: Microservices failed to start due to YAML configuration error
+- **Root Cause**: Duplicate `hibernate.generate_statistics` key in application.yml (lines 136 and 145)
+- **Fix Applied**: Removed duplicate key, kept `hibernate.generate_statistics: true`
+- **Additional Fix**: Updated all 6 Dockerfiles to create `/logs` directory with proper ownership
+- Docker images being rebuilt with both YAML and logging fixes (compilation in progress)
 - Systematic testing planned for all microservice containers once rebuild completes
 
 #### Docker Testing Results So Far:
-- ❌ **Asset Management Service**: Failed to start - Logback error "Failed to create parent directories for logFile"
-- 🔄 **Remaining Services**: Testing pending rebuild completion
-- **Root Cause**: Container filesystem missing required logs directory for Spring Boot logging configuration
-- **Resolution**: Added `mkdir -p /logs && chown jhipster:jhipster /app.jar /logs` to all Dockerfiles
+- ❌ **Asset Management Service**: Failed to start - DuplicateKeyException in YAML configuration
+- ❌ **Previous Issue**: Logback error "Failed to create parent directories for logFile" (resolved)
+- 🔄 **All Services**: Testing pending rebuild completion with YAML configuration fix
+- **Resolution**: Fixed duplicate YAML key + added logs directory creation to all Dockerfiles

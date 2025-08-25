@@ -169,3 +169,7 @@ The single JAR approach with Spring profiles has been validated as appropriate f
 3. **InternalAssetDisposalServiceImpl**: Resolved by adding explicit bean names:
    - `@Service("internalAssetDisposalServiceImpl")` for internal service  
    - `@Service("contextInternalAssetDisposalServiceImpl")` for context service
+4. **AssetRegistrationResource**: Resolved by adding explicit bean names:
+   - `@RestController("assetRegistrationResource")` for web.rest.AssetRegistrationResource
+   - `@RestController("contextAssetRegistrationResource")` for context.assets.web.AssetRegistrationResource
+   - Note: erp.resources.assets.AssetRegistrationResourceProd already had explicit name "assetRegistrationResourceProd"

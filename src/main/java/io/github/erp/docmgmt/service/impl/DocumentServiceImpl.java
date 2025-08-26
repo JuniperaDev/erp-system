@@ -4,6 +4,7 @@ import io.github.erp.docmgmt.domain.Document;
 import io.github.erp.docmgmt.repository.DocumentRepository;
 import io.github.erp.docmgmt.repository.search.DocumentSearchRepository;
 import io.github.erp.docmgmt.service.DocumentService;
+import io.github.erp.docmgmt.service.DocumentQueryService;
 import io.github.erp.docmgmt.service.dto.DocumentDTO;
 import io.github.erp.docmgmt.service.mapper.DocumentMapper;
 import io.github.erp.docmgmt.service.criteria.DocumentCriteria;
@@ -25,15 +26,18 @@ public class DocumentServiceImpl implements DocumentService {
     private final DocumentRepository documentRepository;
     private final DocumentMapper documentMapper;
     private final DocumentSearchRepository documentSearchRepository;
+    private final DocumentQueryService documentQueryService;
 
     public DocumentServiceImpl(
         DocumentRepository documentRepository,
         DocumentMapper documentMapper,
-        DocumentSearchRepository documentSearchRepository
+        DocumentSearchRepository documentSearchRepository,
+        DocumentQueryService documentQueryService
     ) {
         this.documentRepository = documentRepository;
         this.documentMapper = documentMapper;
         this.documentSearchRepository = documentSearchRepository;
+        this.documentQueryService = documentQueryService;
     }
 
     @Override
@@ -53,7 +57,7 @@ public class DocumentServiceImpl implements DocumentService {
         return documentRepository
             .findById(documentDTO.getId())
             .map(existingDocument -> {
-                documentMapper.partialUpdate(existingDocument, documentDTO);
+                documentMapper.partialUpdate(documentDTO, existingDocument);
                 return existingDocument;
             })
             .map(documentRepository::save)
@@ -74,14 +78,14 @@ public class DocumentServiceImpl implements DocumentService {
     @Transactional(readOnly = true)
     public Page<DocumentDTO> findByCriteria(DocumentCriteria criteria, Pageable pageable) {
         log.debug("Request to get Documents by criteria: {}", criteria);
-        return documentRepository.findAll(pageable).map(documentMapper::toDto);
+        return documentQueryService.findByCriteria(criteria, pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Long countByCriteria(DocumentCriteria criteria) {
         log.debug("Request to count Documents by criteria: {}", criteria);
-        return documentRepository.count();
+        return documentQueryService.countByCriteria(criteria);
     }
 
     @Override

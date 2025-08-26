@@ -1,13 +1,18 @@
 package io.github.erp.docmgmt.config;
 
 import io.github.erp.config.AppPropertyFactory;
+import io.github.erp.docmgmt.internal.DocumentFSStorageService;
+import io.github.erp.internal.files.FileStorageService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @ConfigurationProperties(prefix = "erp.document-management")
 @PropertySource(value = "classpath:config/erpConfigs.yml", factory = AppPropertyFactory.class)
+@EnableConfigurationProperties(DocumentProperties.class)
 public class DocumentManagementConfiguration {
 
     private Storage storage = new Storage();
@@ -252,5 +257,10 @@ public class DocumentManagementConfiguration {
                 this.async = async;
             }
         }
+    }
+
+    @Bean("documentFileStorageService")
+    public FileStorageService documentFileStorageService(DocumentProperties documentProperties) {
+        return new DocumentFSStorageService(documentProperties);
     }
 }

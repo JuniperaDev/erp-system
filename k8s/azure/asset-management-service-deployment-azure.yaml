@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: asset-management-service
+  namespace: default
+  labels:
+    app: asset-management-service
+    version: v1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: asset-management-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: asset-management-service
+        version: v1
+    spec:
+      serviceAccountName: erp-system-workload-identity
+      containers:
+      - name: asset-management-service
+        image: erpsystemdevacr.azurecr.io/asset-management-service:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8082
+          name: http
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "prod,azure"
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: erp-system-secrets
+              key: database-password
+        - name: SPRING_KAFKA_SASL_JAAS_CONFIG
+          valueFrom:
+            secretKeyRef:
+              name: erp-system-secrets
+              key: eventhub-connection-string
+        - name: AZURE_STORAGE_ACCOUNT_KEY
+          valueFrom:
+            secretKeyRef:
+              name: erp-system-secrets
+              key: storage-account-key
+        - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: erp-system-secrets
+              key: application-insights-connection-string
+        - name: JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: erp-system-secrets
+              key: jwt-secret
+        envFrom:
+        - configMapRef:
+            name: erp-system-config
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8082
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8082
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        volumeMounts:
+        - name: secrets-store
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
+      volumes:
+      - name: secrets-store
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: "erp-system-secrets"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: asset-management-service
+  namespace: default
+  labels:
+    app: asset-management-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8082
+    targetPort: 8082
+    protocol: TCP
+    name: http
+  selector:
+    app: asset-management-service

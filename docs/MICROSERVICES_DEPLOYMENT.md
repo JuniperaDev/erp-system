@@ -298,4 +298,4 @@ docker-compose -f src/main/docker/microservices/docker-compose.yml up -d
 - Configuration backup
 - Disaster recovery procedures
 
-For additional support, refer to the bounded context documentation in `modernization/architecture/bounded-contexts/` and the microservices design document in `modernization/architecture/MICROSERVICES_DESIGN.md`.
+For additional support, refer to the bounded context documentation in `docs/architecture/bounded-contexts/` and the microservices design document in `docs/architecture/MICROSERVICES_DESIGN.md`.

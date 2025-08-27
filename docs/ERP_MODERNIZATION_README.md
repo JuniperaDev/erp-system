@@ -16,20 +16,12 @@ Contains domain analysis and microservices architecture design:
 ### 📁 deployment/
 Contains cloud platform evaluations and deployment strategies:
 - `CLOUD_DEPLOYMENT_EVALUATION.md` - Comprehensive analysis of AWS, Azure, and GCP options
-- `AWS_DEPLOYMENT_STRATEGY.md` - Detailed AWS deployment recommendations
-- `AZURE_DEPLOYMENT_STRATEGY.md` - Detailed Azure deployment recommendations
-- `GCP_DEPLOYMENT_STRATEGY.md` - Detailed GCP deployment recommendations
 
 ### 📁 backlog/
 Contains actionable work items for implementation:
 - `DOMAIN_IMPROVEMENTS_BACKLOG.md` - Prioritized backlog for domain model improvements
 - `MIGRATION_STRATEGY_BACKLOG.md` - Phased migration planning and work items
 
-### 📁 migration/
-Contains detailed migration planning and execution guides:
-- Migration timelines and resource requirements
-- Risk assessment and mitigation strategies
-- Rollback procedures and contingency plans
 
 ## Executive Summary
 
@@ -74,6 +66,5 @@ The ERP System modernization initiative addresses the current monolithic archite
 1. Review the architecture documentation in `architecture/`
 2. Evaluate cloud deployment options in `deployment/`
 3. Plan implementation using backlog items in `backlog/`
-4. Execute migration following guides in `migration/`
 
 For questions or clarifications, refer to the detailed documentation in each folder or contact the modernization team.

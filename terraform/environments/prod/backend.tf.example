@@ -1,0 +1,36 @@
+# Terraform Backend Configuration for Production Environment
+# Copy this file to backend.tf and update with your specific values
+
+terraform {
+  backend "azurerm" {
+    # Resource group containing the storage account
+    resource_group_name = "terraform-state-rg"
+    
+    # Storage account name for Terraform state
+    # Replace with your actual storage account name
+    storage_account_name = "tfstateprod<unique-suffix>"
+    
+    # Container name for state files
+    container_name = "tfstate"
+    
+    # State file key for production environment
+    key = "prod/terraform.tfstate"
+    
+    # Optional: Specify subscription ID if using multiple subscriptions
+    # subscription_id = "00000000-0000-0000-0000-000000000000"
+    
+    # Optional: Use managed identity for authentication
+    # use_msi = true
+  }
+}
+
+# State locking configuration
+# Azure Storage automatically provides state locking when using azurerm backend
+# No additional configuration required for basic locking
+
+# Production-specific considerations:
+# - Use separate storage account from dev/staging for isolation
+# - Enable storage account firewall with restricted access
+# - Configure storage account with geo-redundancy (GRS or RA-GRS)
+# - Enable storage account logging and monitoring
+# - Use managed identity authentication for enhanced security

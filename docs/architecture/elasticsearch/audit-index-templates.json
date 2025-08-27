@@ -1,0 +1,434 @@
+{
+  "audit_events_template": {
+    "index_patterns": ["audit-events-*"],
+    "version": 1,
+    "priority": 100,
+    "template": {
+      "settings": {
+        "number_of_shards": 3,
+        "number_of_replicas": 1,
+        "refresh_interval": "30s",
+        "max_result_window": 50000,
+        "index": {
+          "lifecycle": {
+            "name": "audit-events-policy",
+            "rollover_alias": "audit-events"
+          },
+          "codec": "best_compression",
+          "mapping": {
+            "total_fields": {
+              "limit": 2000
+            }
+          }
+        },
+        "analysis": {
+          "analyzer": {
+            "audit_text_analyzer": {
+              "type": "custom",
+              "tokenizer": "standard",
+              "filter": [
+                "lowercase",
+                "stop",
+                "snowball"
+              ]
+            },
+            "audit_keyword_analyzer": {
+              "type": "custom", 
+              "tokenizer": "keyword",
+              "filter": [
+                "lowercase",
+                "trim"
+              ]
+            }
+          }
+        }
+      },
+      "mappings": {
+        "dynamic": "strict",
+        "properties": {
+          "eventId": {
+            "type": "keyword",
+            "index": true
+          },
+          "eventType": {
+            "type": "keyword",
+            "index": true
+          },
+          "aggregateType": {
+            "type": "keyword",
+            "index": true
+          },
+          "aggregateId": {
+            "type": "keyword",
+            "index": true
+          },
+          "occurredOn": {
+            "type": "date",
+            "format": "strict_date_optional_time||epoch_millis",
+            "index": true
+          },
+          "version": {
+            "type": "integer",
+            "index": true
+          },
+          "correlationId": {
+            "type": "keyword",
+            "index": true
+          },
+          "userId": {
+            "type": "keyword",
+            "index": true
+          },
+          "sessionId": {
+            "type": "keyword",
+            "index": true
+          },
+          "ipAddress": {
+            "type": "ip",
+            "index": true
+          },
+          "userAgent": {
+            "type": "text",
+            "analyzer": "audit_text_analyzer",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "changes": {
+            "type": "object",
+            "enabled": false,
+            "properties": {
+              "oldValues": {
+                "type": "object",
+                "enabled": false
+              },
+              "newValues": {
+                "type": "object", 
+                "enabled": false
+              },
+              "changedFields": {
+                "type": "keyword"
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "keyword"
+              },
+              "reason": {
+                "type": "text",
+                "analyzer": "audit_text_analyzer"
+              },
+              "businessContext": {
+                "type": "object",
+                "enabled": false
+              },
+              "technicalContext": {
+                "type": "object",
+                "enabled": false
+              }
+            }
+          },
+          "searchableText": {
+            "type": "text",
+            "analyzer": "audit_text_analyzer",
+            "store": false
+          },
+          "tags": {
+            "type": "keyword"
+          },
+          "processed": {
+            "type": "boolean",
+            "index": true
+          },
+          "retryCount": {
+            "type": "integer"
+          },
+          "indexedAt": {
+            "type": "date",
+            "format": "strict_date_optional_time||epoch_millis"
+          }
+        }
+      }
+    }
+  },
+  
+  "compliance_events_template": {
+    "index_patterns": ["compliance-events-*"],
+    "version": 1,
+    "priority": 110,
+    "template": {
+      "settings": {
+        "number_of_shards": 2,
+        "number_of_replicas": 1,
+        "refresh_interval": "60s",
+        "max_result_window": 50000,
+        "index": {
+          "lifecycle": {
+            "name": "compliance-events-policy",
+            "rollover_alias": "compliance-events"
+          },
+          "codec": "best_compression"
+        }
+      },
+      "mappings": {
+        "dynamic": "strict",
+        "_source": {
+          "includes": ["*"],
+          "excludes": ["changes.oldValues", "changes.newValues"]
+        },
+        "properties": {
+          "eventId": {
+            "type": "keyword"
+          },
+          "eventType": {
+            "type": "keyword"
+          },
+          "aggregateType": {
+            "type": "keyword"
+          },
+          "aggregateId": {
+            "type": "keyword"
+          },
+          "occurredOn": {
+            "type": "date",
+            "format": "strict_date_optional_time||epoch_millis"
+          },
+          "version": {
+            "type": "integer"
+          },
+          "correlationId": {
+            "type": "keyword"
+          },
+          "userId": {
+            "type": "keyword"
+          },
+          "sessionId": {
+            "type": "keyword"
+          },
+          "ipAddress": {
+            "type": "ip"
+          },
+          "userAgent": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "complianceType": {
+            "type": "keyword",
+            "index": true
+          },
+          "regulationReference": {
+            "type": "keyword",
+            "index": true
+          },
+          "complianceStatus": {
+            "type": "keyword",
+            "index": true
+          },
+          "riskLevel": {
+            "type": "keyword",
+            "index": true
+          },
+          "riskScore": {
+            "type": "float",
+            "index": true
+          },
+          "remediationRequired": {
+            "type": "boolean",
+            "index": true
+          },
+          "remediationDeadline": {
+            "type": "date",
+            "format": "strict_date_optional_time||epoch_millis"
+          },
+          "auditorId": {
+            "type": "keyword",
+            "index": true
+          },
+          "auditDetails": {
+            "type": "object",
+            "properties": {
+              "checklistItems": {
+                "type": "nested",
+                "properties": {
+                  "item": {
+                    "type": "text",
+                    "analyzer": "audit_text_analyzer"
+                  },
+                  "status": {
+                    "type": "keyword"
+                  },
+                  "notes": {
+                    "type": "text",
+                    "analyzer": "audit_text_analyzer"
+                  }
+                }
+              },
+              "evidenceLinks": {
+                "type": "keyword"
+              },
+              "controlsAssessed": {
+                "type": "keyword"
+              }
+            }
+          },
+          "businessImpact": {
+            "type": "object",
+            "properties": {
+              "financialImpact": {
+                "type": "double"
+              },
+              "operationalImpact": {
+                "type": "keyword"
+              },
+              "reputationalImpact": {
+                "type": "keyword"
+              }
+            }
+          },
+          "reportingPeriod": {
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "date",
+                "format": "strict_date"
+              },
+              "endDate": {
+                "type": "date",
+                "format": "strict_date"
+              },
+              "frequency": {
+                "type": "keyword"
+              }
+            }
+          },
+          "changes": {
+            "type": "object",
+            "enabled": false
+          },
+          "searchableText": {
+            "type": "text",
+            "analyzer": "audit_text_analyzer"
+          },
+          "indexedAt": {
+            "type": "date",
+            "format": "strict_date_optional_time||epoch_millis"
+          }
+        }
+      }
+    }
+  },
+
+  "security_events_template": {
+    "index_patterns": ["security-events-*"],
+    "version": 1,
+    "priority": 105,
+    "template": {
+      "settings": {
+        "number_of_shards": 2,
+        "number_of_replicas": 1,
+        "refresh_interval": "10s",
+        "max_result_window": 50000,
+        "index": {
+          "lifecycle": {
+            "name": "security-events-policy",
+            "rollover_alias": "security-events"
+          }
+        }
+      },
+      "mappings": {
+        "dynamic": "strict",
+        "properties": {
+          "eventId": {
+            "type": "keyword"
+          },
+          "eventType": {
+            "type": "keyword"
+          },
+          "aggregateType": {
+            "type": "keyword"
+          },
+          "aggregateId": {
+            "type": "keyword"
+          },
+          "occurredOn": {
+            "type": "date",
+            "format": "strict_date_optional_time||epoch_millis"
+          },
+          "version": {
+            "type": "integer"
+          },
+          "correlationId": {
+            "type": "keyword"
+          },
+          "userId": {
+            "type": "keyword"
+          },
+          "sessionId": {
+            "type": "keyword"
+          },
+          "ipAddress": {
+            "type": "ip"
+          },
+          "userAgent": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "securityEventType": {
+            "type": "keyword",
+            "index": true
+          },
+          "severity": {
+            "type": "keyword",
+            "index": true
+          },
+          "threatLevel": {
+            "type": "keyword",
+            "index": true
+          },
+          "sourceIp": {
+            "type": "ip"
+          },
+          "targetResource": {
+            "type": "keyword"
+          },
+          "actionTaken": {
+            "type": "keyword"
+          },
+          "blocked": {
+            "type": "boolean"
+          },
+          "geoLocation": {
+            "type": "geo_point"
+          },
+          "deviceFingerprint": {
+            "type": "keyword"
+          },
+          "searchableText": {
+            "type": "text",
+            "analyzer": "audit_text_analyzer"
+          },
+          "indexedAt": {
+            "type": "date",
+            "format": "strict_date_optional_time||epoch_millis"
+          }
+        }
+      }
+    }
+  }
+}

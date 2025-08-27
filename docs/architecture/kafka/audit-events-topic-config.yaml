@@ -1,0 +1,292 @@
+
+topics:
+  erp.audit.prod.business-events.v1:
+    partitions: 12
+    replication-factor: 3
+    config:
+      retention.ms: 2592000000  # 30 days in milliseconds
+      retention.bytes: 107374182400  # 100GB per partition
+      
+      cleanup.policy: delete
+      
+      compression.type: lz4
+      
+      segment.ms: 604800000  # 7 days
+      segment.bytes: 1073741824  # 1GB
+      
+      min.insync.replicas: 2
+      unclean.leader.election.enable: false
+      
+      max.message.bytes: 1048576  # 1MB
+      
+    description: "Business entity lifecycle events (CRUD operations)"
+    event_types:
+      - CREATED
+      - UPDATED
+      - DELETED
+      - PROCESSED
+      - APPROVED
+      - REJECTED
+    
+  erp.audit.prod.compliance-events.v1:
+    partitions: 6
+    replication-factor: 3
+    config:
+      retention.ms: 31536000000  # 1 year in milliseconds
+      retention.bytes: 53687091200  # 50GB per partition
+      
+      cleanup.policy: delete
+      compression.type: lz4
+      
+      segment.ms: 2592000000  # 30 days
+      segment.bytes: 1073741824  # 1GB
+      
+      min.insync.replicas: 2
+      unclean.leader.election.enable: false
+      max.message.bytes: 2097152  # 2MB (larger for compliance details)
+      
+    description: "Regulatory compliance and audit events"
+    compliance_frameworks:
+      - SOX
+      - GDPR
+      - IFRS16
+      - BASEL_III
+      - CUSTOM
+    
+  erp.audit.prod.security-events.v1:
+    partitions: 6
+    replication-factor: 3
+    config:
+      retention.ms: 7776000000  # 90 days in milliseconds
+      retention.bytes: 32212254720  # 30GB per partition
+      
+      cleanup.policy: delete
+      compression.type: lz4
+      
+      segment.ms: 604800000  # 7 days
+      segment.bytes: 536870912  # 512MB
+      
+      min.insync.replicas: 2
+      unclean.leader.election.enable: false
+      max.message.bytes: 1048576  # 1MB
+      
+    description: "Security-related audit events"
+    event_types:
+      - AUTHENTICATION_SUCCESS
+      - AUTHENTICATION_FAILURE
+      - AUTHORIZATION_FAILURE
+      - PRIVILEGE_ESCALATION
+      - DATA_ACCESS
+      - CONFIGURATION_CHANGE
+    
+  erp.audit.prod.system-events.v1:
+    partitions: 4
+    replication-factor: 3
+    config:
+      retention.ms: 604800000  # 7 days in milliseconds
+      retention.bytes: 10737418240  # 10GB per partition
+      
+      cleanup.policy: delete
+      compression.type: lz4
+      
+      segment.ms: 86400000  # 1 day
+      segment.bytes: 268435456  # 256MB
+      
+      min.insync.replicas: 2
+      unclean.leader.election.enable: false
+      max.message.bytes: 1048576  # 1MB
+      
+    description: "System health and operational events"
+    event_types:
+      - SERVICE_STARTED
+      - SERVICE_STOPPED
+      - HEALTH_CHECK
+      - PERFORMANCE_METRIC
+      - ERROR_OCCURRED
+      - INTEGRATION_EVENT
+
+consumer_groups:
+  audit-trail-reconstruction:
+    topics:
+      - erp.audit.prod.business-events.v1
+      - erp.audit.prod.compliance-events.v1
+    config:
+      group.id: audit-trail-reconstruction
+      auto.offset.reset: earliest
+      enable.auto.commit: false
+      max.poll.records: 500
+      session.timeout.ms: 30000
+      heartbeat.interval.ms: 3000
+      fetch.min.bytes: 1024
+      fetch.max.wait.ms: 500
+    parallelism: 6
+    description: "Rebuilds audit trails from event streams"
+    
+  compliance-monitoring:
+    topics:
+      - erp.audit.prod.compliance-events.v1
+      - erp.audit.prod.security-events.v1
+    config:
+      group.id: compliance-monitoring
+      auto.offset.reset: latest
+      enable.auto.commit: false
+      max.poll.records: 100
+      session.timeout.ms: 30000
+      heartbeat.interval.ms: 3000
+    parallelism: 3
+    description: "Real-time compliance assessment and alerting"
+    
+  elasticsearch-indexing:
+    topics:
+      - erp.audit.prod.business-events.v1
+      - erp.audit.prod.compliance-events.v1
+      - erp.audit.prod.security-events.v1
+      - erp.audit.prod.system-events.v1
+    config:
+      group.id: elasticsearch-indexing
+      auto.offset.reset: earliest
+      enable.auto.commit: false
+      max.poll.records: 1000
+      session.timeout.ms: 30000
+      heartbeat.interval.ms: 3000
+      fetch.min.bytes: 10240
+      fetch.max.wait.ms: 1000
+    parallelism: 4
+    description: "Indexes audit events for search capabilities"
+    
+  audit-archival:
+    topics:
+      - erp.audit.prod.business-events.v1
+      - erp.audit.prod.compliance-events.v1
+      - erp.audit.prod.security-events.v1
+    config:
+      group.id: audit-archival
+      auto.offset.reset: earliest
+      enable.auto.commit: false
+      max.poll.records: 2000
+      session.timeout.ms: 60000
+      heartbeat.interval.ms: 10000
+      fetch.min.bytes: 51200
+      fetch.max.wait.ms: 5000
+    parallelism: 2
+    description: "Archives audit events to cold storage"
+
+producer_config:
+  acks: all  # Wait for all replicas to acknowledge
+  retries: 2147483647  # Retry indefinitely
+  max.in.flight.requests.per.connection: 5
+  enable.idempotence: true
+  
+  batch.size: 16384  # 16KB
+  linger.ms: 5  # Wait up to 5ms for batching
+  
+  compression.type: lz4
+  
+  buffer.memory: 33554432  # 32MB
+  
+  request.timeout.ms: 30000
+  delivery.timeout.ms: 120000
+  
+  key.serializer: org.apache.kafka.common.serialization.StringSerializer
+  value.serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+  
+  schema.registry.url: http://schema-registry:8081
+
+monitoring:
+  metrics:
+    - kafka.server:type=BrokerTopicMetrics,name=MessagesInPerSec,topic=erp.audit.prod.*
+    - kafka.server:type=BrokerTopicMetrics,name=BytesInPerSec,topic=erp.audit.prod.*
+    - kafka.server:type=BrokerTopicMetrics,name=BytesOutPerSec,topic=erp.audit.prod.*
+    - kafka.consumer:type=consumer-fetch-manager-metrics,client-id=*
+    - kafka.producer:type=producer-metrics,client-id=*
+    
+  alerts:
+    - name: "High Audit Event Lag"
+      condition: "consumer_lag > 10000"
+      severity: "WARNING"
+      description: "Audit event processing is falling behind"
+      
+    - name: "Audit Topic Disk Usage"
+      condition: "topic_size_bytes > 85% of retention.bytes"
+      severity: "WARNING"
+      description: "Audit topic approaching retention limit"
+      
+    - name: "Compliance Event Processing Failure"
+      condition: "error_rate > 5% for compliance-monitoring group"
+      severity: "CRITICAL"
+      description: "Compliance monitoring is failing"
+
+schema_evolution:
+  compatibility: BACKWARD  # New schemas must be backward compatible
+  
+  versioning_strategy: |
+    - Use semantic versioning for schema versions (v1.0.0, v1.1.0, v2.0.0)
+    - Backward compatible changes increment minor version
+    - Breaking changes increment major version
+    - Topic names include major version (v1, v2, etc.)
+    
+  migration_process: |
+    1. Deploy new schema version to Schema Registry
+    2. Update producers to use new schema
+    3. Verify consumers can handle new schema
+    4. Create new topic version for breaking changes
+    5. Migrate consumers to new topic gradually
+    6. Deprecate old topic after migration complete
+
+security:
+  ssl:
+    enabled: true
+    keystore.location: /etc/kafka/ssl/kafka.server.keystore.jks
+    keystore.password: ${KAFKA_KEYSTORE_PASSWORD}
+    key.password: ${KAFKA_KEY_PASSWORD}
+    truststore.location: /etc/kafka/ssl/kafka.server.truststore.jks
+    truststore.password: ${KAFKA_TRUSTSTORE_PASSWORD}
+    
+  sasl:
+    enabled: true
+    mechanism: SCRAM-SHA-512
+    jaas.config: |
+      org.apache.kafka.common.security.scram.ScramLoginModule required
+      username="${KAFKA_USERNAME}"
+      password="${KAFKA_PASSWORD}";
+      
+  acls:
+    - principal: "User:audit-service"
+      operation: "Write"
+      resource: "Topic:erp.audit.prod.*"
+      
+    - principal: "User:compliance-service"
+      operation: "Read"
+      resource: "Topic:erp.audit.prod.compliance-events.v1"
+      
+    - principal: "User:elasticsearch-indexer"
+      operation: "Read"
+      resource: "Topic:erp.audit.prod.*"
+      
+    - principal: "User:audit-archiver"
+      operation: "Read"
+      resource: "Topic:erp.audit.prod.*"
+
+disaster_recovery:
+  replication:
+    enabled: true
+    target_cluster: "audit-events-dr"
+    topics:
+      - erp.audit.prod.business-events.v1
+      - erp.audit.prod.compliance-events.v1
+      - erp.audit.prod.security-events.v1
+    
+  backup:
+    frequency: "daily"
+    retention: "90 days"
+    storage: "s3://audit-backups/kafka-topics/"
+    
+  recovery:
+    rto: "4 hours"  # Recovery Time Objective
+    rpo: "15 minutes"  # Recovery Point Objective
+    procedures: |
+      1. Assess extent of data loss
+      2. Restore from latest backup if needed
+      3. Resume replication from DR cluster
+      4. Verify data integrity
+      5. Resume normal operations

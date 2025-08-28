@@ -1,0 +1,592 @@
+
+report_templates:
+  sox_compliance_report:
+    id: "sox-compliance-v1.0"
+    name: "Sarbanes-Oxley Compliance Report"
+    description: "Comprehensive SOX compliance audit report covering financial controls and audit trails"
+    compliance_framework: "SOX"
+    version: "1.0"
+    
+    metadata:
+      regulation_references:
+        - "SOX Section 302: Corporate Responsibility for Financial Reports"
+        - "SOX Section 404: Management Assessment of Internal Controls"
+        - "SOX Section 409: Real Time Issuer Disclosures"
+      
+      report_frequency: "quarterly"
+      retention_period: "7 years"
+      confidentiality: "restricted"
+    
+    sections:
+      executive_summary:
+        title: "Executive Summary"
+        description: "High-level compliance status and key findings"
+        content_type: "summary"
+        
+      financial_controls_audit:
+        title: "Financial Controls Audit Trail"
+        description: "Audit trail for financial transaction controls"
+        query_template: |
+          {
+            "bool": {
+              "must": [
+                {"terms": {"aggregateType": ["Payment", "Invoice", "Settlement", "FixedAssetDepreciation"]}},
+                {"range": {"occurredOn": {"gte": "{{from_date}}", "lte": "{{to_date}}"}}},
+                {"terms": {"eventType": ["CREATED", "UPDATED", "APPROVED", "PROCESSED"]}}
+              ]
+            }
+          }
+        visualization: "table"
+        columns:
+          - "occurredOn"
+          - "eventType"
+          - "aggregateType"
+          - "aggregateId"
+          - "userId"
+          - "changes.changedFields"
+        
+      access_control_changes:
+        title: "Access Control and Authorization Changes"
+        description: "Changes to user permissions and system access"
+        query_template: |
+          {
+            "bool": {
+              "must": [
+                {"term": {"eventType": "CONFIGURATION_CHANGE"}},
+                {"range": {"occurredOn": {"gte": "{{from_date}}", "lte": "{{to_date}}"}}},
+                {"wildcard": {"metadata.reason": "*permission*"}}
+              ]
+            }
+          }
+        visualization: "table"
+        
+      segregation_of_duties:
+        title: "Segregation of Duties Compliance"
+        description: "Analysis of duty separation in financial processes"
+        query_template: |
+          {
+            "bool": {
+              "must": [
+                {"terms": {"eventType": ["CREATED", "APPROVED"]}},
+                {"terms": {"aggregateType": ["Payment", "Invoice"]}},
+                {"range": {"occurredOn": {"gte": "{{from_date}}", "lte": "{{to_date}}"}}}
+              ]
+            }
+          }
+        aggregation: "terms"
+        aggregation_field: "userId"
+        visualization: "chart"
+        
+      management_overrides:
+        title: "Management Override Detection"
+        description: "Detection of management overrides in financial processes"
+        query_template: |
+          {
+            "bool": {
+              "must": [
+                {"term": {"eventType": "OVERRIDE"}},
+                {"range": {"occurredOn": {"gte": "{{from_date}}", "lte": "{{to_date}}"}}}
+              ]
+            }
+          }
+        visualization: "table"
+        alert_threshold: 0
+        
+      system_changes:
+        title: "System Configuration Changes"
+        description: "Critical system configuration modifications"
+        query_template: |
+          {
+            "bool": {
+              "must": [
+                {"term": {"eventType": "CONFIGURATION_CHANGE"}},
+                {"range": {"occurredOn": {"gte": "{{from_date}}", "lte": "{{to_date}}"}}}
+              ]
+            }
+          }
+        visualization: "table"
+    
+    output_formats:
+      - "PDF"
+      - "CSV"
+      - "JSON"
+    
+    distribution:
+      automatic: true
+      recipients:
+        - "cfo@company.com"
+        - "audit-committee@company.com"
+        - "compliance@company.com"
+      
+    validation_rules:
+      - name: "Complete audit trail"
+        condition: "All financial transactions have audit events"
+        severity: "CRITICAL"
+      - name: "Segregation compliance"
+        condition: "No single user creates and approves same transaction"
+        severity: "HIGH"
+
+  gdpr_compliance_report:
+    id: "gdpr-compliance-v1.0"
+    name: "GDPR Data Protection Compliance Report"
+    description: "GDPR compliance report covering personal data processing and protection"
+    compliance_framework: "GDPR"
+    version: "1.0"
+    
+    metadata:
+      regulation_references:
+        - "GDPR Article 5: Principles of processing personal data"
+        - "GDPR Article 6: Lawfulness of processing"
+        - "GDPR Article 32: Security of processing"
+        - "GDPR Article 33: Notification of personal data breach"
+      
+      report_frequency: "monthly"
+      retention_period: "6 years"
+      confidentiality: "restricted"
+    
+    sections:
+      data_processing_activities:
+        title: "Personal Data Processing Activities"
+        description: "Audit trail of personal data processing events"
+        query_template: |
+          {
+            "bool": {
+              "must": [
+                {"wildcard": {"searchableText": "*personal*"}},
+                {"range": {"occurredOn": {"gte": "{{from_date}}", "lte": "{{to_date}}"}}},
+                {"terms": {"eventType": ["CREATED", "UPDATED", "ACCESSED", "DELETED"]}}
+              ]
+            }
+          }
+        visualization: "table"
+        
+      consent_management:
+        title: "Consent Management Audit Trail"
+        description: "Tracking of consent collection, modification, and withdrawal"
+        query_template: |
+          {
+            "bool": {
+              "must": [
+                {"wildcard": {"metadata.reason": "*consent*"}},
+                {"range": {"occurredOn": {"gte": "{{from_date}}", "lte": "{{to_date}}"}}}
+              ]
+            }
+          }
+        visualization: "table"
+        
+      data_subject_requests:
+        title: "Data Subject Rights Requests"
+        description: "Processing of data subject access, rectification, and erasure requests"
+        query_template: |
+          {
+            "bool": {
+              "must": [
+                {"terms": {"eventType": ["DATA_SUBJECT_REQUEST", "DATA_ERASURE", "DATA_EXPORT"]}},
+                {"range": {"occurredOn": {"gte": "{{from_date}}", "lte": "{{to_date}}"}}}
+              ]
+            }
+          }
+        visualization: "table"
+        
+      cross_border_transfers:
+        title: "Cross-Border Data Transfers"
+        description: "International data transfer activities and safeguards"
+        query_template: |
+          {
+            "bool": {
+              "must": [
+                {"term": {"eventType": "DATA_TRANSFER"}},
+                {"range": {"occurredOn": {"gte": "{{from_date}}", "lte": "{{to_date}}"}}}
+              ]
+            }
+          }
+        visualization: "table"
+        
+      data_breaches:
+        title: "Data Breach Incidents"
+        description: "Security incidents involving personal data"
+        query_template: |
+          {
+            "bool": {
+              "must": [
+                {"term": {"eventType": "SECURITY_INCIDENT"}},
+                {"wildcard": {"metadata.reason": "*breach*"}},
+                {"range": {"occurredOn": {"gte": "{{from_date}}", "lte": "{{to_date}}"}}}
+              ]
+            }
+          }
+        visualization: "table"
+        alert_threshold: 0
+    
+    output_formats:
+      - "PDF"
+      - "CSV"
+    
+    distribution:
+      automatic: true
+      recipients:
+        - "dpo@company.com"
+        - "privacy@company.com"
+        - "legal@company.com"
+
+  ifrs16_compliance_report:
+    id: "ifrs16-compliance-v1.0"
+    name: "IFRS 16 Lease Accounting Compliance Report"
+    description: "IFRS 16 compliance report for lease accounting and asset management"
+    compliance_framework: "IFRS16"
+    version: "1.0"
+    
+    metadata:
+      regulation_references:
+        - "IFRS 16.22: Initial measurement of lease liability"
+        - "IFRS 16.26: Subsequent measurement of lease liability"
+        - "IFRS 16.30: Initial measurement of right-of-use asset"
+        - "IFRS 16.59: Disclosure requirements"
+      
+      report_frequency: "quarterly"
+      retention_period: "asset_lifecycle + 7 years"
+      confidentiality: "internal"
+    
+    sections:
+      lease_recognition:
+        title: "Lease Recognition and Initial Measurement"
+        description: "Audit trail of lease contract recognition and initial measurements"
+        query_template: |
+          {
+            "bool": {
+              "must": [
+                {"terms": {"aggregateType": ["LeaseContract", "RouAssetRegistration"]}},
+                {"term": {"eventType": "CREATED"}},
+                {"range": {"occurredOn": {"gte": "{{from_date}}", "lte": "{{to_date}}"}}}
+              ]
+            }
+          }
+        visualization: "table"
+        
+      lease_modifications:
+        title: "Lease Modifications and Remeasurements"
+        description: "Changes to lease terms and corresponding remeasurements"
+        query_template: |
+          {
+            "bool": {
+              "must": [
+                {"terms": {"aggregateType": ["LeaseContract", "LeaseLiability"]}},
+                {"term": {"eventType": "UPDATED"}},
+                {"wildcard": {"metadata.reason": "*modification*"}},
+                {"range": {"occurredOn": {"gte": "{{from_date}}", "lte": "{{to_date}}"}}}
+              ]
+            }
+          }
+        visualization: "table"
+        
+      depreciation_calculations:
+        title: "Right-of-Use Asset Depreciation"
+        description: "Depreciation calculations for right-of-use assets"
+        query_template: |
+          {
+            "bool": {
+              "must": [
+                {"term": {"aggregateType": "RouDepreciationEntry"}},
+                {"terms": {"eventType": ["CREATED", "PROCESSED"]}},
+                {"range": {"occurredOn": {"gte": "{{from_date}}", "lte": "{{to_date}}"}}}
+              ]
+            }
+          }
+        visualization: "table"
+        
+      interest_accrual:
+        title: "Lease Liability Interest Accrual"
+        description: "Interest accrual on lease liabilities"
+        query_template: |
+          {
+            "bool": {
+              "must": [
+                {"term": {"aggregateType": "LeaseLiability"}},
+                {"term": {"eventType": "INTEREST_ACCRUED"}},
+                {"range": {"occurredOn": {"gte": "{{from_date}}", "lte": "{{to_date}}"}}}
+              ]
+            }
+          }
+        visualization: "table"
+        
+      impairment_testing:
+        title: "Asset Impairment Testing"
+        description: "Impairment testing for right-of-use assets"
+        query_template: |
+          {
+            "bool": {
+              "must": [
+                {"term": {"aggregateType": "RouAssetRegistration"}},
+                {"term": {"eventType": "IMPAIRMENT_TEST"}},
+                {"range": {"occurredOn": {"gte": "{{from_date}}", "lte": "{{to_date}}"}}}
+              ]
+            }
+          }
+        visualization: "table"
+        
+      disclosure_requirements:
+        title: "Disclosure Requirement Compliance"
+        description: "Compliance with IFRS 16 disclosure requirements"
+        query_template: |
+          {
+            "bool": {
+              "must": [
+                {"term": {"eventType": "DISCLOSURE_GENERATED"}},
+                {"wildcard": {"metadata.reason": "*ifrs16*"}},
+                {"range": {"occurredOn": {"gte": "{{from_date}}", "lte": "{{to_date}}"}}}
+              ]
+            }
+          }
+        visualization: "summary"
+    
+    output_formats:
+      - "PDF"
+      - "Excel"
+      - "JSON"
+    
+    distribution:
+      automatic: true
+      recipients:
+        - "cfo@company.com"
+        - "accounting@company.com"
+        - "external-auditors@company.com"
+
+  custom_compliance_report:
+    id: "custom-compliance-v1.0"
+    name: "Custom Compliance Report Template"
+    description: "Flexible template for custom compliance requirements"
+    compliance_framework: "CUSTOM"
+    version: "1.0"
+    
+    metadata:
+      configurable: true
+      report_frequency: "configurable"
+      retention_period: "configurable"
+      confidentiality: "configurable"
+    
+    sections:
+      custom_section_1:
+        title: "{{section_1_title}}"
+        description: "{{section_1_description}}"
+        query_template: "{{section_1_query}}"
+        visualization: "{{section_1_visualization}}"
+        
+      custom_section_2:
+        title: "{{section_2_title}}"
+        description: "{{section_2_description}}"
+        query_template: "{{section_2_query}}"
+        visualization: "{{section_2_visualization}}"
+        
+      custom_section_3:
+        title: "{{section_3_title}}"
+        description: "{{section_3_description}}"
+        query_template: "{{section_3_query}}"
+        visualization: "{{section_3_visualization}}"
+    
+    configuration_schema:
+      type: "object"
+      properties:
+        title:
+          type: "string"
+          description: "Report title"
+        description:
+          type: "string"
+          description: "Report description"
+        sections:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+              description:
+                type: "string"
+              query:
+                type: "string"
+              visualization:
+                type: "string"
+                enum: ["table", "chart", "summary"]
+        output_formats:
+          type: "array"
+          items:
+            type: "string"
+            enum: ["PDF", "CSV", "JSON", "XML", "Excel"]
+        recipients:
+          type: "array"
+          items:
+            type: "string"
+            format: "email"
+
+report_generation:
+  scheduling:
+    cron_expressions:
+      daily: "0 2 * * *"
+      weekly: "0 2 * * 1"
+      monthly: "0 2 1 * *"
+      quarterly: "0 2 1 1,4,7,10 *"
+      annually: "0 2 1 1 *"
+  
+  processing:
+    max_concurrent_reports: 5
+    timeout_minutes: 60
+    retry_attempts: 3
+    batch_size: 10000
+  
+  storage:
+    report_retention: "3 years"
+    storage_location: "s3://audit-reports/"
+    encryption: "AES-256"
+    access_control: "role-based"
+  
+  notification:
+    on_completion: true
+    on_failure: true
+    channels:
+      - "email"
+      - "slack"
+      - "webhook"
+
+quality_assurance:
+  validation_rules:
+    data_completeness:
+      description: "Ensure all required data is present"
+      threshold: "95%"
+      severity: "HIGH"
+      
+    data_accuracy:
+      description: "Validate data accuracy against source systems"
+      sample_size: "10%"
+      tolerance: "0.1%"
+      severity: "CRITICAL"
+      
+    temporal_consistency:
+      description: "Ensure events are in chronological order"
+      check_type: "automated"
+      severity: "MEDIUM"
+      
+    cross_reference_validation:
+      description: "Validate cross-references between related events"
+      check_type: "automated"
+      severity: "HIGH"
+  
+  review_process:
+    automated_review:
+      enabled: true
+      checks:
+        - "Data completeness"
+        - "Format validation"
+        - "Calculation accuracy"
+        - "Trend analysis"
+    
+    manual_review:
+      required_for:
+        - "Critical compliance violations"
+        - "Unusual patterns detected"
+        - "First-time report generation"
+      
+      reviewers:
+        - "Compliance Officer"
+        - "Internal Auditor"
+        - "Subject Matter Expert"
+  
+  approval_workflow:
+    stages:
+      1. "Automated validation"
+      2. "Technical review"
+      3. "Business review"
+      4. "Compliance approval"
+      5. "Final distribution"
+    
+    escalation:
+      timeout: "24 hours per stage"
+      escalation_path:
+        - "Direct supervisor"
+        - "Department head"
+        - "C-level executive"
+
+monitoring:
+  real_time_monitoring:
+    enabled: true
+    check_frequency: "5 minutes"
+    
+    monitored_conditions:
+      - name: "Critical compliance violation"
+        condition: "complianceStatus = 'NON_COMPLIANT' AND riskLevel = 'CRITICAL'"
+        alert_level: "CRITICAL"
+        notification_delay: "immediate"
+        
+      - name: "High-risk compliance event"
+        condition: "riskLevel = 'HIGH' AND remediationRequired = true"
+        alert_level: "HIGH"
+        notification_delay: "15 minutes"
+        
+      - name: "Compliance trend deterioration"
+        condition: "compliance_score < previous_period * 0.9"
+        alert_level: "MEDIUM"
+        notification_delay: "1 hour"
+  
+  compliance_dashboards:
+    executive_dashboard:
+      metrics:
+        - "Overall compliance score"
+        - "Critical violations count"
+        - "Remediation progress"
+        - "Compliance trends"
+      refresh_frequency: "hourly"
+      
+    operational_dashboard:
+      metrics:
+        - "Recent compliance events"
+        - "Pending remediations"
+        - "Audit trail completeness"
+        - "System health indicators"
+      refresh_frequency: "5 minutes"
+  
+  compliance_kpis:
+    - name: "Compliance Score"
+      calculation: "(compliant_events / total_events) * 100"
+      target: "> 95%"
+      
+    - name: "Mean Time to Remediation"
+      calculation: "avg(remediation_completion_time - violation_detection_time)"
+      target: "< 24 hours"
+      
+    - name: "Audit Trail Completeness"
+      calculation: "(events_with_complete_audit_trail / total_events) * 100"
+      target: "100%"
+      
+    - name: "False Positive Rate"
+      calculation: "(false_positive_violations / total_violations) * 100"
+      target: "< 5%"
+
+external_integrations:
+  grc_platforms:
+    - name: "ServiceNow GRC"
+      integration_type: "API"
+      data_sync: "bidirectional"
+      sync_frequency: "hourly"
+      
+    - name: "MetricStream"
+      integration_type: "file_export"
+      export_format: "XML"
+      export_frequency: "daily"
+  
+  audit_firms:
+    - name: "External Auditor Portal"
+      access_type: "secure_portal"
+      data_scope: "compliance_reports_only"
+      access_duration: "audit_period"
+      
+    - name: "Regulatory Reporting"
+      integration_type: "automated_submission"
+      submission_format: "XBRL"
+      submission_frequency: "quarterly"
+  
+  business_intelligence:
+    - name: "Tableau"
+      integration_type: "database_connection"
+      data_refresh: "real_time"
+      
+    - name: "Power BI"
+      integration_type: "API"
+      data_refresh: "hourly"

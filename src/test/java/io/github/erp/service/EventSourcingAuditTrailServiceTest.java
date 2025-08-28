@@ -22,6 +22,9 @@ import io.github.erp.domain.events.DomainEvent;
 import io.github.erp.domain.events.DomainEventStore;
 import io.github.erp.domain.events.financial.SettlementCreatedEvent;
 import io.github.erp.service.impl.EventSourcingAuditTrailServiceImpl;
+import io.github.erp.service.validation.AuditEventSchemaValidator;
+import io.github.erp.service.validation.ComplianceAuditEventSchemaValidator;
+import io.github.erp.service.validation.ValidationResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,6 +50,12 @@ class EventSourcingAuditTrailServiceTest {
     @Mock
     private DomainEventStore eventStore;
 
+    @Mock
+    private AuditEventSchemaValidator auditEventSchemaValidator;
+
+    @Mock
+    private ComplianceAuditEventSchemaValidator complianceAuditEventSchemaValidator;
+
     private EventSourcingAuditTrailService eventSourcingAuditTrailService;
 
     private SettlementCreatedEvent testEvent;
@@ -55,7 +64,12 @@ class EventSourcingAuditTrailServiceTest {
 
     @BeforeEach
     void setUp() {
-        eventSourcingAuditTrailService = new EventSourcingAuditTrailServiceImpl(eventStore);
+        ValidationResult validResult = ValidationResult.valid();
+        when(auditEventSchemaValidator.validate(any())).thenReturn(validResult);
+        when(complianceAuditEventSchemaValidator.validate(any())).thenReturn(validResult);
+        
+        eventSourcingAuditTrailService = new EventSourcingAuditTrailServiceImpl(
+            eventStore, auditEventSchemaValidator, complianceAuditEventSchemaValidator);
         
         fromDate = Instant.now().minusSeconds(3600);
         toDate = Instant.now();

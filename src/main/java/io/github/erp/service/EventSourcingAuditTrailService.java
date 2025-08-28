@@ -27,6 +27,8 @@ import java.util.UUID;
 
 public interface EventSourcingAuditTrailService {
     
+    DomainEvent validateAndPersistEvent(DomainEvent event);
+    
     List<DomainEvent> reconstructAuditTrail(String entityType, String entityId, Instant fromDate, Instant toDate);
     
     Map<String, Object> generateComplianceReport(Instant fromDate, Instant toDate);

@@ -1,0 +1,155 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://erp-system.github.io/schemas/compliance-audit-event.json",
+  "type": "object",
+  "title": "Compliance Audit Event Schema",
+  "description": "Schema for compliance-specific audit events extending the base audit event",
+  "allOf": [
+    {
+      "$ref": "audit-event-schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "complianceType": {
+          "type": "string",
+          "enum": [
+            "SOX",
+            "GDPR", 
+            "IFRS16",
+            "BASEL_III",
+            "PCI_DSS",
+            "HIPAA",
+            "ISO_27001",
+            "CUSTOM"
+          ],
+          "description": "Compliance framework or regulation"
+        },
+        "regulationReference": {
+          "type": "string",
+          "description": "Specific regulation section or article reference",
+          "examples": [
+            "SOX Section 404",
+            "GDPR Article 32",
+            "IFRS 16.22",
+            "Basel III Pillar 1"
+          ]
+        },
+        "complianceStatus": {
+          "type": "string",
+          "enum": [
+            "COMPLIANT",
+            "NON_COMPLIANT", 
+            "PENDING",
+            "EXCEPTION",
+            "REMEDIATED",
+            "UNDER_REVIEW"
+          ],
+          "description": "Compliance assessment result"
+        },
+        "riskLevel": {
+          "type": "string",
+          "enum": [
+            "LOW",
+            "MEDIUM",
+            "HIGH", 
+            "CRITICAL"
+          ],
+          "description": "Risk assessment level for compliance violation"
+        },
+        "riskScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Numerical risk score (0-100)"
+        },
+        "remediationRequired": {
+          "type": "boolean",
+          "description": "Whether remediation action is required"
+        },
+        "remediationDeadline": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Deadline for remediation if required"
+        },
+        "auditorId": {
+          "type": "string",
+          "description": "Compliance auditor or system identifier"
+        },
+        "auditDetails": {
+          "type": "object",
+          "description": "Detailed compliance audit information",
+          "properties": {
+            "checklistItems": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "item": {"type": "string"},
+                  "status": {"type": "string", "enum": ["PASS", "FAIL", "N/A"]},
+                  "notes": {"type": "string"}
+                },
+                "required": ["item", "status"]
+              }
+            },
+            "evidenceLinks": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "description": "Links to supporting evidence or documentation"
+            },
+            "controlsAssessed": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of controls that were assessed"
+            }
+          }
+        },
+        "businessImpact": {
+          "type": "object",
+          "description": "Business impact assessment",
+          "properties": {
+            "financialImpact": {
+              "type": "number",
+              "description": "Estimated financial impact in base currency"
+            },
+            "operationalImpact": {
+              "type": "string",
+              "enum": ["NONE", "LOW", "MEDIUM", "HIGH", "CRITICAL"]
+            },
+            "reputationalImpact": {
+              "type": "string", 
+              "enum": ["NONE", "LOW", "MEDIUM", "HIGH", "CRITICAL"]
+            }
+          }
+        },
+        "reportingPeriod": {
+          "type": "object",
+          "description": "Reporting period for compliance assessment",
+          "properties": {
+            "startDate": {
+              "type": "string",
+              "format": "date"
+            },
+            "endDate": {
+              "type": "string",
+              "format": "date"
+            },
+            "frequency": {
+              "type": "string",
+              "enum": ["DAILY", "WEEKLY", "MONTHLY", "QUARTERLY", "ANNUALLY"]
+            }
+          }
+        }
+      },
+      "required": [
+        "complianceType",
+        "complianceStatus"
+      ]
+    }
+  ]
+}

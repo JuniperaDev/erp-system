@@ -20,7 +20,12 @@ package io.github.erp.service.impl;
 
 import io.github.erp.domain.events.DomainEvent;
 import io.github.erp.domain.events.DomainEventStore;
+import io.github.erp.domain.events.audit.AuditTrailEvent;
+import io.github.erp.domain.events.audit.ComplianceAuditEvent;
 import io.github.erp.service.EventSourcingAuditTrailService;
+import io.github.erp.service.validation.AuditEventSchemaValidator;
+import io.github.erp.service.validation.ComplianceAuditEventSchemaValidator;
+import io.github.erp.service.validation.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -41,9 +46,39 @@ public class EventSourcingAuditTrailServiceImpl implements EventSourcingAuditTra
     private final Logger log = LoggerFactory.getLogger(EventSourcingAuditTrailServiceImpl.class);
     
     private final DomainEventStore eventStore;
+    private final AuditEventSchemaValidator auditEventValidator;
+    private final ComplianceAuditEventSchemaValidator complianceAuditEventValidator;
 
-    public EventSourcingAuditTrailServiceImpl(DomainEventStore eventStore) {
+    public EventSourcingAuditTrailServiceImpl(DomainEventStore eventStore,
+                                            AuditEventSchemaValidator auditEventValidator,
+                                            ComplianceAuditEventSchemaValidator complianceAuditEventValidator) {
         this.eventStore = eventStore;
+        this.auditEventValidator = auditEventValidator;
+        this.complianceAuditEventValidator = complianceAuditEventValidator;
+    }
+
+    @Override
+    @Transactional
+    public DomainEvent validateAndPersistEvent(DomainEvent event) {
+        log.debug("Validating and persisting event: {}", event.getEventId());
+        
+        if (event instanceof AuditTrailEvent) {
+            ValidationResult result = auditEventValidator.validate((AuditTrailEvent) event);
+            if (!result.isValid()) {
+                log.warn("Audit trail event validation failed for event {}: {}", 
+                    event.getEventId(), result.getFormattedErrors());
+                throw new IllegalArgumentException("Event validation failed: " + result.getFormattedErrors());
+            }
+        } else if (event instanceof ComplianceAuditEvent) {
+            ValidationResult result = complianceAuditEventValidator.validate((ComplianceAuditEvent) event);
+            if (!result.isValid()) {
+                log.warn("Compliance audit event validation failed for event {}: {}", 
+                    event.getEventId(), result.getFormattedErrors());
+                throw new IllegalArgumentException("Event validation failed: " + result.getFormattedErrors());
+            }
+        }
+        
+        return eventStore.store(event);
     }
 
     @Override

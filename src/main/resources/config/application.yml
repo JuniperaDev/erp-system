@@ -275,3 +275,11 @@ app:
   ReIndexer:
     #      interval: PT3600S
     interval: ${ERP_REINDEXER_INTERVAL}
+
+application:
+  rate-limiting:
+    enabled: true
+    standard-requests-per-hour: 1000
+    report-requests-per-hour: 10
+    export-requests-per-hour: 5
+    search-requests-per-hour: 500

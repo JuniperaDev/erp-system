@@ -42,6 +42,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -65,8 +66,8 @@ class EventSourcingAuditTrailServiceTest {
     @BeforeEach
     void setUp() {
         ValidationResult validResult = ValidationResult.valid();
-        when(auditEventSchemaValidator.validate(any())).thenReturn(validResult);
-        when(complianceAuditEventSchemaValidator.validate(any())).thenReturn(validResult);
+        lenient().when(auditEventSchemaValidator.validate(any())).thenReturn(validResult);
+        lenient().when(complianceAuditEventSchemaValidator.validate(any())).thenReturn(validResult);
         
         eventSourcingAuditTrailService = new EventSourcingAuditTrailServiceImpl(
             eventStore, auditEventSchemaValidator, complianceAuditEventSchemaValidator);

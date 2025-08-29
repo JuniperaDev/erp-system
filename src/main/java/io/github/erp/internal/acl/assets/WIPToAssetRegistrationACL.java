@@ -1,4 +1,4 @@
-package io.github.erp.context.assets.acl;
+package io.github.erp.internal.acl.assets;
 
 import io.github.erp.internal.acl.AbstractTranslationACL;
 import io.github.erp.internal.acl.dto.AssetAcquisitionData;

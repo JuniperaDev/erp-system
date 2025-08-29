@@ -22,6 +22,9 @@ import io.github.erp.domain.events.DomainEvent;
 import io.github.erp.domain.events.DomainEventStore;
 import io.github.erp.domain.events.financial.SettlementCreatedEvent;
 import io.github.erp.service.impl.EventSourcingAuditTrailServiceImpl;
+import io.github.erp.service.validation.AuditEventSchemaValidator;
+import io.github.erp.service.validation.ComplianceAuditEventSchemaValidator;
+import io.github.erp.service.validation.ValidationResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +42,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,6 +50,12 @@ class EventSourcingAuditTrailServiceTest {
 
     @Mock
     private DomainEventStore eventStore;
+
+    @Mock
+    private AuditEventSchemaValidator auditEventSchemaValidator;
+
+    @Mock
+    private ComplianceAuditEventSchemaValidator complianceAuditEventSchemaValidator;
 
     private EventSourcingAuditTrailService eventSourcingAuditTrailService;
 
@@ -55,7 +65,12 @@ class EventSourcingAuditTrailServiceTest {
 
     @BeforeEach
     void setUp() {
-        eventSourcingAuditTrailService = new EventSourcingAuditTrailServiceImpl(eventStore);
+        ValidationResult validResult = ValidationResult.valid();
+        lenient().when(auditEventSchemaValidator.validate(any())).thenReturn(validResult);
+        lenient().when(complianceAuditEventSchemaValidator.validate(any())).thenReturn(validResult);
+        
+        eventSourcingAuditTrailService = new EventSourcingAuditTrailServiceImpl(
+            eventStore, auditEventSchemaValidator, complianceAuditEventSchemaValidator);
         
         fromDate = Instant.now().minusSeconds(3600);
         toDate = Instant.now();

@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://erp-system.github.io/schemas/audit-event.json",
+  "type": "object",
+  "title": "Audit Event Schema",
+  "description": "Base schema for all audit events in the ERP system",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique event identifier"
+    },
+    "eventType": {
+      "type": "string",
+      "enum": [
+        "CREATED",
+        "UPDATED", 
+        "DELETED",
+        "ACCESSED",
+        "PROCESSED",
+        "APPROVED",
+        "REJECTED",
+        "ATTACHED",
+        "DETACHED",
+        "LINKED",
+        "UNLINKED",
+        "VIEWED",
+        "EXPORTED",
+        "IMPORTED"
+      ],
+      "description": "Type of audit event"
+    },
+    "aggregateType": {
+      "type": "string",
+      "description": "Entity type being audited",
+      "examples": [
+        "Payment",
+        "Invoice", 
+        "AssetRegistration",
+        "Dealer",
+        "Settlement",
+        "FixedAssetDepreciation",
+        "LeaseContract"
+      ]
+    },
+    "aggregateId": {
+      "type": "string",
+      "description": "Entity instance identifier"
+    },
+    "occurredOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event timestamp in ISO 8601 format"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Event version for ordering within aggregate"
+    },
+    "correlationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Transaction correlation identifier for tracking related events"
+    },
+    "userId": {
+      "type": "string",
+      "description": "User performing the action",
+      "minLength": 1
+    },
+    "sessionId": {
+      "type": "string",
+      "description": "User session identifier"
+    },
+    "ipAddress": {
+      "type": "string",
+      "oneOf": [
+        {"format": "ipv4"},
+        {"format": "ipv6"}
+      ],
+      "description": "Client IP address"
+    },
+    "userAgent": {
+      "type": "string",
+      "description": "Client user agent string"
+    },
+    "changes": {
+      "type": "object",
+      "description": "Entity state changes",
+      "properties": {
+        "oldValues": {
+          "type": "object",
+          "description": "Previous entity state as JSON object"
+        },
+        "newValues": {
+          "type": "object", 
+          "description": "New entity state as JSON object"
+        },
+        "changedFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of fields that were modified"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional event metadata",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "Source system or service that generated the event"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Reason for the action"
+        },
+        "businessContext": {
+          "type": "object",
+          "description": "Business-specific context information"
+        },
+        "technicalContext": {
+          "type": "object",
+          "description": "Technical context like request headers, API version"
+        }
+      }
+    }
+  },
+  "required": [
+    "eventId",
+    "eventType", 
+    "aggregateType",
+    "aggregateId",
+    "occurredOn",
+    "version",
+    "userId"
+  ],
+  "additionalProperties": false
+}

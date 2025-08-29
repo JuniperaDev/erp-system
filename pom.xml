@@ -72,6 +72,7 @@
         <liquibase.version>4.8.0</liquibase.version>
         <liquibase-hibernate5.version>4.8.0</liquibase-hibernate5.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
+        <json-schema-validator.version>1.0.76</json-schema-validator.version>
         <jaxb-runtime.version>2.3.3</jaxb-runtime.version>
         <archunit-junit5.version>0.21.0</archunit-junit5.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
@@ -378,6 +379,11 @@
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.networknt</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>${json-schema-validator.version}</version>
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>

@@ -160,6 +160,20 @@ spring:
       properties:
         replication.factor: 8
     topics:
+      audit-events:
+        business-events:
+          name: "erp.audit.prod.business-events.v1"
+          partitions: 12
+        compliance-events:
+          name: "erp.audit.prod.compliance-events.v1"
+          partitions: 6
+        security-events:
+          name: "erp.audit.prod.security-events.v1"
+          partitions: 6
+        system-events:
+          name: "erp.audit.prod.system-events.v1"
+          partitions: 4
+        replication-factor: 3
       depreciation-batch:
         topic:
           name: "depreciation_batch_topic"

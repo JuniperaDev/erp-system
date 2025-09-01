@@ -29,6 +29,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,11 +44,11 @@ class RateLimitingInterceptorTest {
 
     @BeforeEach
     void setUp() {
-        when(rateLimitingProperties.isEnabled()).thenReturn(true);
-        when(rateLimitingProperties.getStandardRequestsPerHour()).thenReturn(1000);
-        when(rateLimitingProperties.getReportRequestsPerHour()).thenReturn(10);
-        when(rateLimitingProperties.getExportRequestsPerHour()).thenReturn(5);
-        when(rateLimitingProperties.getSearchRequestsPerHour()).thenReturn(500);
+        lenient().when(rateLimitingProperties.isEnabled()).thenReturn(true);
+        lenient().when(rateLimitingProperties.getStandardRequestsPerHour()).thenReturn(1000);
+        lenient().when(rateLimitingProperties.getReportRequestsPerHour()).thenReturn(10);
+        lenient().when(rateLimitingProperties.getExportRequestsPerHour()).thenReturn(5);
+        lenient().when(rateLimitingProperties.getSearchRequestsPerHour()).thenReturn(500);
 
         rateLimitingInterceptor = new RateLimitingInterceptor(rateLimitingProperties);
         request = new MockHttpServletRequest();

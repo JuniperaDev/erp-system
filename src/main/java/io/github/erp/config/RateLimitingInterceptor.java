@@ -58,10 +58,10 @@ public class RateLimitingInterceptor implements HandlerInterceptor {
         Bucket bucket = getBucketForUser(userKey, requestPath);
         
         if (bucket.tryConsume(1)) {
-            addRateLimitHeaders(response, bucket);
+            addRateLimitHeaders(response, bucket, requestPath);
             return true;
         } else {
-            handleRateLimitExceeded(response, bucket);
+            handleRateLimitExceeded(response, bucket, requestPath);
             return false;
         }
     }
@@ -112,19 +112,21 @@ public class RateLimitingInterceptor implements HandlerInterceptor {
         }
     }
 
-    private void addRateLimitHeaders(HttpServletResponse response, Bucket bucket) {
+    private void addRateLimitHeaders(HttpServletResponse response, Bucket bucket, String requestPath) {
         long availableTokens = bucket.getAvailableTokens();
-        long capacity = bucket.getAvailableTokens() + bucket.getAvailableTokens();
+        long capacity = getRequestsPerHour(requestPath);
         
         response.setHeader("X-RateLimit-Limit", String.valueOf(capacity));
         response.setHeader("X-RateLimit-Remaining", String.valueOf(availableTokens));
         response.setHeader("X-RateLimit-Reset", String.valueOf(System.currentTimeMillis() + Duration.ofHours(1).toMillis()));
     }
 
-    private void handleRateLimitExceeded(HttpServletResponse response, Bucket bucket) throws Exception {
+    private void handleRateLimitExceeded(HttpServletResponse response, Bucket bucket, String requestPath) throws Exception {
+        long capacity = getRequestsPerHour(requestPath);
+        
         response.setStatus(429);
         response.setHeader("Retry-After", "3600");
-        response.setHeader("X-RateLimit-Limit", "0");
+        response.setHeader("X-RateLimit-Limit", String.valueOf(capacity));
         response.setHeader("X-RateLimit-Remaining", "0");
         response.setHeader("X-RateLimit-Reset", String.valueOf(System.currentTimeMillis() + Duration.ofHours(1).toMillis()));
         response.setContentType("application/json");

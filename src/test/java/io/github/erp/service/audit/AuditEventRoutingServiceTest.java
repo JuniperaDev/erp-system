@@ -112,24 +112,32 @@ class AuditEventRoutingServiceTest {
     }
 
     private AuditTrailEvent createTestEvent(String actionType) {
-        AuditTrailEvent event = new AuditTrailEvent();
-        event.setEventId(UUID.randomUUID().toString());
-        event.setAggregateId(UUID.randomUUID().toString());
-        event.setAggregateType("TEST_ENTITY");
-        event.setActionType(actionType);
-        event.setEventTimestamp(Instant.now());
-        return event;
+        return new AuditTrailEvent(
+            UUID.randomUUID().toString(),
+            "TEST_ENTITY",
+            "test-user",
+            actionType,
+            "TestEntity",
+            "{}",
+            "{\"name\":\"test\"}",
+            "192.168.1.1",
+            "Mozilla/5.0",
+            UUID.randomUUID()
+        );
     }
 
     private ComplianceAuditEvent createTestComplianceEvent() {
-        ComplianceAuditEvent event = new ComplianceAuditEvent();
-        event.setEventId(UUID.randomUUID().toString());
-        event.setAggregateId(UUID.randomUUID().toString());
-        event.setAggregateType("COMPLIANCE_ENTITY");
-        event.setEventTimestamp(Instant.now());
-        event.setComplianceType("SOX");
-        event.setRiskLevel("LOW");
-        event.setRemediationRequired(false);
-        return event;
+        return new ComplianceAuditEvent(
+            UUID.randomUUID().toString(),
+            "COMPLIANCE_ENTITY",
+            "SOX",
+            "SOX-404",
+            "COMPLIANT",
+            "Compliance audit details",
+            "auditor-123",
+            "LOW",
+            false,
+            UUID.randomUUID()
+        );
     }
 }

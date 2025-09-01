@@ -93,12 +93,17 @@ class AuditTrailKafkaConsumerTest {
     }
 
     private AuditTrailEvent createTestEvent(String actionType) {
-        AuditTrailEvent event = new AuditTrailEvent();
-        event.setEventId(UUID.randomUUID().toString());
-        event.setAggregateId(UUID.randomUUID().toString());
-        event.setAggregateType("TEST_ENTITY");
-        event.setActionType(actionType);
-        event.setEventTimestamp(Instant.now());
-        return event;
+        return new AuditTrailEvent(
+            UUID.randomUUID().toString(),
+            "TEST_ENTITY",
+            "test-user",
+            actionType,
+            "TestEntity",
+            "{}",
+            "{\"name\":\"test\"}",
+            "192.168.1.1",
+            "Mozilla/5.0",
+            UUID.randomUUID()
+        );
     }
 }

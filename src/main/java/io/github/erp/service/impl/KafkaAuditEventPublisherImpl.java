@@ -102,10 +102,9 @@ public class KafkaAuditEventPublisherImpl implements KafkaAuditEventPublisher {
             log.info("Publishing {} audit event: {} for entity: {} to topic: {}", 
                     eventType, event.getEventId(), event.getAggregateId(), topicName);
 
-            CompletableFuture<SendResult<String, AuditTrailEvent>> future = 
-                auditTrailEventKafkaTemplate.send(topicName, partitionKey, event);
-
-            return future.handle((result, throwable) -> {
+            return auditTrailEventKafkaTemplate.send(topicName, partitionKey, event)
+                .completable()
+                .handle((result, throwable) -> {
                 if (throwable != null) {
                     log.error("Failed to publish {} audit event: {} to topic: {}", 
                             eventType, event.getEventId(), topicName, throwable);
@@ -134,10 +133,9 @@ public class KafkaAuditEventPublisherImpl implements KafkaAuditEventPublisher {
             log.info("Publishing {} audit event: {} for entity: {} to topic: {}", 
                     eventType, event.getEventId(), event.getAggregateId(), topicName);
 
-            CompletableFuture<SendResult<String, ComplianceAuditEvent>> future = 
-                complianceAuditEventKafkaTemplate.send(topicName, partitionKey, event);
-
-            return future.handle((result, throwable) -> {
+            return complianceAuditEventKafkaTemplate.send(topicName, partitionKey, event)
+                .completable()
+                .handle((result, throwable) -> {
                 if (throwable != null) {
                     log.error("Failed to publish {} audit event: {} to topic: {}", 
                             eventType, event.getEventId(), topicName, throwable);

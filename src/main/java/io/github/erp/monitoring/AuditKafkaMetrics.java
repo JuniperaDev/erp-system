@@ -76,10 +76,18 @@ public class AuditKafkaMetrics {
     }
 
     public Timer.Sample startPublishTimer() {
-        return Timer.start(auditEventPublishTime);
+        return Timer.start();
     }
 
     public Timer.Sample startProcessingTimer() {
-        return Timer.start(auditEventProcessingTime);
+        return Timer.start();
+    }
+
+    public void recordPublishTime(Timer.Sample sample) {
+        sample.stop(auditEventPublishTime);
+    }
+
+    public void recordProcessingTime(Timer.Sample sample) {
+        sample.stop(auditEventProcessingTime);
     }
 }

@@ -56,7 +56,7 @@ public class ComplianceMonitoringConsumer {
             log.info("Consuming compliance audit event: {} from topic: {} partition: {} offset: {}", 
                     event.getEventId(), topic, partition, offset);
             
-            eventSourcingAuditTrailService.validateAndPersistComplianceEvent(event);
+            eventSourcingAuditTrailService.validateAndPersistEvent(event);
             
             if (isHighRiskComplianceEvent(event)) {
                 log.warn("High-risk compliance event detected: {} - Type: {} Risk Level: {}", 

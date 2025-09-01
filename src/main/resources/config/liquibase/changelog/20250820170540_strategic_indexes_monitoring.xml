@@ -39,6 +39,11 @@
 
     <changeSet id="20250820170540-2" author="devin">
         <!-- Fiscal Year/Quarter Optimization for Cross-Domain Queries -->
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_fiscal_quarter_fiscal_year" tableName="fiscal_quarter"/>
+            </not>
+        </preConditions>
         <createIndex indexName="idx_fiscal_quarter_fiscal_year" tableName="fiscal_quarter">
             <column name="fiscal_year_id"/>
         </createIndex>
@@ -68,6 +73,9 @@
 
     <changeSet id="20250820170540-4" author="devin">
         <!-- Create index usage monitoring view for PostgreSQL -->
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+        </preConditions>
         <createView viewName="v_strategic_index_usage_monitoring">
             <![CDATA[
             SELECT 
@@ -100,6 +108,9 @@
 
     <changeSet id="20250820170540-5" author="devin">
         <!-- Create performance monitoring view for strategic indexes -->
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+        </preConditions>
         <createView viewName="v_strategic_index_performance_summary">
             <![CDATA[
             WITH index_stats AS (

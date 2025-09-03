@@ -1,0 +1,16 @@
+# Copy this file to terraform.tfvars and fill in the values
+
+project_name     = "erp-system"
+location         = "East US 2"
+database_password = "YourSecureStagingPassword123!"
+
+# Azure AD group object IDs for admin access
+admin_group_object_ids = [
+  # "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+]
+
+# Email addresses for monitoring alerts
+alert_email_addresses = [
+  # "admin@yourcompany.com",
+  # "devops@yourcompany.com"
+]

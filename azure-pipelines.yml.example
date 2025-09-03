@@ -1,0 +1,270 @@
+# Azure DevOps Pipeline for Terraform CI/CD
+# This pipeline validates, plans, and applies Terraform configurations
+# Copy this file to azure-pipelines.yml and customize as needed
+
+trigger:
+  branches:
+    include:
+      - main
+      - master
+  paths:
+    include:
+      - terraform/*
+
+pr:
+  branches:
+    include:
+      - main
+      - master
+  paths:
+    include:
+      - terraform/*
+
+variables:
+  - group: terraform-variables
+  - name: terraformVersion
+    value: '1.5.0'
+  - name: azureServiceConnection
+    value: 'azure-service-connection'
+
+stages:
+  - stage: Validate
+    displayName: 'Terraform Validate'
+    jobs:
+      - job: TerraformValidate
+        displayName: 'Validate Terraform Configuration'
+        pool:
+          vmImage: 'ubuntu-latest'
+        
+        steps:
+          - task: TerraformInstaller@0
+            displayName: 'Install Terraform'
+            inputs:
+              terraformVersion: $(terraformVersion)
+          
+          - task: PowerShell@2
+            displayName: 'Terraform Format Check'
+            inputs:
+              targetType: 'inline'
+              script: |
+                terraform fmt -check -recursive terraform/
+                if ($LASTEXITCODE -ne 0) {
+                  Write-Error "Terraform format check failed"
+                  exit 1
+                }
+          
+          - task: TerraformTaskV3@3
+            displayName: 'Terraform Validate - Dev'
+            inputs:
+              provider: 'azurerm'
+              command: 'validate'
+              workingDirectory: 'terraform/environments/dev'
+              backendServiceArm: $(azureServiceConnection)
+              backendAzureRmResourceGroupName: 'terraform-state-rg'
+              backendAzureRmStorageAccountName: '$(terraformStorageAccount)'
+              backendAzureRmContainerName: 'tfstate'
+              backendAzureRmKey: 'dev/terraform.tfstate'
+
+  - stage: SecurityScan
+    displayName: 'Security Scanning'
+    dependsOn: Validate
+    jobs:
+      - job: SecurityScan
+        displayName: 'Run Security Scans'
+        pool:
+          vmImage: 'ubuntu-latest'
+        
+        steps:
+          - task: PowerShell@2
+            displayName: 'Install Checkov'
+            inputs:
+              targetType: 'inline'
+              script: |
+                pip install checkov
+          
+          - task: PowerShell@2
+            displayName: 'Run Checkov Security Scan'
+            inputs:
+              targetType: 'inline'
+              script: |
+                checkov -d terraform/ --framework terraform --output junitxml --output-file-path checkov-results.xml
+            continueOnError: true
+          
+          - task: PublishTestResults@2
+            displayName: 'Publish Security Scan Results'
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: 'checkov-results.xml'
+              testRunTitle: 'Checkov Security Scan'
+
+  - stage: PlanDev
+    displayName: 'Plan - Development'
+    dependsOn: [Validate, SecurityScan]
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+    jobs:
+      - job: TerraformPlan
+        displayName: 'Terraform Plan - Dev'
+        pool:
+          vmImage: 'ubuntu-latest'
+        
+        steps:
+          - task: TerraformInstaller@0
+            displayName: 'Install Terraform'
+            inputs:
+              terraformVersion: $(terraformVersion)
+          
+          - task: TerraformTaskV3@3
+            displayName: 'Terraform Init'
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: 'terraform/environments/dev'
+              backendServiceArm: $(azureServiceConnection)
+              backendAzureRmResourceGroupName: 'terraform-state-rg'
+              backendAzureRmStorageAccountName: '$(terraformStorageAccount)'
+              backendAzureRmContainerName: 'tfstate'
+              backendAzureRmKey: 'dev/terraform.tfstate'
+          
+          - task: TerraformTaskV3@3
+            displayName: 'Terraform Plan'
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              workingDirectory: 'terraform/environments/dev'
+              environmentServiceNameAzureRM: $(azureServiceConnection)
+              commandOptions: '-var-file="terraform.tfvars" -out=tfplan'
+
+  - stage: ApplyDev
+    displayName: 'Apply - Development'
+    dependsOn: Validate
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - deployment: TerraformApply
+        displayName: 'Terraform Apply - Dev'
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: 'development'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: TerraformInstaller@0
+                  displayName: 'Install Terraform'
+                  inputs:
+                    terraformVersion: $(terraformVersion)
+                
+                - task: TerraformTaskV3@3
+                  displayName: 'Terraform Init'
+                  inputs:
+                    provider: 'azurerm'
+                    command: 'init'
+                    workingDirectory: 'terraform/environments/dev'
+                    backendServiceArm: $(azureServiceConnection)
+                    backendAzureRmResourceGroupName: 'terraform-state-rg'
+                    backendAzureRmStorageAccountName: '$(terraformStorageAccount)'
+                    backendAzureRmContainerName: 'tfstate'
+                    backendAzureRmKey: 'dev/terraform.tfstate'
+                
+                - task: TerraformTaskV3@3
+                  displayName: 'Terraform Apply'
+                  inputs:
+                    provider: 'azurerm'
+                    command: 'apply'
+                    workingDirectory: 'terraform/environments/dev'
+                    environmentServiceNameAzureRM: $(azureServiceConnection)
+                    commandOptions: '-var-file="terraform.tfvars" -auto-approve'
+
+  - stage: ApplyStaging
+    displayName: 'Apply - Staging'
+    dependsOn: ApplyDev
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - deployment: TerraformApply
+        displayName: 'Terraform Apply - Staging'
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: 'staging'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: TerraformInstaller@0
+                  displayName: 'Install Terraform'
+                  inputs:
+                    terraformVersion: $(terraformVersion)
+                
+                - task: TerraformTaskV3@3
+                  displayName: 'Terraform Init'
+                  inputs:
+                    provider: 'azurerm'
+                    command: 'init'
+                    workingDirectory: 'terraform/environments/staging'
+                    backendServiceArm: $(azureServiceConnection)
+                    backendAzureRmResourceGroupName: 'terraform-state-rg'
+                    backendAzureRmStorageAccountName: '$(terraformStorageAccount)'
+                    backendAzureRmContainerName: 'tfstate'
+                    backendAzureRmKey: 'staging/terraform.tfstate'
+                
+                - task: TerraformTaskV3@3
+                  displayName: 'Terraform Apply'
+                  inputs:
+                    provider: 'azurerm'
+                    command: 'apply'
+                    workingDirectory: 'terraform/environments/staging'
+                    environmentServiceNameAzureRM: $(azureServiceConnection)
+                    commandOptions: '-var-file="terraform.tfvars" -auto-approve'
+
+  - stage: ApplyProd
+    displayName: 'Apply - Production'
+    dependsOn: ApplyStaging
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), contains(variables['Build.SourceVersionMessage'], '[deploy-prod]'))
+    jobs:
+      - deployment: TerraformApply
+        displayName: 'Terraform Apply - Production'
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: 'production'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: TerraformInstaller@0
+                  displayName: 'Install Terraform'
+                  inputs:
+                    terraformVersion: $(terraformVersion)
+                
+                - task: TerraformTaskV3@3
+                  displayName: 'Terraform Init'
+                  inputs:
+                    provider: 'azurerm'
+                    command: 'init'
+                    workingDirectory: 'terraform/environments/prod'
+                    backendServiceArm: $(azureServiceConnection)
+                    backendAzureRmResourceGroupName: 'terraform-state-rg'
+                    backendAzureRmStorageAccountName: '$(terraformStorageAccount)'
+                    backendAzureRmContainerName: 'tfstate'
+                    backendAzureRmKey: 'prod/terraform.tfstate'
+                
+                - task: TerraformTaskV3@3
+                  displayName: 'Terraform Plan'
+                  inputs:
+                    provider: 'azurerm'
+                    command: 'plan'
+                    workingDirectory: 'terraform/environments/prod'
+                    environmentServiceNameAzureRM: $(azureServiceConnection)
+                    commandOptions: '-var-file="terraform.tfvars" -out=tfplan'
+                
+                - task: ManualValidation@0
+                  displayName: 'Manual Approval for Production'
+                  inputs:
+                    notifyUsers: '$(prodApprovers)'
+                    instructions: 'Please review the Terraform plan and approve for production deployment'
+                
+                - task: TerraformTaskV3@3
+                  displayName: 'Terraform Apply'
+                  inputs:
+                    provider: 'azurerm'
+                    command: 'apply'
+                    workingDirectory: 'terraform/environments/prod'
+                    environmentServiceNameAzureRM: $(azureServiceConnection)
+                    commandOptions: 'tfplan'

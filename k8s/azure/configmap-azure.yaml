@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: erp-system-config
+  namespace: default
+data:
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://erp-system-prod-postgres.postgres.database.azure.com:5432/erpSystem?sslmode=require"
+  SPRING_DATASOURCE_USERNAME: "erpadmin"
+  SPRING_DATASOURCE_PASSWORD: "" # Will be injected from Azure Key Vault
+  SPRING_JPA_DATABASE_PLATFORM: "org.hibernate.dialect.PostgreSQLDialect"
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "validate"
+  SPRING_LIQUIBASE_CHANGE_LOG: "classpath:config/liquibase/master.xml"
+  
+  SPRING_KAFKA_BOOTSTRAP_SERVERS: "erp-system-prod-eventhub.servicebus.windows.net:9093"
+  SPRING_KAFKA_SECURITY_PROTOCOL: "SASL_SSL"
+  SPRING_KAFKA_SASL_MECHANISM: "PLAIN"
+  SPRING_KAFKA_SASL_JAAS_CONFIG: "" # Will be injected from Azure Key Vault
+  
+  KAFKA_TOPIC_ASSET_EVENTS: "asset-events-topic"
+  KAFKA_TOPIC_FINANCIAL_EVENTS: "financial-events-topic"
+  KAFKA_TOPIC_LEASE_EVENTS: "lease-events-topic"
+  KAFKA_TOPIC_DEPRECIATION_BATCH: "depreciation-batch-topic"
+  KAFKA_TOPIC_WIP_EVENTS: "wip-events-topic"
+  KAFKA_TOPIC_REPORTING_EVENTS: "reporting-events-topic"
+  
+  AZURE_STORAGE_ACCOUNT_NAME: "" # Will be injected from Azure Key Vault
+  AZURE_STORAGE_ACCOUNT_KEY: "" # Will be injected from Azure Key Vault
+  AZURE_STORAGE_CONTAINER_DOCUMENTS: "documents"
+  AZURE_STORAGE_CONTAINER_REPORTS: "reports"
+  AZURE_STORAGE_CONTAINER_BACKUPS: "backups"
+  AZURE_STORAGE_CONTAINER_AUDIT_LOGS: "audit-logs"
+  
+  APPLICATIONINSIGHTS_CONNECTION_STRING: "" # Will be injected from Azure Key Vault
+  
+  EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://jhipster-registry:8761/eureka/"
+  EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
+  
+  JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET: "" # Will be injected from Azure Key Vault
+  
+  SPRING_CLOUD_CONFIG_URI: "http://jhipster-registry:8761/config"
+  SPRING_PROFILES_ACTIVE: "prod,azure"
+  
+  LOGGING_LEVEL_COM_JHIPSTER: "INFO"
+  LOGGING_LEVEL_IO_GITHUB_JHIPSTER: "INFO"
+  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: "INFO"
+  LOGGING_LEVEL_ROOT: "INFO"
+  
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,metrics,prometheus"
+  MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: "when_authorized"
+  MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED: "true"

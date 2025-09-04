@@ -37,7 +37,7 @@ import org.springframework.data.elasticsearch.core.convert.ElasticsearchCustomCo
 
 @Configuration
 @Profile("!test & !testcontainers")
-@ConditionalOnProperty(name = "spring.elasticsearch.rest.uris")
+@ConditionalOnProperty(name = "SPRING_DATA_JEST_URI", matchIfMissing = false)
 @ConditionalOnClass(ElasticsearchRestTemplate.class)
 @EnableElasticsearchRepositories("io.github.erp.repository.search")
 public class ElasticsearchConfiguration extends ElasticsearchConfigurationSupport {

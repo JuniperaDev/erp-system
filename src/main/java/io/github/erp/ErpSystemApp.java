@@ -37,7 +37,10 @@ import tech.jhipster.config.DefaultProfileUtil;
 import tech.jhipster.config.JHipsterConstants;
 
 @EnableDiscoveryClient
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+    org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration.class,
+    org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration.class
+})
 @EnableConfigurationProperties({ LiquibaseProperties.class, ApplicationProperties.class })
 public class ErpSystemApp {
 

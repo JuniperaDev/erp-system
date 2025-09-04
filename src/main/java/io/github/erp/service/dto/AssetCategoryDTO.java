@@ -27,7 +27,7 @@ import javax.persistence.Lob;
 import javax.validation.constraints.*;
 
 /**
- * A DTO for the {@link io.github.erp.domain.AssetCategory} entity.
+ * A DTO for the {@link io.github.erp.context.assets.domain.AssetCategory} entity.
  */
 public class AssetCategoryDTO implements Serializable {
 

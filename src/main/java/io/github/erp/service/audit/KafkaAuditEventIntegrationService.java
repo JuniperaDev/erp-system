@@ -1,4 +1,4 @@
-package io.github.erp.domain;
+package io.github.erp.service.audit;
 
 /*-
  * Erp System - Mark X No 10 (Jehoiada Series) Server ver 1.8.2
@@ -18,15 +18,19 @@ package io.github.erp.domain;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import javax.persistence.*;
+import io.github.erp.domain.events.DomainEvent;
+import io.github.erp.domain.events.audit.AuditTrailEvent;
+import io.github.erp.domain.events.audit.ComplianceAuditEvent;
 
-/**
- * Entity alias for AssetCategory to maintain backward compatibility.
- * This class serves as a bridge to the actual AssetCategory implementation
- * in the context.assets.domain package.
- */
-@Entity
-@Table(name = "asset_category")
-public class AssetCategory extends io.github.erp.context.assets.domain.AssetCategory {
-    
+public interface KafkaAuditEventIntegrationService {
+
+    void publishAuditEventToKafka(DomainEvent event);
+
+    void publishAuditTrailEventToKafka(AuditTrailEvent event);
+
+    void publishComplianceEventToKafka(ComplianceAuditEvent event);
+
+    boolean isAuditEvent(DomainEvent event);
+
+    boolean isComplianceEvent(DomainEvent event);
 }

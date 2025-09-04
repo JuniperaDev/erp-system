@@ -31,7 +31,7 @@ import tech.jhipster.service.filter.LongFilter;
 import tech.jhipster.service.filter.StringFilter;
 
 /**
- * Criteria class for the {@link io.github.erp.domain.AssetCategory} entity. This class is used
+ * Criteria class for the {@link io.github.erp.context.assets.domain.AssetCategory} entity. This class is used
  * in {@link io.github.erp.web.rest.AssetCategoryResource} to receive all the possible filtering options from
  * the Http GET request parameters.
  * For example the following could be a valid request:

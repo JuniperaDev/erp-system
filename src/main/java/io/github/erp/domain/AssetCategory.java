@@ -18,15 +18,17 @@ package io.github.erp.domain;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import javax.persistence.*;
-
 /**
- * Entity alias for AssetCategory to maintain backward compatibility.
- * This class serves as a bridge to the actual AssetCategory implementation
- * in the context.assets.domain package.
+ * DEPRECATED: This entity alias has been removed to resolve JPA entity name conflicts.
+ * Use io.github.erp.context.assets.domain.AssetCategory directly instead.
+ * 
+ * This file is kept as a placeholder to maintain package structure and provide
+ * clear migration guidance for any remaining references.
  */
-@Entity
-@Table(name = "asset_category")
-public class AssetCategory extends io.github.erp.context.assets.domain.AssetCategory {
-    
+public final class AssetCategory {
+    private AssetCategory() {
+        throw new UnsupportedOperationException(
+            "This class has been deprecated. Use io.github.erp.context.assets.domain.AssetCategory instead."
+        );
+    }
 }

@@ -24,7 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**
- * Service Interface for managing {@link io.github.erp.domain.AssetCategory}.
+ * Service Interface for managing {@link io.github.erp.context.assets.domain.AssetCategory}.
  */
 public interface AssetCategoryService {
     /**

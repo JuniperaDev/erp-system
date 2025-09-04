@@ -45,7 +45,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * REST controller for managing {@link io.github.erp.domain.AssetCategory}.
+ * REST controller for managing {@link io.github.erp.context.assets.domain.AssetCategory}.
  */
 @RestController("assetCategoryResourceProd")
 @RequestMapping("/api/fixed-asset")

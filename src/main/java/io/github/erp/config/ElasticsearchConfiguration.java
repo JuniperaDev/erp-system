@@ -58,7 +58,11 @@ public class ElasticsearchConfiguration extends ElasticsearchConfigurationSuppor
         );
     }
 
-
+    @Bean
+    @Override
+    public ElasticsearchRestTemplate elasticsearchRestTemplate() {
+        return new ElasticsearchRestTemplate(elasticsearchClient());
+    }
 
     @WritingConverter
     static class ZonedDateTimeWritingConverter implements Converter<ZonedDateTime, String> {

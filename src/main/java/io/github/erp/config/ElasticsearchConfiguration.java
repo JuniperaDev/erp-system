@@ -58,6 +58,7 @@ public class ElasticsearchConfiguration extends ElasticsearchConfigurationSuppor
         );
     }
 
+
     @WritingConverter
     static class ZonedDateTimeWritingConverter implements Converter<ZonedDateTime, String> {
 

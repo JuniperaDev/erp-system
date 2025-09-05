@@ -52,7 +52,7 @@ import java.util.Objects;
  * Intercepts prepayment-report-requisition, and triggers a report-generation process using the
  * ExportReportService interface
  */
-// @Aspect
+@Aspect
 public class PrepaymentReportRequisitionInterceptor {
 
     private static final Logger log = LoggerFactory.getLogger(PrepaymentReportRequisitionInterceptor.class);

@@ -497,7 +497,7 @@ import java.util.Optional;
  * The idea is while storing the information just like the advised resource, the method also stores the
  * file on the file-system folders asynchronously
  */
-// @Aspect
+@Aspect
 public class BusinessDocumentsFilingInterceptor {
 
     private static final String ENTITY_NAME = "businessDocumentFiling";

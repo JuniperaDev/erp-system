@@ -27,11 +27,11 @@ output "connection_string" {
 output "event_hubs" {
   description = "Map of Event Hub names to their IDs"
   value = {
-    asset_events      = azurerm_eventhub.asset_events.name
-    financial_events  = azurerm_eventhub.financial_events.name
-    lease_events      = azurerm_eventhub.lease_events.name
+    asset_events       = azurerm_eventhub.asset_events.name
+    financial_events   = azurerm_eventhub.financial_events.name
+    lease_events       = azurerm_eventhub.lease_events.name
     depreciation_batch = azurerm_eventhub.depreciation_batch.name
-    wip_events        = azurerm_eventhub.wip_events.name
-    reporting_events  = azurerm_eventhub.reporting_events.name
+    wip_events         = azurerm_eventhub.wip_events.name
+    reporting_events   = azurerm_eventhub.reporting_events.name
   }
 }

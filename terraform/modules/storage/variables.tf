@@ -83,3 +83,75 @@ variable "container_retention_days" {
   type        = number
   default     = 30
 }
+
+variable "lifecycle_cool_after_days" {
+  description = "Days after which to move blobs to cool tier"
+  type        = number
+  default     = 30
+}
+
+variable "lifecycle_archive_after_days" {
+  description = "Days after which to move blobs to archive tier"
+  type        = number
+  default     = 90
+}
+
+variable "lifecycle_delete_after_days" {
+  description = "Days after which to delete blobs"
+  type        = number
+  default     = 2555
+}
+
+variable "lifecycle_snapshot_delete_days" {
+  description = "Days after which to delete blob snapshots"
+  type        = number
+  default     = 90
+}
+
+variable "lifecycle_version_delete_days" {
+  description = "Days after which to delete blob versions"
+  type        = number
+  default     = 90
+}
+
+variable "lifecycle_reports_cool_days" {
+  description = "Days after which to move reports to cool tier"
+  type        = number
+  default     = 7
+}
+
+variable "lifecycle_reports_archive_days" {
+  description = "Days after which to move reports to archive tier"
+  type        = number
+  default     = 30
+}
+
+variable "lifecycle_reports_delete_days" {
+  description = "Days after which to delete reports"
+  type        = number
+  default     = 365
+}
+
+variable "lifecycle_audit_archive_days" {
+  description = "Days after which to move audit logs to archive tier"
+  type        = number
+  default     = 90
+}
+
+variable "lifecycle_backup_cool_days" {
+  description = "Days after which to move backups to cool tier"
+  type        = number
+  default     = 7
+}
+
+variable "lifecycle_backup_archive_days" {
+  description = "Days after which to move backups to archive tier"
+  type        = number
+  default     = 30
+}
+
+variable "lifecycle_backup_delete_days" {
+  description = "Days after which to delete backups"
+  type        = number
+  default     = 1095
+}

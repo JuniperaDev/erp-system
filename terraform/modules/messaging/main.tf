@@ -4,7 +4,7 @@ resource "azurerm_eventhub_namespace" "main" {
   resource_group_name = var.resource_group_name
   sku                 = var.sku
   capacity            = var.capacity
-  
+
   auto_inflate_enabled     = var.auto_inflate_enabled
   maximum_throughput_units = var.auto_inflate_enabled ? var.maximum_throughput_units : null
 
@@ -75,7 +75,7 @@ resource "azurerm_eventhub_consumer_group" "asset_service" {
     "financial-events-topic",
     "depreciation-batch-topic"
   ])
-  
+
   name                = "asset-service"
   namespace_name      = azurerm_eventhub_namespace.main.name
   eventhub_name       = each.value
@@ -88,7 +88,7 @@ resource "azurerm_eventhub_consumer_group" "financial_service" {
     "financial-events-topic",
     "lease-events-topic"
   ])
-  
+
   name                = "financial-service"
   namespace_name      = azurerm_eventhub_namespace.main.name
   eventhub_name       = each.value
@@ -101,7 +101,7 @@ resource "azurerm_eventhub_consumer_group" "lease_service" {
     "financial-events-topic",
     "asset-events-topic"
   ])
-  
+
   name                = "lease-service"
   namespace_name      = azurerm_eventhub_namespace.main.name
   eventhub_name       = each.value
@@ -113,7 +113,7 @@ resource "azurerm_eventhub_consumer_group" "depreciation_service" {
     "depreciation-batch-topic",
     "asset-events-topic"
   ])
-  
+
   name                = "depreciation-service"
   namespace_name      = azurerm_eventhub_namespace.main.name
   eventhub_name       = each.value
@@ -126,7 +126,7 @@ resource "azurerm_eventhub_consumer_group" "wip_service" {
     "asset-events-topic",
     "financial-events-topic"
   ])
-  
+
   name                = "wip-service"
   namespace_name      = azurerm_eventhub_namespace.main.name
   eventhub_name       = each.value
@@ -142,7 +142,7 @@ resource "azurerm_eventhub_consumer_group" "reporting_service" {
     "depreciation-batch-topic",
     "wip-events-topic"
   ])
-  
+
   name                = "reporting-service"
   namespace_name      = azurerm_eventhub_namespace.main.name
   eventhub_name       = each.value

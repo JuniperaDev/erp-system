@@ -27,9 +27,12 @@ import io.github.erp.service.DepreciationBatchSequenceService;
 import io.github.erp.service.dto.DepreciationBatchSequenceDTO;
 import io.github.erp.service.mapper.DepreciationBatchSequenceMapper;
 import java.util.Optional;
+import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,16 +50,15 @@ public class DepreciationBatchSequenceServiceImpl implements DepreciationBatchSe
 
     private final DepreciationBatchSequenceMapper depreciationBatchSequenceMapper;
 
-    private final DepreciationBatchSequenceSearchRepository depreciationBatchSequenceSearchRepository;
+    @Autowired(required = false)
+    private DepreciationBatchSequenceSearchRepository depreciationBatchSequenceSearchRepository;
 
     public DepreciationBatchSequenceServiceImpl(
         DepreciationBatchSequenceRepository depreciationBatchSequenceRepository,
-        DepreciationBatchSequenceMapper depreciationBatchSequenceMapper,
-        DepreciationBatchSequenceSearchRepository depreciationBatchSequenceSearchRepository
+        DepreciationBatchSequenceMapper depreciationBatchSequenceMapper
     ) {
         this.depreciationBatchSequenceRepository = depreciationBatchSequenceRepository;
         this.depreciationBatchSequenceMapper = depreciationBatchSequenceMapper;
-        this.depreciationBatchSequenceSearchRepository = depreciationBatchSequenceSearchRepository;
     }
 
     @Override
@@ -65,7 +67,9 @@ public class DepreciationBatchSequenceServiceImpl implements DepreciationBatchSe
         DepreciationBatchSequence depreciationBatchSequence = depreciationBatchSequenceMapper.toEntity(depreciationBatchSequenceDTO);
         depreciationBatchSequence = depreciationBatchSequenceRepository.save(depreciationBatchSequence);
         DepreciationBatchSequenceDTO result = depreciationBatchSequenceMapper.toDto(depreciationBatchSequence);
-        depreciationBatchSequenceSearchRepository.save(depreciationBatchSequence);
+        if (depreciationBatchSequenceSearchRepository != null) {
+            depreciationBatchSequenceSearchRepository.save(depreciationBatchSequence);
+        }
         return result;
     }
 
@@ -82,7 +86,9 @@ public class DepreciationBatchSequenceServiceImpl implements DepreciationBatchSe
             })
             .map(depreciationBatchSequenceRepository::save)
             .map(savedDepreciationBatchSequence -> {
-                depreciationBatchSequenceSearchRepository.save(savedDepreciationBatchSequence);
+                if (depreciationBatchSequenceSearchRepository != null) {
+                    depreciationBatchSequenceSearchRepository.save(savedDepreciationBatchSequence);
+                }
 
                 return savedDepreciationBatchSequence;
             })
@@ -107,13 +113,20 @@ public class DepreciationBatchSequenceServiceImpl implements DepreciationBatchSe
     public void delete(Long id) {
         log.debug("Request to delete DepreciationBatchSequence : {}", id);
         depreciationBatchSequenceRepository.deleteById(id);
-        depreciationBatchSequenceSearchRepository.deleteById(id);
+        if (depreciationBatchSequenceSearchRepository != null) {
+            depreciationBatchSequenceSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<DepreciationBatchSequenceDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of DepreciationBatchSequences for query {}", query);
-        return depreciationBatchSequenceSearchRepository.search(query, pageable).map(depreciationBatchSequenceMapper::toDto);
+        if (depreciationBatchSequenceSearchRepository != null) {
+            return depreciationBatchSequenceSearchRepository.search(query, pageable).map(depreciationBatchSequenceMapper::toDto);
+        } else {
+            log.warn("Elasticsearch search not available, returning empty results for query: {}", query);
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
+        }
     }
 }

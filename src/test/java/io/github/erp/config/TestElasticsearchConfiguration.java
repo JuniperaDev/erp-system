@@ -20,6 +20,7 @@ package io.github.erp.config;
 import io.github.erp.repository.search.*;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.mockito.Mockito;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -31,6 +32,7 @@ import org.springframework.data.elasticsearch.core.mapping.SimpleElasticsearchMa
 
 @TestConfiguration
 @Profile("testcontainers")
+@ConditionalOnClass(ElasticsearchRestTemplate.class)
 public class TestElasticsearchConfiguration {
 
     @Bean

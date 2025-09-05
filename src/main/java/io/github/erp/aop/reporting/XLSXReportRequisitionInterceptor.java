@@ -37,7 +37,7 @@ import java.util.Objects;
  * response is returning to the user the report-service is invoked in the background to continue
  * with the work of assembling the report.
  */
-@Aspect
+// @Aspect
 public class XLSXReportRequisitionInterceptor {
     private static final Logger log = LoggerFactory.getLogger(XLSXReportRequisitionInterceptor.class);
 

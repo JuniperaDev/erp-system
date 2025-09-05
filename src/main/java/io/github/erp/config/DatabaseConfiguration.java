@@ -37,7 +37,8 @@ import tech.jhipster.config.JHipsterConstants;
         "io.github.erp.erp.assets.nbv.calculation",
         "io.github.erp.cqrs.asset.repositories",
         "io.github.erp.cqrs.lease.repositories",
-        "io.github.erp.cqrs.financial.repositories"
+        "io.github.erp.cqrs.financial.repositories",
+        "io.github.erp.docmgmt.repository"
     },
     excludeFilters = {
         @ComponentScan.Filter(
@@ -52,7 +53,11 @@ import tech.jhipster.config.JHipsterConstants;
 )
 @EntityScan(basePackages = {
     "io.github.erp.domain",
-    "io.github.erp.context.assets.domain"
+    "io.github.erp.context.assets.domain",
+    "io.github.erp.cqrs.asset.readmodel",
+    "io.github.erp.cqrs.financial.readmodel",
+    "io.github.erp.cqrs.lease.readmodel",
+    "io.github.erp.docmgmt.domain"
 })
 @EnableJpaAuditing(auditorAwareRef = "springSecurityAuditorAware")
 @EnableTransactionManagement

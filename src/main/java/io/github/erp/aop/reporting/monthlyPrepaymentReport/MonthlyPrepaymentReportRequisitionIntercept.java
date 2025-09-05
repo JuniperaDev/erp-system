@@ -51,7 +51,7 @@ import org.springframework.scheduling.annotation.Async;
 import java.util.Locale;
 import java.util.Objects;
 
-@Aspect
+// @Aspect
 public class MonthlyPrepaymentReportRequisitionIntercept {
 
 

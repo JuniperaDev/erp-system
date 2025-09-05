@@ -29,6 +29,64 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 public class ApplicationProperties {
 
+    private RateLimiting rateLimiting = new RateLimiting();
+
+    public RateLimiting getRateLimiting() {
+        return rateLimiting;
+    }
+
+    public void setRateLimiting(RateLimiting rateLimiting) {
+        this.rateLimiting = rateLimiting;
+    }
+
+    public static class RateLimiting {
+        private boolean enabled = true;
+        private int standardRequestsPerHour = 1000;
+        private int reportRequestsPerHour = 10;
+        private int exportRequestsPerHour = 5;
+        private int searchRequestsPerHour = 500;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public int getStandardRequestsPerHour() {
+            return standardRequestsPerHour;
+        }
+
+        public void setStandardRequestsPerHour(int standardRequestsPerHour) {
+            this.standardRequestsPerHour = standardRequestsPerHour;
+        }
+
+        public int getReportRequestsPerHour() {
+            return reportRequestsPerHour;
+        }
+
+        public void setReportRequestsPerHour(int reportRequestsPerHour) {
+            this.reportRequestsPerHour = reportRequestsPerHour;
+        }
+
+        public int getExportRequestsPerHour() {
+            return exportRequestsPerHour;
+        }
+
+        public void setExportRequestsPerHour(int exportRequestsPerHour) {
+            this.exportRequestsPerHour = exportRequestsPerHour;
+        }
+
+        public int getSearchRequestsPerHour() {
+            return searchRequestsPerHour;
+        }
+
+        public void setSearchRequestsPerHour(int searchRequestsPerHour) {
+            this.searchRequestsPerHour = searchRequestsPerHour;
+        }
+    }
+
 //    @Data
 //    public static class Registry {
 //        private String host;

@@ -45,7 +45,7 @@ public interface AssetRegistrationRepository extends JpaRepository<AssetRegistra
     List<AssetRegistration> findAllWithEagerRelationships();
 
     @Query(
-        "select assetRegistration from AssetRegistration assetRegistration left join fetch assetRegistration.acquiringTransaction left join fetch assetRegistration.placeholders where assetRegistration.id =:id"
+        "select assetRegistration from AssetRegistration assetRegistration left join fetch assetRegistration.placeholders where assetRegistration.id =:id"
     )
     Optional<AssetRegistration> findOneWithEagerRelationships(@Param("id") Long id);
 

@@ -32,10 +32,13 @@ import io.github.erp.service.monitoring.MemoryMonitoringService;
 import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import java.util.Collections;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +59,8 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
 
     private final AssetRegistrationMapper assetRegistrationMapper;
 
-    private final AssetRegistrationSearchRepository assetRegistrationSearchRepository;
+    @Autowired(required = false)
+    private AssetRegistrationSearchRepository assetRegistrationSearchRepository;
 
     private final InternalAssetRegistrationRepository internalAssetRegistrationRepository;
 
@@ -64,10 +68,9 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
 
     private final MemoryMonitoringService memoryMonitoringService;
 
-    public InternalAssetRegistrationServiceImpl(InternalAssetRegistrationRepository assetRegistrationRepository, AssetRegistrationMapper assetRegistrationMapper, AssetRegistrationSearchRepository assetRegistrationSearchRepository, InternalAssetRegistrationRepository internalAssetRegistrationRepository, DomainEventPublisher domainEventPublisher, MemoryMonitoringService memoryMonitoringService) {
+    public InternalAssetRegistrationServiceImpl(InternalAssetRegistrationRepository assetRegistrationRepository, AssetRegistrationMapper assetRegistrationMapper, InternalAssetRegistrationRepository internalAssetRegistrationRepository, DomainEventPublisher domainEventPublisher, MemoryMonitoringService memoryMonitoringService) {
         this.assetRegistrationRepository = assetRegistrationRepository;
         this.assetRegistrationMapper = assetRegistrationMapper;
-        this.assetRegistrationSearchRepository = assetRegistrationSearchRepository;
         this.internalAssetRegistrationRepository = internalAssetRegistrationRepository;
         this.domainEventPublisher = domainEventPublisher;
         this.memoryMonitoringService = memoryMonitoringService;
@@ -81,7 +84,9 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
         AssetRegistration assetRegistration = assetRegistrationMapper.toEntity(assetRegistrationDTO);
         assetRegistration = assetRegistrationRepository.save(assetRegistration);
         AssetRegistrationDTO result = assetRegistrationMapper.toDto(assetRegistration);
-        assetRegistrationSearchRepository.save(assetRegistration);
+        if (assetRegistrationSearchRepository != null) {
+            assetRegistrationSearchRepository.save(assetRegistration);
+        }
         
         if (isNewAsset) {
             AssetCreatedEvent event = new AssetCreatedEvent(
@@ -136,7 +141,9 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
             })
             .map(assetRegistrationRepository::save)
             .map(savedAssetRegistration -> {
-                assetRegistrationSearchRepository.save(savedAssetRegistration);
+                if (assetRegistrationSearchRepository != null) {
+                    assetRegistrationSearchRepository.save(savedAssetRegistration);
+                }
 
                 return savedAssetRegistration;
             })
@@ -211,14 +218,21 @@ public class InternalAssetRegistrationServiceImpl implements InternalAssetRegist
     public void delete(Long id) {
         log.debug("Request to delete AssetRegistration : {}", id);
         assetRegistrationRepository.deleteById(id);
-        assetRegistrationSearchRepository.deleteById(id);
+        if (assetRegistrationSearchRepository != null) {
+            assetRegistrationSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AssetRegistrationDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of AssetRegistrations for query {}", query);
-        return assetRegistrationSearchRepository.search(query, pageable).map(assetRegistrationMapper::toDto);
+        if (assetRegistrationSearchRepository != null) {
+            return assetRegistrationSearchRepository.search(query, pageable).map(assetRegistrationMapper::toDto);
+        } else {
+            log.warn("Elasticsearch search not available, returning empty results for query: {}", query);
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
+        }
     }
 
     @Override

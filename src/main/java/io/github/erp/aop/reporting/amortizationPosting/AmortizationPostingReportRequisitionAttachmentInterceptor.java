@@ -51,7 +51,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
-@Aspect
+// @Aspect
 public class AmortizationPostingReportRequisitionAttachmentInterceptor {
 
     private final ReportAttachmentService<AmortizationPostingReportRequisitionDTO> reportAttachmentService;

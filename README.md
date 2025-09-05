@@ -55,8 +55,23 @@ If you encounter "FATAL: role 'erp_user' does not exist":
    ```
 5. Verify database user: `docker exec -it docker-erpsystem-postgresql-1 psql -U erpSystem -c "SELECT current_user;"`
 
-### Elasticsearch Connection Issues
+### Elasticsearch (Optional for Development)
 
+Elasticsearch provides search functionality but is not required for basic application operation.
+
+**To run with Elasticsearch:**
+```bash
+docker-compose -f src/main/docker/elasticsearch.yml up -d
+export SPRING_DATA_JEST_URI=http://localhost:9200
+./mvnw spring-boot:run
+```
+
+**To run without Elasticsearch:**
+```bash
+./mvnw spring-boot:run
+```
+
+**Troubleshooting Elasticsearch Connection Issues:**
 If you encounter "Connection refused" for Elasticsearch:
 1. Verify Elasticsearch is running: `docker ps | grep elasticsearch`
 2. Check port accessibility: `curl http://localhost:9200/_cluster/health`
@@ -93,13 +108,18 @@ echo "ERP_DOCUMENTS_MAX_FILE_SIZE: ${ERP_DOCUMENTS_MAX_FILE_SIZE:-'NOT SET (will
 
 ### Complete Startup Process
 
-1. Start services:
+1. Start required services:
    ```bash
    docker-compose -f src/main/docker/postgresql.yml up -d
-   docker-compose -f src/main/docker/elasticsearch.yml up -d
    ```
 
-2. Wait for services (30-60 seconds)
+2. Optionally start Elasticsearch for search functionality:
+   ```bash
+   docker-compose -f src/main/docker/elasticsearch.yml up -d
+   export SPRING_DATA_JEST_URI=http://localhost:9200
+   ```
+
+3. Wait for services (30-60 seconds)
 
 3. Create the development database (first time only):
    ```bash
@@ -978,4 +998,4 @@ enthralling read; because the efficiency of their model is simply out of this wo
 academic illustrations of the accounting process such as the one I have done [myself](https://github.com/ghacupha/book-keeper) with very 
 little regard for concerns like persistence.
 Why someone would create an accounting tool without instructions on how to save data beyond some school illustration is beyond me,
-because book keeping is about keeping records.          
+because book keeping is about keeping records.                    

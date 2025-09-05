@@ -37,7 +37,7 @@ import java.util.concurrent.CompletableFuture;
  * Intercepts the response after a pdf-report-requisition is created and triggers the actual
  * report creation process
  */
-@Aspect
+// @Aspect
 public class PDFReportRequisitionInterceptor {
     private static final Logger log = LoggerFactory.getLogger(PDFReportRequisitionInterceptor.class);
 

@@ -60,7 +60,7 @@ import java.util.Optional;
  * request goes to the client it is Indistinguishable from an entity whose entire data
  * resides entirely in the database
  */
-@Aspect
+// @Aspect
 public class PrepaymentReportRequisitionAttachmentInterceptor {
 
 

@@ -28,8 +28,11 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import java.util.Collections;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,16 +49,15 @@ public class InternalDepreciationEntryServiceImpl implements InternalDepreciatio
 
     private final DepreciationEntryMapper depreciationEntryMapper;
 
-    private final DepreciationEntrySearchRepository depreciationEntrySearchRepository;
+    @Autowired(required = false)
+    private DepreciationEntrySearchRepository depreciationEntrySearchRepository;
 
     public InternalDepreciationEntryServiceImpl(
         DepreciationEntryRepository depreciationEntryRepository,
-        DepreciationEntryMapper depreciationEntryMapper,
-        DepreciationEntrySearchRepository depreciationEntrySearchRepository
+        DepreciationEntryMapper depreciationEntryMapper
     ) {
         this.depreciationEntryRepository = depreciationEntryRepository;
         this.depreciationEntryMapper = depreciationEntryMapper;
-        this.depreciationEntrySearchRepository = depreciationEntrySearchRepository;
     }
 
     @Override
@@ -64,7 +66,9 @@ public class InternalDepreciationEntryServiceImpl implements InternalDepreciatio
         DepreciationEntry depreciationEntry = depreciationEntryMapper.toEntity(depreciationEntryDTO);
         depreciationEntry = depreciationEntryRepository.save(depreciationEntry);
         DepreciationEntryDTO result = depreciationEntryMapper.toDto(depreciationEntry);
-        depreciationEntrySearchRepository.save(depreciationEntry);
+        if (depreciationEntrySearchRepository != null) {
+            depreciationEntrySearchRepository.save(depreciationEntry);
+        }
         return result;
     }
 
@@ -81,7 +85,9 @@ public class InternalDepreciationEntryServiceImpl implements InternalDepreciatio
             })
             .map(depreciationEntryRepository::save)
             .map(savedDepreciationEntry -> {
-                depreciationEntrySearchRepository.save(savedDepreciationEntry);
+                if (depreciationEntrySearchRepository != null) {
+                    depreciationEntrySearchRepository.save(savedDepreciationEntry);
+                }
 
                 return savedDepreciationEntry;
             })
@@ -106,14 +112,21 @@ public class InternalDepreciationEntryServiceImpl implements InternalDepreciatio
     public void delete(Long id) {
         log.debug("Request to delete DepreciationEntry : {}", id);
         depreciationEntryRepository.deleteById(id);
-        depreciationEntrySearchRepository.deleteById(id);
+        if (depreciationEntrySearchRepository != null) {
+            depreciationEntrySearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<DepreciationEntryDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of DepreciationEntries for query {}", query);
-        return depreciationEntrySearchRepository.search(query, pageable).map(depreciationEntryMapper::toDto);
+        if (depreciationEntrySearchRepository != null) {
+            return depreciationEntrySearchRepository.search(query, pageable).map(depreciationEntryMapper::toDto);
+        } else {
+            log.warn("Elasticsearch search not available, returning empty results for query: {}", query);
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
+        }
     }
 
     @Override
@@ -121,6 +134,8 @@ public class InternalDepreciationEntryServiceImpl implements InternalDepreciatio
 
         depreciationEntryRepository.saveAll(depreciationEntries);
 
-        depreciationEntrySearchRepository.saveAll(depreciationEntries);
+        if (depreciationEntrySearchRepository != null) {
+            depreciationEntrySearchRepository.saveAll(depreciationEntries);
+        }
     }
 }

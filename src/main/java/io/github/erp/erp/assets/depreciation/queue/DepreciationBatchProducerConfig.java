@@ -58,7 +58,7 @@ public class DepreciationBatchProducerConfig {
 
     @SneakyThrows
     @Bean("depreciationMessageKafkaTemplate")
-    public KafkaTemplate<String, DepreciationBatchMessage> kafkaTemplate() {
+    public KafkaTemplate<String, DepreciationBatchMessage> kafkaTemplate() throws ClassNotFoundException {
         return new KafkaTemplate<>(producerFactory());
     }
 }

@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Intercepts requests on the excel-report-export resource to provide the actual intended
  * functionality of creating a report from a template obtained from the report-design entity
  */
-@Aspect
+// @Aspect
 public class ExcelReportExportInterceptor {
 
     private final static Logger log = LoggerFactory.getLogger(ExcelReportExportInterceptor.class);

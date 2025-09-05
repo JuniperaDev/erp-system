@@ -37,7 +37,7 @@ import java.util.Objects;
 /**
  * Aspect for running report requests upon intercepting the response to the client
  */
-@Aspect
+// @Aspect
 public class ReportRequisitionInterceptor {
 
     private static final Logger log = LoggerFactory.getLogger(ReportRequisitionInterceptor.class);

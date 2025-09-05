@@ -11,8 +11,10 @@ import org.springframework.stereotype.Repository;
 
 /**
  * Spring Data SQL repository for the Payment entity.
+ * Note: This interface is disabled to avoid duplicate bean definition.
+ * The main PaymentRepository is located in io.github.erp.repository package.
  */
-@Repository
+@SuppressWarnings("unused")
 public interface PaymentRepository extends JpaRepository<Payment, Long>, JpaSpecificationExecutor<Payment> {
     default Optional<Payment> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);

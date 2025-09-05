@@ -28,7 +28,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Objects;
 
-@Aspect
+// @Aspect
 public class DepreciationReportInterceptor {
 
     private static final Logger log = LoggerFactory.getLogger(DepreciationReportInterceptor.class);

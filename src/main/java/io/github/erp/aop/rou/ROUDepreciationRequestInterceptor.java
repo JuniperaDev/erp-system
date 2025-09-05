@@ -30,7 +30,6 @@ import org.springframework.scheduling.annotation.Async;
 
 import java.util.Objects;
 
-@Aspect
 public class ROUDepreciationRequestInterceptor {
 
 

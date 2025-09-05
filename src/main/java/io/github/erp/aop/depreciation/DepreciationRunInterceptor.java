@@ -31,7 +31,7 @@ import org.springframework.scheduling.annotation.Async;
 
 import java.util.Objects;
 
-@Aspect
+// @Aspect
 public class DepreciationRunInterceptor {
 
     private static final Logger log = LoggerFactory.getLogger(DepreciationRunInterceptor.class);

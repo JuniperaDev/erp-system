@@ -26,13 +26,16 @@ import io.github.erp.service.dto.LeaseRepaymentPeriodDTO;
 import io.github.erp.service.mapper.LeaseRepaymentPeriodMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,16 +52,15 @@ public class InternalLeaseRepaymentPeriodServiceImpl implements InternalLeaseRep
 
     private final LeaseRepaymentPeriodMapper leaseRepaymentPeriodMapper;
 
-    private final LeaseRepaymentPeriodSearchRepository leaseRepaymentPeriodSearchRepository;
+    @Autowired(required = false)
+    private LeaseRepaymentPeriodSearchRepository leaseRepaymentPeriodSearchRepository;
 
     public InternalLeaseRepaymentPeriodServiceImpl(
         InternalLeaseRepaymentPeriodRepository leaseRepaymentPeriodRepository,
-        LeaseRepaymentPeriodMapper leaseRepaymentPeriodMapper,
-        LeaseRepaymentPeriodSearchRepository leaseRepaymentPeriodSearchRepository
+        LeaseRepaymentPeriodMapper leaseRepaymentPeriodMapper
     ) {
         this.leaseRepaymentPeriodRepository = leaseRepaymentPeriodRepository;
         this.leaseRepaymentPeriodMapper = leaseRepaymentPeriodMapper;
-        this.leaseRepaymentPeriodSearchRepository = leaseRepaymentPeriodSearchRepository;
     }
 
     @Override
@@ -67,7 +69,9 @@ public class InternalLeaseRepaymentPeriodServiceImpl implements InternalLeaseRep
         LeaseRepaymentPeriod leaseRepaymentPeriod = leaseRepaymentPeriodMapper.toEntity(leaseRepaymentPeriodDTO);
         leaseRepaymentPeriod = leaseRepaymentPeriodRepository.save(leaseRepaymentPeriod);
         LeaseRepaymentPeriodDTO result = leaseRepaymentPeriodMapper.toDto(leaseRepaymentPeriod);
-        leaseRepaymentPeriodSearchRepository.save(leaseRepaymentPeriod);
+        if (leaseRepaymentPeriodSearchRepository != null) {
+            leaseRepaymentPeriodSearchRepository.save(leaseRepaymentPeriod);
+        }
         return result;
     }
 
@@ -84,7 +88,9 @@ public class InternalLeaseRepaymentPeriodServiceImpl implements InternalLeaseRep
             })
             .map(leaseRepaymentPeriodRepository::save)
             .map(savedLeaseRepaymentPeriod -> {
-                leaseRepaymentPeriodSearchRepository.save(savedLeaseRepaymentPeriod);
+                if (leaseRepaymentPeriodSearchRepository != null) {
+                    leaseRepaymentPeriodSearchRepository.save(savedLeaseRepaymentPeriod);
+                }
 
                 return savedLeaseRepaymentPeriod;
             })
@@ -109,14 +115,21 @@ public class InternalLeaseRepaymentPeriodServiceImpl implements InternalLeaseRep
     public void delete(Long id) {
         log.debug("Request to delete LeaseRepaymentPeriod : {}", id);
         leaseRepaymentPeriodRepository.deleteById(id);
-        leaseRepaymentPeriodSearchRepository.deleteById(id);
+        if (leaseRepaymentPeriodSearchRepository != null) {
+            leaseRepaymentPeriodSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<LeaseRepaymentPeriodDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of LeaseRepaymentPeriods for query {}", query);
-        return leaseRepaymentPeriodSearchRepository.search(query, pageable).map(leaseRepaymentPeriodMapper::toDto);
+        if (leaseRepaymentPeriodSearchRepository != null) {
+            return leaseRepaymentPeriodSearchRepository.search(query, pageable).map(leaseRepaymentPeriodMapper::toDto);
+        } else {
+            log.warn("Elasticsearch search not available, returning empty results for query: {}", query);
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
+        }
     }
 
     /**

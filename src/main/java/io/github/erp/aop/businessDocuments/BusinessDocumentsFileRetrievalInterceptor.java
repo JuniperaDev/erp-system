@@ -630,7 +630,7 @@ import java.util.Optional;
  * This aspect intercepts around the get-one API and includes the file bytestream of the file for which the
  * entity instance has been persisted, using the file-attachement-service
  */
-@Aspect
+// @Aspect
 public class BusinessDocumentsFileRetrievalInterceptor {
 
 

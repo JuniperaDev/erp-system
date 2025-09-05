@@ -29,10 +29,13 @@ import io.github.erp.service.mapper.DepreciationJobMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Collections;
 
 /**
  * Service Implementation for managing {@link DepreciationJob}.
@@ -47,16 +50,15 @@ public class DepreciationJobServiceImpl implements DepreciationJobService {
 
     private final DepreciationJobMapper depreciationJobMapper;
 
-    private final DepreciationJobSearchRepository depreciationJobSearchRepository;
+    @Autowired(required = false)
+    private DepreciationJobSearchRepository depreciationJobSearchRepository;
 
     public DepreciationJobServiceImpl(
         DepreciationJobRepository depreciationJobRepository,
-        DepreciationJobMapper depreciationJobMapper,
-        DepreciationJobSearchRepository depreciationJobSearchRepository
+        DepreciationJobMapper depreciationJobMapper
     ) {
         this.depreciationJobRepository = depreciationJobRepository;
         this.depreciationJobMapper = depreciationJobMapper;
-        this.depreciationJobSearchRepository = depreciationJobSearchRepository;
     }
 
     @Override
@@ -65,7 +67,9 @@ public class DepreciationJobServiceImpl implements DepreciationJobService {
         DepreciationJob depreciationJob = depreciationJobMapper.toEntity(depreciationJobDTO);
         depreciationJob = depreciationJobRepository.save(depreciationJob);
         DepreciationJobDTO result = depreciationJobMapper.toDto(depreciationJob);
-        depreciationJobSearchRepository.save(depreciationJob);
+        if (depreciationJobSearchRepository != null) {
+            depreciationJobSearchRepository.save(depreciationJob);
+        }
         return result;
     }
 
@@ -82,7 +86,9 @@ public class DepreciationJobServiceImpl implements DepreciationJobService {
             })
             .map(depreciationJobRepository::save)
             .map(savedDepreciationJob -> {
-                depreciationJobSearchRepository.save(savedDepreciationJob);
+                if (depreciationJobSearchRepository != null) {
+                    depreciationJobSearchRepository.save(savedDepreciationJob);
+                }
 
                 return savedDepreciationJob;
             })
@@ -107,13 +113,20 @@ public class DepreciationJobServiceImpl implements DepreciationJobService {
     public void delete(Long id) {
         log.debug("Request to delete DepreciationJob : {}", id);
         depreciationJobRepository.deleteById(id);
-        depreciationJobSearchRepository.deleteById(id);
+        if (depreciationJobSearchRepository != null) {
+            depreciationJobSearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<DepreciationJobDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of DepreciationJobs for query {}", query);
-        return depreciationJobSearchRepository.search(query, pageable).map(depreciationJobMapper::toDto);
+        if (depreciationJobSearchRepository != null) {
+            return depreciationJobSearchRepository.search(query, pageable).map(depreciationJobMapper::toDto);
+        } else {
+            log.warn("Elasticsearch search not available, returning empty results for query: {}", query);
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
+        }
     }
 }

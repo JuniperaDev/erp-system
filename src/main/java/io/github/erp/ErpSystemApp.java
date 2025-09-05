@@ -38,6 +38,7 @@ import tech.jhipster.config.JHipsterConstants;
 
 @EnableDiscoveryClient
 @SpringBootApplication(exclude = {
+    org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration.class,
     org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration.class,
     org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration.class
 })

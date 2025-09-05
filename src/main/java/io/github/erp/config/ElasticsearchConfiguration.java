@@ -34,10 +34,11 @@ import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
 import org.springframework.data.elasticsearch.config.ElasticsearchConfigurationSupport;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchCustomConversions;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 
 @Configuration
 @Profile("!test & !testcontainers")
-@ConditionalOnProperty(name = "SPRING_DATA_JEST_URI", matchIfMissing = false)
+@ConditionalOnExpression("!'${spring.elasticsearch.rest.uris:}'.isEmpty()")
 @ConditionalOnClass(ElasticsearchRestTemplate.class)
 @EnableElasticsearchRepositories("io.github.erp.repository.search")
 public class ElasticsearchConfiguration extends ElasticsearchConfigurationSupport {

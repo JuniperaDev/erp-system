@@ -26,11 +26,14 @@ import io.github.erp.service.dto.LeaseLiabilityDTO;
 import io.github.erp.service.mapper.LeaseLiabilityMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -48,19 +51,18 @@ public class InternalLeaseLiabilityServiceImpl implements InternalLeaseLiability
 
     private final LeaseLiabilityMapper leaseLiabilityMapper;
 
-    private final LeaseLiabilitySearchRepository leaseLiabilitySearchRepository;
+    @Autowired(required = false)
+    private LeaseLiabilitySearchRepository leaseLiabilitySearchRepository;
 
     private final DomainEventPublisher domainEventPublisher;
 
     public InternalLeaseLiabilityServiceImpl(
         InternalLeaseLiabilityRepository leaseLiabilityRepository,
         LeaseLiabilityMapper leaseLiabilityMapper,
-        LeaseLiabilitySearchRepository leaseLiabilitySearchRepository,
         DomainEventPublisher domainEventPublisher
     ) {
         this.leaseLiabilityRepository = leaseLiabilityRepository;
         this.leaseLiabilityMapper = leaseLiabilityMapper;
-        this.leaseLiabilitySearchRepository = leaseLiabilitySearchRepository;
         this.domainEventPublisher = domainEventPublisher;
     }
 
@@ -70,7 +72,9 @@ public class InternalLeaseLiabilityServiceImpl implements InternalLeaseLiability
         LeaseLiability leaseLiability = leaseLiabilityMapper.toEntity(leaseLiabilityDTO);
         leaseLiability = leaseLiabilityRepository.save(leaseLiability);
         LeaseLiabilityDTO result = leaseLiabilityMapper.toDto(leaseLiability);
-        leaseLiabilitySearchRepository.save(leaseLiability);
+        if (leaseLiabilitySearchRepository != null) {
+            leaseLiabilitySearchRepository.save(leaseLiability);
+        }
         
         publishLeaseLiabilityCalculatedEvent(result);
         
@@ -122,7 +126,9 @@ public class InternalLeaseLiabilityServiceImpl implements InternalLeaseLiability
             })
             .map(leaseLiabilityRepository::save)
             .map(savedLeaseLiability -> {
-                leaseLiabilitySearchRepository.save(savedLeaseLiability);
+                if (leaseLiabilitySearchRepository != null) {
+                    leaseLiabilitySearchRepository.save(savedLeaseLiability);
+                }
 
                 return savedLeaseLiability;
             })
@@ -147,14 +153,21 @@ public class InternalLeaseLiabilityServiceImpl implements InternalLeaseLiability
     public void delete(Long id) {
         log.debug("Request to delete LeaseLiability : {}", id);
         leaseLiabilityRepository.deleteById(id);
-        leaseLiabilitySearchRepository.deleteById(id);
+        if (leaseLiabilitySearchRepository != null) {
+            leaseLiabilitySearchRepository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<LeaseLiabilityDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of LeaseLiabilities for query {}", query);
-        return leaseLiabilitySearchRepository.search(query, pageable).map(leaseLiabilityMapper::toDto);
+        if (leaseLiabilitySearchRepository != null) {
+            return leaseLiabilitySearchRepository.search(query, pageable).map(leaseLiabilityMapper::toDto);
+        } else {
+            log.warn("Elasticsearch search not available, returning empty results for query: {}", query);
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
+        }
     }
 
     /**

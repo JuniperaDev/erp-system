@@ -70,20 +70,20 @@ module "networking" {
 module "security" {
   source = "../../modules/security"
 
-  project_name                 = var.project_name
-  environment                  = local.environment
-  location                     = var.location
-  resource_group_name          = module.networking.resource_group_name
-  resource_group_id            = module.networking.resource_group_id
-  aks_subnet_id                = module.networking.aks_subnet_id
-  private_endpoint_subnet_id   = module.networking.database_subnet_id
-  tags                         = local.common_tags
+  project_name               = var.project_name
+  environment                = local.environment
+  location                   = var.location
+  resource_group_name        = module.networking.resource_group_name
+  resource_group_id          = module.networking.resource_group_id
+  aks_subnet_id              = module.networking.aks_subnet_id
+  private_endpoint_subnet_id = module.networking.database_subnet_id
+  tags                       = local.common_tags
 
-  key_vault_sku               = "premium"
-  soft_delete_retention_days  = 90
-  enable_purge_protection     = true
-  admin_group_object_ids      = var.admin_group_object_ids
-  enable_policy_assignments   = true
+  key_vault_sku              = "premium"
+  soft_delete_retention_days = 90
+  enable_purge_protection    = true
+  admin_group_object_ids     = var.admin_group_object_ids
+  enable_policy_assignments  = true
 }
 
 module "aks" {
@@ -113,27 +113,27 @@ module "aks" {
 module "database" {
   source = "../../modules/database"
 
-  project_name           = var.project_name
-  environment            = local.environment
-  location               = var.location
-  resource_group_name    = module.networking.resource_group_name
-  database_subnet_id     = module.networking.database_subnet_id
-  private_dns_zone_id    = module.networking.private_dns_zone_id
-  key_vault_id           = module.security.key_vault_id
-  tags                   = local.common_tags
+  project_name        = var.project_name
+  environment         = local.environment
+  location            = var.location
+  resource_group_name = module.networking.resource_group_name
+  database_subnet_id  = module.networking.database_subnet_id
+  private_dns_zone_id = module.networking.private_dns_zone_id
+  key_vault_id        = module.security.key_vault_id
+  tags                = local.common_tags
 
-  postgres_version              = "14"
-  admin_username                = "erpadmin"
-  admin_password                = var.database_password
-  sku_name                      = "GP_Standard_D4s_v3"
-  storage_mb                    = 131072  # 128 GB
-  backup_retention_days         = 35
-  enable_geo_redundant_backup   = true
-  enable_high_availability      = true
-  availability_zone             = "1"
-  standby_availability_zone     = "2"
-  enable_firewall_rules         = false
-  aks_subnet_cidr               = "10.1.1.0/24"
+  postgres_version            = "14"
+  admin_username              = "erpadmin"
+  admin_password              = var.database_password
+  sku_name                    = "GP_Standard_D4s_v3"
+  storage_mb                  = 131072 # 128 GB
+  backup_retention_days       = 35
+  enable_geo_redundant_backup = true
+  enable_high_availability    = true
+  availability_zone           = "1"
+  standby_availability_zone   = "2"
+  enable_firewall_rules       = false
+  aks_subnet_cidr             = "10.1.1.0/24"
 
   depends_on = [module.security]
 }
@@ -149,12 +149,12 @@ module "messaging" {
   key_vault_id        = module.security.key_vault_id
   tags                = local.common_tags
 
-  sku                        = "Standard"
-  capacity                   = 4
-  auto_inflate_enabled       = true
-  maximum_throughput_units   = 20
-  partition_count            = 8
-  message_retention          = 7
+  sku                      = "Standard"
+  capacity                 = 4
+  auto_inflate_enabled     = true
+  maximum_throughput_units = 20
+  partition_count          = 8
+  message_retention        = 7
 
   depends_on = [module.security]
 }
@@ -171,12 +171,12 @@ module "storage" {
   key_vault_id               = module.security.key_vault_id
   tags                       = local.common_tags
 
-  account_tier              = "Standard"
-  replication_type          = "GRS"
-  enable_versioning         = true
-  enable_change_feed        = true
-  blob_retention_days       = 90
-  container_retention_days  = 90
+  account_tier             = "Standard"
+  replication_type         = "GRS"
+  enable_versioning        = true
+  enable_change_feed       = true
+  blob_retention_days      = 90
+  container_retention_days = 90
 
   depends_on = [module.security]
 }
@@ -184,18 +184,19 @@ module "storage" {
 module "monitoring_update" {
   source = "../../modules/monitoring"
 
-  project_name               = var.project_name
-  environment                = local.environment
-  location                   = var.location
-  resource_group_name        = module.networking.resource_group_name
-  key_vault_id               = module.security.key_vault_id
-  aks_cluster_id             = module.aks.cluster_id
-  database_server_id         = module.database.server_id
-  tags                       = local.common_tags
+  project_name             = var.project_name
+  environment              = local.environment
+  location                 = var.location
+  resource_group_name      = module.networking.resource_group_name
+  key_vault_id             = module.security.key_vault_id
+  aks_cluster_id           = module.aks.cluster_id
+  database_server_id       = module.database.server_id
+  application_gateway_fqdn = module.networking.application_gateway_fqdn
+  tags                     = local.common_tags
 
-  log_analytics_sku      = "PerGB2018"
-  log_retention_days     = 90
-  alert_email_addresses  = var.alert_email_addresses
+  log_analytics_sku     = "PerGB2018"
+  log_retention_days    = 90
+  alert_email_addresses = var.alert_email_addresses
 
-  depends_on = [module.aks, module.database, module.security]
+  depends_on = [module.aks, module.database, module.security, module.networking]
 }

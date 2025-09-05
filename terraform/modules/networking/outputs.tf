@@ -42,3 +42,18 @@ output "private_dns_zone_name" {
   description = "Name of the private DNS zone for PostgreSQL"
   value       = azurerm_private_dns_zone.postgres.name
 }
+
+output "application_gateway_id" {
+  description = "ID of the Application Gateway"
+  value       = azurerm_application_gateway.main.id
+}
+
+output "application_gateway_public_ip" {
+  description = "Public IP address of the Application Gateway"
+  value       = azurerm_public_ip.appgw.ip_address
+}
+
+output "application_gateway_fqdn" {
+  description = "FQDN of the Application Gateway"
+  value       = azurerm_public_ip.appgw.fqdn
+}

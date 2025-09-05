@@ -37,7 +37,7 @@ import java.util.Optional;
  * This object the #getReportRequisition(id) method call and attaches the appropriate report
  * from the file system.
  */
-@Aspect
+// @Aspect
 public class ReportRequisitionAttachmentInterceptor {
 
     private final ReportAttachmentService<ReportRequisitionDTO> reportAttachmentService;

@@ -39,7 +39,7 @@ import java.util.Optional;
  * Interceptor for the monthly-prepayment API on the get path for the
  * api/prepayments/monthly-prepayment-report-requisitions/{id}
  */
-@Aspect
+// @Aspect
 public class MonthlyPrepaymentReportRequisitionAttachmentInterceptor {
 
 

@@ -50,7 +50,7 @@ import org.springframework.scheduling.annotation.Async;
 
 import java.util.Objects;
 
-@Aspect
+// @Aspect
 public class PrepaymentByAccountReportRequisitionInterceptor {
 
     private static final Logger log = LoggerFactory.getLogger(AmortizationPostingReportRequisitionInterceptor.class);

@@ -108,8 +108,8 @@ variable "maintenance_window" {
     start_minute = number
   })
   default = {
-    day_of_week  = 0  # Sunday
-    start_hour   = 2  # 2 AM
+    day_of_week  = 0 # Sunday
+    start_hour   = 2 # 2 AM
     start_minute = 0
   }
 }

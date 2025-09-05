@@ -9,9 +9,9 @@ resource "azurerm_postgresql_flexible_server" "main" {
   administrator_password = var.admin_password
   zone                   = var.availability_zone
 
-  storage_mb   = var.storage_mb
-  sku_name     = var.sku_name
-  backup_retention_days = var.backup_retention_days
+  storage_mb                   = var.storage_mb
+  sku_name                     = var.sku_name
+  backup_retention_days        = var.backup_retention_days
   geo_redundant_backup_enabled = var.enable_geo_redundant_backup
 
   high_availability {

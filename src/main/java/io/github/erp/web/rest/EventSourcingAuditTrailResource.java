@@ -20,6 +20,7 @@ package io.github.erp.web.rest;
 
 import io.github.erp.domain.events.DomainEvent;
 import io.github.erp.service.EventSourcingAuditTrailService;
+import io.github.erp.service.elasticsearch.ElasticsearchAuditSearchService;
 import io.github.erp.web.rest.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -55,9 +56,14 @@ public class EventSourcingAuditTrailResource {
     private final Logger log = LoggerFactory.getLogger(EventSourcingAuditTrailResource.class);
 
     private final EventSourcingAuditTrailService eventSourcingAuditTrailService;
+    private final ElasticsearchAuditSearchService elasticsearchAuditSearchService;
 
-    public EventSourcingAuditTrailResource(EventSourcingAuditTrailService eventSourcingAuditTrailService) {
+    public EventSourcingAuditTrailResource(
+        EventSourcingAuditTrailService eventSourcingAuditTrailService,
+        ElasticsearchAuditSearchService elasticsearchAuditSearchService
+    ) {
         this.eventSourcingAuditTrailService = eventSourcingAuditTrailService;
+        this.elasticsearchAuditSearchService = elasticsearchAuditSearchService;
     }
 
     @GetMapping("/events/{entityType}/{entityId}")
@@ -276,12 +282,7 @@ public class EventSourcingAuditTrailResource {
     }
 
     private AuditSearchResponseDTO performAuditSearch(AuditSearchRequestDTO searchRequest) {
-        AuditSearchResponseDTO response = new AuditSearchResponseDTO();
-        response.setHits(java.util.Collections.emptyList());
-        response.setTotalHits(0L);
-        response.setAggregations(java.util.Collections.emptyMap());
-        response.setTook(0);
-        return response;
+        return elasticsearchAuditSearchService.performAdvancedSearch(searchRequest);
     }
 
     private ReportGenerationResponseDTO initiateComplianceReportGeneration(ComplianceReportRequestDTO reportRequest) {

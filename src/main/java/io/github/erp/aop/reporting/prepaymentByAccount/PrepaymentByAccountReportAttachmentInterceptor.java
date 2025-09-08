@@ -40,7 +40,7 @@ import java.util.Optional;
  * path which is responsible for attaching to the object that is fetched from the server with the
  * file related to the same object that is fetched from the file system
  */
-@Aspect
+// @Aspect
 public class PrepaymentByAccountReportAttachmentInterceptor {
 
     private final ReportAttachmentService<PrepaymentByAccountReportRequisitionDTO> reportAttachmentService;

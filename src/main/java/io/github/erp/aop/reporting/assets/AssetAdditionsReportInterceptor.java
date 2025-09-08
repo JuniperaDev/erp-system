@@ -30,7 +30,7 @@ import org.springframework.scheduling.annotation.Async;
 
 import java.util.Objects;
 
-@Aspect
+// @Aspect
 public class AssetAdditionsReportInterceptor {
 
     private static final Logger log = LoggerFactory.getLogger(AssetAdditionsReportInterceptor.class);

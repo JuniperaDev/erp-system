@@ -32,7 +32,7 @@ import org.springframework.scheduling.annotation.Async;
 import java.util.Objects;
 
 @Slf4j
-@Aspect
+// @Aspect
 public class WIPTransferListReportRequisitionInterceptor {
 
     private final ExportReportService<WIPTransferListReportDTO> exportReportService;

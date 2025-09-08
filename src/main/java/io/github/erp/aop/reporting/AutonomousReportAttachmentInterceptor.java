@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
-@Aspect
+// @Aspect
 public class AutonomousReportAttachmentInterceptor {
 
     private final ReportAttachmentService<AutonomousReportDTO> reportAttachmentService;

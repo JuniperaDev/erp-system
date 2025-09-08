@@ -53,7 +53,7 @@ import java.util.Objects;
  * routing the same to actual (but asynchronous) report-generating entities which will run a report
  * and export it to the file system.
  */
-@Aspect
+// @Aspect
 public class AmortizationPostingReportRequisitionInterceptor {
 
     private static final Logger log = LoggerFactory.getLogger(AmortizationPostingReportRequisitionInterceptor.class);

@@ -22,6 +22,7 @@ import io.github.erp.service.elasticsearch.AuditIndexManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -31,7 +32,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 
 @Configuration
-@ConditionalOnProperty(name = "spring.elasticsearch.audit.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "spring.elasticsearch.audit.enabled", havingValue = "true", matchIfMissing = false)
+@ConditionalOnClass(ElasticsearchRestTemplate.class)
 public class ElasticsearchAuditConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchAuditConfiguration.class);
@@ -41,6 +43,7 @@ public class ElasticsearchAuditConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnClass(ElasticsearchRestTemplate.class)
     public AuditIndexManager auditIndexManager(ElasticsearchRestTemplate template) {
         return new AuditIndexManager(template);
     }

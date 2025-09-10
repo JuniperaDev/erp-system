@@ -66,11 +66,11 @@ class AuditTrailEventSearchRepositoryInternalImpl implements AuditTrailEventSear
 
     @Override
     public AuditSearchResponseDTO advancedSearch(AuditSearchRequestDTO request) {
-        return null;
+        throw new UnsupportedOperationException("Use ElasticsearchAuditSearchService.performAdvancedSearch() instead");
     }
 
     @Override
     public Map<String, Object> searchWithAggregations(AuditSearchRequestDTO request) {
-        return null;
+        throw new UnsupportedOperationException("Use ElasticsearchAuditSearchService.performAdvancedSearch() instead");
     }
 }

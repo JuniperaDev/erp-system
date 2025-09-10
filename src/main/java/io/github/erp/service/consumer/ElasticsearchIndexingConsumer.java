@@ -82,7 +82,6 @@ public class ElasticsearchIndexingConsumer {
         } catch (Exception e) {
             log.error("Error indexing audit event: {} from topic: {}", 
                     event.getEventId(), topic, e);
-            throw e;
         }
     }
 
@@ -110,7 +109,6 @@ public class ElasticsearchIndexingConsumer {
         } catch (Exception e) {
             log.error("Error indexing compliance event: {} from topic: {}", 
                     event.getEventId(), topic, e);
-            throw e;
         }
     }
 

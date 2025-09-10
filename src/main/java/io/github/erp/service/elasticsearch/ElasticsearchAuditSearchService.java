@@ -19,27 +19,22 @@ package io.github.erp.service.elasticsearch;
  */
 
 import io.github.erp.repository.search.AuditTrailEventSearchRepository;
+import io.github.erp.service.elasticsearch.document.AuditEventDocument;
 import io.github.erp.web.rest.dto.AuditEventDTO;
 import io.github.erp.web.rest.dto.AuditSearchRequestDTO;
 import io.github.erp.web.rest.dto.AuditSearchResponseDTO;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.sort.SortOrder;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,11 +65,14 @@ public class ElasticsearchAuditSearchService {
             
             log.debug("Performing advanced audit search with query: {}", request.getQuery());
             
-            AuditSearchResponseDTO result = new AuditSearchResponseDTO();
-            result.setHits(new ArrayList<>());
-            result.setTotalHits(0L);
-            result.setAggregations(new HashMap<>());
+            NativeSearchQuery nativeSearchQuery = buildNativeSearchQuery(request);
+            List<AuditEventDocument> documents = elasticsearchTemplate
+                .search(nativeSearchQuery, AuditEventDocument.class)
+                .map(hit -> hit.getContent())
+                .stream()
+                .collect(java.util.stream.Collectors.toList());
             
+            AuditSearchResponseDTO result = buildSearchResponseFromDocuments(documents);
             result.setTook((int) (System.currentTimeMillis() - startTime));
             
             log.debug("Advanced search completed in {} ms, found {} hits", 
@@ -87,19 +85,13 @@ public class ElasticsearchAuditSearchService {
         }
     }
 
-    private SearchRequest buildSearchRequest(AuditSearchRequestDTO request) {
-        SearchRequest searchRequest = new SearchRequest("audit-events-*");
-        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-
+    private NativeSearchQuery buildNativeSearchQuery(AuditSearchRequestDTO request) {
         QueryBuilder query = buildQuery(request);
-        sourceBuilder.query(query);
-
-        addSorting(sourceBuilder, request);
-        addPagination(sourceBuilder, request);
-        addAggregations(sourceBuilder, request);
-
-        searchRequest.source(sourceBuilder);
-        return searchRequest;
+        
+        NativeSearchQuery nativeSearchQuery = new NativeSearchQuery(query);
+        nativeSearchQuery.setPageable(buildPageable(request));
+        
+        return nativeSearchQuery;
     }
 
     private QueryBuilder buildQuery(AuditSearchRequestDTO request) {
@@ -161,102 +153,70 @@ public class ElasticsearchAuditSearchService {
         }
     }
 
-    private void addSorting(SearchSourceBuilder sourceBuilder, AuditSearchRequestDTO request) {
-        if (request.getSort() != null && !request.getSort().isEmpty()) {
-            for (AuditSearchRequestDTO.SortDTO sort : request.getSort()) {
-                SortOrder order = "desc".equalsIgnoreCase(sort.getDirection()) 
-                    ? SortOrder.DESC : SortOrder.ASC;
-                sourceBuilder.sort(sort.getField(), order);
-            }
-        } else {
-            sourceBuilder.sort("occurredOn", SortOrder.DESC);
-        }
-    }
-
-    private void addPagination(SearchSourceBuilder sourceBuilder, AuditSearchRequestDTO request) {
+    private org.springframework.data.domain.Pageable buildPageable(AuditSearchRequestDTO request) {
         int page = request.getPage() != null ? request.getPage() : 0;
         int size = request.getSize() != null ? request.getSize() : 20;
         
-        sourceBuilder.from(page * size);
-        sourceBuilder.size(size);
+        org.springframework.data.domain.Sort sort = buildSort(request);
+        
+        return org.springframework.data.domain.PageRequest.of(page, size, sort);
     }
-
-    private void addAggregations(SearchSourceBuilder sourceBuilder, AuditSearchRequestDTO request) {
-        if (request.getAggregations() != null && !request.getAggregations().isEmpty()) {
-            for (AuditSearchRequestDTO.AggregationDTO agg : request.getAggregations()) {
-                AggregationBuilder aggregation = buildAggregation(agg);
-                if (aggregation != null) {
-                    sourceBuilder.aggregation(aggregation);
-                }
-            }
+    
+    private org.springframework.data.domain.Sort buildSort(AuditSearchRequestDTO request) {
+        if (request.getSort() != null && !request.getSort().isEmpty()) {
+            org.springframework.data.domain.Sort.Order[] orders = request.getSort().stream()
+                .map(sortDto -> {
+                    org.springframework.data.domain.Sort.Direction direction = 
+                        "desc".equalsIgnoreCase(sortDto.getDirection()) 
+                            ? org.springframework.data.domain.Sort.Direction.DESC 
+                            : org.springframework.data.domain.Sort.Direction.ASC;
+                    return new org.springframework.data.domain.Sort.Order(direction, sortDto.getField());
+                })
+                .toArray(org.springframework.data.domain.Sort.Order[]::new);
+            return org.springframework.data.domain.Sort.by(orders);
+        } else {
+            return org.springframework.data.domain.Sort.by(
+                org.springframework.data.domain.Sort.Direction.DESC, "occurredOn");
         }
     }
 
-    private AggregationBuilder buildAggregation(AuditSearchRequestDTO.AggregationDTO agg) {
-        switch (agg.getType().toLowerCase()) {
-            case "terms":
-                return AggregationBuilders.terms(agg.getField() + "_terms")
-                    .field(agg.getField())
-                    .size(100);
-            case "date_histogram":
-                return AggregationBuilders.dateHistogram(agg.getField() + "_histogram")
-                    .field(agg.getField())
-                    .calendarInterval(org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval.DAY);
-            default:
-                log.warn("Unsupported aggregation type: {}", agg.getType());
-                return null;
-        }
-    }
 
-    private AuditSearchResponseDTO buildSearchResponse(SearchResponse response) {
+    private AuditSearchResponseDTO buildSearchResponseFromDocuments(List<AuditEventDocument> documents) {
         AuditSearchResponseDTO result = new AuditSearchResponseDTO();
         
         List<AuditEventDTO> hits = new ArrayList<>();
-        for (SearchHit hit : response.getHits().getHits()) {
-            AuditEventDTO dto = convertToAuditEventDTO(hit);
+        for (AuditEventDocument document : documents) {
+            AuditEventDTO dto = convertDocumentToAuditEventDTO(document);
             hits.add(dto);
         }
         
         result.setHits(hits);
-        result.setTotalHits(response.getHits().getTotalHits().value);
-        
-        Map<String, Object> aggregations = new HashMap<>();
-        if (response.getAggregations() != null) {
-            response.getAggregations().forEach(agg -> {
-                aggregations.put(agg.getName(), agg);
-            });
-        }
-        result.setAggregations(aggregations);
+        result.setTotalHits((long) documents.size());
+        result.setAggregations(new HashMap<>());
         
         return result;
     }
 
-    private AuditEventDTO convertToAuditEventDTO(SearchHit hit) {
-        Map<String, Object> source = hit.getSourceAsMap();
+    private AuditEventDTO convertDocumentToAuditEventDTO(AuditEventDocument document) {
         AuditEventDTO dto = new AuditEventDTO();
         
-        if (source.get("eventId") != null) {
-            dto.setEventId(UUID.fromString((String) source.get("eventId")));
+        if (document.getEventId() != null) {
+            dto.setEventId(UUID.fromString(document.getEventId()));
         }
-        dto.setEventType((String) source.get("eventType"));
-        dto.setAggregateType((String) source.get("aggregateType"));
-        dto.setAggregateId((String) source.get("aggregateId"));
-        dto.setUserId((String) source.get("userId"));
-        dto.setIpAddress((String) source.get("ipAddress"));
-        dto.setUserAgent((String) source.get("userAgent"));
-        dto.setSessionId((String) source.get("sessionId"));
+        dto.setEventType(document.getEventType());
+        dto.setAggregateType(document.getAggregateType());
+        dto.setAggregateId(document.getAggregateId());
+        dto.setUserId(document.getUserId());
+        dto.setIpAddress(document.getIpAddress());
+        dto.setUserAgent(document.getUserAgent());
+        dto.setSessionId(document.getSessionId());
+        dto.setVersion(document.getVersion());
         
-        if (source.get("version") != null) {
-            dto.setVersion((Integer) source.get("version"));
-        }
-        
-        if (source.get("correlationId") != null) {
-            dto.setCorrelationId(UUID.fromString((String) source.get("correlationId")));
+        if (document.getCorrelationId() != null) {
+            dto.setCorrelationId(UUID.fromString(document.getCorrelationId()));
         }
         
-        if (source.get("occurredOn") != null) {
-            dto.setOccurredOn(Instant.ofEpochMilli((Long) source.get("occurredOn")));
-        }
+        dto.setOccurredOn(document.getOccurredOn());
         
         return dto;
     }

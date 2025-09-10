@@ -172,16 +172,14 @@ public class AuditIndexManager {
             log.info("Creating index template: {} (template creation will be handled by Elasticsearch auto-configuration)", templateName);
         } catch (Exception e) {
             log.error("Failed to create index template: {}", templateName, e);
-            throw new RuntimeException("Failed to create index template: " + templateName, e);
         }
     }
 
     private void createILMPolicy(String policyName, String policyJson) {
         try {
-            log.info("Creating ILM policy: {} (policy creation will be handled by Elasticsearch auto-configuration)", policyName);
+            log.info("ILM policy creation for {} will be handled by Elasticsearch configuration", policyName);
         } catch (Exception e) {
             log.error("Failed to create ILM policy: {}", policyName, e);
-            throw new RuntimeException("Failed to create ILM policy: " + policyName, e);
         }
     }
 }

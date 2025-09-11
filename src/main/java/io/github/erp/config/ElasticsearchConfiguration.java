@@ -30,17 +30,23 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
+import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
+import org.springframework.data.elasticsearch.core.convert.MappingElasticsearchConverter;
+import org.springframework.data.elasticsearch.core.mapping.SimpleElasticsearchMappingContext;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
 import org.springframework.data.elasticsearch.config.ElasticsearchConfigurationSupport;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchCustomConversions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.apache.http.HttpHost;
 
 @Configuration
 @Profile("!test & !testcontainers")
-@ConditionalOnExpression("!'${spring.elasticsearch.rest.uris:}'.isEmpty()")
+@ConditionalOnProperty(name = "spring.elasticsearch.rest.uris")
 @ConditionalOnClass(ElasticsearchRestTemplate.class)
-@EnableElasticsearchRepositories("io.github.erp.repository.search")
+@EnableElasticsearchRepositories({"io.github.erp.repository.search", "io.github.erp.docmgmt.repository.search"})
 public class ElasticsearchConfiguration extends ElasticsearchConfigurationSupport {
 
     @Bean
@@ -57,6 +63,25 @@ public class ElasticsearchConfiguration extends ElasticsearchConfigurationSuppor
             )
         );
     }
+
+    @Bean(name = {"elasticsearchRestTemplate", "elasticsearchTemplate"})
+    @ConditionalOnMissingBean
+    public ElasticsearchRestTemplate elasticsearchRestTemplate() {
+        return new ElasticsearchRestTemplate(elasticsearchClient());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public org.elasticsearch.client.RestHighLevelClient elasticsearchClient() {
+        final org.elasticsearch.client.RestClientBuilder builder = org.elasticsearch.client.RestClient.builder(
+            new org.apache.http.HttpHost("localhost", 9200, "http")
+        );
+        return new org.elasticsearch.client.RestHighLevelClient(builder);
+    }
+
+
+
+
 
     @WritingConverter
     static class ZonedDateTimeWritingConverter implements Converter<ZonedDateTime, String> {

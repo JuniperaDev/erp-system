@@ -1115,6 +1115,7 @@
                     <configuration>
                         <mainClass>${start-class}</mainClass>
                         <fork>true</fork>
+                        <jvmArguments>--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED --add-opens java.base/java.time=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED</jvmArguments>
                         <!--
                         Enable the line below to have remote debugging of your application on port 5005
                         <jvmArguments>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</jvmArguments>

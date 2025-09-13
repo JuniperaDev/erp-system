@@ -45,8 +45,8 @@ module "monitoring" {
   resource_group_name = "${var.project_name}-${local.environment}-rg"
   tags                = local.common_tags
 
-  log_analytics_sku    = "PerGB2018"
-  log_retention_days   = 30
+  log_analytics_sku     = "PerGB2018"
+  log_retention_days    = 30
   alert_email_addresses = var.alert_email_addresses
 }
 
@@ -68,20 +68,20 @@ module "networking" {
 module "security" {
   source = "../../modules/security"
 
-  project_name                 = var.project_name
-  environment                  = local.environment
-  location                     = var.location
-  resource_group_name          = module.networking.resource_group_name
-  resource_group_id            = module.networking.resource_group_id
-  aks_subnet_id                = module.networking.aks_subnet_id
-  private_endpoint_subnet_id   = module.networking.database_subnet_id
-  tags                         = local.common_tags
+  project_name               = var.project_name
+  environment                = local.environment
+  location                   = var.location
+  resource_group_name        = module.networking.resource_group_name
+  resource_group_id          = module.networking.resource_group_id
+  aks_subnet_id              = module.networking.aks_subnet_id
+  private_endpoint_subnet_id = module.networking.database_subnet_id
+  tags                       = local.common_tags
 
-  key_vault_sku               = "standard"
-  soft_delete_retention_days  = 7
-  enable_purge_protection     = false
-  admin_group_object_ids      = var.admin_group_object_ids
-  enable_policy_assignments   = false
+  key_vault_sku              = "standard"
+  soft_delete_retention_days = 7
+  enable_purge_protection    = false
+  admin_group_object_ids     = var.admin_group_object_ids
+  enable_policy_assignments  = false
 }
 
 module "aks" {
@@ -109,25 +109,25 @@ module "aks" {
 module "database" {
   source = "../../modules/database"
 
-  project_name           = var.project_name
-  environment            = local.environment
-  location               = var.location
-  resource_group_name    = module.networking.resource_group_name
-  database_subnet_id     = module.networking.database_subnet_id
-  private_dns_zone_id    = module.networking.private_dns_zone_id
-  key_vault_id           = module.security.key_vault_id
-  tags                   = local.common_tags
+  project_name        = var.project_name
+  environment         = local.environment
+  location            = var.location
+  resource_group_name = module.networking.resource_group_name
+  database_subnet_id  = module.networking.database_subnet_id
+  private_dns_zone_id = module.networking.private_dns_zone_id
+  key_vault_id        = module.security.key_vault_id
+  tags                = local.common_tags
 
-  postgres_version              = "14"
-  admin_username                = "erpadmin"
-  admin_password                = var.database_password
-  sku_name                      = "B_Standard_B1ms"
-  storage_mb                    = 32768
-  backup_retention_days         = 7
-  enable_geo_redundant_backup   = false
-  enable_high_availability      = false
-  enable_firewall_rules         = false
-  aks_subnet_cidr               = "10.0.1.0/24"
+  postgres_version            = "14"
+  admin_username              = "erpadmin"
+  admin_password              = var.database_password
+  sku_name                    = "B_Standard_B1ms"
+  storage_mb                  = 32768
+  backup_retention_days       = 7
+  enable_geo_redundant_backup = false
+  enable_high_availability    = false
+  enable_firewall_rules       = false
+  aks_subnet_cidr             = "10.0.1.0/24"
 
   depends_on = [module.security]
 }
@@ -143,12 +143,12 @@ module "messaging" {
   key_vault_id        = module.security.key_vault_id
   tags                = local.common_tags
 
-  sku                        = "Basic"
-  capacity                   = 1
-  auto_inflate_enabled       = false
-  maximum_throughput_units   = 1
-  partition_count            = 2
-  message_retention          = 1
+  sku                      = "Basic"
+  capacity                 = 1
+  auto_inflate_enabled     = false
+  maximum_throughput_units = 1
+  partition_count          = 2
+  message_retention        = 1
 
   depends_on = [module.security]
 }
@@ -165,12 +165,12 @@ module "storage" {
   key_vault_id               = module.security.key_vault_id
   tags                       = local.common_tags
 
-  account_tier              = "Standard"
-  replication_type          = "LRS"
-  enable_versioning         = false
-  enable_change_feed        = false
-  blob_retention_days       = 7
-  container_retention_days  = 7
+  account_tier             = "Standard"
+  replication_type         = "LRS"
+  enable_versioning        = false
+  enable_change_feed       = false
+  blob_retention_days      = 7
+  container_retention_days = 7
 
   depends_on = [module.security]
 }
@@ -178,18 +178,19 @@ module "storage" {
 module "monitoring_update" {
   source = "../../modules/monitoring"
 
-  project_name               = var.project_name
-  environment                = local.environment
-  location                   = var.location
-  resource_group_name        = module.networking.resource_group_name
-  key_vault_id               = module.security.key_vault_id
-  aks_cluster_id             = module.aks.cluster_id
-  database_server_id         = module.database.server_id
-  tags                       = local.common_tags
+  project_name             = var.project_name
+  environment              = local.environment
+  location                 = var.location
+  resource_group_name      = module.networking.resource_group_name
+  key_vault_id             = module.security.key_vault_id
+  aks_cluster_id           = module.aks.cluster_id
+  database_server_id       = module.database.server_id
+  application_gateway_fqdn = module.networking.application_gateway_fqdn
+  tags                     = local.common_tags
 
-  log_analytics_sku      = "PerGB2018"
-  log_retention_days     = 30
-  alert_email_addresses  = var.alert_email_addresses
+  log_analytics_sku     = "PerGB2018"
+  log_retention_days    = 30
+  alert_email_addresses = var.alert_email_addresses
 
-  depends_on = [module.aks, module.database, module.security]
+  depends_on = [module.aks, module.database, module.security, module.networking]
 }

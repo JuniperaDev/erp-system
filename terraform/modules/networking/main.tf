@@ -24,7 +24,7 @@ resource "azurerm_subnet" "database" {
   resource_group_name  = azurerm_resource_group.main.name
   virtual_network_name = azurerm_virtual_network.main.name
   address_prefixes     = [var.database_subnet_address_prefix]
-  
+
   delegation {
     name = "fs"
     service_delegation {
@@ -115,4 +115,90 @@ resource "azurerm_private_dns_zone_virtual_network_link" "postgres" {
   virtual_network_id    = azurerm_virtual_network.main.id
   resource_group_name   = azurerm_resource_group.main.name
   tags                  = var.tags
+}
+
+resource "azurerm_public_ip" "appgw" {
+  name                = "${var.project_name}-${var.environment}-appgw-pip"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+  tags                = var.tags
+}
+
+resource "azurerm_application_gateway" "main" {
+  name                = "${var.project_name}-${var.environment}-appgw"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  tags                = var.tags
+
+  sku {
+    name     = var.appgw_sku_name
+    tier     = var.appgw_sku_tier
+    capacity = var.appgw_capacity
+  }
+
+  waf_configuration {
+    enabled          = true
+    firewall_mode    = var.waf_mode
+    rule_set_type    = "OWASP"
+    rule_set_version = "3.2"
+  }
+
+  gateway_ip_configuration {
+    name      = "appGatewayIpConfig"
+    subnet_id = azurerm_subnet.application_gateway.id
+  }
+
+  frontend_port {
+    name = "port_80"
+    port = 80
+  }
+
+  frontend_port {
+    name = "port_443"
+    port = 443
+  }
+
+  frontend_ip_configuration {
+    name                 = "appGatewayFrontendIP"
+    public_ip_address_id = azurerm_public_ip.appgw.id
+  }
+
+  backend_address_pool {
+    name = "appGatewayBackendPool"
+  }
+
+  backend_http_settings {
+    name                  = "appGatewayBackendHttpSettings"
+    cookie_based_affinity = "Disabled"
+    port                  = 80
+    protocol              = "Http"
+    request_timeout       = 60
+  }
+
+  http_listener {
+    name                           = "appGatewayHttpListener"
+    frontend_ip_configuration_name = "appGatewayFrontendIP"
+    frontend_port_name             = "port_80"
+    protocol                       = "Http"
+  }
+
+  request_routing_rule {
+    name                       = "rule1"
+    rule_type                  = "Basic"
+    http_listener_name         = "appGatewayHttpListener"
+    backend_address_pool_name  = "appGatewayBackendPool"
+    backend_http_settings_name = "appGatewayBackendHttpSettings"
+    priority                   = 100
+  }
+
+  lifecycle {
+    ignore_changes = [
+      backend_address_pool,
+      backend_http_settings,
+      http_listener,
+      request_routing_rule
+    ]
+  }
 }
